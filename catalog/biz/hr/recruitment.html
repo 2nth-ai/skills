@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>biz/hr/recruitment — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">biz</a><span class="breadcrumb-sep">›</span><a href="#">hr</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">recruitment</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/biz/hr/recruitment/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">biz/hr/recruitment</div>
+      <h1>RECRUITMENT</h1>
+      <p class="skill-desc">Recruitment value chain — AI augmentation across every stage from sourcing to signed offer.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Any ATS via REST API; Cloudflare Workers AI for CV parsing</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../tech/cloudflare/workers.html">tech/cloudflare/workers</a><a class="skill-chip" href="../../../tech/cloudflare/ai/workers-ai.html">tech/cloudflare/ai/workers-ai</a><a class="skill-chip" href="../../../tech/cloudflare/ai/ai-gateway.html">tech/cloudflare/ai/ai-gateway</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">biz/hr</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Recruitment Value Chain</h1>
+
+<p>The recruitment value chain has six stages where AI adds compounding value. Each stage produces a structured output consumed by the next.</p>
+
+<pre><code class="lang-text">JD Creation → Sourcing → CV Screening → Interviewing → Assessment → Offer</code></pre>
+
+<h2>Stage 1 — Job Description Creation</h2>
+
+<p>AI drafts JDs from a brief. The output is scored against a rubric before it goes live.</p>
+
+<pre><code class="lang-typescript">const jdPrompt = `
+You are a talent acquisition specialist. Draft a job description from this brief.
+
+Brief: ${brief}
+
+Output JSON:
+{
+  "title": string,
+  "summary": string (2-3 sentences, candidate-facing),
+  "responsibilities": string[] (5-8 bullets, action verbs),
+  "requirements": {
+    "essential": string[],
+    "desirable": string[]
+  },
+  "about_us": string (3-4 sentences),
+  "inclusivity_flags": string[] (list any non-inclusive language found — empty if clean)
+}
+`;
+
+const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+  messages: [{ role: 'user', content: jdPrompt }],
+  response_format: { type: 'json_object' },
+});
+const jd = JSON.parse(response.response);
+// Flag and fix any inclusivity_flags before publishing</code></pre>
+
+<h2>Stage 2 — CV Screening and Ranking</h2>
+
+<p>Parse raw CV text and score against the JD. Returns a structured candidate record.</p>
+
+<pre><code class="lang-typescript">interface CandidateScore {
+  name: string;
+  email: string;
+  score: number;           // 0–100
+  tier: 'A' | 'B' | 'C';  // A = interview, B = hold, C = reject
+  strengths: string[];
+  gaps: string[];
+  experience_years: number;
+  red_flags: string[];     // gaps, frequent moves, mismatch
+  summary: string;         // 2-sentence recruiter note
+}
+
+async function screenCV(cvText: string, jd: string, env: Env): Promise&lt;CandidateScore&gt; {
+  const prompt = `
+Score this CV against the job description. Be rigorous — only A-tier candidates
+meet 80%+ of essential requirements AND have relevant domain experience.
+
+JD: ${jd}
+CV: ${cvText}
+
+Output JSON matching CandidateScore schema.
+`;
+
+  const result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+    messages: [{ role: 'user', content: prompt }],
+    response_format: { type: 'json_object' },
+  });
+  return JSON.parse(result.response) as CandidateScore;
+}</code></pre>
+
+<h2>Stage 3 — Interview Guide Generation</h2>
+
+<p>Produces a structured interview guide per competency, with scoring rubric.</p>
+
+<pre><code class="lang-typescript">const interviewPrompt = `
+Create a competency-based interview guide for this role.
+
+Role: ${jd.title}
+Level: ${level}  // e.g. "Senior", "Entry"
+Key competencies: ${competencies.join(', ')}
+
+For each competency produce:
+- 2 behavioural questions (STAR format)
+- 1 situational/hypothetical question
+- Green/amber/red answer indicators
+
+Output JSON: { competencies: [{ name, questions: [{ text, type, indicators }] }] }
+`;</code></pre>
+
+<h2>Stage 4 — Candidate Outreach</h2>
+
+<p>Personalised outreach for sourced candidates. Never send without human review.</p>
+
+<pre><code class="lang-typescript">async function draftOutreach(params: {
+  candidateName: string;
+  candidateRole: string;        // their current title
+  targetRole: string;
+  companyContext: string;
+  tone: 'formal' | 'conversational';
+}, env: Env): Promise&lt;string&gt; {
+  const prompt = `
+Draft a LinkedIn/email outreach message to ${params.candidateName}, currently a
+${params.candidateRole}. We're hiring a ${params.targetRole}.
+
+${params.companyContext}
+
+Tone: ${params.tone}. Max 120 words. No buzzwords. End with a specific question,
+not a generic CTA. Do not use "I hope this message finds you well."
+`;
+
+  const result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+    messages: [{ role: 'user', content: prompt }],
+    max_tokens: 200,
+  });
+  return result.response;
+}</code></pre>
+
+<h2>Stage 5 — Offer Letter Drafting</h2>
+
+<p>Structured offer letter from compensation parameters. Always reviewed by HR and legal.</p>
+
+<pre><code class="lang-typescript">interface OfferParams {
+  candidateName: string;
+  role: string;
+  department: string;
+  reportingTo: string;
+  startDate: string;
+  baseSalary: number;
+  currency: string;
+  bonusScheme?: string;
+  equity?: string;
+  probationMonths: number;
+  location: string;
+  remotePolicy: string;
+  expiryDate: string;
+}
+
+// Generate offer letter body — merge into your letterhead template
+async function draftOffer(params: OfferParams, env: Env): Promise&lt;string&gt; {
+  // Use Claude via AI Gateway for formal document drafting
+  const res = await fetch(env.AI_GATEWAY_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.ANTHROPIC_API_KEY}`,
+      'Content-Type': 'application/json',
+      'cf-aig-metadata': JSON.stringify({ skill: 'biz/hr/recruitment', stage: 'offer' }),
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 800,
+      messages: [{
+        role: 'user',
+        content: `Draft a formal offer letter body from these parameters: ${JSON.stringify(params)}.
+Include: opening congratulations, role/department/reporting line, start date, compensation breakdown,
+probation terms, remote policy, acceptance deadline. Professional tone, no exclamation marks.`,
+      }],
+    }),
+  });
+  const { content } = await res.json();
+  return content[0].text;
+}</code></pre>
+
+<h2>ATS Integration Patterns</h2>
+
+<h3>Greenhouse (REST API)</h3>
+
+<pre><code class="lang-typescript">// POST a candidate to a job
+await fetch(`https://harvest.greenhouse.io/v1/jobs/${jobId}/candidates`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Basic ${btoa(env.GREENHOUSE_API_KEY + ':')}`,
+    'Content-Type': 'application/json',
+    'On-Behalf-Of': recruiterId,
+  },
+  body: JSON.stringify({
+    first_name: candidate.firstName,
+    last_name: candidate.lastName,
+    email_addresses: [{ value: candidate.email, type: 'personal' }],
+    applications: [{ job_id: jobId }],
+    attachments: [{ filename: 'cv.pdf', type: 'resume', content: base64CV, content_type: 'application/pdf' }],
+  }),
+});</code></pre>
+
+<h3>BambooHR (REST API)</h3>
+
+<pre><code class="lang-typescript">// Get open positions
+const jobs = await fetch(`https://api.bamboohr.com/api/gateway.php/${env.BAMBOOHR_SUBDOMAIN}/v1/applicant_tracking/jobs`, {
+  headers: { 'Authorization': `Basic ${btoa(env.BAMBOOHR_API_KEY + ':x')}`, 'Accept': 'application/json' },
+});</code></pre>
+
+<h2>Scoring Rubric (A/B/C tiers)</h2>
+
+<table><thead><tr><th>Tier</th><th>Score</th><th>Criteria</th><th>Action</th></tr></thead><tbody><tr><td>A</td><td>80–100</td><td>Meets all essential + most desirable requirements</td><td>Invite to interview</td></tr><tr><td>B</td><td>55–79</td><td>Meets essential requirements; gaps in desirable</td><td>Hold for review</td></tr><tr><td>C</td><td>0–54</td><td>Missing essential requirements</td><td>Reject with feedback</td></tr></tbody></table>
+
+<p><strong>Important</strong>: AI scores are a first-pass filter. A human recruiter reviews all A-tier and B-tier candidates before any decision is communicated.</p>
+
+<h2>Common Gotchas</h2>
+
+<ul><li><strong>Bias in JDs</strong>: Always check <code>inclusivity_flags</code> output. Words like "rockstar", "ninja", age-coded phrases, and gender-coded language reduce application diversity.</li><li><strong>CV parsing accuracy</strong>: Structured CVs (Word/PDF with clear sections) parse well. Creative/visual CVs often lose data — ask candidates to submit a plain text version too.</li><li><strong>AI scoring is not a decision</strong>: The score is a ranking aid, not a hiring decision. Document human review at every stage for audit trails (POPIA/GDPR compliance).</li><li><strong>Outreach volume</strong>: Don't automate bulk outreach — personalise each message. AI-generated but human-sent is the correct pattern.</li><li><strong>Offer letter jurisdiction</strong>: Employment law varies by country. Always have a qualified HR practitioner review offers, especially for notice periods, restraints of trade, and equity terms.</li></ul>
+
+<h2>See Also</h2>
+
+<ul><li><a href="../SKILL.md" target="_blank" rel="noopener">biz/hr (domain manifest)</a></li><li><a href="../../../tech/cloudflare/ai/workers-ai/SKILL.md" target="_blank" rel="noopener">tech/cloudflare/ai/workers-ai (CV parsing, JSON schema enforcement)</a></li><li><a href="../../../tech/cloudflare/ai/ai-gateway/SKILL.md" target="_blank" rel="noopener">tech/cloudflare/ai/ai-gateway (token metering for recruitment AI spend)</a></li><li><a href="../../../tech/cloudflare/queues/SKILL.md" target="_blank" rel="noopener">tech/cloudflare/queues (async CV processing queue)</a></li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/biz/hr/recruitment/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

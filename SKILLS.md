@@ -31,6 +31,11 @@ biz/
   crm/
     hubspot/         stub
     salesforce/      stub
+  hr/                SKILL.md  ✓ stub — HR and talent domain manifest
+    recruitment/     SKILL.md  ✓ production — full recruitment value chain, JD → offer
+    onboarding/      stub
+    performance/     stub
+    compliance/      stub
   ops/               stub
 
 edu/

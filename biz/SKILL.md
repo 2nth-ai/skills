@@ -5,7 +5,8 @@ description: |
   (1) ERP systems — Sage X3, ERPNext, SAP, Odoo,
   (2) CRM platforms — HubSpot, Salesforce,
   (3) e-commerce — Shopify, WooCommerce,
-  (4) business operations, workflow automation, reporting.
+  (4) HR and talent — recruitment value chain, onboarding, performance,
+  (5) business operations, workflow automation, reporting.
 license: MIT
 homepage: https://skills.2nth.ai/biz
 repository: https://github.com/2nth-ai/skills
@@ -25,6 +26,7 @@ Skills for AI agents working in business systems — ERP, CRM, e-commerce, and o
 |------|-------|
 | `biz/erp/` | Enterprise resource planning systems |
 | `biz/crm/` | Customer relationship management |
+| `biz/hr/` | HR and talent — recruitment, onboarding, performance |
 | `biz/ops/` | Operations, workflow, automation |
 
 Load the relevant subdomain or leaf skill directly. This manifest is for discovery.
