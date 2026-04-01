@@ -28,6 +28,7 @@ biz/
     sage-x3/         SKILL.md  ✓ production — Sage X3 GraphQL ERP integration
     erpnext/         SKILL.md  ✓ production — ERPNext REST API, furniture manufacturing
     shopify/         SKILL.md  ✓ production — Shopify Admin + Storefront API, 6 AI roles
+    woocommerce/     SKILL.md  ✓ production — WooCommerce REST API v3, orders, products, inventory, webhooks
   accounting/        SKILL.md  ✓ production — accounting domain manifest
     xero/            SKILL.md  ✓ production — Xero REST API, OAuth 2.0, invoicing, reconciliation, reports
   crm/
