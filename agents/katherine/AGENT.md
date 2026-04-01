@@ -7,8 +7,17 @@ visibility: member
 tier: agent
 status: preview
 skills:
+  - biz/sales
+  - biz/sales/qualification
+  - biz/sales/discovery
+  - biz/sales/pipeline
+  - biz/sales/forecasting
+  - biz/sales/proposal
+  - biz/sales/negotiation
+  - biz/sales/enablement
+  - biz/sales/prospecting
+  - biz/sales/revops
   - biz/crm
-  - biz/erp/shopify
   - fin/modelling
 avatar_color: "#0EA5E9"
 ---
