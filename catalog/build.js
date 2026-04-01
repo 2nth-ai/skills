@@ -625,8 +625,10 @@ function scanDomain(domain) {
         hasFile = true;
         const parsed = parseFrontmatter(content);
         meta = parsed.meta;
-        desc = (meta.description || '').split('\n').find(l => l.trim() && !l.includes('Use this')) || '';
-        desc = desc.trim();
+        // First numbered use case line, or fallback to first non-empty line
+        const descLines = (meta.description || '').split('\n').map(l => l.trim()).filter(Boolean);
+        const useCase = descLines.find(l => /^\(1\)/.test(l));
+        desc = useCase ? useCase.replace(/^\(1\)\s*/, '') : (descLines.find(l => !l.startsWith('Use this')) || descLines[0] || '');
       } catch { /* no SKILL.md — stub */ }
 
       // Determine local catalog path for this skill
@@ -635,9 +637,13 @@ function scanDomain(domain) {
       if (domain === 'tech' && entry === 'cloudflare') {
         localPath = `cloudflare/`;
       } else {
-        // Check if a generated html exists
-        const htmlPath = join(CATALOG, domain, `${entry}.html`);
-        try { statSync(htmlPath); localPath = `${entry}.html`; } catch { /* no html yet */ }
+        // Check if a generated html exists (skillPath may be nested, e.g. erp/woocommerce)
+        const htmlPath = join(CATALOG, domain, `${skillPath}.html`);
+        try {
+          statSync(htmlPath);
+          // Compute relative href from domain index to the html file
+          localPath = `${skillPath}.html`;
+        } catch { /* no html yet */ }
       }
 
       skills.push({
