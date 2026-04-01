@@ -8,10 +8,19 @@ tier: agent
 status: preview
 skills:
   - fin/accounting
+  - fin/management-accounts
+  - fin/cash-flow
+  - fin/fp-and-a
+  - fin/credit-control
+  - fin/costing
   - fin/modelling
   - fin/accounting/quickbooks
   - fin/accounting/xero
-  - biz/erp
+  - fin/sa
+  - fin/sa/vat
+  - fin/sa/tax
+  - fin/sa/paye
+  - fin/sa/sars
 avatar_color: "#10B981"
 ---
 
