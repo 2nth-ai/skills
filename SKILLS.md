@@ -64,10 +64,24 @@ leg/
   ip/                stub
 
 tech/
-  cloudflare/        SKILL.md  ✓ stub — Cloudflare Workers, Pages, D1, KV, R2
-    workers/         stub
-    d1/              stub
-    pages/           stub
+  cloudflare/        SKILL.md  ✓ production — full platform manifest, 16 services
+    workers/         SKILL.md  ✓ production — Workers runtime, streaming, service bindings
+    pages/           SKILL.md  ✓ production — Pages deploy, Functions, Git integration
+    d1/              SKILL.md  ✓ production — SQLite edge DB, migrations, batch ops
+    kv/              SKILL.md  ✓ production — KV store, sessions, feature flags
+    r2/              SKILL.md  ✓ production — object storage, presigned URLs, zero egress
+    durable-objects/ SKILL.md  ✓ production — stateful compute, WebSockets, hibernation
+    queues/          SKILL.md  ✓ production — reliable messaging, DLQ, async AI pattern
+    workflows/       SKILL.md  ✓ production — durable execution, step.do(), beta
+    ai/
+      workers-ai/    SKILL.md  ✓ production — edge inference, JSON schema, embeddings
+      ai-gateway/    SKILL.md  ✓ production — token metering, caching, fallback routing
+      vectorize/     SKILL.md  ✓ production — vector DB, RAG pipeline, metadata filtering
+    hyperdrive/      SKILL.md  ✓ production — Postgres/MySQL pooling, client SOR access
+    analytics-engine/ SKILL.md ✓ production — time-series metrics, token economy
+    email/           SKILL.md  ✓ stub — inbound routing, MailChannels outbound
+    tunnel/          SKILL.md  ✓ stub — secure outbound connector, on-premise SOR
+    workers-for-platforms/ SKILL.md ✓ stub — multi-tenant execution (deferred)
   claude-code/       SKILL.md  ✓ stub — Claude Code setup and patterns
   mcp/               stub
   iac/               stub

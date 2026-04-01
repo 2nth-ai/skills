@@ -26,16 +26,24 @@ The 2nth.ai deployment substrate. All client applications and platform services 
 
 ## Core Services
 
-| Service | Purpose | 2nth Usage |
-|---------|---------|-----------|
-| Workers | Edge compute (JS/TS) | API logic, agent runtimes |
-| Pages | Static + Functions | Frontend deployments |
-| D1 | SQLite at the edge | Per-client databases |
-| KV | Key-value store | Sessions, caching |
-| R2 | Object storage | Documents, assets |
-| Vectorize | Vector embeddings | RAG search |
-| Workers AI | Edge inference | Routing, classification |
-| AI Gateway | Claude proxy | Logging, rate limiting, token metering |
+| Service | Tier | Purpose | 2nth Usage |
+|---------|------|---------|-----------|
+| [workers](workers/SKILL.md) | Free/Paid | Edge compute (JS/TS) | API logic, agent runtimes |
+| [pages](pages/SKILL.md) | Free | Static + Functions | Frontend deployments, skills catalog |
+| [d1](d1/SKILL.md) | Free/Paid | SQLite at the edge | Per-client databases |
+| [kv](kv/SKILL.md) | Free/Paid | Key-value store | Sessions, feature flags, caching |
+| [r2](r2/SKILL.md) | Free/Paid | Object storage | Documents, assets, zero egress |
+| [durable-objects](durable-objects/SKILL.md) | Paid | Stateful compute | WebSockets, per-entity locks |
+| [queues](queues/SKILL.md) | Paid | Reliable messaging | Async AI inference, webhook ingestion |
+| [workflows](workflows/SKILL.md) | Paid (beta) | Durable multi-step execution | AI pipeline orchestration |
+| [workers-ai](ai/workers-ai/SKILL.md) | Free/Paid | Edge inference | Intent routing, embeddings |
+| [ai-gateway](ai/ai-gateway/SKILL.md) | Free/Paid | AI control plane | Token metering, caching, fallback |
+| [vectorize](ai/vectorize/SKILL.md) | Paid | Vector database | RAG for skill retrieval |
+| [hyperdrive](hyperdrive/SKILL.md) | Paid | DB connection pooling | Client SOR (Postgres/MySQL) access |
+| [analytics-engine](analytics-engine/SKILL.md) | Included | Time-series metrics | Token economy, billing reports |
+| [email](email/SKILL.md) | Free | Inbound/outbound email | Penny briefings, client intake |
+| [tunnel](tunnel/SKILL.md) | Free | Secure outbound connector | On-premise SOR access |
+| [workers-for-platforms](workers-for-platforms/SKILL.md) | Paid | Multi-tenant Worker execution | Future: client plugin namespaces |
 
 ## Common Commands
 
@@ -109,6 +117,7 @@ const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
 
 ## See Also
 
+- [Cloudflare Skills Catalog](https://skills.2nth.ai/tech/cloudflare)
 - [Workers docs](https://developers.cloudflare.com/workers/)
 - [D1 docs](https://developers.cloudflare.com/d1/)
 - [AI Gateway docs](https://developers.cloudflare.com/ai-gateway/)
