@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>skills.2nth.ai — AI Agent Skills</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f5f0;
+      --accent: #00e5a0;
+      --muted: #888;
+      --border: #1e1e1e;
+      --card: #111;
+      --tag: #1a2a20;
+      --tag-text: #00e5a0;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --sans: 'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+    .logo {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+    .logo span { color: var(--muted); }
+    nav a { color: var(--muted); text-decoration: none; font-size: 13px; }
+    nav a:hover { color: var(--white); }
+    nav .links { display: flex; gap: 24px; align-items: center; }
+    .nav-cta {
+      background: var(--accent);
+      color: var(--black) !important;
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 13px !important;
+    }
+    .nav-cta:hover { opacity: 0.9; }
+
+    /* HERO */
+    .hero {
+      padding: 80px 40px 60px;
+      max-width: 800px;
+    }
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    h1 em { color: var(--accent); font-style: normal; }
+    .hero-sub {
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 560px;
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+    .install-block {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 20px;
+    }
+    .install-block code {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--accent);
+    }
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--mono);
+      transition: all 0.15s;
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* FILTERS */
+    .filters {
+      display: flex;
+      gap: 8px;
+      padding: 0 40px 32px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--sans);
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,229,160,0.06);
+    }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1px;
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+      margin: 0 40px 80px;
+    }
+    .card {
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 28px;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .card:hover { background: #161616; }
+    .card.hidden { display: none; }
+
+    .card-path {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .card-title {
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      background: var(--tag);
+      color: var(--tag-text);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-family: var(--mono);
+    }
+    .status-prod {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--accent);
+    }
+    .status-stub {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: #444;
+    }
+
+    /* DOMAIN SECTION HEADERS */
+    .domain-header {
+      grid-column: 1 / -1;
+      background: var(--black);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .domain-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .domain-name {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+    .footer-right { display: flex; gap: 24px; }
+
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .hero, .filters { padding-left: 20px; padding-right: 20px; }
+      .grid { margin: 0 20px 60px; }
+      footer { padding: 24px 20px; flex-direction: column; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="/">skills<span>.2nth.ai</span></a>
+  <div class="links">
+    <a href="https://github.com/2nth-ai/skills">GitHub</a>
+    <a href="https://2nth.ai">2nth.ai</a>
+    <a class="nav-cta" href="https://github.com/2nth-ai/skills">Add a skill</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">github.com/2nth-ai/skills</div>
+  <h1>AI agent skills for<br><em>the real world</em></h1>
+  <p class="hero-sub">A fractal, self-referencing library of skills for Claude Code and any AI agent runtime. Load the domain you need — skills pull in what they depend on automatically.</p>
+  <div class="install-block">
+    <code>npx skills add biz/erp/sage-x3</code>
+    <button class="copy-btn" onclick="copyInstall()">copy</button>
+  </div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filter('all', this)">All</button>
+  <button class="filter-btn" onclick="filter('biz', this)">Business</button>
+  <button class="filter-btn" onclick="filter('edu', this)">Education</button>
+  <button class="filter-btn" onclick="filter('fin', this)">Finance</button>
+  <button class="filter-btn" onclick="filter('health', this)">Healthcare</button>
+  <button class="filter-btn" onclick="filter('leg', this)">Legal</button>
+  <button class="filter-btn" onclick="filter('tech', this)">Technology</button>
+  <button class="filter-btn" onclick="filter('production', this)">Production only</button>
+</div>
+
+<div class="grid" id="grid">
+
+  <!-- BUSINESS -->
+  <div class="domain-header" data-domain="biz">
+    <span class="domain-label">biz</span>
+    <span class="domain-name">Business — ERP, CRM, Operations</span>
+  </div>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/biz/erp/sage-x3/SKILL.md"
+     data-domain="biz" data-status="production" target="_blank">
+    <div class="card-path">biz/erp/sage-x3</div>
+    <div class="card-title">Sage X3 ERP</div>
+    <div class="card-desc">GraphQL API integration for Sage X3 master data, sales, purchasing, stock, and accounting. Deploy integrations to Cloudflare Workers.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">GraphQL</span><span class="tag">ERP</span><span class="tag">Reporting</span></div>
+      <span class="status-prod">● production</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/biz/erp/erpnext/SKILL.md"
+     data-domain="biz" data-status="production" target="_blank">
+    <div class="card-path">biz/erp/erpnext</div>
+    <div class="card-title">ERPNext</div>
+    <div class="card-desc">Frappe/ERPNext REST + RPC API. Manufacturing workflows, BOMs, work orders, stock management. Open-source ERP on GCP or self-hosted.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">REST</span><span class="tag">Manufacturing</span><span class="tag">Frappe</span></div>
+      <span class="status-prod">● production</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/biz/erp/shopify/SKILL.md"
+     data-domain="biz" data-status="production" target="_blank">
+    <div class="card-path">biz/erp/shopify</div>
+    <div class="card-title">Shopify</div>
+    <div class="card-desc">Admin + Storefront API. Six AI-powered role partners: owner, merchandiser, content creator, customer service, marketing, operations.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">E-Commerce</span><span class="tag">GraphQL</span><span class="tag">MCP</span></div>
+      <span class="status-prod">● production</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/biz/crm"
+     data-domain="biz" data-status="stub" target="_blank">
+    <div class="card-path">biz/crm/hubspot</div>
+    <div class="card-title">HubSpot CRM</div>
+    <div class="card-desc">Contacts, deals, pipelines, and marketing automation via HubSpot API.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">CRM</span><span class="tag">Sales</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <!-- EDUCATION -->
+  <div class="domain-header" data-domain="edu">
+    <span class="domain-label">edu</span>
+    <span class="domain-name">Education — Course Design, Training, Assessment</span>
+  </div>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/edu"
+     data-domain="edu" data-status="stub" target="_blank">
+    <div class="card-path">edu/higher-ed</div>
+    <div class="card-title">Higher Education</div>
+    <div class="card-desc">Course design, assessment, LMS integration, and AI learning companions for universities and colleges.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">LMS</span><span class="tag">Assessment</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/edu"
+     data-domain="edu" data-status="stub" target="_blank">
+    <div class="card-path">edu/corporate/training</div>
+    <div class="card-title">Corporate Training</div>
+    <div class="card-desc">Onboarding, skill development, and AI-powered learning paths for enterprise teams.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">L&D</span><span class="tag">Onboarding</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <!-- FINANCE -->
+  <div class="domain-header" data-domain="fin">
+    <span class="domain-label">fin</span>
+    <span class="domain-name">Finance — Reporting, Treasury, Tax</span>
+  </div>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/fin/reporting/SKILL.md"
+     data-domain="fin" data-status="stub" target="_blank">
+    <div class="card-path">fin/reporting</div>
+    <div class="card-title">Financial Reporting</div>
+    <div class="card-desc">KPI dashboards, variance analysis, and executive financial summaries from ERP and CRM data.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">KPIs</span><span class="tag">Dashboards</span><span class="tag">Variance</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/fin"
+     data-domain="fin" data-status="stub" target="_blank">
+    <div class="card-path">fin/treasury</div>
+    <div class="card-title">Treasury</div>
+    <div class="card-desc">Cash flow forecasting, liquidity management, and working capital optimisation.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">Cash Flow</span><span class="tag">Forecasting</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <!-- HEALTHCARE -->
+  <div class="domain-header" data-domain="health">
+    <span class="domain-label">health</span>
+    <span class="domain-name">Healthcare — Clinical, Operations, Pharma</span>
+  </div>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/health/clinical/SKILL.md"
+     data-domain="health" data-status="stub" target="_blank">
+    <div class="card-path">health/clinical</div>
+    <div class="card-title">Clinical Systems</div>
+    <div class="card-desc">EHR/EMR integration via FHIR R4 and HL7. Patient records, clinical notes, diagnostic support, and care pathways.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">FHIR</span><span class="tag">HL7</span><span class="tag">EHR</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/health/ops/SKILL.md"
+     data-domain="health" data-status="stub" target="_blank">
+    <div class="card-path">health/ops</div>
+    <div class="card-title">Healthcare Operations</div>
+    <div class="card-desc">Patient scheduling, medical billing (ICD-10, CPT, NAPPi), revenue cycle, and compliance (HIPAA, POPIA).</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">Billing</span><span class="tag">ICD-10</span><span class="tag">HIPAA</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/health"
+     data-domain="health" data-status="stub" target="_blank">
+    <div class="card-path">health/pharma</div>
+    <div class="card-title">Pharmaceuticals</div>
+    <div class="card-desc">Formulary management, drug interaction checks, and clinical trial data patterns.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">Formulary</span><span class="tag">Clinical Trials</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <!-- LEGAL -->
+  <div class="domain-header" data-domain="leg">
+    <span class="domain-label">leg</span>
+    <span class="domain-name">Legal — Contracts, Compliance, IP</span>
+  </div>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/leg"
+     data-domain="leg" data-status="stub" target="_blank">
+    <div class="card-path">leg/contracts</div>
+    <div class="card-title">Contract Review</div>
+    <div class="card-desc">Contract analysis, clause identification, risk flagging, and redlining assistance. Human legal review always required.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">Contracts</span><span class="tag">Risk</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/leg"
+     data-domain="leg" data-status="stub" target="_blank">
+    <div class="card-path">leg/compliance</div>
+    <div class="card-title">Compliance</div>
+    <div class="card-desc">POPIA, GDPR, and industry-specific regulatory compliance frameworks and audit support.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">POPIA</span><span class="tag">GDPR</span><span class="tag">Audit</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <!-- TECHNOLOGY -->
+  <div class="domain-header" data-domain="tech">
+    <span class="domain-label">tech</span>
+    <span class="domain-name">Technology — Cloudflare, Claude Code, MCP</span>
+  </div>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/SKILL.md"
+     data-domain="tech" data-status="stub" target="_blank">
+    <div class="card-path">tech/cloudflare</div>
+    <div class="card-title">Cloudflare Platform</div>
+    <div class="card-desc">Workers, Pages, D1, KV, R2, Vectorize, Workers AI, and AI Gateway. The 2nth.ai deployment substrate.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">Workers</span><span class="tag">D1</span><span class="tag">Edge</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/tech/claude-code/SKILL.md"
+     data-domain="tech" data-status="stub" target="_blank">
+    <div class="card-path">tech/claude-code</div>
+    <div class="card-title">Claude Code</div>
+    <div class="card-desc">Claude Code setup, CLAUDE.md patterns, skill injection, .claude/settings.json, and token economy integration.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">Claude</span><span class="tag">AI Dev</span><span class="tag">2nth</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/tech"
+     data-domain="tech" data-status="stub" target="_blank">
+    <div class="card-path">tech/mcp</div>
+    <div class="card-title">Model Context Protocol</div>
+    <div class="card-desc">Build and consume MCP servers to give AI agents access to tools, APIs, and data sources.</div>
+    <div class="card-footer">
+      <div class="card-tags"><span class="tag">MCP</span><span class="tag">Tools</span></div>
+      <span class="status-stub">○ stub</span>
+    </div>
+  </a>
+
+</div>
+
+<footer>
+  <span>github.com/2nth-ai/skills — MIT License</span>
+  <div class="footer-right">
+    <a href="https://2nth.ai">2nth.ai</a>
+    <a href="https://imbilawork.com">imbilawork</a>
+    <a href="https://github.com/2nth-ai/skills">GitHub</a>
+  </div>
+</footer>
+
+<script>
+  function filter(domain, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cards = document.querySelectorAll('.card');
+    const headers = document.querySelectorAll('.domain-header');
+    if (domain === 'all') {
+      cards.forEach(c => c.classList.remove('hidden'));
+      headers.forEach(h => h.classList.remove('hidden'));
+      return;
+    }
+    if (domain === 'production') {
+      cards.forEach(c => {
+        c.classList.toggle('hidden', c.dataset.status !== 'production');
+      });
+      headers.forEach(h => {
+        const d = h.dataset.domain;
+        const hasVisible = [...document.querySelectorAll(`.card[data-domain="${d}"]:not(.hidden)`)].length > 0;
+        h.classList.toggle('hidden', !hasVisible);
+      });
+      return;
+    }
+    cards.forEach(c => {
+      c.classList.toggle('hidden', c.dataset.domain !== domain);
+    });
+    headers.forEach(h => {
+      h.classList.toggle('hidden', h.dataset.domain !== domain);
+    });
+  }
+
+  function copyInstall() {
+    navigator.clipboard.writeText('npx skills add biz/erp/sage-x3').then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'copied';
+      setTimeout(() => btn.textContent = 'copy', 1500);
+    });
+  }
+</script>
+</body>
+</html>
