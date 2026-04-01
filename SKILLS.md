@@ -80,6 +80,8 @@ edu/
   k12/               stub
 
 fin/
+  capital-markets/   SKILL.md  ✓ production — capital markets domain (trading, risk, pricing, post-trade; SA FSCA/SARB context)
+    trading-platforms/ SKILL.md ✓ production — non-monolithic trading platforms, FM Converge, FRTB/SA-CCR/XVA, composable architecture
   reporting/         SKILL.md  ✓ stub — financial KPI reporting patterns
   modelling/         SKILL.md  ✓ production — DCF, three-statement, scenario analysis, sensitivity tables, Excel export
   accounting/        SKILL.md  ✓ production — accounting domain manifest
