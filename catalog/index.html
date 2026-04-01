@@ -4,553 +4,516 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>skills.2nth.ai — AI Agent Skills</title>
+  <meta name="description" content="Fractal AI agent skills for Claude Code and any agent runtime. Business, Education, Finance, Healthcare, Legal, Technology.">
+  <link rel="stylesheet" href="theme.css">
+  <script>
+    // Apply theme before paint to avoid flash
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    * { -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text-3); line-height: 1.625; transition: background-color .25s, color .25s; }
+    a { color: inherit; text-decoration: none; }
 
-    :root {
-      --black: #0a0a0a;
-      --white: #f5f5f0;
-      --accent: #00e5a0;
-      --muted: #888;
-      --border: #1e1e1e;
-      --card: #111;
-      --tag: #1a2a20;
-      --tag-text: #00e5a0;
-      --mono: 'JetBrains Mono', 'Fira Code', monospace;
-      --sans: 'Inter', system-ui, sans-serif;
-    }
-
-    body {
-      background: var(--black);
-      color: var(--white);
-      font-family: var(--sans);
-      font-size: 15px;
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-
-    /* NAV */
+    /* ── NAV ── */
     nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 40px;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      background: rgba(10,10,10,0.95);
-      backdrop-filter: blur(8px);
-      z-index: 100;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--nav-bg); border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     }
-    .logo {
-      font-family: var(--mono);
-      font-size: 14px;
-      color: var(--accent);
-      text-decoration: none;
-      letter-spacing: 0.05em;
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 24px; gap: 12px;
     }
-    .logo span { color: var(--muted); }
-    nav a { color: var(--muted); text-decoration: none; font-size: 13px; }
-    nav a:hover { color: var(--white); }
-    nav .links { display: flex; gap: 24px; align-items: center; }
-    .nav-cta {
-      background: var(--accent);
-      color: var(--black) !important;
-      padding: 6px 14px;
-      border-radius: 4px;
-      font-weight: 600;
-      font-size: 13px !important;
+    .nav-brand { font-family: var(--font-display); font-size: 22px; letter-spacing: .05em; color: var(--text); }
+    .nav-brand span { color: var(--brand); }
+    .nav-domains { display: flex; align-items: center; gap: 6px; }
+    .dpill {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 3px; border: 1px solid var(--border);
+      color: var(--text-muted); transition: all .15s; cursor: pointer;
     }
-    .nav-cta:hover { opacity: 0.9; }
+    .dpill:hover { border-color: var(--brand); color: var(--brand); }
+    .dpill[data-domain="biz"]:hover { border-color: var(--domain-biz); color: var(--domain-biz); }
+    .dpill[data-domain="edu"]:hover { border-color: var(--domain-edu); color: var(--domain-edu); }
+    .dpill[data-domain="fin"]:hover { border-color: var(--domain-fin); color: var(--domain-fin); }
+    .dpill[data-domain="health"]:hover { border-color: var(--domain-health); color: var(--domain-health); }
+    .dpill[data-domain="leg"]:hover { border-color: var(--domain-leg); color: var(--domain-leg); }
+    .dpill[data-domain="tech"]:hover { border-color: var(--domain-tech); color: var(--domain-tech); }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .nav-link {
+      font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .05em;
+      color: var(--text-muted); transition: color .15s;
+    }
+    .nav-link:hover { color: var(--text-2); }
+    .theme-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 4px;
+      border: 1px solid var(--border); background: none;
+      color: var(--text-muted); cursor: pointer; transition: all .15s;
+    }
+    .theme-btn:hover { border-color: var(--border-strong); color: var(--text-2); }
 
-    /* HERO */
+    /* ── HERO ── */
     .hero {
-      padding: 80px 40px 60px;
-      max-width: 800px;
+      position: relative; padding: 130px 24px 80px; overflow: hidden;
     }
-    .hero-label {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--accent);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(90deg, transparent, transparent 99px, var(--grid-line) 99px, var(--grid-line) 100px),
+        repeating-linear-gradient(0deg, transparent, transparent 99px, var(--grid-line) 99px, var(--grid-line) 100px);
     }
+    .hero-spectrum {
+      position: absolute; width: 100%; height: 1px; top: 55%;
+      background: linear-gradient(90deg,
+        transparent,
+        var(--domain-biz) 12%,
+        var(--domain-edu) 30%,
+        var(--domain-tech) 50%,
+        var(--domain-leg) 70%,
+        var(--domain-fin) 88%,
+        transparent);
+      opacity: .2; animation: drift 18s ease-in-out infinite;
+    }
+    @keyframes drift { 0%,100%{top:52%;opacity:.15} 50%{top:58%;opacity:.25} }
+    .hero-inner { position: relative; max-width: 1200px; margin: 0 auto; }
+    .eyebrow {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--brand); margin-bottom: 20px;
+    }
+    .eyebrow::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--brand);
+      animation: blink 2s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
     h1 {
-      font-size: clamp(32px, 5vw, 52px);
-      font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      margin-bottom: 20px;
+      font-family: var(--font-display); font-size: clamp(42px, 8vw, 88px);
+      line-height: .92; letter-spacing: .04em; color: var(--text); margin-bottom: 20px;
     }
-    h1 em { color: var(--accent); font-style: normal; }
-    .hero-sub {
-      color: var(--muted);
-      font-size: 17px;
-      max-width: 560px;
-      margin-bottom: 32px;
-      line-height: 1.7;
-    }
-    .install-block {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 20px;
-    }
-    .install-block code {
-      font-family: var(--mono);
-      font-size: 14px;
-      color: var(--accent);
-    }
-    .copy-btn {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: var(--mono);
-      transition: all 0.15s;
-    }
-    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* FILTERS */
-    .filters {
-      display: flex;
-      gap: 8px;
-      padding: 0 40px 32px;
-      flex-wrap: wrap;
-    }
-    .filter-btn {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 6px 16px;
-      border-radius: 100px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.15s;
-      font-family: var(--sans);
-    }
-    .filter-btn:hover, .filter-btn.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(0,229,160,0.06);
-    }
-
-    /* GRID */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 1px;
-      border-top: 1px solid var(--border);
-      border-left: 1px solid var(--border);
-      margin: 0 40px 80px;
-    }
-    .card {
-      background: var(--card);
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 28px;
-      cursor: pointer;
-      transition: background 0.15s;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    h1 em { color: var(--brand); font-style: normal; }
+    .hero-sub { font-size: 18px; color: var(--text-3); max-width: 600px; line-height: 1.65; margin-bottom: 36px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .btn-primary {
+      font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;
+      background: var(--brand); color: #fff; padding: 11px 22px; border-radius: 3px; border: none;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: opacity .2s;
       text-decoration: none;
-      color: inherit;
     }
-    .card:hover { background: #161616; }
-    .card.hidden { display: none; }
+    .btn-primary:hover { opacity: .85; }
+    .btn-ghost {
+      font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+      border: 1px solid var(--border-strong); color: var(--text-2); padding: 10px 18px; border-radius: 3px;
+      cursor: pointer; background: none; display: inline-flex; align-items: center; gap: 7px; transition: all .2s;
+      text-decoration: none;
+    }
+    .btn-ghost:hover { border-color: var(--brand); color: var(--brand); }
 
-    .card-path {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.05em;
+    /* ── INSTALL BLOCK ── */
+    .install-strip {
+      display: flex; align-items: center; gap: 12px; margin-top: 28px;
+      background: var(--bg-subtle); border: 1px solid var(--border);
+      border-radius: 4px; padding: 12px 18px; max-width: 520px;
     }
-    .card-title {
-      font-size: 17px;
-      font-weight: 600;
-      line-height: 1.3;
+    .install-strip code { font-family: var(--font-mono); font-size: 13px; color: var(--brand); flex: 1; }
+    .copy-btn {
+      font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+      background: none; border: 1px solid var(--border); color: var(--text-muted);
+      padding: 4px 10px; border-radius: 3px; cursor: pointer; transition: all .15s; white-space: nowrap;
     }
-    .card-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.6;
-      flex: 1;
+    .copy-btn:hover { border-color: var(--brand); color: var(--brand); }
+
+    /* ── SECTION ── */
+    .section { max-width: 1200px; margin: 0 auto; padding: 72px 24px; }
+    hr.divider { border: none; border-top: 1px solid var(--border); }
+    .sec-label {
+      font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--brand); font-weight: 600; margin-bottom: 8px;
     }
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 4px;
+    .sec-title {
+      font-family: var(--font-display); font-size: clamp(28px, 5vw, 44px);
+      letter-spacing: .04em; color: var(--text); line-height: .95; margin-bottom: 10px;
     }
-    .card-tags {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
+    .sec-desc { font-size: 15px; color: var(--text-3); max-width: 600px; line-height: 1.65; margin-bottom: 36px; }
+
+    /* ── DOMAIN CARDS ── */
+    .domains-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
     }
-    .tag {
-      background: var(--tag);
-      color: var(--tag-text);
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 3px;
-      font-family: var(--mono);
+    .domain-card {
+      background: var(--bg-card); padding: 32px; display: flex; flex-direction: column; gap: 16px;
+      transition: background .2s; position: relative; overflow: hidden; text-decoration: none; color: inherit;
     }
-    .status-prod {
-      font-size: 11px;
-      font-family: var(--mono);
-      color: var(--accent);
+    .domain-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--dc, var(--brand));
     }
-    .status-stub {
-      font-size: 11px;
-      font-family: var(--mono);
-      color: #444;
+    .domain-card:hover { background: var(--bg-card-hover); }
+    .domain-card-top { display: flex; align-items: center; justify-content: space-between; }
+    .domain-slug {
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--dc, var(--brand)); font-weight: 600;
+    }
+    .skill-count {
+      font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); border: 1px solid var(--border);
+      padding: 2px 8px; border-radius: 3px;
+    }
+    .domain-name { font-family: var(--font-display); font-size: 28px; letter-spacing: .04em; color: var(--text); }
+    .domain-desc { font-size: 14px; color: var(--text-3); line-height: 1.6; }
+    .domain-skills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .skill-pill {
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: .5px;
+      color: var(--text-muted); background: var(--bg-subtle); border: 1px solid var(--border);
+      padding: 3px 8px; border-radius: 3px;
+    }
+    .domain-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+    .view-link {
+      font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--dc, var(--brand)); font-weight: 700; display: flex; align-items: center; gap: 5px;
     }
 
-    /* DOMAIN SECTION HEADERS */
-    .domain-header {
-      grid-column: 1 / -1;
-      background: var(--black);
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 16px 28px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    /* ── GITHUB CTA ── */
+    .github-cta {
+      background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 4px;
+      padding: 36px; display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap;
     }
-    .domain-label {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+    .github-cta-icon { font-size: 32px; flex-shrink: 0; }
+    .github-cta-body { flex: 1; }
+    .github-cta-body h3 {
+      font-family: var(--font-display); font-size: 28px; letter-spacing: .04em; color: var(--text); margin-bottom: 8px;
     }
-    .domain-name {
-      font-size: 13px;
-      color: var(--muted);
+    .github-cta-body p { font-size: 14px; color: var(--text-3); line-height: 1.65; max-width: 560px; margin-bottom: 16px; }
+    .github-links { display: flex; gap: 10px; flex-wrap: wrap; }
+    .github-link {
+      font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--text-2); border: 1px solid var(--border); padding: 7px 14px; border-radius: 3px;
+      display: flex; align-items: center; gap: 7px; transition: all .15s;
     }
+    .github-link:hover { border-color: var(--brand); color: var(--brand); }
 
-    /* FOOTER */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 32px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--muted);
-      font-size: 13px;
+    /* ── HOW IT WORKS ── */
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
     }
-    footer a { color: var(--muted); text-decoration: none; }
-    footer a:hover { color: var(--accent); }
-    .footer-right { display: flex; gap: 24px; }
+    .step { background: var(--bg-card); padding: 24px; }
+    .step-num { font-family: var(--font-display); font-size: 40px; color: var(--brand); opacity: .35; line-height: 1; margin-bottom: 10px; }
+    .step-title { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-2); font-weight: 600; margin-bottom: 8px; }
+    .step-desc { font-size: 13px; color: var(--text-3); line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); padding: 28px 24px; }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-brand { font-family: var(--font-display); font-size: 18px; letter-spacing: .04em; color: var(--text-3); }
+    .footer-brand span { color: var(--brand); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); transition: color .15s; }
+    .footer-links a:hover { color: var(--brand); }
+    .footer-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
 
     @media (max-width: 640px) {
-      nav { padding: 16px 20px; }
-      .hero, .filters { padding-left: 20px; padding-right: 20px; }
-      .grid { margin: 0 20px 60px; }
-      footer { padding: 24px 20px; flex-direction: column; gap: 16px; }
+      .nav-domains { display: none; }
+      .hero { padding: 110px 20px 60px; }
+      .section { padding: 48px 20px; }
+      footer { padding: 24px 20px; }
     }
   </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
-  <a class="logo" href="/">skills<span>.2nth.ai</span></a>
-  <div class="links">
-    <a href="https://github.com/2nth-ai/skills">GitHub</a>
-    <a href="https://2nth.ai">2nth.ai</a>
-    <a class="nav-cta" href="https://github.com/2nth-ai/skills">Add a skill</a>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">skills<span>.2nth.ai</span></a>
+    <div class="nav-domains">
+      <a href="#biz" class="dpill" data-domain="biz">biz</a>
+      <a href="#edu" class="dpill" data-domain="edu">edu</a>
+      <a href="#fin" class="dpill" data-domain="fin">fin</a>
+      <a href="#health" class="dpill" data-domain="health">health</a>
+      <a href="#leg" class="dpill" data-domain="leg">leg</a>
+      <a href="tech/cloudflare/" class="dpill" data-domain="tech">tech</a>
+    </div>
+    <div class="nav-right">
+      <a href="https://github.com/2nth-ai/skills" class="nav-link" target="_blank">GitHub</a>
+      <a href="https://2nth.ai" class="nav-link" target="_blank">2nth.ai</a>
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle light / dark">
+        <svg id="iconLight" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg id="iconDark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-label">github.com/2nth-ai/skills</div>
-  <h1>AI agent skills for<br><em>the real world</em></h1>
-  <p class="hero-sub">A fractal, self-referencing library of skills for Claude Code and any AI agent runtime. Load the domain you need — skills pull in what they depend on automatically.</p>
-  <div class="install-block">
-    <code>npx skills add biz/erp/sage-x3</code>
-    <button class="copy-btn" onclick="copyInstall()">copy</button>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-spectrum"></div>
+  <div class="hero-inner">
+    <div class="eyebrow">github.com/2nth-ai/skills</div>
+    <h1>Human + AI<br>+ <em>n Skills</em></h1>
+    <p class="hero-sub">A fractal, self-referencing library of AI agent skills. Load a skill, its dependencies resolve automatically. Each skill compounds the last.</p>
+    <div class="hero-actions">
+      <a href="tech/cloudflare/" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Cloudflare domain
+      </a>
+      <a href="https://github.com/2nth-ai/skills" class="btn-ghost" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        View on GitHub
+      </a>
+    </div>
+    <div class="install-strip">
+      <code>npx skills add biz/erp/sage-x3</code>
+      <button class="copy-btn" onclick="copyInstall(this, 'npx skills add biz/erp/sage-x3')">copy</button>
+    </div>
   </div>
-</div>
+</section>
 
-<div class="filters">
-  <button class="filter-btn active" onclick="filter('all', this)">All</button>
-  <button class="filter-btn" onclick="filter('biz', this)">Business</button>
-  <button class="filter-btn" onclick="filter('edu', this)">Education</button>
-  <button class="filter-btn" onclick="filter('fin', this)">Finance</button>
-  <button class="filter-btn" onclick="filter('health', this)">Healthcare</button>
-  <button class="filter-btn" onclick="filter('leg', this)">Legal</button>
-  <button class="filter-btn" onclick="filter('tech', this)">Technology</button>
-  <button class="filter-btn" onclick="filter('production', this)">Production only</button>
-</div>
+<hr class="divider">
 
-<div class="grid" id="grid">
+<!-- DOMAINS -->
+<section class="section">
+  <div class="sec-label">Skill Domains</div>
+  <div class="sec-title">Six domains.<br>Infinite depth.</div>
+  <p class="sec-desc">Skills compose via <code style="font-family:var(--font-mono);font-size:13px;background:var(--code-bg);padding:1px 5px;border-radius:2px">requires:</code> — load one skill and its dependencies resolve automatically. Every skill links directly to its source on GitHub.</p>
 
-  <!-- BUSINESS -->
-  <div class="domain-header" data-domain="biz">
-    <span class="domain-label">biz</span>
-    <span class="domain-name">Business — ERP, CRM, Operations</span>
+  <div class="domains-grid">
+
+    <a class="domain-card" id="biz" href="https://github.com/2nth-ai/skills/tree/main/biz" style="--dc:var(--domain-biz)" target="_blank">
+      <div class="domain-card-top">
+        <span class="domain-slug">biz</span>
+        <span class="skill-count">3 production</span>
+      </div>
+      <div class="domain-name">Business</div>
+      <p class="domain-desc">ERP, CRM, and e-commerce integrations. AI partners for every business role — from the ERP admin to the Shopify merchandiser.</p>
+      <div class="domain-skills">
+        <span class="skill-pill">sage-x3</span>
+        <span class="skill-pill">erpnext</span>
+        <span class="skill-pill">shopify</span>
+        <span class="skill-pill">hubspot</span>
+      </div>
+      <div class="domain-footer">
+        <span class="view-link">View on GitHub →</span>
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-faint)">biz/erp/sage-x3</span>
+      </div>
+    </a>
+
+    <a class="domain-card" id="edu" href="https://github.com/2nth-ai/skills/tree/main/edu" style="--dc:var(--domain-edu)" target="_blank">
+      <div class="domain-card-top">
+        <span class="domain-slug">edu</span>
+        <span class="skill-count">stubs</span>
+      </div>
+      <div class="domain-name">Education</div>
+      <p class="domain-desc">Course design, assessment, LMS integration. AI learning companions for universities, corporate L&D, and K-12.</p>
+      <div class="domain-skills">
+        <span class="skill-pill">higher-ed</span>
+        <span class="skill-pill">corporate/training</span>
+        <span class="skill-pill">k12</span>
+        <span class="skill-pill">assessment</span>
+      </div>
+      <div class="domain-footer">
+        <span class="view-link">View on GitHub →</span>
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-faint)">edu/</span>
+      </div>
+    </a>
+
+    <a class="domain-card" id="fin" href="https://github.com/2nth-ai/skills/tree/main/fin" style="--dc:var(--domain-fin)" target="_blank">
+      <div class="domain-card-top">
+        <span class="domain-slug">fin</span>
+        <span class="skill-count">1 active stub</span>
+      </div>
+      <div class="domain-name">Finance</div>
+      <p class="domain-desc">KPI reporting, treasury, tax, and financial modelling. Feed ERP data through AI to get CFO-grade analysis in seconds.</p>
+      <div class="domain-skills">
+        <span class="skill-pill">reporting</span>
+        <span class="skill-pill">treasury</span>
+        <span class="skill-pill">tax</span>
+        <span class="skill-pill">modelling</span>
+      </div>
+      <div class="domain-footer">
+        <span class="view-link">View on GitHub →</span>
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-faint)">fin/reporting</span>
+      </div>
+    </a>
+
+    <a class="domain-card" id="health" href="https://github.com/2nth-ai/skills/tree/main/health" style="--dc:var(--domain-health)" target="_blank">
+      <div class="domain-card-top">
+        <span class="domain-slug">health</span>
+        <span class="skill-count">2 active stubs</span>
+      </div>
+      <div class="domain-name">Healthcare</div>
+      <p class="domain-desc">Clinical systems (FHIR, HL7), healthcare operations (ICD-10, billing), pharma, and public health. AI supports — it never replaces clinical judgement.</p>
+      <div class="domain-skills">
+        <span class="skill-pill">clinical/ehr</span>
+        <span class="skill-pill">ops/billing</span>
+        <span class="skill-pill">pharma</span>
+        <span class="skill-pill">public-health</span>
+      </div>
+      <div class="domain-footer">
+        <span class="view-link">View on GitHub →</span>
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-faint)">health/</span>
+      </div>
+    </a>
+
+    <a class="domain-card" id="leg" href="https://github.com/2nth-ai/skills/tree/main/leg" style="--dc:var(--domain-leg)" target="_blank">
+      <div class="domain-card-top">
+        <span class="domain-slug">leg</span>
+        <span class="skill-count">stubs</span>
+      </div>
+      <div class="domain-name">Legal</div>
+      <p class="domain-desc">Contract review, POPIA/GDPR compliance, IP, and document processing. All outputs require qualified human legal review.</p>
+      <div class="domain-skills">
+        <span class="skill-pill">contracts</span>
+        <span class="skill-pill">compliance</span>
+        <span class="skill-pill">ip</span>
+      </div>
+      <div class="domain-footer">
+        <span class="view-link">View on GitHub →</span>
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-faint)">leg/</span>
+      </div>
+    </a>
+
+    <a class="domain-card" id="tech" href="tech/cloudflare/" style="--dc:var(--domain-tech)">
+      <div class="domain-card-top">
+        <span class="domain-slug">tech</span>
+        <span class="skill-count">13 skills</span>
+      </div>
+      <div class="domain-name">Technology</div>
+      <p class="domain-desc">Full Cloudflare enterprise stack: Workers, D1, KV, R2, Durable Objects, Queues, Workers AI, AI Gateway, Vectorize, Hyperdrive, Workflows, Analytics Engine.</p>
+      <div class="domain-skills">
+        <span class="skill-pill">cloudflare</span>
+        <span class="skill-pill">workers-ai</span>
+        <span class="skill-pill">ai-gateway</span>
+        <span class="skill-pill">vectorize</span>
+        <span class="skill-pill">+9 more</span>
+      </div>
+      <div class="domain-footer">
+        <span class="view-link" style="color:var(--domain-tech)">Explore Cloudflare domain →</span>
+      </div>
+    </a>
+
   </div>
+</section>
 
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/biz/erp/sage-x3/SKILL.md"
-     data-domain="biz" data-status="production" target="_blank">
-    <div class="card-path">biz/erp/sage-x3</div>
-    <div class="card-title">Sage X3 ERP</div>
-    <div class="card-desc">GraphQL API integration for Sage X3 master data, sales, purchasing, stock, and accounting. Deploy integrations to Cloudflare Workers.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">GraphQL</span><span class="tag">ERP</span><span class="tag">Reporting</span></div>
-      <span class="status-prod">● production</span>
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="sec-label">How it works</div>
+  <div class="sec-title">Load once.<br>Compound forever.</div>
+  <p class="sec-desc">Skills are YAML-frontmatter markdown files. An agent loads a skill, resolves its <code style="font-family:var(--font-mono);font-size:13px;background:var(--code-bg);padding:1px 5px;border-radius:2px">requires:</code> chain, and gains compound domain knowledge.</p>
+
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Add a skill</div>
+      <div class="step-desc"><code style="font-family:var(--font-mono);font-size:12px">npx skills add biz/erp/sage-x3</code><br><br>Or reference the raw GitHub URL directly in any agent system prompt.</div>
     </div>
-  </a>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/biz/erp/erpnext/SKILL.md"
-     data-domain="biz" data-status="production" target="_blank">
-    <div class="card-path">biz/erp/erpnext</div>
-    <div class="card-title">ERPNext</div>
-    <div class="card-desc">Frappe/ERPNext REST + RPC API. Manufacturing workflows, BOMs, work orders, stock management. Open-source ERP on GCP or self-hosted.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">REST</span><span class="tag">Manufacturing</span><span class="tag">Frappe</span></div>
-      <span class="status-prod">● production</span>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Dependencies resolve</div>
+      <div class="step-desc">The <code style="font-family:var(--font-mono);font-size:12px">requires:</code> field in the skill's frontmatter pulls in dependent skills automatically — depth-first, deduplicated.</div>
     </div>
-  </a>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/biz/erp/shopify/SKILL.md"
-     data-domain="biz" data-status="production" target="_blank">
-    <div class="card-path">biz/erp/shopify</div>
-    <div class="card-title">Shopify</div>
-    <div class="card-desc">Admin + Storefront API. Six AI-powered role partners: owner, merchandiser, content creator, customer service, marketing, operations.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">E-Commerce</span><span class="tag">GraphQL</span><span class="tag">MCP</span></div>
-      <span class="status-prod">● production</span>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Agent goes deep</div>
+      <div class="step-desc">Your agent now has domain expertise: API patterns, gotchas, data models, and the 2nth first-principles context for that skill.</div>
     </div>
-  </a>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/biz/crm"
-     data-domain="biz" data-status="stub" target="_blank">
-    <div class="card-path">biz/crm/hubspot</div>
-    <div class="card-title">HubSpot CRM</div>
-    <div class="card-desc">Contacts, deals, pipelines, and marketing automation via HubSpot API.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">CRM</span><span class="tag">Sales</span></div>
-      <span class="status-stub">○ stub</span>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Skills improve</div>
+      <div class="step-desc">Penny monitors which skills are used most. Hot skills get improved via PR — the tree is self-referencing and recursively improves.</div>
     </div>
-  </a>
-
-  <!-- EDUCATION -->
-  <div class="domain-header" data-domain="edu">
-    <span class="domain-label">edu</span>
-    <span class="domain-name">Education — Course Design, Training, Assessment</span>
   </div>
+</section>
 
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/edu"
-     data-domain="edu" data-status="stub" target="_blank">
-    <div class="card-path">edu/higher-ed</div>
-    <div class="card-title">Higher Education</div>
-    <div class="card-desc">Course design, assessment, LMS integration, and AI learning companions for universities and colleges.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">LMS</span><span class="tag">Assessment</span></div>
-      <span class="status-stub">○ stub</span>
+<hr class="divider">
+
+<!-- GITHUB CTA -->
+<section class="section">
+  <div class="github-cta">
+    <div class="github-cta-icon">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--text-3)"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
     </div>
-  </a>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/edu"
-     data-domain="edu" data-status="stub" target="_blank">
-    <div class="card-path">edu/corporate/training</div>
-    <div class="card-title">Corporate Training</div>
-    <div class="card-desc">Onboarding, skill development, and AI-powered learning paths for enterprise teams.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">L&D</span><span class="tag">Onboarding</span></div>
-      <span class="status-stub">○ stub</span>
+    <div class="github-cta-body">
+      <h3>Skills live on GitHub</h3>
+      <p>The web renderer is coming — for now, every skill links directly to its SKILL.md on GitHub. The source is always canonical. Propose improvements via PR; Penny reviews.</p>
+      <div class="github-links">
+        <a href="https://github.com/2nth-ai/skills" class="github-link" target="_blank">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          2nth-ai/skills
+        </a>
+        <a href="https://github.com/2nth-ai/skills/blob/main/SKILLS.md" class="github-link" target="_blank">Root index (SKILLS.md)</a>
+        <a href="https://github.com/2nth-ai/skills/blob/main/SKILL_FORMAT.md" class="github-link" target="_blank">Skill format spec</a>
+        <a href="https://github.com/2nth-ai/skills/blob/main/agents/penny/AGENT.md" class="github-link" target="_blank">Penny (CEP agent)</a>
+      </div>
     </div>
-  </a>
-
-  <!-- FINANCE -->
-  <div class="domain-header" data-domain="fin">
-    <span class="domain-label">fin</span>
-    <span class="domain-name">Finance — Reporting, Treasury, Tax</span>
   </div>
+</section>
 
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/fin/reporting/SKILL.md"
-     data-domain="fin" data-status="stub" target="_blank">
-    <div class="card-path">fin/reporting</div>
-    <div class="card-title">Financial Reporting</div>
-    <div class="card-desc">KPI dashboards, variance analysis, and executive financial summaries from ERP and CRM data.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">KPIs</span><span class="tag">Dashboards</span><span class="tag">Variance</span></div>
-      <span class="status-stub">○ stub</span>
-    </div>
-  </a>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/fin"
-     data-domain="fin" data-status="stub" target="_blank">
-    <div class="card-path">fin/treasury</div>
-    <div class="card-title">Treasury</div>
-    <div class="card-desc">Cash flow forecasting, liquidity management, and working capital optimisation.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">Cash Flow</span><span class="tag">Forecasting</span></div>
-      <span class="status-stub">○ stub</span>
-    </div>
-  </a>
-
-  <!-- HEALTHCARE -->
-  <div class="domain-header" data-domain="health">
-    <span class="domain-label">health</span>
-    <span class="domain-name">Healthcare — Clinical, Operations, Pharma</span>
-  </div>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/health/clinical/SKILL.md"
-     data-domain="health" data-status="stub" target="_blank">
-    <div class="card-path">health/clinical</div>
-    <div class="card-title">Clinical Systems</div>
-    <div class="card-desc">EHR/EMR integration via FHIR R4 and HL7. Patient records, clinical notes, diagnostic support, and care pathways.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">FHIR</span><span class="tag">HL7</span><span class="tag">EHR</span></div>
-      <span class="status-stub">○ stub</span>
-    </div>
-  </a>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/health/ops/SKILL.md"
-     data-domain="health" data-status="stub" target="_blank">
-    <div class="card-path">health/ops</div>
-    <div class="card-title">Healthcare Operations</div>
-    <div class="card-desc">Patient scheduling, medical billing (ICD-10, CPT, NAPPi), revenue cycle, and compliance (HIPAA, POPIA).</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">Billing</span><span class="tag">ICD-10</span><span class="tag">HIPAA</span></div>
-      <span class="status-stub">○ stub</span>
-    </div>
-  </a>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/health"
-     data-domain="health" data-status="stub" target="_blank">
-    <div class="card-path">health/pharma</div>
-    <div class="card-title">Pharmaceuticals</div>
-    <div class="card-desc">Formulary management, drug interaction checks, and clinical trial data patterns.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">Formulary</span><span class="tag">Clinical Trials</span></div>
-      <span class="status-stub">○ stub</span>
-    </div>
-  </a>
-
-  <!-- LEGAL -->
-  <div class="domain-header" data-domain="leg">
-    <span class="domain-label">leg</span>
-    <span class="domain-name">Legal — Contracts, Compliance, IP</span>
-  </div>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/leg"
-     data-domain="leg" data-status="stub" target="_blank">
-    <div class="card-path">leg/contracts</div>
-    <div class="card-title">Contract Review</div>
-    <div class="card-desc">Contract analysis, clause identification, risk flagging, and redlining assistance. Human legal review always required.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">Contracts</span><span class="tag">Risk</span></div>
-      <span class="status-stub">○ stub</span>
-    </div>
-  </a>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/leg"
-     data-domain="leg" data-status="stub" target="_blank">
-    <div class="card-path">leg/compliance</div>
-    <div class="card-title">Compliance</div>
-    <div class="card-desc">POPIA, GDPR, and industry-specific regulatory compliance frameworks and audit support.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">POPIA</span><span class="tag">GDPR</span><span class="tag">Audit</span></div>
-      <span class="status-stub">○ stub</span>
-    </div>
-  </a>
-
-  <!-- TECHNOLOGY -->
-  <div class="domain-header" data-domain="tech">
-    <span class="domain-label">tech</span>
-    <span class="domain-name">Technology — Cloudflare, Claude Code, MCP</span>
-  </div>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/SKILL.md"
-     data-domain="tech" data-status="stub" target="_blank">
-    <div class="card-path">tech/cloudflare</div>
-    <div class="card-title">Cloudflare Platform</div>
-    <div class="card-desc">Workers, Pages, D1, KV, R2, Vectorize, Workers AI, and AI Gateway. The 2nth.ai deployment substrate.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">Workers</span><span class="tag">D1</span><span class="tag">Edge</span></div>
-      <span class="status-stub">○ stub</span>
-    </div>
-  </a>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/tech/claude-code/SKILL.md"
-     data-domain="tech" data-status="stub" target="_blank">
-    <div class="card-path">tech/claude-code</div>
-    <div class="card-title">Claude Code</div>
-    <div class="card-desc">Claude Code setup, CLAUDE.md patterns, skill injection, .claude/settings.json, and token economy integration.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">Claude</span><span class="tag">AI Dev</span><span class="tag">2nth</span></div>
-      <span class="status-stub">○ stub</span>
-    </div>
-  </a>
-
-  <a class="card" href="https://github.com/2nth-ai/skills/blob/main/tech"
-     data-domain="tech" data-status="stub" target="_blank">
-    <div class="card-path">tech/mcp</div>
-    <div class="card-title">Model Context Protocol</div>
-    <div class="card-desc">Build and consume MCP servers to give AI agents access to tools, APIs, and data sources.</div>
-    <div class="card-footer">
-      <div class="card-tags"><span class="tag">MCP</span><span class="tag">Tools</span></div>
-      <span class="status-stub">○ stub</span>
-    </div>
-  </a>
-
-</div>
-
+<!-- FOOTER -->
 <footer>
-  <span>github.com/2nth-ai/skills — MIT License</span>
-  <div class="footer-right">
-    <a href="https://2nth.ai">2nth.ai</a>
-    <a href="https://imbilawork.com">imbilawork</a>
-    <a href="https://github.com/2nth-ai/skills">GitHub</a>
+  <div class="footer-inner">
+    <div class="footer-brand">skills<span>.2nth.ai</span></div>
+    <div class="footer-links">
+      <a href="https://2nth.ai" target="_blank">2nth.ai</a>
+      <a href="https://imbilawork.com" target="_blank">imbilawork</a>
+      <a href="https://github.com/2nth-ai/skills" target="_blank">GitHub</a>
+      <a href="https://github.com/2nth-ai/agents" target="_blank">Agents</a>
+    </div>
+    <div class="footer-meta">MIT License · github.com/2nth-ai/skills</div>
   </div>
 </footer>
 
 <script>
-  function filter(domain, btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const cards = document.querySelectorAll('.card');
-    const headers = document.querySelectorAll('.domain-header');
-    if (domain === 'all') {
-      cards.forEach(c => c.classList.remove('hidden'));
-      headers.forEach(h => h.classList.remove('hidden'));
-      return;
-    }
-    if (domain === 'production') {
-      cards.forEach(c => {
-        c.classList.toggle('hidden', c.dataset.status !== 'production');
-      });
-      headers.forEach(h => {
-        const d = h.dataset.domain;
-        const hasVisible = [...document.querySelectorAll(`.card[data-domain="${d}"]:not(.hidden)`)].length > 0;
-        h.classList.toggle('hidden', !hasVisible);
-      });
-      return;
-    }
-    cards.forEach(c => {
-      c.classList.toggle('hidden', c.dataset.domain !== domain);
-    });
-    headers.forEach(h => {
-      h.classList.toggle('hidden', h.dataset.domain !== domain);
-    });
-  }
+  // Theme toggle
+  const html = document.documentElement;
+  const btn = document.getElementById('themeBtn');
+  const iconLight = document.getElementById('iconLight');
+  const iconDark = document.getElementById('iconDark');
 
-  function copyInstall() {
-    navigator.clipboard.writeText('npx skills add biz/erp/sage-x3').then(() => {
-      const btn = document.querySelector('.copy-btn');
-      btn.textContent = 'copied';
-      setTimeout(() => btn.textContent = 'copy', 1500);
+  function updateIcons() {
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    iconLight.style.display = isDark ? 'block' : 'none';
+    iconDark.style.display = isDark ? 'none' : 'block';
+  }
+  updateIcons();
+
+  btn.addEventListener('click', () => {
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      html.removeAttribute('data-theme');
+      localStorage.setItem('2nth-theme', 'light');
+    } else {
+      html.setAttribute('data-theme', 'dark');
+      localStorage.setItem('2nth-theme', 'dark');
+    }
+    updateIcons();
+  });
+
+  // Copy install command
+  function copyInstall(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'copied!';
+      setTimeout(() => btn.textContent = 'copy', 1800);
     });
   }
 </script>

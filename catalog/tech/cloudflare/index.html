@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloudflare — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      flex: 1;
+    }
+    .breadcrumb a {
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-3);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px;
+      padding: 0 12px; height: 36px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 24px 40px;
+    }
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--brand-dim);
+      border: 1px solid var(--brand-border);
+      color: var(--brand);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 5vw, 56px);
+      letter-spacing: 0.02em;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1;
+    }
+    .hero p {
+      font-size: 18px;
+      color: var(--text-3);
+      max-width: 680px;
+      margin-bottom: 24px;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* ── Tier legend ── */
+    .tier-legend {
+      max-width: 1200px;
+      margin: 32px auto 0;
+      padding: 0 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .tier-legend-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .badge-free { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-paid { background: var(--tag-bg); color: var(--tag-text); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+    .badge-included { background: var(--tag-prod-bg); color: var(--tag-prod); }
+
+    /* ── Category sections ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    .section { margin-bottom: 52px; }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      color: var(--text);
+    }
+    .section-count {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1px 7px;
+    }
+
+    /* ── Service cards ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .card:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-card-hover);
+      box-shadow: var(--shadow-md);
+    }
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .card-name {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .card-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-3);
+      line-height: 1.5;
+      flex: 1;
+    }
+    .card-use {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-style: italic;
+      line-height: 1.4;
+    }
+    .card-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .card-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      color: var(--text-3);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .card-link:hover { border-color: var(--border-strong); color: var(--text); }
+    .card-link svg { width: 13px; height: 13px; fill: currentColor; flex-shrink: 0; }
+    .card-link-primary {
+      background: var(--brand-dim);
+      border-color: var(--brand-border);
+      color: var(--brand);
+    }
+    .card-link-primary:hover { border-color: var(--brand); color: var(--brand); }
+
+    /* ── Bottom CTA ── */
+    .cta-strip {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+    }
+    .cta-strip h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+    .cta-strip p { color: var(--text-3); font-size: 15px; margin-bottom: 20px; }
+    .cta-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--brand);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid var(--border-strong);
+      color: var(--text-2);
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .btn-secondary:hover { border-color: var(--brand); color: var(--brand); }
+
+    @media (max-width: 600px) {
+      .cards { grid-template-columns: 1fr; }
+      .hero { padding: 32px 16px 28px; }
+      main { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">tech / cloudflare</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/tree/main/tech/cloudflare" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0L10.2 5.5H16L11.4 8.9L13.1 14.5L8 11.1L2.9 14.5L4.6 8.9L0 5.5H5.8L8 0Z"/></svg>
+        tech / cloudflare
+      </div>
+      <h1>CLOUDFLARE PLATFORM</h1>
+      <p>The full 2nth.ai edge compute stack. Every service in the Workers Paid plan documented with production patterns, gotchas, and direct skill links.</p>
+      <div class="hero-meta">
+        <span>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.5A1.5 1.5 0 012.5 1h11A1.5 1.5 0 0115 2.5v11a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 011 13.5v-11zm1.5 0v11h11v-11h-11z"/></svg>
+          13 services documented
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 2A2.5 2.5 0 003 4.5v1A2.5 2.5 0 005.5 8h5A2.5 2.5 0 0013 5.5v-1A2.5 2.5 0 0010.5 2h-5zm0 1h5A1.5 1.5 0 0112 4.5v1A1.5 1.5 0 0110.5 7h-5A1.5 1.5 0 014 5.5v-1A1.5 1.5 0 015.5 3z"/></svg>
+          Workers Paid plan
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13zm.75 3.25a.75.75 0 00-1.5 0v4.5c0 .414.336.75.75.75h3a.75.75 0 000-1.5H8.75v-3.75z"/></svg>
+          v1.0.0
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tier-legend">
+    <span class="tier-legend-label">Tiers:</span>
+    <span class="badge badge-free">Free</span><span style="font-size:13px;color:var(--text-muted)">included on free plan</span>
+    <span class="badge badge-paid">Paid</span><span style="font-size:13px;color:var(--text-muted)">Workers Paid ($5/mo) required</span>
+    <span class="badge badge-beta">Beta</span><span style="font-size:13px;color:var(--text-muted)">open beta, API may change</span>
+  </div>
+
+  <main>
+
+    <!-- ── COMPUTE ── -->
+    <section class="section">
+      <div class="section-header">
+        <span class="section-title">COMPUTE</span>
+        <span class="section-count">2 services</span>
+      </div>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">workers</span>
+            <div class="card-badges">
+              <span class="badge badge-free">Free</span>
+              <span class="badge badge-paid">Paid</span>
+            </div>
+          </div>
+          <p class="card-desc">V8 isolate runtime at the edge. The foundation every other Cloudflare service is built on. 100k req/day free; unlimited on Paid.</p>
+          <div class="card-use">Use for: API handlers, AI inference proxies, auth middleware, request routing.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/workers/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/><path d="M8 3.5v5M5.5 7L8 9.5 10.5 7"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/workers/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">pages</span>
+            <div class="card-badges">
+              <span class="badge badge-free">Free</span>
+            </div>
+          </div>
+          <p class="card-desc">Static site hosting with global CDN and automatic Git deploys. Unlimited sites, 500 builds/month free. Full-stack via Pages Functions.</p>
+          <div class="card-use">Use for: skills.2nth.ai catalog, client portals, demo sites, marketing pages.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/pages/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/pages/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── STORAGE ── -->
+    <section class="section">
+      <div class="section-header">
+        <span class="section-title">STORAGE</span>
+        <span class="section-count">3 services</span>
+      </div>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">d1</span>
+            <div class="card-badges">
+              <span class="badge badge-free">Free</span>
+              <span class="badge badge-paid">Paid</span>
+            </div>
+          </div>
+          <p class="card-desc">Serverless SQLite at the edge. Native Workers binding, migrations, batch operations, and JSON columns. The default database for 2nth.</p>
+          <div class="card-use">Use for: user records, skill metadata, client configs, session state, orders. Prefer over Hyperdrive when possible.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/d1/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/d1/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">kv</span>
+            <div class="card-badges">
+              <span class="badge badge-free">Free</span>
+              <span class="badge badge-paid">Paid</span>
+            </div>
+          </div>
+          <p class="card-desc">Eventually-consistent global key-value store. Read-optimised for low-latency global reads. Not suitable for rate limiting or counters.</p>
+          <div class="card-use">Use for: session tokens, feature flags, config, skill resolution cache. Never for counters — use Analytics Engine.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/kv/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/kv/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">r2</span>
+            <div class="card-badges">
+              <span class="badge badge-free">Free</span>
+              <span class="badge badge-paid">Paid</span>
+            </div>
+          </div>
+          <p class="card-desc">S3-compatible object storage with zero egress fees. Presigned URLs, multipart upload, public buckets. Never pay bandwidth costs for blobs.</p>
+          <div class="card-use">Use for: AI-generated documents, exported reports, uploaded files, model artifacts. Never store blobs in D1.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/r2/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/r2/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── AI ── -->
+    <section class="section">
+      <div class="section-header">
+        <span class="section-title">AI</span>
+        <span class="section-count">3 services</span>
+      </div>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">workers-ai</span>
+            <div class="card-badges">
+              <span class="badge badge-free">Free</span>
+              <span class="badge badge-paid">Paid</span>
+            </div>
+          </div>
+          <p class="card-desc">Serverless inference on 50+ models including Llama, Mistral, Whisper, and embedding models. JSON schema enforcement for structured output.</p>
+          <div class="card-use">Use for: intent classification, embedding generation, local inference (data sovereignty), skill-level routing.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/ai/workers-ai/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/workers-ai/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">ai-gateway</span>
+            <div class="card-badges">
+              <span class="badge badge-free">Free</span>
+              <span class="badge badge-paid">Paid</span>
+            </div>
+          </div>
+          <p class="card-desc">Observability and control plane for all AI calls — Claude, OpenAI, Workers AI. Token metering, request logging, semantic caching, rate limiting, fallback routing.</p>
+          <div class="card-use">Use for: token economy metering, cost attribution per client/skill, fallback routing, caching identical prompts.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/ai/ai-gateway/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/ai-gateway/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">vectorize</span>
+            <div class="card-badges">
+              <span class="badge badge-paid">Paid</span>
+            </div>
+          </div>
+          <p class="card-desc">Vector database native to Workers. Store embeddings, query by ANN similarity, filter by metadata. Powers the RAG pipeline for skill retrieval.</p>
+          <div class="card-use">Use for: skill semantic search, client knowledge base RAG, document similarity, semantic de-duplication.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/ai/vectorize/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/vectorize/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── STATEFUL ── -->
+    <section class="section">
+      <div class="section-header">
+        <span class="section-title">STATEFUL</span>
+        <span class="section-count">3 services</span>
+      </div>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">durable-objects</span>
+            <div class="card-badges">
+              <span class="badge badge-paid">Paid</span>
+            </div>
+          </div>
+          <p class="card-desc">Globally unique stateful compute. Each DO instance has private storage and a single-threaded execution model. The primitive for WebSockets and real-time coordination.</p>
+          <div class="card-use">Use for: live collaboration sessions, WebSocket hubs, per-entity locks, agent execution state.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/durable-objects/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/durable-objects/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">queues</span>
+            <div class="card-badges">
+              <span class="badge badge-paid">Paid</span>
+            </div>
+          </div>
+          <p class="card-desc">Reliable message queues with automatic retry and dead-letter queue. Decouple AI inference from request handlers to avoid timeout errors.</p>
+          <div class="card-use">Use for: async AI inference, webhook ingestion, batch processing, email dispatch, event fan-out.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/queues/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/queues/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">workflows</span>
+            <div class="card-badges">
+              <span class="badge badge-paid">Paid</span>
+              <span class="badge badge-beta">Beta</span>
+            </div>
+          </div>
+          <p class="card-desc">Durable multi-step execution with per-step retry, persistent state, and sleep. Orchestrate long-running AI pipelines that survive Worker restarts.</p>
+          <div class="card-use">Use for: classify → retrieve → generate → store pipelines, saga patterns, scheduled follow-ups with step.sleep().</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/workflows/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/workflows/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── ADVANCED ── -->
+    <section class="section">
+      <div class="section-header">
+        <span class="section-title">ADVANCED</span>
+        <span class="section-count">2 services</span>
+      </div>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">hyperdrive</span>
+            <div class="card-badges">
+              <span class="badge badge-paid">Paid</span>
+            </div>
+          </div>
+          <p class="card-desc">Connection pooler between Workers and external Postgres/MySQL databases. Eliminates per-request connection overhead for client SOR integrations.</p>
+          <div class="card-use">Use for: existing client databases on Supabase, Neon, RDS, or PlanetScale that can't be migrated to D1.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/hyperdrive/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/hyperdrive/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">analytics-engine</span>
+            <div class="card-badges">
+              <span class="badge badge-included">Included</span>
+            </div>
+          </div>
+          <p class="card-desc">Columnar time-series store built into Workers. 10M data points free/month. The token economy metering layer — cheaper and more appropriate than KV counters.</p>
+          <div class="card-use">Use for: token usage per client/skill/model, request counts, latency histograms, billing reports via SQL.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/blob/main/tech/cloudflare/analytics-engine/SKILL.md" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              SKILL.md
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/analytics/analytics-engine/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── INFRASTRUCTURE ── -->
+    <section class="section">
+      <div class="section-header">
+        <span class="section-title">INFRASTRUCTURE</span>
+        <span class="section-count">2 services</span>
+      </div>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">email-routing</span>
+            <div class="card-badges">
+              <span class="badge badge-free">Free</span>
+            </div>
+          </div>
+          <p class="card-desc">Route inbound email to Workers for processing. Send outbound via MailChannels. Parse MIME, extract attachments, trigger AI workflows from email.</p>
+          <div class="card-use">Use for: Penny's email briefings, client intake via email, AI-powered email triage, notification dispatch.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/tree/main/tech/cloudflare/email" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              GitHub ↗
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/email-routing/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">tunnel</span>
+            <div class="card-badges">
+              <span class="badge badge-free">Free</span>
+            </div>
+          </div>
+          <p class="card-desc">Expose local or on-premise services through Cloudflare's network without opening firewall ports. Secure outbound-only connector for client SOR access.</p>
+          <div class="card-use">Use for: secure access to client on-premise ERP/CRM, dev environment previews, private service mesh.</div>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/tree/main/tech/cloudflare/tunnel" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1.5a6.5 6.5 0 110 13 6.5 6.5 0 010-13z"/></svg>
+              GitHub ↗
+            </a>
+            <a class="card-link" href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/" target="_blank" rel="noopener">Docs ↗</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── CTA ── -->
+    <div class="cta-strip">
+      <h2>EXPLORE THE FULL TREE</h2>
+      <p>Every skill links to a SKILL.md with production-ready patterns, wrangler.toml config, gotchas, and cross-references.</p>
+      <div class="cta-links">
+        <a class="btn-primary" href="https://github.com/2nth-ai/skills/tree/main/tech/cloudflare" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          Browse on GitHub
+        </a>
+        <a class="btn-secondary" href="../../">← All Domains</a>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        html.removeAttribute('data-theme');
+        localStorage.setItem('2nth-theme', 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem('2nth-theme', 'dark');
+      }
+    });
+  </script>
+
+</body>
+</html>
