@@ -14,11 +14,30 @@ Skills teach AI agents how to work effectively in a specific domain context. The
 | Domain | Path | Purpose |
 |--------|------|---------|
 | Business | `biz/` | ERP, CRM, operations — systems businesses run on |
+| Data | `data/` | Data strategy, engineering, analytics, ML, governance |
 | Education | `edu/` | Course design, assessment, corporate training |
 | Finance | `fin/` | Reporting, treasury, tax, financial modelling |
 | Healthcare | `health/` | Clinical systems, operations, pharma, public health |
+| IoT | `iot/` | Embedded hardware, firmware, connectivity, sensors, platform |
 | Legal | `leg/` | Contracts, compliance, IP, regulatory |
 | Technology | `tech/` | Cloudflare, Claude Code, MCP, infrastructure |
+
+## Agents
+
+| Agent | Role | Skills |
+|-------|------|--------|
+| `agents/penny` | Fractional CMO | mkt/brand, mkt/content, mkt/digital, mkt/social, mkt/performance, mkt/demand-gen, mkt/pr, mkt/go-to-market, mkt/sa |
+| `agents/grant` | Fractional CFO | fin/accounting, fin/management-accounts, fin/cash-flow, fin/fp-and-a, fin/credit-control, fin/costing, fin/modelling, fin/sa |
+| `agents/katharine` | Fractional CRO | biz/sales, biz/sales/prospecting, biz/sales/qualification, biz/sales/discovery, biz/sales/proposal, biz/sales/negotiation, biz/sales/pipeline, biz/sales/forecasting, biz/sales/enablement, biz/sales/revops |
+| `agents/tom` | Fractional COO | biz/erp, tech/architecture |
+| `agents/grace` | Fractional CHRO | biz/crm |
+| `agents/leo` | Fractional CLO | leg/commercial, leg/disputes, leg/property, leg/employment, leg/employment/ccma, leg/ip, leg/corporate, leg/data-privacy, leg/fundraising |
+| `agents/clara` | Fractional CSM Lead | biz/crm |
+| `agents/max` | Fractional CSO | fin/modelling, tech/architecture, tech/agent-protocols |
+| `agents/alex` | Fractional CDO | data/strategy, data/engineering, data/analysis, data/science, data/ml-ops, data/visualisation, data/governance, data/sa, tech/agent-protocols |
+| `agents/morgan` | Fractional Healthcare Director | health/operations, health/clinical-governance, health/finance, health/digital, health/public-health, health/mental-health, health/pharmacy, health/sa |
+| `agents/eric` | Fractional IoT Engineering Director | iot/hardware, iot/firmware, iot/connectivity, iot/sensors, iot/power, iot/security, iot/platform, iot/sa |
+| `agents/sophia` | (specialist — see AGENT.md) | |
 
 ## Skill Tree (current state)
 
@@ -41,6 +60,16 @@ biz/
     compliance/      stub
   ops/               stub
 
+data/
+  strategy/          SKILL.md  ✓ production — data maturity, data product road-map, platform architecture, team structure
+  engineering/       SKILL.md  ✓ production — ETL/ELT, data warehouse, dbt, orchestration, data quality
+  analysis/          SKILL.md  ✓ production — SQL analytics, EDA, statistical reasoning, A/B testing
+  science/           SKILL.md  ✓ production — ML problem framing, feature engineering, model selection, evaluation
+  ml-ops/            SKILL.md  ✓ production — model serving, feature stores, drift detection, retraining pipelines
+  visualisation/     SKILL.md  ✓ production — dashboard design, BI tool selection, semantic layer, self-serve analytics
+  governance/        SKILL.md  ✓ production — data quality SLAs, cataloguing, lineage, RBAC, POPIA
+  sa/                SKILL.md  ✓ production — SA cloud regions, POPIA, SA talent, load shedding, B-BBEE data
+
 edu/
   curriculum/        SKILL.md  ✓ production — lesson plans, scope & sequence, Bloom's, CAPS/IEB/Cambridge/IB/Common Core
   higher-ed/
@@ -59,22 +88,35 @@ fin/
   tax/               stub
 
 health/
-  clinical/          SKILL.md  ✓ stub — EHR, FHIR, diagnostics, protocols
-    ehr/             stub
-    diagnostics/     stub
-    protocols/       stub
-  ops/               SKILL.md  ✓ stub — scheduling, billing, compliance
-    scheduling/      stub
-    billing/         stub
-    compliance/      stub
-  pharma/            stub
-  public-health/     stub
+  operations/        SKILL.md  ✓ production — bed management, capacity planning, staffing, theatre utilisation, KPIs
+  clinical-governance/ SKILL.md ✓ production — patient safety, RCA, clinical audit, M&M, COHSASA, OHSC, NCS
+  finance/           SKILL.md  ✓ production — medical billing, ICD-10, PMBs, revenue cycle, DRGs, denial management
+  digital/           SKILL.md  ✓ production — EMR/EHR, HL7 FHIR, telemedicine, DHIS2, clinical decision support
+  public-health/     SKILL.md  ✓ production — epidemiology, SA disease burden (HIV/TB/NCD), PHC, NHI
+  mental-health/     SKILL.md  ✓ production — Mental Health Care Act, psychiatric pathways, psychotropics, workforce
+  pharmacy/          SKILL.md  ✓ production — formulary, ARV management, pharmacovigilance, scheduling, SEP
+  sa/                SKILL.md  ✓ production — NHI, medical aid schemes, HPCSA, public sector, private hospital groups
+
+iot/
+  hardware/          SKILL.md  ✓ production — PCB design, EMC, DFM, signal integrity, component selection, bring-up
+  firmware/          SKILL.md  ✓ production — MCU selection, FreeRTOS, Zephyr, OTA pipelines, CI/CD for embedded
+  connectivity/      SKILL.md  ✓ production — WiFi, BLE, LoRaWAN, NB-IoT, MQTT, CoAP, mesh networking
+  sensors/           SKILL.md  ✓ production — sensor selection, ADC, calibration, sensor fusion, edge anomaly detection
+  power/             SKILL.md  ✓ production — battery tech, BMS, solar harvest, load shedding resilience, power budget
+  security/          SKILL.md  ✓ production — device identity, mTLS, secure boot, OTA signing, POPIA for IoT
+  platform/          SKILL.md  ✓ production — AWS IoT Core, Azure IoT Hub, ThingsBoard, device management, tinyML
+  sa/                SKILL.md  ✓ production — ICASA type approval, SA LoRaWAN/NB-IoT, load shedding design, local suppliers
 
 leg/
-  contracts/         SKILL.md  ✓ production — contracts subdomain manifest
-    review/          SKILL.md  ✓ production — first-pass contract review, risk scoring, redlines, clause library (15 types)
-  compliance/        stub
-  ip/                stub
+  commercial/        SKILL.md  ✓ production — MSAs, SLAs, NDAs — structure, red flags, negotiation priorities
+  disputes/          SKILL.md  ✓ production — escalation ladder: negotiation → demand letter → mediation → arbitration
+  property/          SKILL.md  ✓ production — lease review and negotiation — escalation, TIA, break clauses, exit
+  employment/        SKILL.md  ✓ production — LRA, BCEA, employment contracts, dismissal procedure
+    ccma/            SKILL.md  ✓ production — Form 7.11 referral, conciliation, arbitration
+  ip/                SKILL.md  ✓ production — copyright, trademarks (CIPC), patents, trade secrets, IP assignment
+  corporate/         SKILL.md  ✓ production — Companies Act 71/2008, MOI, director duties, shareholder agreements, King IV
+  data-privacy/      SKILL.md  ✓ production — POPIA 8 conditions, Information Officer, breach notification, R10m penalties
+  fundraising/       SKILL.md  ✓ production — term sheets, SAFE notes, preference shares, cap table
 
 tech/
   architecture/      SKILL.md  ✓ production — ADRs, C4 diagrams, trade-off matrices, anti-pattern detection, 12 patterns
@@ -97,6 +139,7 @@ tech/
     tunnel/          SKILL.md  ✓ stub — secure outbound connector, on-premise SOR
     workers-for-platforms/ SKILL.md ✓ stub — multi-tenant execution (deferred)
   claude-code/       SKILL.md  ✓ stub — Claude Code setup and patterns
+  agent-protocols/   SKILL.md  ✓ production — MCP, A2A, ACP, multi-agent orchestration patterns
   mcp/               stub
   iac/               stub
 ```
