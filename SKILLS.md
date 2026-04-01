@@ -53,6 +53,8 @@ edu/
 fin/
   reporting/         SKILL.md  ✓ stub — financial KPI reporting patterns
   modelling/         SKILL.md  ✓ production — DCF, three-statement, scenario analysis, sensitivity tables, Excel export
+  accounting/        SKILL.md  ✓ production — accounting domain manifest
+    quickbooks/      SKILL.md  ✓ production — QBO REST API v3, OAuth 2.0, invoices, payments, CDC, reports, webhooks
   treasury/          stub
   tax/               stub
 
