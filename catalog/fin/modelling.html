@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>fin/modelling — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">fin</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">modelling</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/fin/modelling/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">fin/modelling</div>
+      <h1>MODELLING</h1>
+      <p class="skill-desc">Financial modelling AI expert.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Any — outputs Excel, JSON, Markdown</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../fin/reporting.html">fin/reporting</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">fin</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Financial Modelling AI</h1>
+
+<p>Financial modelling is one of the highest-leverage AI pairings in finance. The human brings domain judgement — industry knowledge, deal context, capital structure preferences. The AI brings speed, consistency, and tireless number-crunching. Together they produce models that are faster, better-documented, and easier to audit.</p>
+
+<p>This skill covers the full financial modelling workflow: three-statement models, DCF valuation, scenario analysis, sensitivity tables, and model export.</p>
+
+<h2>Key Capabilities</h2>
+
+<ul><li>Build three-statement models (P&amp;L, Balance Sheet, Cash Flow) from natural language inputs</li><li>Compute WACC, terminal value, IRR, NPV, MOIC automatically</li><li>Generate base / bull / bear scenarios with linked assumption tables</li><li>Produce two-dimensional sensitivity tables (discount rate vs revenue growth)</li><li>Export to Excel (with formulas intact) or structured JSON for downstream use</li><li>Audit models for circular references, hardcoded values, and assumption gaps</li></ul>
+
+<h2>Three-Statement Model</h2>
+
+<p>The three statements are fully linked: retained earnings flow from net income, working capital movements derive from DSO/DPO assumptions, and closing cash derives from the cash flow statement. Any out-of-balance condition is flagged immediately with the offending line identified.</p>
+
+<pre><code class="lang-json">{
+  "model": "three_statement",
+  "period": "FY2026",
+  "assumptions": {
+    "revenue_growth": 0.18,
+    "gross_margin": 0.72,
+    "opex_pct_revenue": 0.45,
+    "capex_pct_revenue": 0.08,
+    "tax_rate": 0.28,
+    "days_receivable": 45,
+    "days_payable": 30,
+    "days_inventory": 0
+  },
+  "income_statement": {
+    "revenue": 12400000,
+    "cogs": 3472000,
+    "gross_profit": 8928000,
+    "opex": 5580000,
+    "ebitda": 3348000,
+    "da": 420000,
+    "ebit": 2928000,
+    "interest": 180000,
+    "ebt": 2748000,
+    "tax": 769440,
+    "net_income": 1978560
+  }
+}</code></pre>
+
+<h3>Cash Flow Bridge</h3>
+
+<pre><code class="lang-json">{
+  "cash_flow_statement": {
+    "period": "FY2026",
+    "operating": {
+      "net_income": 1978560,
+      "add_back_da": 420000,
+      "change_in_receivables": -167671,
+      "change_in_payables": 36164,
+      "change_in_inventory": 0,
+      "cfo": 2267053
+    },
+    "investing": {
+      "capex": -992000,
+      "cfi": -992000
+    },
+    "financing": {
+      "debt_repayment": -180000,
+      "cff": -180000
+    },
+    "net_change_in_cash": 1095053,
+    "opening_cash": 800000,
+    "closing_cash": 1895053
+  }
+}</code></pre>
+
+<h2>DCF Valuation</h2>
+
+<pre><code class="lang-js">async function buildDCF(model, params) {
+  const { wacc, terminalGrowth, horizon } = params;
+
+  // AI generates FCF projections from three-statement model
+  const fcfProjections = await ai.project({
+    model,
+    years: horizon,
+    sensitivity: 'conservative'
+  });
+
+  // Discount cash flows
+  const pvFCF = fcfProjections.map((fcf, i) =&gt;
+    fcf / Math.pow(1 + wacc, i + 1)
+  );
+
+  // Terminal value (Gordon Growth Model)
+  const tv = fcfProjections[horizon - 1] * (1 + terminalGrowth)
+             / (wacc - terminalGrowth);
+  const pvTV = tv / Math.pow(1 + wacc, horizon);
+
+  return {
+    enterpriseValue: pvFCF.reduce((a, b) =&gt; a + b, 0) + pvTV,
+    terminalValuePct: (pvTV / (pvFCF.reduce((a, b) =&gt; a + b, 0) + pvTV)) * 100,
+  };
+}</code></pre>
+
+<h3>WACC Components</h3>
+
+<table><thead><tr><th>Component</th><th>Source / Method</th></tr></thead><tbody><tr><td>Risk-Free Rate</td><td>10-year government bond yield</td></tr><tr><td>Equity Risk Premium</td><td>Damodaran country ERP</td></tr><tr><td>Beta</td><td>Sector / levered beta</td></tr><tr><td>Cost of Debt</td><td>Marginal rate x (1 - tax rate)</td></tr><tr><td>Capital Structure</td><td>Market value weights (equity / debt)</td></tr></tbody></table>
+
+<h2>Scenario Analysis</h2>
+
+<p>The AI maintains scenario consistency — changing a revenue assumption in the bull case cascades working capital, tax, and capex automatically.</p>
+
+<table><thead><tr><th>Scenario</th><th>Revenue Growth</th><th>Margin</th><th>WACC</th><th>EV/EBITDA</th></tr></thead><tbody><tr><td>Bear</td><td>-5%</td><td>-300bps</td><td>+150bps</td><td>6.2x</td></tr><tr><td>Base</td><td>+18%</td><td>Stable</td><td>Flat</td><td>9.1x</td></tr><tr><td>Bull</td><td>+32%</td><td>+200bps</td><td>-50bps</td><td>13.4x</td></tr></tbody></table>
+
+<h2>Sensitivity Tables</h2>
+
+<p>Two-dimensional sensitivity tables show enterprise value across ranges of any two variables. Example: Enterprise Value vs WACC and Terminal Growth Rate (base case: WACC 10%, TGR 2.5%):</p>
+
+<table><thead><tr><th>WACC \ TGR</th><th>1.5%</th><th>2.0%</th><th>2.5%</th><th>3.0%</th><th>3.5%</th></tr></thead><tbody><tr><td>8%</td><td>48.2M</td><td>52.1M</td><td>56.8M</td><td>62.4M</td><td>69.9M</td></tr><tr><td>9%</td><td>41.3M</td><td>44.4M</td><td>48.0M</td><td>52.3M</td><td>57.8M</td></tr><tr><td><strong>10%</strong></td><td>35.6M</td><td>38.1M</td><td><strong>40.9M</strong></td><td>44.2M</td><td>48.2M</td></tr><tr><td>11%</td><td>30.9M</td><td>32.9M</td><td>35.2M</td><td>37.8M</td><td>41.0M</td></tr><tr><td>12%</td><td>27.1M</td><td>28.7M</td><td>30.5M</td><td>32.6M</td><td>35.2M</td></tr></tbody></table>
+
+<h2>Agent Workflow Example</h2>
+
+<pre><code class="lang-text">Human: Build a DCF for a SaaS company with $12.4M ARR, 72% gross margin,
+       growing at 18% YoY. Use WACC of 10% and 2.5% terminal growth.
+
+AI:    Three-statement model built. Net income FY2026: $1.98M.
+       FCF projection: $2.1M, $2.5M, $3.0M, $3.6M, $4.3M over 5 years.
+       Enterprise value: $40.9M at base case.
+       Terminal value is 68% of EV — typical for high-growth SaaS.
+       Implied EV/ARR: 3.3x.</code></pre>
+
+<h2>MCP Tools</h2>
+
+<table><thead><tr><th>Tool</th><th>Description</th></tr></thead><tbody><tr><td><code>build_three_statement</code></td><td>Generate P&amp;L, BS, CF from assumptions JSON</td></tr><tr><td><code>compute_dcf</code></td><td>WACC, FCF projections, terminal value, EV</td></tr><tr><td><code>run_scenario</code></td><td>Apply named scenario to model and recompute</td></tr><tr><td><code>build_sensitivity_table</code></td><td>2D sensitivity for any two variables</td></tr><tr><td><code>compute_wacc</code></td><td>Build WACC from capital structure inputs</td></tr><tr><td><code>export_excel</code></td><td>Export model to .xlsx with formula cells</td></tr><tr><td><code>export_json</code></td><td>Structured model output for downstream APIs</td></tr><tr><td><code>audit_model</code></td><td>Flag circular references, hardcoded values, assumption gaps</td></tr><tr><td><code>compare_versions</code></td><td>Diff two model versions and summarise changes</td></tr><tr><td><code>generate_board_pack</code></td><td>Produce executive summary with key metrics and charts</td></tr></tbody></table>
+
+<h2>Common Gotchas</h2>
+
+<ul><li><strong>Circular references in Excel</strong> — AI flags these before export; cash/debt sweep models require iterative calculation enabled in the workbook settings.</li><li><strong>Terminal value dominance</strong> — If TV &gt; 80% of EV, assumptions are speculative. Warn and suggest a shorter horizon or exit multiple approach instead of Gordon Growth.</li><li><strong>Currency consistency</strong> — Ensure all inputs in same currency; mixed-currency inputs will produce nonsense without an explicit exchange rate table.</li><li><strong>IFRS vs GAAP differences</strong> — Lease accounting (IFRS 16) affects EBITDA by capitalising operating lease costs; adjust automatically when standard is specified.</li><li><strong>Working capital timing</strong> — DSO/DPO assumptions can swing FCF materially; show sensitivity to +/-5 day changes before finalising.</li><li><strong>Tax loss carryforwards</strong> — Track NOL shields across projection years; failing to model these understates equity value in early-stage companies.</li><li><strong>Minority interests</strong> — Bridge from enterprise to equity value requires deducting minorities; prompt for this if detected in inputs.</li><li><strong>Model lock date</strong> — Always stamp model with lock date and exchange rates used; auto-stamp on export to prevent version confusion.</li><li><strong>IFRS 17 — Insurance entities</strong> — IFRS 17 fundamentally changes income recognition for insurance. Use a dedicated Insurance Modelling skill for CSM, RA, and fulfilment cashflow projections.</li></ul>
+
+<h2>See Also</h2>
+
+<ul><li><a href="../reporting/SKILL.md" target="_blank" rel="noopener">fin/reporting</a> — Financial KPI reporting patterns</li></ul>
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/fin/modelling/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

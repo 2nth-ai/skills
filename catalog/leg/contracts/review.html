@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>leg/contracts/review — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">leg</a><span class="breadcrumb-sep">›</span><a href="#">contracts</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">review</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/leg/contracts/review/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">leg/contracts/review</div>
+      <h1>REVIEW</h1>
+      <p class="skill-desc">Contract review AI expert.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Any — outputs JSON, Markdown, redline documents</span>
+        
+      </div>
+      
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">leg/contracts</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Contract Review AI</h1>
+
+<blockquote><strong>Legal Disclaimer:</strong> This skill assists qualified legal professionals with research, drafting, and review workflows. It does not constitute legal advice and does not replace qualified legal counsel. All AI-generated risk scores, redline suggestions, and review reports must be reviewed and approved by a qualified legal professional before use in any commercial transaction.</blockquote>
+
+<p>This skill equips AI agents with the legal knowledge to perform first-pass contract review — identifying non-standard clauses, flagging missing protections, scoring risk per clause, and producing a structured review report. It reduces the time a qualified lawyer or contracts manager spends on initial review by handling the systematic comparison work, so human attention focuses on clauses that genuinely require professional judgment and negotiating strategy.</p>
+
+<h2>Configuration</h2>
+
+<pre><code class="lang-bash"># .env — optional configuration
+LEG_JURISDICTION=ZA            # Default: ZA (South Africa). Options: ZA | UK | US
+LEG_BASELINE_TEMPLATE=standard # Use 'standard' or path to custom baseline JSON
+LEG_RISK_THRESHOLD=6           # Flag clauses at or above this risk score (1-10)</code></pre>
+
+<h2>Supported Contract Types</h2>
+
+<ul><li><strong>NDA</strong> — mutual and one-way non-disclosure agreements</li><li><strong>MSA / PSA</strong> — master services and professional services agreements</li><li><strong>SLA</strong> — service level agreements with SLO and credit provisions</li><li><strong>Employment</strong> — employment contracts (SA LRA compliant)</li><li><strong>Vendor / Supplier</strong> — procurement and vendor agreements</li><li><strong>Software / SaaS</strong> — software licence and subscription agreements</li></ul>
+
+<h2>Core Capabilities</h2>
+
+<ul><li><strong>Clause-by-clause risk scoring</strong> — 1-10 scale with rationale for each score</li><li><strong>Non-standard term identification</strong> — comparison against configurable baseline or market standard</li><li><strong>Missing clause detection</strong> — what is absent matters as much as what is present</li><li><strong>Liability exposure analysis</strong> — maximum exposure scenarios with triggering conditions</li><li><strong>Payment terms summarisation</strong> — structured extraction of all payment obligations</li><li><strong>Termination right mapping</strong> — all termination triggers, notice periods, and consequences</li><li><strong>IP ownership clause extraction</strong> — work product, background IP, and licence grants</li><li><strong>Comparative analysis</strong> — deviation report against stored standard templates</li><li><strong>Executive summary generation</strong> — board-ready risk summary with key concerns</li><li><strong>Redline suggestion generation</strong> — alternative clause language with commercial rationale</li></ul>
+
+<h2>Review Output Structure</h2>
+
+<pre><code class="lang-json">{
+  "contract_review": {
+    "document": "Master Services Agreement — Vendor XYZ",
+    "review_date": "2026-03-31",
+    "overall_risk_score": 7.2,
+    "summary": "Above-market risk profile. Primary concerns: uncapped liability, missing IP ownership clause, unilateral termination right for vendor.",
+    "clause_analysis": [
+      {
+        "clause": "Limitation of Liability",
+        "location": "Section 8.2",
+        "text_extracted": "Vendor's total liability shall not exceed the fees paid in the preceding 30 days...",
+        "risk_score": 9,
+        "issue": "30-day cap is extremely low for a 12-month contract — effectively limits recovery to 1/12th of annual fees",
+        "market_standard": "12-month lookback is standard; some contracts use total contract value",
+        "recommendation": "Negotiate to 12-month fee cap minimum, or total contract value for material breaches"
+      },
+      {
+        "clause": "IP Ownership",
+        "location": "Not found",
+        "risk_score": 8,
+        "issue": "No IP assignment clause — ownership of work product is ambiguous",
+        "recommendation": "Add explicit clause: all work product created under this agreement vests in Client upon payment"
+      }
+    ],
+    "missing_clauses": ["IP ownership", "Data processing agreement", "Business continuity"],
+    "favourable_clauses": [
+      "Confidentiality (Section 5) — standard 3-year term",
+      "Governing law (South Africa — Western Cape) — acceptable"
+    ]
+  }
+}</code></pre>
+
+<h2>Redline Suggestion Format</h2>
+
+<pre><code class="lang-markdown">## Original (Section 8.2):
+Vendor's total liability shall not exceed the fees paid in the **preceding 30 days**.
+
+## Suggested Redline:
+Vendor's total liability shall not exceed the **greater of (i) the fees paid in the
+preceding 12 months or (ii) ZAR 500,000** for any single claim or series of related claims.
+
+## Rationale:
+30-day cap creates insufficient protection for a 12-month engagement. 12-month lookback
+is market standard for services contracts of this nature.</code></pre>
+
+<h2>Pairing by Role</h2>
+
+<table><thead><tr><th>Role</th><th>Primary Use</th></tr></thead><tbody><tr><td>Contracts Manager</td><td>AI reviews vendor MSA, scores each clause, flags deviations from standard terms, drafts redline suggestions for review</td></tr><tr><td>In-house Counsel</td><td>AI extracts liability exposure scenarios, calculates maximum risk, identifies triggering conditions for legal review</td></tr><tr><td>Procurement Lead</td><td>AI compares incoming vendor terms against standard playbook, produces deviation register for negotiation briefing</td></tr><tr><td>Legal Ops</td><td>AI processes contract pipeline, categorises by risk level, routes high-risk agreements for priority legal review</td></tr></tbody></table>
+
+<h2>MCP Tools</h2>
+
+<table><thead><tr><th>Tool</th><th>Description</th></tr></thead><tbody><tr><td><code>leg_review_contract</code></td><td>Run full first-pass review on a contract document, returning structured analysis with overall risk score</td></tr><tr><td><code>leg_extract_clauses</code></td><td>Extract and categorise all identifiable clauses from a contract document</td></tr><tr><td><code>leg_score_risk</code></td><td>Score a specific clause or clause text on the 1-10 risk scale with rationale</td></tr><tr><td><code>leg_detect_missing</code></td><td>Identify standard clauses that are absent from the contract given its type and jurisdiction</td></tr><tr><td><code>leg_suggest_redline</code></td><td>Generate alternative clause language for a flagged provision with commercial rationale</td></tr><tr><td><code>leg_summarise_terms</code></td><td>Produce an executive summary of key commercial terms: payment, liability, IP, termination</td></tr><tr><td><code>leg_compare_baseline</code></td><td>Compare contract against a stored standard template and produce a deviation register</td></tr><tr><td><code>leg_analyse_liability</code></td><td>Calculate maximum liability exposure scenarios with triggering conditions</td></tr><tr><td><code>leg_generate_report</code></td><td>Produce a formatted review report suitable for legal or board distribution</td></tr></tbody></table>
+
+<h2>Clause Types Reference</h2>
+
+<p>Market standard positions for 15 standard clause types across SA, UK, and US commercial agreements:</p>
+
+<table><thead><tr><th>Clause Type</th><th>Normal Position</th><th>Red Flags</th></tr></thead><tbody><tr><td>Limitation of Liability</td><td>12-month fee cap; consequential loss excluded</td><td>No cap; sub-30-day lookback; consequential loss included</td></tr><tr><td>Indemnification</td><td>Mutual; IP &amp; gross negligence only; capped</td><td>One-way; no cap; defence costs included</td></tr><tr><td>Termination for Convenience</td><td>Mutual; 90-day notice</td><td>Unilateral vendor; 7-day notice; fees accelerate</td></tr><tr><td>Termination for Cause</td><td>Mutual; 30-day cure period</td><td>No cure; immediate; broad triggers</td></tr><tr><td>IP Ownership</td><td>Client owns work product; vendor retains background IP</td><td>Clause absent; vendor owns all; ownership ambiguous</td></tr><tr><td>Confidentiality</td><td>Mutual; 3 years; standard exclusions</td><td>Perpetual; one-way; no exclusion for public domain</td></tr><tr><td>Payment Terms</td><td>30 days net; dispute mechanism</td><td>7-day terms; default interest above prime; no dispute mechanism</td></tr><tr><td>Warranties</td><td>Fitness for purpose; compliance with specs; no IP infringement</td><td>No warranties; total disclaimer; no remedy on breach</td></tr><tr><td>Governing Law</td><td>Agreed neutral jurisdiction; clearly specified</td><td>Absent; vendor's home jurisdiction only</td></tr><tr><td>Dispute Resolution</td><td>Negotiation then mediation then arbitration</td><td>Immediate litigation; foreign courts only; no cost sharing</td></tr><tr><td>Force Majeure</td><td>Defined events; notice; termination if &gt;90 days</td><td>No definition; no notice; no termination right</td></tr><tr><td>Change of Control</td><td>Either party may terminate on change; notice required</td><td>Absent; automatic assignment permitted</td></tr><tr><td>Data Protection</td><td>POPIA/GDPR compliant; DPA attached; 72hr breach notification</td><td>No DPA; no breach notification; no data deletion obligation</td></tr><tr><td>Non-Solicitation</td><td>Mutual; 12 months; employees only</td><td>Unlimited duration; covers contractors and clients</td></tr><tr><td>Entire Agreement</td><td>Supersedes prior; amendments in writing only</td><td>Unilateral variation right; no notice of changes</td></tr></tbody></table>
+
+<h2>Common Gotchas</h2>
+
+<ul><li><strong>Liability cap arithmetic</strong> — a 30-day cap on a 12-month contract limits recovery to 1/12th of annual fees. Always calculate the absolute ZAR/USD/GBP value implied by the cap formula, not just the formula itself.</li><li><strong>Consequential loss carve-outs</strong> — many contracts disclaim consequential loss in general terms but then include specific indemnities (e.g. for IP infringement) with no cap. The specific indemnity overrides the general disclaimer. Check both.</li><li><strong>Missing clauses are risk too</strong> — an absent IP ownership clause is often more dangerous than a bad one. The default legal position (IP stays with the creator) is rarely what the client intends.</li><li><strong>Governing law vs jurisdiction</strong> — a contract can specify South African law but require disputes be heard in London courts. These are separate clauses; both must be checked.</li><li><strong>Force majeure scope creep</strong> — overly broad definitions (e.g. "any event beyond the vendor's control") can excuse performance for foreseeable operational failures like staffing shortages.</li><li><strong>Data processing agreements</strong> — POPIA (South Africa) and GDPR (UK/EU) both require a formal DPA when personal data is processed. Absence is a regulatory risk independent of the commercial terms.</li><li><strong>Non-compete vs non-solicitation</strong> — non-compete clauses in employment contracts are rarely enforceable in South Africa; non-solicitation clauses generally are. Flag scope and duration of both.</li></ul>
+
+<h2>See Also</h2>
+
+<ul><li><a href="../SKILL.md" target="_blank" rel="noopener">leg/contracts</a> — contracts subdomain manifest</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/leg/contracts/review/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

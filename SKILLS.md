@@ -28,6 +28,8 @@ biz/
     sage-x3/         SKILL.md  ✓ production — Sage X3 GraphQL ERP integration
     erpnext/         SKILL.md  ✓ production — ERPNext REST API, furniture manufacturing
     shopify/         SKILL.md  ✓ production — Shopify Admin + Storefront API, 6 AI roles
+  accounting/        SKILL.md  ✓ production — accounting domain manifest
+    xero/            SKILL.md  ✓ production — Xero REST API, OAuth 2.0, invoicing, reconciliation, reports
   crm/
     hubspot/         stub
     salesforce/      stub
@@ -39,6 +41,7 @@ biz/
   ops/               stub
 
 edu/
+  curriculum/        SKILL.md  ✓ production — lesson plans, scope & sequence, Bloom's, CAPS/IEB/Cambridge/IB/Common Core
   higher-ed/
     course-design/   stub
     assessment/      stub
@@ -48,6 +51,7 @@ edu/
 
 fin/
   reporting/         SKILL.md  ✓ stub — financial KPI reporting patterns
+  modelling/         SKILL.md  ✓ production — DCF, three-statement, scenario analysis, sensitivity tables, Excel export
   treasury/          stub
   tax/               stub
 
@@ -64,11 +68,13 @@ health/
   public-health/     stub
 
 leg/
-  contracts/         stub
+  contracts/         SKILL.md  ✓ production — contracts subdomain manifest
+    review/          SKILL.md  ✓ production — first-pass contract review, risk scoring, redlines, clause library (15 types)
   compliance/        stub
   ip/                stub
 
 tech/
+  architecture/      SKILL.md  ✓ production — ADRs, C4 diagrams, trade-off matrices, anti-pattern detection, 12 patterns
   cloudflare/        SKILL.md  ✓ production — full platform manifest, 16 services
     workers/         SKILL.md  ✓ production — Workers runtime, streaming, service bindings
     pages/           SKILL.md  ✓ production — Pages deploy, Functions, Git integration

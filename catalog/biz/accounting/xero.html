@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>biz/accounting/xero — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">biz</a><span class="breadcrumb-sep">›</span><a href="#">accounting</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">xero</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/biz/accounting/xero/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">biz/accounting/xero</div>
+      <h1>XERO</h1>
+      <p class="skill-desc">Xero cloud accounting AI integration expert.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Any HTTP client, Cloudflare Workers, Node.js</span>
+        
+      </div>
+      
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">biz/accounting</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Xero Accounting AI</h1>
+
+<p>Xero is the dominant cloud accounting platform for SMEs in South Africa, Australia, New Zealand, and the UK. It manages the general ledger, accounts payable/receivable, bank feeds, and financial reporting — all accessible via a well-documented REST API. The AI pairing enables natural-language invoice management, automated reconciliation suggestions, and instant financial narrative from Xero data.</p>
+
+<p>API base: <code>https://api.xero.com/api.xro/2.0</code></p>
+
+<h2>Authentication</h2>
+
+<p>Xero uses <strong>OAuth 2.0</strong> with PKCE for public apps and client credentials for private/machine-to-machine flows. Access tokens expire after 30 minutes; refresh tokens expire after 60 days of inactivity.</p>
+
+<p><strong>Credentials:</strong> Store as environment variables — never hardcode.</p>
+
+<pre><code class="lang-text">XERO_CLIENT_ID=...
+XERO_CLIENT_SECRET=...
+XERO_REDIRECT_URI=...</code></pre>
+
+<pre><code class="lang-js">// OAuth 2.0 — Authorization Code + PKCE flow
+async function getXeroToken(code, codeVerifier) {
+  const response = await fetch('https://identity.xero.com/connect/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: process.env.XERO_CLIENT_ID,
+      code,
+      redirect_uri: process.env.XERO_REDIRECT_URI,
+      code_verifier: codeVerifier,
+    })
+  });
+  return response.json();
+  // Returns: { access_token, refresh_token, expires_in: 1800, token_type: 'Bearer' }
+}
+
+// Refresh token (access tokens expire after 30 min)
+async function refreshXeroToken(refreshToken) {
+  const response = await fetch('https://identity.xero.com/connect/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      client_id: process.env.XERO_CLIENT_ID,
+      refresh_token: refreshToken,
+    })
+  });
+  return response.json();
+}</code></pre>
+
+<h3>OAuth Scopes</h3>
+
+<table><thead><tr><th>Scope</th><th>Access</th></tr></thead><tbody><tr><td><code>openid profile email</code></td><td>User identity</td></tr><tr><td><code>accounting.transactions</code></td><td>Invoices, credit notes, payments, bank transactions</td></tr><tr><td><code>accounting.contacts</code></td><td>Contacts (customers, suppliers)</td></tr><tr><td><code>accounting.reports.read</code></td><td>Financial reports (P&amp;L, balance sheet, trial balance)</td></tr><tr><td><code>accounting.settings</code></td><td>Chart of accounts, tax rates, currencies</td></tr><tr><td><code>accounting.attachments</code></td><td>File attachments on transactions</td></tr></tbody></table>
+
+<h3>Multi-Tenancy</h3>
+
+<p>After token exchange, call <code>GET /connections</code> to retrieve the list of authorised organisations. Store the <code>tenantId</code> UUID — it is required as the <code>Xero-Tenant-Id</code> header on every subsequent API call.</p>
+
+<pre><code class="lang-js">const connections = await fetch('https://api.xero.com/connections', {
+  headers: { 'Authorization': `Bearer ${token}` }
+}).then(r =&gt; r.json());
+// [{ tenantId, tenantName, tenantType, ... }]</code></pre>
+
+<h2>Core Objects</h2>
+
+<table><thead><tr><th>Object</th><th>Endpoint</th><th>Key Fields</th><th>Notes</th></tr></thead><tbody><tr><td>Contact</td><td><code>/Contacts</code></td><td>ContactID, Name, EmailAddress, AccountNumber, IsCustomer, IsSupplier</td><td>Used for both customers and suppliers</td></tr><tr><td>Account</td><td><code>/Accounts</code></td><td>AccountID, Code, Name, Type, TaxType</td><td>Chart of accounts</td></tr><tr><td>Invoice</td><td><code>/Invoices</code></td><td>InvoiceID, Type (ACCREC/ACCPAY), ContactID, LineItems, DueDate, Status</td><td>ACCREC = AR, ACCPAY = AP</td></tr><tr><td>Payment</td><td><code>/Payments</code></td><td>PaymentID, InvoiceID, AccountID, Amount, Date</td><td>Links invoice to bank account</td></tr><tr><td>BankTransaction</td><td><code>/BankTransactions</code></td><td>BankTransactionID, Type, Contact, LineItems, BankAccount</td><td>Manual bank entries</td></tr><tr><td>BankStatement</td><td><code>/BankStatements</code></td><td>StatementID, Lines</td><td>Bank feed import</td></tr><tr><td>Report</td><td><code>/Reports/{ReportID}</code></td><td>ProfitAndLoss, BalanceSheet, TrialBalance, AgedReceivablesByContact</td><td>Read-only financial reports</td></tr><tr><td>CreditNote</td><td><code>/CreditNotes</code></td><td>CreditNoteID, Type, Status, LineItems</td><td>AR/AP credit notes</td></tr></tbody></table>
+
+<pre><code class="lang-js">const XERO_BASE = 'https://api.xero.com/api.xro/2.0';
+
+async function xeroGet(path, tenantId, token) {
+  const res = await fetch(`${XERO_BASE}${path}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Xero-Tenant-Id': tenantId,
+      'Accept': 'application/json',
+    }
+  });
+  if (!res.ok) throw new Error(`Xero API ${res.status}: ${await res.text()}`);
+  return res.json();
+}
+
+// Fetch contacts (customers)
+const { Contacts } = await xeroGet('/Contacts?where=IsCustomer=true', tenantId, token);</code></pre>
+
+<h2>Invoicing &amp; Payments</h2>
+
+<p>Xero invoices are typed: <code>ACCREC</code> for accounts receivable (money owed to you) and <code>ACCPAY</code> for accounts payable (money you owe). Invoices move through a defined status lifecycle.</p>
+
+<pre><code class="lang-js">async function createInvoice(tenantId, token, { contactId, lineItems, dueDate, reference }) {
+  const body = {
+    Invoices: [{
+      Type: 'ACCREC',
+      Contact: { ContactID: contactId },
+      DueDate: dueDate,                    // "2026-04-30"
+      Reference: reference,
+      Status: 'DRAFT',                     // DRAFT → SUBMITTED → AUTHORISED → PAID
+      LineItems: lineItems.map(li =&gt; ({
+        Description: li.description,
+        Quantity: li.quantity,
+        UnitAmount: li.unitAmount,
+        AccountCode: li.accountCode,       // e.g. "200" (Sales)
+        TaxType: 'OUTPUT2',                // SA VAT at 15%
+      }))
+    }]
+  };
+  const res = await fetch(`${XERO_BASE}/Invoices`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Xero-Tenant-Id': tenantId,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}</code></pre>
+
+<h3>Invoice Lifecycle</h3>
+
+<table><thead><tr><th>Status</th><th>Meaning</th><th>Transitions</th></tr></thead><tbody><tr><td>DRAFT</td><td>Created, not submitted</td><td>→ SUBMITTED or AUTHORISED</td></tr><tr><td>SUBMITTED</td><td>Awaiting approval</td><td>→ AUTHORISED or DELETED</td></tr><tr><td>AUTHORISED</td><td>Approved, sent to customer</td><td>→ PAID or VOIDED</td></tr><tr><td>PAID</td><td>Fully paid</td><td>Terminal</td></tr><tr><td>VOIDED</td><td>Cancelled</td><td>Terminal</td></tr><tr><td>DELETED</td><td>Soft deleted</td><td>Terminal</td></tr></tbody></table>
+
+<h3>Applying a Payment</h3>
+
+<pre><code class="lang-js">async function applyPayment(tenantId, token, { invoiceId, accountId, amount, date }) {
+  const body = {
+    Payments: [{
+      Invoice: { InvoiceID: invoiceId },
+      Account: { AccountID: accountId },   // Bank account the payment was received into
+      Amount: amount,
+      Date: date,                           // "2026-04-15"
+      Reference: 'EFT payment received',
+    }]
+  };
+  const res = await fetch(`${XERO_BASE}/Payments`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Xero-Tenant-Id': tenantId,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}</code></pre>
+
+<h3>AR Aging Query</h3>
+
+<pre><code class="lang-js">// Get all authorised AR invoices overdue (DueDate &lt; today)
+const today = new Date().toISOString().split('T')[0];
+const { Invoices } = await xeroGet(
+  `/Invoices?where=Type=="ACCREC"&amp;&amp;Status=="AUTHORISED"&amp;&amp;DueDate&lt;DateTime(${today.replace(/-/g,',,')})&amp;order=DueDate ASC`,
+  tenantId, token
+);
+
+const aging = Invoices.map(inv =&gt; ({
+  contact: inv.Contact.Name,
+  invoiceNumber: inv.InvoiceNumber,
+  amountDue: inv.AmountDue,
+  dueDate: inv.DueDate,
+  daysOverdue: Math.floor((Date.now() - new Date(inv.DueDate)) / 86400000)
+}));</code></pre>
+
+<h2>Bank Reconciliation</h2>
+
+<p>Xero bank feeds import statement lines that must be matched to existing transactions or manually coded to the correct GL account. Unreconciled lines accumulate until matched.</p>
+
+<pre><code class="lang-js">// Get unreconciled bank statement lines
+async function getUnreconciledLines(tenantId, token, bankAccountId) {
+  const { BankStatements } = await xeroGet(
+    `/BankStatements?BankAccountID=${bankAccountId}&amp;Unreconciled=true`,
+    tenantId, token
+  );
+  return BankStatements.flatMap(s =&gt; s.Lines);
+}
+
+// AI reconciliation suggestion engine
+async function suggestMatches(statementLine, openInvoices) {
+  const amountMatches = openInvoices.filter(inv =&gt;
+    Math.abs(inv.AmountDue - statementLine.Amount) &lt; 0.01
+  );
+  const nameMatches = openInvoices.filter(inv =&gt;
+    statementLine.Payee?.toLowerCase().includes(
+      inv.Contact.Name.toLowerCase().split(' ')[0]
+    )
+  );
+  return [...new Set([...amountMatches, ...nameMatches])].map(inv =&gt; ({
+    invoice: inv,
+    confidence: amountMatches.includes(inv) &amp;&amp; nameMatches.includes(inv) ? 'HIGH'
+               : amountMatches.includes(inv) ? 'MEDIUM' : 'LOW'
+  }));
+}</code></pre>
+
+<p>High-confidence matches (amount + payee both match) can be auto-reconciled. Always queue low-confidence matches for human review.</p>
+
+<h2>Reporting</h2>
+
+<p>Xero's Reports API returns structured JSON for all standard financial statements. The AI converts this into plain-English narratives, summaries, and variance analyses.</p>
+
+<pre><code class="lang-js">// P&amp;L for a date range
+async function getProfitAndLoss(tenantId, token, fromDate, toDate) {
+  const { Reports } = await xeroGet(
+    `/Reports/ProfitAndLoss?fromDate=${fromDate}&amp;toDate=${toDate}&amp;standardLayout=true`,
+    tenantId, token
+  );
+  return Reports[0];
+}
+
+// Balance Sheet as at a date
+async function getBalanceSheet(tenantId, token, date) {
+  const { Reports } = await xeroGet(
+    `/Reports/BalanceSheet?date=${date}&amp;standardLayout=true`,
+    tenantId, token
+  );
+  return Reports[0];
+}
+
+// Aged Receivables — who owes what
+async function getAgedReceivables(tenantId, token) {
+  const { Reports } = await xeroGet(
+    `/Reports/AgedReceivablesByContact`,
+    tenantId, token
+  );
+  return Reports[0];
+}</code></pre>
+
+<h2>MCP Tools</h2>
+
+<table><thead><tr><th>Tool</th><th>Description</th></tr></thead><tbody><tr><td><code>get_contacts</code></td><td>List customers and suppliers with filtering</td></tr><tr><td><code>create_invoice</code></td><td>Draft or authorise an ACCREC/ACCPAY invoice</td></tr><tr><td><code>get_invoices</code></td><td>Query invoices by status, contact, date range</td></tr><tr><td><code>apply_payment</code></td><td>Mark invoice as paid against a bank account</td></tr><tr><td><code>get_bank_transactions</code></td><td>Fetch unreconciled bank statement lines</td></tr><tr><td><code>suggest_reconciliation</code></td><td>AI-powered match suggestions for statement lines</td></tr><tr><td><code>get_profit_and_loss</code></td><td>P&amp;L report for any date range</td></tr><tr><td><code>get_balance_sheet</code></td><td>Balance sheet as at any date</td></tr><tr><td><code>get_aged_receivables</code></td><td>Aged debtor analysis by contact</td></tr><tr><td><code>get_aged_payables</code></td><td>Aged creditor analysis by contact</td></tr><tr><td><code>create_credit_note</code></td><td>Issue AR/AP credit notes</td></tr><tr><td><code>get_chart_of_accounts</code></td><td>Full account list with codes and types</td></tr></tbody></table>
+
+<h2>Key Facts</h2>
+
+<ul><li>API version: 2.0; formats: JSON and XML</li><li>Rate limit: 60 requests/minute per tenant connection, 5,000/day</li><li>Supports 160+ currencies; IFRS and GAAP compliant</li><li>Multi-tenant: each organisation has a distinct UUID <code>tenantId</code></li><li>All monetary values in decimal; specify currency code explicitly</li><li>Xero's unique identifier for most objects is a UUID called <code>{ObjectType}ID</code></li></ul>
+
+<h2>Common Gotchas</h2>
+
+<ul><li><strong>Access tokens expire in 30 minutes</strong> — always refresh before calling; store refresh token securely; refresh tokens expire after 60 days of inactivity.</li><li><strong>Tenant ID is mandatory</strong> — every API call requires a <code>Xero-Tenant-Id</code> header; missing it returns 403, not a helpful error message.</li><li><strong>Rate limits are per connection, not global</strong> — 60 req/min per tenant connection; if you have 10 tenants, each gets 60 independently. Xero returns 429 on breach with a <code>Retry-After</code> header.</li><li><strong>Invoice amounts are net of tax unless stated</strong> — <code>LineAmount</code> is net; <code>TaxAmount</code> is separate. South African VAT (<code>OUTPUT2</code> / <code>INPUT2</code>) = 15%. Always specify <code>TaxType</code> explicitly or Xero will infer from account settings.</li><li><strong>DueDate format</strong> — use <code>"YYYY-MM-DD"</code> string in JSON mode. Millisecond timestamp format is accepted but not documented — stick to ISO date strings.</li><li><strong>Contacts are shared</strong> — the same Contact can be both a customer (<code>IsCustomer=true</code>) and supplier (<code>IsSupplier=true</code>). Search first, do not create duplicates.</li><li><strong>Voided is not deleted</strong> — voided invoices remain in history; deleted invoices are soft-deleted and retrievable with <code>includeArchived=true</code>. Regulatory audit trails require voiding, not deletion.</li><li><strong>Bank feed vs manual entry</strong> — bank feeds (direct integration) have <code>IsReconciled</code> managed by Xero; manual bank transactions require explicit reconciliation calls. Do not mix the workflows.</li></ul>
+
+<h2>See Also</h2>
+
+<ul><li><a href="https://developer.xero.com/changelog" target="_blank" rel="noopener">Xero API changelog</a> — subscribe before building production integrations</li><li><a href="../SKILL.md" target="_blank" rel="noopener">Related: biz/accounting</a></li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/biz/accounting/xero/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>
