@@ -1,0 +1,10 @@
+{
+  "name": "skills-2nth-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node catalog/build.js",
+    "deploy": "npm run build && wrangler pages deploy catalog --project-name=skills-2nth-ai --commit-dirty=true"
+  }
+}
