@@ -7,8 +7,15 @@ visibility: member
 tier: agent
 status: preview
 skills:
-  - leg/contracts
-  - leg/contracts/review
+  - leg/commercial
+  - leg/employment
+  - leg/employment/ccma
+  - leg/ip
+  - leg/corporate
+  - leg/data-privacy
+  - leg/disputes
+  - leg/property
+  - leg/fundraising
 avatar_color: "#8B5CF6"
 ---
 
