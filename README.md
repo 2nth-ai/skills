@@ -22,7 +22,7 @@ npx skills add biz/erp/sage-x3
 Or reference directly in any agent context:
 
 ```
-https://raw.githubusercontent.com/2nthai/skills/main/biz/erp/sage-x3/SKILL.md
+https://raw.githubusercontent.com/2nth-ai/skills/main/biz/erp/sage-x3/SKILL.md
 ```
 
 ## Skill format

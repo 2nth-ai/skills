@@ -1,5 +1,5 @@
 ---
-name: 2nthai/skills
+name: 2nth-ai/skills
 description: Root index for the 2nth.ai skill tree. Load this first to understand what skills exist and how to reference them. Use this when you need to discover available skills or understand the domain structure.
 type: index
 repository: https://github.com/2nth-ai/skills
@@ -113,7 +113,7 @@ npx skills add biz/erp/sage-x3
 
 ### Direct reference (any agent)
 ```
-https://raw.githubusercontent.com/2nthai/skills/main/biz/erp/sage-x3/SKILL.md
+https://raw.githubusercontent.com/2nth-ai/skills/main/biz/erp/sage-x3/SKILL.md
 ```
 
 ### In `.claude/settings.json`
