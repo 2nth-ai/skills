@@ -51,6 +51,7 @@ Skills for AI agents working with the 2nth.ai technology stack — Cloudflare ed
 | `tech/cisco/collaboration/` | Webex, CUCM, Unity Connection, UCCX contact centre |
 | `tech/cisco/automation/` | Netmiko, NAPALM, Ansible, DNA Center, NSO, NETCONF/RESTCONF |
 | `tech/elevenlabs/` | ElevenLabs voice AI — TTS, voice cloning, STT, conversational AI agents |
+| `tech/github/` | GitHub REST API, Octokit, Actions, Apps, webhooks, Copilot data policy |
 | `tech/slack/` | Slack bot, Events API, slash commands, Block Kit, AI agent surface |
 | `tech/discord/` | Discord bot, Interactions Endpoint, Ed25519 verify, embeds, AI agent surface |
 | `tech/meta/` | Meta Business — Graph API auth, WhatsApp, Messenger, Instagram, Conversions API |

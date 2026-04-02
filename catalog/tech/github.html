@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/github — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">github</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/github/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/github</div>
+      <h1>GITHUB</h1>
+      <p class="skill-desc">GitHub platform skill. Use when:</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">GitHub REST API v3, GraphQL API v4, Octokit v21 (TypeScript/JS), GitHub Actions, GitHub Apps</span>
+        
+      </div>
+      
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>GitHub</h1>
+
+<p>GitHub is the primary platform for source control, CI/CD, and developer collaboration in the 2nth.ai stack. This skill covers the GitHub REST API, Octokit SDK, GitHub Actions automation, GitHub Apps, and the Copilot platform — including data policy obligations developers need to understand.</p>
+
+<blockquote><strong>Stub</strong> — full skill pending. Core patterns documented below.</blockquote>
+
+<h2>API areas</h2>
+
+<table><thead><tr><th>Area</th><th>REST base path</th><th>Use case</th></tr></thead><tbody><tr><td><strong>Repositories</strong></td><td><code>/repos/{owner}/{repo}</code></td><td>CRUD, topics, activity, templates</td></tr><tr><td><strong>Issues</strong></td><td><code>/repos/{owner}/{repo}/issues</code></td><td>Create, list, comment, label, close</td></tr><tr><td><strong>Pull Requests</strong></td><td><code>/repos/{owner}/{repo}/pulls</code></td><td>Open, review, merge, list checks</td></tr><tr><td><strong>Actions</strong></td><td><code>/repos/{owner}/{repo}/actions</code></td><td>Trigger workflows, list runs, download artifacts</td></tr><tr><td><strong>Code Search</strong></td><td><code>/search/code</code></td><td>Find files/symbols across repos</td></tr><tr><td><strong>Code Scanning</strong></td><td><code>/repos/{owner}/{repo}/code-scanning</code></td><td>Upload SARIF, list alerts</td></tr><tr><td><strong>Copilot</strong></td><td><code>/orgs/{org}/copilot</code></td><td>Seat assignment, usage metrics</td></tr><tr><td><strong>Webhooks</strong></td><td><code>/repos/{owner}/{repo}/hooks</code></td><td>Subscribe to push, PR, issue events</td></tr><tr><td><strong>GitHub Apps</strong></td><td><code>/app</code></td><td>JWT auth, installation tokens, org access</td></tr></tbody></table>
+
+<hr>
+
+<h2>Authentication</h2>
+
+<h3>Fine-grained PAT (recommended for personal/script use)</h3>
+
+<pre><code class="lang-bash"># Set as environment variable — never hardcode
+export GITHUB_TOKEN="github_pat_xxxxxxxxxxxx"
+
+# Use in requests
+curl -H "Authorization: Bearer $GITHUB_TOKEN" \
+     -H "Accept: application/vnd.github+json" \
+     https://api.github.com/repos/owner/repo</code></pre>
+
+<p>Fine-grained PATs scope to specific repositories and permissions. Prefer these over classic PATs for all new integrations.</p>
+
+<h3>GitHub Actions (built-in token)</h3>
+
+<pre><code class="lang-yaml"># GITHUB_TOKEN is automatically injected — never create a PAT for this
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # only request what you need
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create v1.0.0 --generate-notes</code></pre>
+
+<h3>GitHub App (for org-level / multi-repo automation)</h3>
+
+<pre><code class="lang-typescript">import { createAppAuth } from '@octokit/auth-app';
+import { Octokit } from '@octokit/rest';
+
+// App authenticates with a JWT, then gets installation token per org/repo
+const octokit = new Octokit({
+  authStrategy: createAppAuth,
+  auth: {
+    appId: process.env.GITHUB_APP_ID,
+    privateKey: process.env.GITHUB_APP_PRIVATE_KEY,
+    installationId: process.env.GITHUB_INSTALLATION_ID,
+  },
+});</code></pre>
+
+<hr>
+
+<h2>Octokit (TypeScript)</h2>
+
+<pre><code class="lang-bash">npm install @octokit/rest</code></pre>
+
+<pre><code class="lang-typescript">import { Octokit } from '@octokit/rest';
+
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN,
+  userAgent: 'my-app/1.0.0',
+});
+
+// Get repo
+const { data: repo } = await octokit.repos.get({ owner: '2nth-ai', repo: 'skills' });
+
+// List open PRs
+const { data: prs } = await octokit.pulls.list({
+  owner: '2nth-ai',
+  repo: 'skills',
+  state: 'open',
+  per_page: 50,
+});
+
+// Create an issue
+const { data: issue } = await octokit.issues.create({
+  owner: '2nth-ai',
+  repo: 'skills',
+  title: 'Add Python SDK skill',
+  body: 'Stub needed for biz/accounting/python-sdk',
+  labels: ['enhancement'],
+});
+
+// Merge a PR
+await octokit.pulls.merge({
+  owner: '2nth-ai',
+  repo: 'skills',
+  pull_number: 42,
+  merge_method: 'squash',
+  commit_title: 'feat: add python sdk skill (#42)',
+});</code></pre>
+
+<h3>Pagination</h3>
+
+<pre><code class="lang-typescript">// Use paginate for large result sets
+const allIssues = await octokit.paginate(octokit.issues.listForRepo, {
+  owner: '2nth-ai',
+  repo: 'skills',
+  state: 'all',
+  per_page: 100,
+});</code></pre>
+
+<hr>
+
+<h2>GitHub Actions</h2>
+
+<pre><code class="lang-yaml"># .github/workflows/deploy.yml
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+
+  # Matrix build example
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['18', '20', '22']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ matrix.node }}' }
+      - run: npm ci &amp;&amp; npm test</code></pre>
+
+<h3>Trigger a workflow via API</h3>
+
+<pre><code class="lang-typescript">await octokit.actions.createWorkflowDispatch({
+  owner: 'my-org',
+  repo: 'my-repo',
+  workflow_id: 'deploy.yml',
+  ref: 'main',
+  inputs: { environment: 'production' },
+});</code></pre>
+
+<hr>
+
+<h2>Webhooks (Cloudflare Worker)</h2>
+
+<pre><code class="lang-typescript">import { createHmac } from 'crypto'; // not available in Workers — use Web Crypto
+
+async function verifySignature(payload: string, signature: string, secret: string): Promise&lt;boolean&gt; {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(payload));
+  const expected = 'sha256=' + Array.from(new Uint8Array(sig))
+    .map(b =&gt; b.toString(16).padStart(2, '0')).join('');
+  return expected === signature;
+}
+
+export default {
+  async fetch(req: Request, env: Env): Promise&lt;Response&gt; {
+    const payload = await req.text();
+    const sig = req.headers.get('x-hub-signature-256') ?? '';
+    const event = req.headers.get('x-github-event') ?? '';
+
+    if (!await verifySignature(payload, sig, env.GITHUB_WEBHOOK_SECRET)) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+
+    const body = JSON.parse(payload);
+
+    if (event === 'push' &amp;&amp; body.ref === 'refs/heads/main') {
+      // trigger deploy, update cache, notify Slack, etc.
+    }
+
+    if (event === 'pull_request' &amp;&amp; body.action === 'opened') {
+      // auto-assign reviewer, post welcome comment, etc.
+    }
+
+    return new Response('OK');
+  },
+};</code></pre>
+
+<hr>
+
+<h2>Rate limits</h2>
+
+<pre><code class="lang-typescript">// Check rate limit before bulk operations
+const { data } = await octokit.rateLimit.get();
+const { remaining, reset, limit } = data.rate;
+console.log(`${remaining}/${limit} requests left — resets ${new Date(reset * 1000)}`);
+
+// Authenticated: 5,000 req/hr (PAT), 15,000 req/hr (GitHub App)
+// Search API: 30 req/min authenticated
+// Secondary rate limits apply to concurrent requests and content creation</code></pre>
+
+<hr>
+
+<h2>Copilot data policy — what developers need to know</h2>
+
+<p><strong>Effective date: 24 April 2026</strong></p>
+
+<p>GitHub updated its Copilot interaction data usage policy for <strong>Free, Pro, and Pro+ tiers</strong>. <strong>Business and Enterprise tiers are unaffected.</strong></p>
+
+<h3>What changes</h3>
+
+<p>From 24 April 2026, GitHub will use interaction data from individual Copilot users to train and improve its AI models, unless the user opts out.</p>
+
+<p><strong>Data collected includes:</strong></p>
+
+<table><thead><tr><th>Data type</th><th>Examples</th></tr></thead><tbody><tr><td>Code suggestions accepted or modified</td><td>Completions you tab-accept or partially edit</td></tr><tr><td>Inputs submitted</td><td>Prompts, inline chat queries, code snippets you send</td></tr><tr><td>Surrounding code context</td><td>Open files, imports, function signatures visible to Copilot</td></tr><tr><td>Comments and documentation</td><td>Docstrings, inline comments in scope</td></tr><tr><td>Repository structure</td><td>File names, directory layout</td></tr><tr><td>Navigation patterns</td><td>Files visited, features used</td></tr><tr><td>Feature feedback</td><td>Thumbs up/down ratings on suggestions</td></tr></tbody></table>
+
+<p><strong>Data NOT collected:</strong></p>
+
+<ul><li>Interaction data from Business or Enterprise tiers (zero change for paid org accounts)</li><li>Data from users who disable this setting</li><li>"At rest" content from private repositories (though Copilot processes it during active use)</li></ul>
+
+<p><strong>Data sharing:</strong> Shared with GitHub affiliates (including Microsoft). Not shared with third-party providers.</p>
+
+<h3>How to opt out</h3>
+
+<ol><li>Go to <strong>github.com → Settings → Privacy</strong></li><li>Under "GitHub Copilot" → toggle off <strong>"Allow GitHub to use my data to improve GitHub Copilot"</strong></li><li>Previously opted-out preferences are automatically retained — no action needed if you opted out before</li></ol>
+
+<pre><code class="lang-bash"># Verify your current setting via API (requires user scope)
+curl -H "Authorization: Bearer $GITHUB_TOKEN" \
+     -H "Accept: application/vnd.github+json" \
+     https://api.github.com/user/copilot_interaction_data_policy</code></pre>
+
+<h3>What this means for teams</h3>
+
+<table><thead><tr><th>Tier</th><th>Impact</th><th>Action required</th></tr></thead><tbody><tr><td><strong>Free</strong></td><td>Data used to train models from 24 Apr 2026</td><td>Opt out in Settings if unwilling</td></tr><tr><td><strong>Pro / Pro+</strong></td><td>Same as Free</td><td>Opt out in Settings if unwilling</td></tr><tr><td><strong>Business</strong></td><td>No change — org data never used for training</td><td>None</td></tr><tr><td><strong>Enterprise</strong></td><td>No change — org data never used for training</td><td>None</td></tr></tbody></table>
+
+<p><strong>For consultants and contractors</strong>: If you use a personal Free/Pro Copilot account and write code for clients on personal hardware, client code snippets may be included in training data unless you opt out. Consider upgrading to Business or opting out via Settings.</p>
+
+<p><strong>For open source contributors</strong>: Contributions to public repos are already public. The policy extends to interaction patterns (what suggestions you accept), not just the code itself.</p>
+
+<hr>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong>Fine-grained PAT expiry</strong> — fine-grained tokens expire (max 1 year); classic tokens can be set to no-expiry but GitHub recommends against it for security</li><li><strong><code>GITHUB_TOKEN</code> scope defaults</strong> — the default <code>GITHUB_TOKEN</code> in Actions has read-only permissions since 2023; declare <code>permissions:</code> explicitly in your workflow</li><li><strong>Secondary rate limits</strong> — creating issues/PRs/comments too fast triggers secondary limits; add a small delay in batch scripts</li><li><strong>Webhook secret required</strong> — always verify <code>x-hub-signature-256</code>; unauthenticated webhook endpoints are a common injection vector</li><li><strong>GraphQL vs REST</strong> — GraphQL v4 is more efficient for complex queries (one request vs multiple REST calls); use Octokit's <code>graphql</code> method for nested data</li><li><strong>GitHub App vs PAT</strong> — Apps have higher rate limits (15,000/hr vs 5,000/hr) and don't expire; prefer Apps for production integrations</li></ul>
+
+<h2>See also</h2>
+
+<ul><li><code>tech/cloudflare/workers</code> — host GitHub webhook handlers at the edge</li><li><code>tech/aws/compute</code> — Lambda for GitHub webhook processing</li><li><code>tech/microsoft/azure-ai</code> — GitHub Copilot runs on Azure OpenAI infrastructure</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/github/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

@@ -157,6 +157,7 @@ tech/
     collaboration/   SKILL.md  ✓ stub — Webex, CUCM, Unity Connection, UCCX
     automation/      SKILL.md  ✓ stub — Netmiko, NAPALM, Ansible, DNA Center, NETCONF
   elevenlabs/        SKILL.md  ✓ stub — TTS (flash/v3), voice cloning, STT, conversational AI agents, Cloudflare streaming
+  github/            SKILL.md  ✓ stub — REST API, Octokit v21, Actions, Apps, webhooks, Copilot data policy (Apr 2026)
   claude-code/       SKILL.md  ✓ stub — Claude Code setup and patterns
   agent-protocols/   SKILL.md  ✓ production — MCP, A2A, ACP, multi-agent orchestration patterns
   mcp/               stub
