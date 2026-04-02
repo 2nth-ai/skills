@@ -20,7 +20,7 @@ Skills teach AI agents how to work effectively in a specific domain context. The
 | Healthcare | `health/` | Clinical systems, operations, pharma, public health |
 | IoT | `iot/` | Embedded hardware, firmware, connectivity, sensors, platform |
 | Legal | `leg/` | Contracts, compliance, IP, regulatory |
-| Technology | `tech/` | Cloudflare, Claude Code, MCP, infrastructure |
+| Technology | `tech/` | Cloudflare, AWS, Google Cloud, Microsoft, Claude Code, MCP, infrastructure |
 
 ## Agents
 
@@ -37,6 +37,7 @@ Skills teach AI agents how to work effectively in a specific domain context. The
 | `agents/alex` | Fractional CDO | data/strategy, data/engineering, data/analysis, data/science, data/ml-ops, data/visualisation, data/governance, data/sa, tech/agent-protocols |
 | `agents/morgan` | Fractional Healthcare Director | health/operations, health/clinical-governance, health/finance, health/digital, health/public-health, health/mental-health, health/pharmacy, health/sa |
 | `agents/eric` | Fractional IoT Engineering Director | iot/hardware, iot/firmware, iot/connectivity, iot/sensors, iot/power, iot/security, iot/platform, iot/sa |
+| `agents/andi` | FinMechanics Africa Representative | fin/capital-markets, fin/capital-markets/trading-platforms, fin/sa |
 | `agents/sophia` | (specialist — see AGENT.md) | |
 
 ## Skill Tree (current state)
@@ -140,6 +141,14 @@ tech/
     email/           SKILL.md  ✓ stub — inbound routing, MailChannels outbound
     tunnel/          SKILL.md  ✓ stub — secure outbound connector, on-premise SOR
     workers-for-platforms/ SKILL.md ✓ stub — multi-tenant execution (deferred)
+  aws/               SKILL.md  ✓ production — IAM auth model, regions (af-south-1), Cloudflare+AWS hybrid
+    compute/         SKILL.md  ✓ production — Lambda, ECS Fargate, EC2, API Gateway, SigV4 signing from CF Workers
+    security/        SKILL.md  ✓ production — IAM least-privilege, VPC security groups, KMS, Secrets Manager
+    storage/         SKILL.md  ✓ stub — S3, EBS, EFS, Glacier
+    database/        SKILL.md  ✓ stub — RDS, DynamoDB, ElastiCache, Aurora
+    networking/      SKILL.md  ✓ stub — VPC, Route 53, CloudFront, ALB/NLB
+    messaging/       SKILL.md  ✓ stub — SQS, SNS, EventBridge, Kinesis
+    ai/              SKILL.md  ✓ stub — Bedrock (Claude), SageMaker, Rekognition
   claude-code/       SKILL.md  ✓ stub — Claude Code setup and patterns
   agent-protocols/   SKILL.md  ✓ production — MCP, A2A, ACP, multi-agent orchestration patterns
   mcp/               stub
