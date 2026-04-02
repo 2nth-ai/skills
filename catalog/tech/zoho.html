@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/zoho — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">zoho</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/zoho/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/zoho</div>
+      <h1>ZOHO</h1>
+      <p class="skill-desc">Zoho platform integration skill. Use when:</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Zoho CRM API v8, Zoho Books API v3, Zoho OAuth 2.0, Node.js/TypeScript SDK, Python SDK</span>
+        
+      </div>
+      
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech</a><a class="skill-chip" href="#">biz</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Zoho</h1>
+
+<p>Zoho is a full-stack business platform — CRM, accounting (Books), HR (People), support (Desk), projects, email, and analytics — all under one OAuth identity. A single registered OAuth client can access all Zoho products across all data centres. In the 2nth.ai stack Zoho fills the SMB CRM and accounting layer; agents use the APIs to read pipeline data, raise invoices, and sync contacts.</p>
+
+<blockquote><strong>Stub</strong> — full skill pending. Core patterns documented below.</blockquote>
+
+<h2>Product API map</h2>
+
+<table><thead><tr><th>Product</th><th>API base</th><th>Primary use</th></tr></thead><tbody><tr><td><strong>CRM v8</strong></td><td><code>https://www.zohoapis.[DC]/crm/v8</code></td><td>Leads, Contacts, Accounts, Deals, Activities</td></tr><tr><td><strong>Books v3</strong></td><td><code>https://www.zohoapis.[DC]/books/v3</code></td><td>Invoices, bills, expenses, contacts, payments</td></tr><tr><td><strong>Desk</strong></td><td><code>https://desk.zoho.[DC]/api/v1</code></td><td>Support tickets, agents, contacts</td></tr><tr><td><strong>People</strong></td><td><code>https://people.zoho.[DC]/api/v2</code></td><td>Employees, leave, attendance</td></tr><tr><td><strong>Projects</strong></td><td><code>https://projectsapi.zoho.[DC]/restapi</code></td><td>Tasks, milestones, timesheets</td></tr><tr><td><strong>Campaigns</strong></td><td><code>https://campaigns.zoho.[DC]/api/v1.1</code></td><td>Email campaigns, mailing lists</td></tr><tr><td><strong>Analytics</strong></td><td><code>https://analyticsapi.zoho.[DC]/api/v2</code></td><td>Reports, dashboards, workspaces</td></tr></tbody></table>
+
+<hr>
+
+<h2>Data centres</h2>
+
+<p>Zoho is multi-regional. <strong>All OAuth tokens and API calls must use the same DC throughout a session.</strong> Use the <code>api_domain</code> field returned in OAuth responses to route subsequent calls.</p>
+
+<table><thead><tr><th>Region</th><th>Account domain</th><th>API domain</th></tr></thead><tbody><tr><td>US (default)</td><td><code>accounts.zoho.com</code></td><td><code>www.zohoapis.com</code></td></tr><tr><td>EU</td><td><code>accounts.zoho.eu</code></td><td><code>www.zohoapis.eu</code></td></tr><tr><td>India</td><td><code>accounts.zoho.in</code></td><td><code>www.zohoapis.in</code></td></tr><tr><td>Australia</td><td><code>accounts.zoho.com.au</code></td><td><code>www.zohoapis.com.au</code></td></tr><tr><td>UK</td><td><code>accounts.zoho.uk</code></td><td><code>www.zohoapis.uk</code></td></tr><tr><td>Canada</td><td><code>accounts.zoho.ca</code></td><td><code>www.zohoapis.ca</code></td></tr><tr><td>Japan</td><td><code>accounts.zoho.jp</code></td><td><code>www.zohoapis.jp</code></td></tr><tr><td>Saudi Arabia</td><td><code>accounts.zoho.sa</code></td><td><code>www.zohoapis.sa</code></td></tr></tbody></table>
+
+<pre><code class="lang-bash"># Discover DC-to-URL mapping programmatically
+curl https://accounts.zoho.com/oauth/serverinfo</code></pre>
+
+<hr>
+
+<h2>1. OAuth 2.0 authentication</h2>
+
+<p>Zoho uses standard OAuth 2.0. Register your app at <strong>api-console.zoho.com</strong> → get Client ID + Client Secret.</p>
+
+<h3>Step 1 — authorisation code request</h3>
+
+<pre><code class="lang-text">https://accounts.zoho.[DC]/oauth/v2/auth
+  ?response_type=code
+  &amp;client_id=YOUR_CLIENT_ID
+  &amp;scope=ZohoCRM.modules.ALL,ZohoBooks.invoices.ALL,ZohoBooks.contacts.ALL
+  &amp;redirect_uri=https://your-app.com/oauth/callback
+  &amp;access_type=offline   ← required to get a refresh token
+  &amp;prompt=consent</code></pre>
+
+<h3>Step 2 — exchange code for tokens</h3>
+
+<pre><code class="lang-bash">curl -X POST "https://accounts.zoho.com/oauth/v2/token" \
+  -d "grant_type=authorization_code" \
+  -d "client_id=$CLIENT_ID" \
+  -d "client_secret=$CLIENT_SECRET" \
+  -d "redirect_uri=https://your-app.com/oauth/callback" \
+  -d "code=$AUTH_CODE"</code></pre>
+
+<p>Response:</p>
+<pre><code class="lang-json">{
+  "access_token": "1000.xxxx",
+  "refresh_token": "1000.xxxx",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "api_domain": "https://www.zohoapis.com"
+}</code></pre>
+
+<h3>Step 3 — refresh access token (store and reuse refresh token)</h3>
+
+<pre><code class="lang-typescript">async function refreshZohoToken(
+  refreshToken: string,
+  clientId: string,
+  clientSecret: string,
+  dc = 'com'
+): Promise&lt;string&gt; {
+  const res = await fetch(`https://accounts.zoho.${dc}/oauth/v2/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      client_id: clientId,
+      client_secret: clientSecret,
+    }),
+  });
+  const data = await res.json() as { access_token: string };
+  return data.access_token;
+}</code></pre>
+
+<h3>Token management pattern (Cloudflare KV or AWS Secrets Manager)</h3>
+
+<pre><code class="lang-typescript">// Cache access token; refresh only when expired
+async function getAccessToken(env: Env): Promise&lt;string&gt; {
+  const cached = await env.KV.get('zoho_access_token');
+  if (cached) return cached;
+
+  const newToken = await refreshZohoToken(
+    await env.KV.get('zoho_refresh_token') ?? '',
+    env.ZOHO_CLIENT_ID,
+    env.ZOHO_CLIENT_SECRET,
+  );
+  // Cache for 55 minutes (tokens expire at 60)
+  await env.KV.put('zoho_access_token', newToken, { expirationTtl: 3300 });
+  return newToken;
+}</code></pre>
+
+<hr>
+
+<h2>2. Zoho CRM</h2>
+
+<h3>Scopes</h3>
+
+<pre><code class="lang-text">ZohoCRM.modules.ALL          ← read/write all modules
+ZohoCRM.modules.leads.ALL
+ZohoCRM.modules.contacts.ALL
+ZohoCRM.modules.accounts.ALL
+ZohoCRM.modules.deals.ALL
+ZohoCRM.settings.ALL         ← module metadata, fields, layouts
+ZohoCRM.bulk.ALL             ← bulk read/write jobs</code></pre>
+
+<h3>List records</h3>
+
+<pre><code class="lang-typescript">async function crmGet(module: string, token: string, params?: Record&lt;string, string&gt;) {
+  const url = new URL(`https://www.zohoapis.com/crm/v8/${module}`);
+  if (params) Object.entries(params).forEach(([k, v]) =&gt; url.searchParams.set(k, v));
+
+  const res = await fetch(url.toString(), {
+    headers: { Authorization: `Zoho-oauthtoken ${token}` },
+  });
+  return res.json();
+}
+
+// Fetch first 200 leads modified in last 7 days
+const leads = await crmGet('Leads', token, {
+  fields: 'First_Name,Last_Name,Email,Lead_Status,Company',
+  sort_by: 'Modified_Time',
+  sort_order: 'desc',
+  per_page: '200',
+  page: '1',
+});</code></pre>
+
+<h3>Create / update records</h3>
+
+<pre><code class="lang-typescript">// Create a lead
+const res = await fetch('https://www.zohoapis.com/crm/v8/Leads', {
+  method: 'POST',
+  headers: {
+    Authorization: `Zoho-oauthtoken ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    data: [{
+      First_Name: 'Jane',
+      Last_Name: 'Doe',
+      Email: 'jane@example.com',
+      Company: 'Acme Corp',
+      Lead_Source: 'Web Site',
+      Lead_Status: 'Not Contacted',
+    }],
+    duplicate_check_fields: ['Email'],  // upsert by email
+    trigger: ['approval', 'workflow'],  // run automation
+  }),
+});
+
+// Update a deal stage
+await fetch(`https://www.zohoapis.com/crm/v8/Deals/${dealId}`, {
+  method: 'PUT',
+  headers: {
+    Authorization: `Zoho-oauthtoken ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    data: [{ Stage: 'Proposal/Price Quote', Closing_Date: '2026-06-30' }],
+  }),
+});</code></pre>
+
+<h3>Search records (COQL query)</h3>
+
+<pre><code class="lang-typescript">// SQL-style query across CRM modules
+const res = await fetch('https://www.zohoapis.com/crm/v8/coql', {
+  method: 'POST',
+  headers: {
+    Authorization: `Zoho-oauthtoken ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    select_query: `
+      SELECT First_Name, Last_Name, Email, Account_Name, Modified_Time
+      FROM Contacts
+      WHERE Account_Name = 'Acme Corp'
+        AND Modified_Time &gt;= '2026-01-01T00:00:00+00:00'
+      ORDER BY Modified_Time DESC
+      LIMIT 10
+    `,
+  }),
+});</code></pre>
+
+<h3>Rate limits (CRM)</h3>
+
+<table><thead><tr><th>Licences</th><th>Requests/day</th></tr></thead><tbody><tr><td>1–5</td><td>4,000 (minimum floor)</td></tr><tr><td>10</td><td>5,000 (10 × 500)</td></tr><tr><td>50</td><td>25,000 (cap)</td></tr></tbody></table>
+
+<p>Max 200 records per GET, 100 per POST/PUT/DELETE. Bulk API for larger jobs.</p>
+
+<hr>
+
+<h2>3. Zoho Books</h2>
+
+<p>All Books requests require <code>organization_id</code> as a query parameter.</p>
+
+<pre><code class="lang-bash"># Get your organization ID first
+curl -H "Authorization: Zoho-oauthtoken $TOKEN" \
+  "https://www.zohoapis.com/books/v3/organizations"</code></pre>
+
+<h3>Scopes</h3>
+
+<pre><code class="lang-text">ZohoBooks.contacts.ALL
+ZohoBooks.invoices.ALL
+ZohoBooks.expenses.ALL
+ZohoBooks.bills.ALL
+ZohoBooks.customerpayments.ALL
+ZohoBooks.vendorpayments.ALL
+ZohoBooks.settings.ALL
+ZohoBooks.banking.ALL</code></pre>
+
+<h3>Create and send an invoice</h3>
+
+<pre><code class="lang-typescript">const orgId = 'YOUR_ORG_ID';
+
+// Create invoice
+const createRes = await fetch(
+  `https://www.zohoapis.com/books/v3/invoices?organization_id=${orgId}`,
+  {
+    method: 'POST',
+    headers: {
+      Authorization: `Zoho-oauthtoken ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      customer_id: '2345678000000111111',
+      invoice_number: 'INV-00042',
+      date: '2026-04-02',
+      due_date: '2026-05-02',
+      line_items: [
+        {
+          item_id: '2345678000000222222',
+          quantity: 10,
+          rate: 500.00,
+          description: 'Software consulting — April 2026',
+        },
+      ],
+      notes: 'Payment due within 30 days.',
+      terms: 'Net 30',
+    }),
+  }
+);
+const { invoice } = await createRes.json();
+
+// Email the invoice to the customer
+await fetch(
+  `https://www.zohoapis.com/books/v3/invoices/${invoice.invoice_id}/email?organization_id=${orgId}`,
+  {
+    method: 'POST',
+    headers: {
+      Authorization: `Zoho-oauthtoken ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      to_mail_ids: ['client@example.com'],
+      subject: `Invoice ${invoice.invoice_number} from Acme`,
+      body: 'Please find your invoice attached.',
+      send_from_org_email_id: true,
+    }),
+  }
+);</code></pre>
+
+<h3>Record a payment</h3>
+
+<pre><code class="lang-typescript">await fetch(
+  `https://www.zohoapis.com/books/v3/customerpayments?organization_id=${orgId}`,
+  {
+    method: 'POST',
+    headers: {
+      Authorization: `Zoho-oauthtoken ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      customer_id: '2345678000000111111',
+      payment_mode: 'bank_transfer',
+      amount: 5000.00,
+      date: '2026-04-15',
+      reference_number: 'EFT-987654',
+      invoices: [{ invoice_id: invoice.invoice_id, amount_applied: 5000.00 }],
+    }),
+  }
+);</code></pre>
+
+<h3>Rate limits (Books)</h3>
+
+<table><thead><tr><th>Plan</th><th>Requests/day</th><th>Per minute</th></tr></thead><tbody><tr><td>Free</td><td>1,000</td><td>100</td></tr><tr><td>Standard</td><td>2,000</td><td>100</td></tr><tr><td>Professional</td><td>5,000</td><td>100</td></tr><tr><td>Premium+</td><td>10,000</td><td>100</td></tr></tbody></table>
+
+<hr>
+
+<h2>4. Webhooks (CRM notifications)</h2>
+
+<pre><code class="lang-typescript">// Register a notification channel in CRM
+await fetch('https://www.zohoapis.com/crm/v8/actions/watch', {
+  method: 'POST',
+  headers: {
+    Authorization: `Zoho-oauthtoken ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    watch: [{
+      channel_id: '1000000068001',
+      events: ['Leads.create', 'Leads.edit', 'Deals.edit'],
+      channel_expiry: '2026-12-31T00:00:00+05:30',
+      token: 'MY_WEBHOOK_VERIFY_TOKEN',
+      notify_url: 'https://my-worker.workers.dev/zoho/crm/notify',
+    }],
+  }),
+});
+
+// Cloudflare Worker — receive CRM notification
+export default {
+  async fetch(req: Request): Promise&lt;Response&gt; {
+    const payload = await req.json() as {
+      query_params: { token: string };
+      data: Array&lt;{ module_name: string; operation: string; ids: string[] }&gt;;
+    };
+
+    // Verify token
+    if (payload.query_params.token !== 'MY_WEBHOOK_VERIFY_TOKEN') {
+      return new Response('Forbidden', { status: 403 });
+    }
+
+    for (const event of payload.data) {
+      console.log(`${event.module_name} ${event.operation}: ${event.ids.join(', ')}`);
+      // Sync to Books, notify Slack, trigger workflow, etc.
+    }
+
+    return new Response('OK');
+  },
+};</code></pre>
+
+<hr>
+
+<h2>5. CRM ↔ Books contact sync pattern</h2>
+
+<p>A common agent task: keep CRM Contacts in sync with Books Contacts so invoices can be raised from deal data.</p>
+
+<pre><code class="lang-typescript">async function syncContactToBooks(
+  crmContactId: string,
+  crmToken: string,
+  booksToken: string,
+  orgId: string
+): Promise&lt;void&gt; {
+  // 1. Fetch from CRM
+  const crmRes = await fetch(
+    `https://www.zohoapis.com/crm/v8/Contacts/${crmContactId}`,
+    { headers: { Authorization: `Zoho-oauthtoken ${crmToken}` } }
+  );
+  const { data: [contact] } = await crmRes.json();
+
+  // 2. Search Books for existing contact by email
+  const searchRes = await fetch(
+    `https://www.zohoapis.com/books/v3/contacts?organization_id=${orgId}&amp;email=${contact.Email}`,
+    { headers: { Authorization: `Zoho-oauthtoken ${booksToken}` } }
+  );
+  const { contacts } = await searchRes.json();
+  const existing = contacts?.[0];
+
+  const payload = {
+    contact_name: `${contact.First_Name} ${contact.Last_Name}`,
+    company_name: contact.Account_Name,
+    email: contact.Email,
+    phone: contact.Phone,
+    contact_type: 'customer',
+  };
+
+  // 3. Create or update
+  if (existing) {
+    await fetch(
+      `https://www.zohoapis.com/books/v3/contacts/${existing.contact_id}?organization_id=${orgId}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: `Zoho-oauthtoken ${booksToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+  } else {
+    await fetch(
+      `https://www.zohoapis.com/books/v3/contacts?organization_id=${orgId}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Zoho-oauthtoken ${booksToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+  }
+}</code></pre>
+
+<hr>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong>DC mismatch causes <code>invalid_client</code></strong> — the DC used for the authorisation URL, token exchange, and API calls must all match; never mix <code>.com</code> auth with <code>.eu</code> API calls</li><li><strong><code>api_domain</code> is authoritative</strong> — use the <code>api_domain</code> from the token response as the base URL for all API calls, not a hardcoded region</li><li><strong><code>organization_id</code> is mandatory for Books</strong> — every Books request fails without it; fetch it once at startup and cache it</li><li><strong>Refresh token limits</strong> — max 20 refresh tokens per user per client; creating more silently invalidates the oldest; store the refresh token securely and reuse it</li><li><strong>CRM module API names differ from display names</strong> — <code>Contacts</code> not <code>Contact</code>, <code>Deals</code> not <code>Opportunity</code>; use <code>GET /settings/modules</code> to discover actual API names</li><li><strong>CRM rate limit resets at midnight PST</strong> — burst usage in a single hour is fine; daily cap is the constraint</li><li><strong>COQL 10K row limit</strong> — COQL queries return max 10,000 rows per query; use <code>offset</code> + <code>limit</code> or the Bulk Read API for full table exports</li><li><strong>Notification channel expiry</strong> — CRM webhook channels expire; renew them before expiry or events will stop arriving silently</li><li><strong>Books <code>payment_mode</code> enum</strong> — must be an exact string from Zoho's enum (<code>cash</code>, <code>check</code>, <code>creditcard</code>, <code>banktransfer</code>, <code>bank_transfer</code>, etc.); free-text values are rejected</li><li><strong>OAuth consent screen on re-auth</strong> — adding new scopes to an existing client requires user re-consent; design scope lists upfront to avoid re-auth flows</li></ul>
+
+<h2>See also</h2>
+
+<ul><li><code>tech/cloudflare/kv</code> — cache Zoho access tokens (55-min TTL)</li><li><code>tech/cloudflare/workers</code> — host CRM webhook handler and API proxy at the edge</li><li><code>tech/aws/compute</code> — Lambda for scheduled CRM-to-Books sync jobs</li><li><code>biz/crm</code> — CRM strategy and pipeline management context</li><li><code>fin/accounting</code> — accounting principles behind Books usage</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/zoho/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

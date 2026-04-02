@@ -158,6 +158,7 @@ tech/
     automation/      SKILL.md  ✓ stub — Netmiko, NAPALM, Ansible, DNA Center, NETCONF
   elevenlabs/        SKILL.md  ✓ stub — TTS (flash/v3), voice cloning, STT, conversational AI agents, Cloudflare streaming
   github/            SKILL.md  ✓ stub — REST API, Octokit v21, Actions, Apps, webhooks, Copilot data policy (Apr 2026)
+  zoho/              SKILL.md  ✓ stub — CRM v8 (COQL, bulk), Books v3 (invoices, payments), OAuth multi-DC, CRM↔Books sync
   claude-code/       SKILL.md  ✓ stub — Claude Code setup and patterns
   agent-protocols/   SKILL.md  ✓ production — MCP, A2A, ACP, multi-agent orchestration patterns
   mcp/               stub
