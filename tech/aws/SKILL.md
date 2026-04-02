@@ -7,7 +7,8 @@ description: |
   (3) storing data — S3 object storage, RDS managed databases, DynamoDB, ElastiCache,
   (4) building event-driven architectures — SQS, SNS, EventBridge, Kinesis,
   (5) running AI/ML workloads — Bedrock (Claude, Llama), SageMaker, Rekognition,
-  (6) building hybrid Cloudflare + AWS architectures — Cloudflare at the edge, AWS for compute-heavy or stateful workloads.
+  (6) building a cloud contact centre — Amazon Connect IVR, routing, agent desktop, Contact Lens, Lex,
+  (7) building hybrid Cloudflare + AWS architectures — Cloudflare at the edge, AWS for compute-heavy or stateful workloads.
 license: MIT
 homepage: https://skills.2nth.ai/tech/aws
 repository: https://github.com/2nth-ai/skills
@@ -32,6 +33,7 @@ The pattern is: **Cloudflare at the edge → AWS for the heavy lift**.
 |------|-------|--------|
 | `tech/aws/compute` | Lambda, EC2, ECS Fargate, API Gateway, Auto Scaling | ✓ production |
 | `tech/aws/security` | IAM, VPC security groups, KMS, Secrets Manager, GuardDuty | ✓ production |
+| `tech/aws/connect` | Amazon Connect contact centre — IVR, routing, Lambda integration, Streams API | ✓ production |
 | `tech/aws/storage` | S3, EBS, EFS, Glacier | stub |
 | `tech/aws/database` | RDS, DynamoDB, ElastiCache, Aurora | stub |
 | `tech/aws/networking` | VPC, Route 53, CloudFront, ALB/NLB | stub |

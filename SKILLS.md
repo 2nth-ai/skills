@@ -148,6 +148,7 @@ tech/
     database/        SKILL.md  ✓ stub — RDS, DynamoDB, ElastiCache, Aurora
     networking/      SKILL.md  ✓ stub — VPC, Route 53, CloudFront, ALB/NLB
     messaging/       SKILL.md  ✓ stub — SQS, SNS, EventBridge, Kinesis
+    connect/         SKILL.md  ✓ production — Amazon Connect contact centre: IVR flows, routing, Lambda, Lex, Streams API, Contact Lens
     ai/              SKILL.md  ✓ stub — Bedrock (Claude), SageMaker, Rekognition
   cisco/             SKILL.md  ✓ stub — IOS/NX-OS, ASA/Firepower, Meraki, Webex, Netmiko
     networking/      SKILL.md  ✓ stub — VLANs, STP, OSPF, EIGRP, BGP

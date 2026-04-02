@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/aws/connect — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><a href="#">aws</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">connect</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/aws/connect/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/aws/connect</div>
+      <h1>CONNECT</h1>
+      <p class="skill-desc">Amazon Connect contact centre skill. Use when:</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">AWS CLI v2, Amazon Connect Console, Connect Streams API v2, AWS SDK v3 (TypeScript/Python)</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../tech/aws.html">tech/aws</a><a class="skill-chip" href="../../../tech/aws/compute.html">tech/aws/compute</a><a class="skill-chip" href="../../../tech/aws/security.html">tech/aws/security</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech/aws</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Amazon Connect</h1>
+
+<p>Amazon Connect is AWS's cloud-native contact centre service. No hardware, no per-seat licences — pay only for active contact minutes and associated feature usage. The architecture is: <strong>phone/chat/task → Contact Flow (IVR logic) → Queue → Agent</strong>, with Lambda callable at any step for real-time CRM lookups, dynamic prompts, or routing decisions.</p>
+
+<p>In the 2nth.ai stack Connect sits behind Cloudflare for web channel entry points and integrates with the rest of the AWS backend (Lambda, DynamoDB, S3, Lex) for the business logic layer.</p>
+
+<h2>Core concepts</h2>
+
+<table><thead><tr><th>Concept</th><th>What it is</th></tr></thead><tbody><tr><td><strong>Instance</strong></td><td>The Connect deployment unit — one per contact centre environment</td></tr><tr><td><strong>Contact Flow</strong></td><td>IVR logic tree — play prompts, branch on input, invoke Lambda, transfer to queue</td></tr><tr><td><strong>Queue</strong></td><td>Holding area for contacts waiting for an agent</td></tr><tr><td><strong>Routing Profile</strong></td><td>Assigns queues + channels (voice/chat/task) to an agent with priority/delay rules</td></tr><tr><td><strong>Hours of Operation</strong></td><td>Schedule defining when a queue accepts contacts</td></tr><tr><td><strong>Agent Hierarchy</strong></td><td>Org structure (Location → Department → Team) used in reporting and routing</td></tr><tr><td><strong>Contact Lens</strong></td><td>ML-powered transcription, sentiment, PII redaction, conversation analytics</td></tr><tr><td><strong>Streams API</strong></td><td>JavaScript SDK for embedding the Contact Control Panel (CCP) in custom apps</td></tr></tbody></table>
+
+<hr>
+
+<h2>1. Instance setup</h2>
+
+<pre><code class="lang-bash"># Create a Connect instance (alias becomes subdomain: alias.my.connect.aws)
+aws connect create-instance \
+  --identity-management-type CONNECT_MANAGED \
+  --instance-alias my-contact-centre \
+  --inbound-calls-enabled \
+  --outbound-calls-enabled \
+  --region af-south-1
+
+# Get instance ID (needed for all subsequent CLI commands)
+aws connect list-instances --region af-south-1 \
+  --query 'InstanceSummaryList[?InstanceAlias==`my-contact-centre`].Id' \
+  --output text</code></pre>
+
+<blockquote><strong>af-south-1 note</strong>: Amazon Connect is available in af-south-1 (Cape Town). Voice quality to South African PSTN is excellent via the local AWS PoP. For East/West Africa consider eu-west-1 (Ireland) or ap-southeast-1 (Singapore) depending on majority caller location.</blockquote>
+
+<h3>Storage configuration (S3 + KMS)</h3>
+
+<p>Connect stores call recordings, transcripts, chat transcripts, and exported reports in S3. Set this immediately after instance creation.</p>
+
+<pre><code class="lang-bash">INSTANCE_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+BUCKET="my-connect-recordings"
+KMS_KEY_ARN="arn:aws:kms:af-south-1:123456789012:key/xxxxxxxx"
+
+# Call recordings
+aws connect associate-instance-storage-config \
+  --instance-id $INSTANCE_ID \
+  --resource-type CALL_RECORDINGS \
+  --storage-config '{
+    "StorageType": "S3",
+    "S3Config": {
+      "BucketName": "'$BUCKET'",
+      "BucketPrefix": "recordings",
+      "EncryptionConfig": {
+        "EncryptionType": "KMS",
+        "KeyId": "'$KMS_KEY_ARN'"
+      }
+    }
+  }' \
+  --region af-south-1
+
+# Chat transcripts
+aws connect associate-instance-storage-config \
+  --instance-id $INSTANCE_ID \
+  --resource-type CHAT_TRANSCRIPTS \
+  --storage-config '{
+    "StorageType": "S3",
+    "S3Config": {
+      "BucketName": "'$BUCKET'",
+      "BucketPrefix": "chat-transcripts",
+      "EncryptionConfig": {
+        "EncryptionType": "KMS",
+        "KeyId": "'$KMS_KEY_ARN'"
+      }
+    }
+  }' \
+  --region af-south-1</code></pre>
+
+<hr>
+
+<h2>2. Phone numbers</h2>
+
+<pre><code class="lang-bash"># Claim a DID (direct inward dial) number
+aws connect search-available-phone-numbers \
+  --target-arn "arn:aws:connect:af-south-1:123456789012:instance/$INSTANCE_ID" \
+  --phone-number-country-code ZA \
+  --phone-number-type DID \
+  --region af-south-1
+
+# Claim the number (use phoneNumberId from above)
+aws connect claim-phone-number \
+  --target-arn "arn:aws:connect:af-south-1:123456789012:instance/$INSTANCE_ID" \
+  --phone-number "+27XXXXXXXXX" \
+  --phone-number-type DID \
+  --phone-number-country-code ZA \
+  --region af-south-1
+
+# Associate number with a contact flow
+aws connect associate-phone-number-contact-flow \
+  --phone-number-id "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+  --instance-id $INSTANCE_ID \
+  --contact-flow-id "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+  --region af-south-1</code></pre>
+
+<hr>
+
+<h2>3. Hours of operation</h2>
+
+<pre><code class="lang-bash">aws connect create-hours-of-operation \
+  --instance-id $INSTANCE_ID \
+  --name "Business Hours ZA" \
+  --description "Mon-Fri 08:00-17:00 SAST" \
+  --time-zone "Africa/Johannesburg" \
+  --config '[
+    {"Day":"MONDAY","StartTime":{"Hours":8,"Minutes":0},"EndTime":{"Hours":17,"Minutes":0}},
+    {"Day":"TUESDAY","StartTime":{"Hours":8,"Minutes":0},"EndTime":{"Hours":17,"Minutes":0}},
+    {"Day":"WEDNESDAY","StartTime":{"Hours":8,"Minutes":0},"EndTime":{"Hours":17,"Minutes":0}},
+    {"Day":"THURSDAY","StartTime":{"Hours":8,"Minutes":0},"EndTime":{"Hours":17,"Minutes":0}},
+    {"Day":"FRIDAY","StartTime":{"Hours":8,"Minutes":0},"EndTime":{"Hours":17,"Minutes":0}}
+  ]' \
+  --region af-south-1</code></pre>
+
+<hr>
+
+<h2>4. Queues</h2>
+
+<pre><code class="lang-bash"># Create a queue (requires hours-of-operation ARN)
+aws connect create-queue \
+  --instance-id $INSTANCE_ID \
+  --name "General Enquiries" \
+  --hours-of-operation-id "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+  --max-contacts 50 \
+  --region af-south-1
+
+# Queue with outbound caller ID
+aws connect create-queue \
+  --instance-id $INSTANCE_ID \
+  --name "Sales Outbound" \
+  --hours-of-operation-id "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+  --outbound-caller-config '{
+    "OutboundCallerIdName": "Acme Sales",
+    "OutboundCallerIdNumberId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  }' \
+  --region af-south-1</code></pre>
+
+<hr>
+
+<h2>5. Routing profiles</h2>
+
+<p>Routing profiles determine which queues an agent handles and in what order. An agent can only be assigned one routing profile.</p>
+
+<pre><code class="lang-bash">aws connect create-routing-profile \
+  --instance-id $INSTANCE_ID \
+  --name "Voice Generalist" \
+  --description "Handles voice contacts from General Enquiries queue" \
+  --default-outbound-queue-id "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+  --media-concurrencies '[
+    {"Channel":"VOICE","Concurrency":1},
+    {"Channel":"CHAT","Concurrency":3},
+    {"Channel":"TASK","Concurrency":5}
+  ]' \
+  --queue-configs '[
+    {
+      "QueueReference": {
+        "QueueId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "Channel": "VOICE"
+      },
+      "Priority": 1,
+      "Delay": 0
+    }
+  ]' \
+  --region af-south-1</code></pre>
+
+<hr>
+
+<h2>6. Agents (users)</h2>
+
+<pre><code class="lang-bash"># Create agent user
+aws connect create-user \
+  --instance-id $INSTANCE_ID \
+  --username "jane.doe" \
+  --password "Temp@1234!" \
+  --identity-info '{"FirstName":"Jane","LastName":"Doe","Email":"jane.doe@example.com"}' \
+  --phone-config '{"PhoneType":"SOFT_PHONE","AutoAccept":false,"AfterContactWorkTimeLimit":30}' \
+  --routing-profile-id "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+  --security-profile-ids '["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]' \
+  --region af-south-1
+
+# List security profiles (Agent, Admin, CallCentreManager built-in)
+aws connect list-security-profiles \
+  --instance-id $INSTANCE_ID \
+  --region af-south-1</code></pre>
+
+<hr>
+
+<h2>7. Contact flows (IVR)</h2>
+
+<p>Contact flows define what happens when a contact arrives. Build in the visual editor (Connect console → Contact flows) or import JSON.</p>
+
+<h3>Minimal flow structure (JSON)</h3>
+
+<pre><code class="lang-json">{
+  "Version": "2019-10-30",
+  "StartAction": "check-hours",
+  "Actions": [
+    {
+      "Identifier": "check-hours",
+      "Type": "CheckHoursOfOperation",
+      "Parameters": {
+        "HoursOfOperationId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      },
+      "Transitions": {
+        "NextAction": "play-welcome",
+        "Conditions": [
+          {"NextAction": "play-closed", "Condition": {"Operator": "Equals", "Operands": ["False"]}}
+        ],
+        "Errors": [{"NextAction": "play-error", "ErrorType": "Any"}]
+      }
+    },
+    {
+      "Identifier": "play-welcome",
+      "Type": "MessageParticipant",
+      "Parameters": {
+        "Text": "Thank you for calling. Please hold while we connect you.",
+        "TextToSpeechType": "neural",
+        "LanguageCode": "en-ZA"
+      },
+      "Transitions": {"NextAction": "transfer-to-queue"}
+    },
+    {
+      "Identifier": "transfer-to-queue",
+      "Type": "TransferContactToQueue",
+      "Parameters": {
+        "QueueId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      },
+      "Transitions": {
+        "Errors": [{"NextAction": "play-error", "ErrorType": "QueueAtCapacity"}]
+      }
+    },
+    {
+      "Identifier": "play-closed",
+      "Type": "MessageParticipant",
+      "Parameters": {
+        "Text": "Our offices are currently closed. We are open Monday to Friday, 8am to 5pm.",
+        "TextToSpeechType": "neural"
+      },
+      "Transitions": {"NextAction": "disconnect"}
+    },
+    {
+      "Identifier": "disconnect",
+      "Type": "DisconnectParticipant",
+      "Parameters": {},
+      "Transitions": {}
+    },
+    {
+      "Identifier": "play-error",
+      "Type": "MessageParticipant",
+      "Parameters": {"Text": "We are unable to take your call at this time. Please try again later."},
+      "Transitions": {"NextAction": "disconnect"}
+    }
+  ]
+}</code></pre>
+
+<pre><code class="lang-bash"># Import a contact flow
+aws connect create-contact-flow \
+  --instance-id $INSTANCE_ID \
+  --name "Main IVR" \
+  --type CONTACT_FLOW \
+  --content file://main-ivr.json \
+  --region af-south-1</code></pre>
+
+<hr>
+
+<h2>8. Lambda integration</h2>
+
+<p>Lambda is invoked from contact flows using the <strong>Invoke AWS Lambda function</strong> block. The function receives a standard Connect event and returns key-value attributes that become contact attributes usable in subsequent flow blocks.</p>
+
+<h3>Lambda function pattern</h3>
+
+<pre><code class="lang-typescript">import type { ConnectContactFlowEvent, ConnectContactFlowResult } from 'aws-lambda';
+
+export const handler = async (
+  event: ConnectContactFlowEvent
+): Promise&lt;ConnectContactFlowResult&gt; =&gt; {
+  const phoneNumber = event.Details.ContactData.CustomerEndpoint?.Address;
+  const accountId = event.Details.Parameters.AccountId; // passed from flow block
+
+  // CRM lookup
+  const customer = await lookupCustomer(phoneNumber);
+
+  return {
+    // Return values become contact attributes in the flow
+    CustomerName: customer?.name ?? 'Valued Customer',
+    AccountStatus: customer?.status ?? 'unknown',
+    PreferredLanguage: customer?.language ?? 'en-ZA',
+    AgentSkillRequired: customer?.tier === 'premium' ? 'senior' : 'general',
+  };
+};</code></pre>
+
+<h3>Grant Connect permission to invoke Lambda</h3>
+
+<pre><code class="lang-bash">aws lambda add-permission \
+  --function-name my-crm-lookup \
+  --statement-id connect-invoke \
+  --action lambda:InvokeFunction \
+  --principal connect.amazonaws.com \
+  --source-arn "arn:aws:connect:af-south-1:123456789012:instance/$INSTANCE_ID" \
+  --region af-south-1
+
+# Associate Lambda with instance (required before it appears in flow editor)
+aws connect associate-lambda-function \
+  --instance-id $INSTANCE_ID \
+  --function-arn "arn:aws:lambda:af-south-1:123456789012:function:my-crm-lookup" \
+  --region af-south-1</code></pre>
+
+<hr>
+
+<h2>9. Amazon Lex integration (voice bot / IVR automation)</h2>
+
+<p>Lex bots handle natural language intent capture inside contact flows — collect slot values (account number, date, query type) before routing to an agent or self-serving the contact entirely.</p>
+
+<pre><code class="lang-bash"># Associate a Lex V2 bot with the Connect instance
+aws connect associate-lex-bot \
+  --instance-id $INSTANCE_ID \
+  --lex-bot '{
+    "Name": "BankingIVR",
+    "LexRegion": "af-south-1"
+  }' \
+  --region af-south-1</code></pre>
+
+<p>In the contact flow, use <strong>Get customer input</strong> block → Lex bot → branch on returned intent.</p>
+
+<hr>
+
+<h2>10. Contact Lens (transcription + analytics)</h2>
+
+<p>Contact Lens performs post-call and real-time transcription, sentiment analysis, keyword spotting, and PII redaction. Enable per-instance then configure per-contact-flow.</p>
+
+<pre><code class="lang-bash"># Enable Contact Lens on the instance
+aws connect update-instance-attribute \
+  --instance-id $INSTANCE_ID \
+  --attribute-type CONTACT_LENS \
+  --value "true" \
+  --region af-south-1</code></pre>
+
+<p>In the contact flow, add a <strong>Set recording and analytics behaviour</strong> block and set <strong>Contact Lens</strong> to <code>Enable</code>. Transcripts land in the S3 bucket configured at step 1.</p>
+
+<h3>Query transcripts via API</h3>
+
+<pre><code class="lang-python">import boto3
+
+client = boto3.client('connect', region_name='af-south-1')
+
+# Get transcript for a completed contact
+response = client.get_transcript(
+    InstanceId=INSTANCE_ID,
+    ContactId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+    ContactFlowId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+    MaxResults=100,
+    ScanDirection='FORWARD',
+    SortOrder='ASCENDING'
+)
+for item in response['Transcript']:
+    print(f"[{item['ParticipantRole']}] {item['Content']}")</code></pre>
+
+<hr>
+
+<h2>11. Real-time and historical metrics</h2>
+
+<pre><code class="lang-python"># Real-time queue metrics (agents available, contacts in queue, oldest contact)
+response = client.get_current_metric_data(
+    InstanceId=INSTANCE_ID,
+    Filters={'Queues': ['QUEUE_ID'], 'Channels': ['VOICE']},
+    CurrentMetrics=[
+        {'Name': 'AGENTS_AVAILABLE', 'Unit': 'COUNT'},
+        {'Name': 'CONTACTS_IN_QUEUE', 'Unit': 'COUNT'},
+        {'Name': 'OLDEST_CONTACT_AGE', 'Unit': 'SECONDS'},
+    ]
+)
+
+# Historical metrics (e.g. AHT, abandonment rate, service level for last 24h)
+import datetime
+response = client.get_metric_data(
+    InstanceId=INSTANCE_ID,
+    StartTime=datetime.datetime.utcnow() - datetime.timedelta(hours=24),
+    EndTime=datetime.datetime.utcnow(),
+    Filters={'Queues': ['QUEUE_ID'], 'Channels': ['VOICE']},
+    Groupings=['QUEUE'],
+    HistoricalMetrics=[
+        {'Name': 'CONTACTS_HANDLED', 'Unit': 'COUNT', 'Statistic': 'SUM'},
+        {'Name': 'CONTACTS_ABANDONED', 'Unit': 'COUNT', 'Statistic': 'SUM'},
+        {'Name': 'HANDLE_TIME', 'Unit': 'SECONDS', 'Statistic': 'AVG'},
+        {'Name': 'SERVICE_LEVEL', 'Unit': 'PERCENT', 'Statistic': 'AVG',
+         'Threshold': {'Comparison': 'LT', 'ThresholdValue': 20}},
+    ]
+)</code></pre>
+
+<hr>
+
+<h2>12. Custom agent desktop (Streams API)</h2>
+
+<p>The Connect Streams API lets you embed the Contact Control Panel (CCP) in your own web app — CRM, intranet portal, banking platform — and subscribe to agent state and contact events.</p>
+
+<pre><code class="lang-html">&lt;!-- Include Streams SDK --&gt;
+&lt;script src="https://unpkg.com/amazon-connect-streams/release/connect-streams.js"&gt;&lt;/script&gt;
+&lt;div id="ccp-container" style="width:320px;height:540px;"&gt;&lt;/div&gt;</code></pre>
+
+<pre><code class="lang-javascript">connect.core.initCCP(document.getElementById('ccp-container'), {
+  ccpUrl: 'https://my-contact-centre.my.connect.aws/ccp-v2',
+  loginPopup: true,
+  softphone: { allowFramedSoftphone: true },
+  storageAccess: { canRequest: true },
+});
+
+// Subscribe to contact events
+connect.contact(contact =&gt; {
+  contact.onConnecting(contact =&gt; {
+    const attrs = contact.getAttributes();
+    const customerName = attrs.CustomerName?.value;
+    // Open CRM record, display screen-pop, etc.
+    console.log('Incoming contact from:', customerName);
+  });
+
+  contact.onACW(contact =&gt; {
+    // After Contact Work started — start wrap-up timer
+  });
+
+  contact.onEnded(contact =&gt; {
+    // Contact ended — log to CRM, auto-submit wrap-up
+  });
+});
+
+// Subscribe to agent state changes
+connect.agent(agent =&gt; {
+  agent.onStateChange(stateChange =&gt; {
+    console.log(`Agent state: ${stateChange.newState}`);
+    // Available | Busy | AfterContactWork | Offline | custom states
+  });
+});</code></pre>
+
+<hr>
+
+<h2>13. Outbound campaigns (preview/progressive/predictive dialler)</h2>
+
+<p>Requires <strong>Amazon Connect outbound campaigns</strong> (separate feature, available in select regions).</p>
+
+<pre><code class="lang-bash"># Create a campaign
+aws connectcampaigns create-campaign \
+  --name "Q1 Renewals" \
+  --connect-instance-id $INSTANCE_ID \
+  --dialer-config '{"predictiveDialerConfig":{"bandwidthAllocation":1.0}}' \
+  --outbound-call-config '{
+    "connectContactFlowId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "connectSourcePhoneNumber": "+27XXXXXXXXX",
+    "answerMachineDetectionConfig": {"enableAnswerMachineDetection": true}
+  }' \
+  --region eu-west-1   # outbound campaigns not yet in af-south-1 as of 2025</code></pre>
+
+<hr>
+
+<h2>14. Kinesis stream for real-time contact events</h2>
+
+<p>Stream every contact event (initiated, queued, connected, disconnected, ACW) to Kinesis for real-time dashboards, CRM sync, or compliance logging.</p>
+
+<pre><code class="lang-bash"># Create stream
+aws kinesis create-stream \
+  --stream-name connect-contact-events \
+  --shard-count 1 \
+  --region af-south-1
+
+# Associate with Connect instance
+aws connect associate-instance-storage-config \
+  --instance-id $INSTANCE_ID \
+  --resource-type CONTACT_TRACE_RECORDS \
+  --storage-config '{
+    "StorageType": "KINESIS_STREAM",
+    "KinesisStreamConfig": {
+      "StreamArn": "arn:aws:kinesis:af-south-1:123456789012:stream/connect-contact-events"
+    }
+  }' \
+  --region af-south-1</code></pre>
+
+<hr>
+
+<h2>Cost model</h2>
+
+<table><thead><tr><th>Component</th><th>Pricing model</th><th>Indicative (ZAR)</th></tr></thead><tbody><tr><td>Voice contact</td><td>per minute (inbound + outbound separately)</td><td>~R0.09/min inbound</td></tr><tr><td>Chat contact</td><td>per message</td><td>~R0.005/message</td></tr><tr><td>Task contact</td><td>per task</td><td>~R0.06/task</td></tr><tr><td>Contact Lens transcription</td><td>per minute</td><td>~R0.12/min</td></tr><tr><td>Contact Lens real-time</td><td>per minute</td><td>~R0.24/min</td></tr><tr><td>Outbound campaigns</td><td>per dialler minute</td><td>additional per-minute charge</td></tr><tr><td>Phone number rental</td><td>per DID per day</td><td>~R2.50/day ZA DID</td></tr></tbody></table>
+
+<blockquote><strong>No per-seat licence.</strong> Connect charges purely on usage. A 10-agent centre that handles 500 calls/day at 4 minutes AHT costs roughly R180/day in contact minutes — compare to $150/agent/month for legacy on-prem systems.</blockquote>
+
+<hr>
+
+<h2>Security and compliance</h2>
+
+<pre><code class="lang-bash"># Enable CloudTrail logging for all Connect API calls
+aws cloudtrail create-trail \
+  --name connect-audit \
+  --s3-bucket-name my-connect-recordings \
+  --include-global-service-events \
+  --is-multi-region-trail \
+  --region af-south-1
+
+# Contact recordings are encrypted at rest with KMS (configured at instance setup)
+# Restrict recording access to compliance role only
+aws s3api put-bucket-policy --bucket my-connect-recordings --policy '{
+  "Statement": [{
+    "Effect": "Deny",
+    "Principal": "*",
+    "Action": "s3:GetObject",
+    "Resource": "arn:aws:s3:::my-connect-recordings/recordings/*",
+    "Condition": {
+      "StringNotEquals": {
+        "aws:PrincipalArn": "arn:aws:iam::123456789012:role/ComplianceAuditRole"
+      }
+    }
+  }]
+}'</code></pre>
+
+<p><strong>POPIA note</strong>: Store all recordings and transcripts in af-south-1. Enable Contact Lens PII redaction to mask ID numbers, card numbers, and account numbers from transcripts before storage.</p>
+
+<hr>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong>Instance alias is permanent</strong> — you cannot rename a Connect instance after creation; the subdomain is fixed</li><li><strong>Contact flow errors are silent by default</strong> — always add an error branch on every Lambda invoke block or contacts silently disconnect</li><li><strong>Lambda timeout</strong> — Connect waits max 8 seconds for a Lambda response; keep lookup functions under 3s or callers hear dead air</li><li><strong>Lex V1 vs V2</strong> — Connect console still shows both; use Lex V2 (bot aliases) for all new builds; V1 is legacy</li><li><strong>Routing profile channel concurrency</strong> — voice concurrency must be 1 (hard limit); chat/task can be higher</li><li><strong>Outbound campaigns region gap</strong> — not available in af-south-1 as of 2025; use eu-west-1 with documented POPIA transfer basis</li><li><strong>Streams API CORS</strong> — your embedding domain must be whitelisted in the Connect instance's Approved origins list</li><li><strong>Contact Lens real-time adds ~3s latency</strong> to transcription delivery — not suitable for sub-second screen-pop requirements</li><li><strong>Phone number porting</strong> — porting an existing ZA number into Connect takes 4-8 weeks via AWS support</li></ul>
+
+<h2>See also</h2>
+
+<ul><li><code>tech/aws/compute</code> — Lambda functions invoked from contact flows</li><li><code>tech/aws/security</code> — IAM roles for Connect, KMS key policy for recordings</li><li><code>tech/aws/storage</code> — S3 bucket configuration for recordings and transcripts</li><li><code>tech/aws/messaging</code> — Kinesis stream for contact event pipeline</li><li><code>tech/cisco/collaboration</code> — Cisco CUCM/UCCX migration path to Connect</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/aws/connect/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>
