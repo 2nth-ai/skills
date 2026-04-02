@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/microsoft/azure-ai — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><a href="#">microsoft</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">azure-ai</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/microsoft/azure-ai/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/microsoft/azure-ai</div>
+      <h1>AZURE AI</h1>
+      <p class="skill-desc">Microsoft Azure AI agentic platform skill.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Azure OpenAI REST API, Azure AI Agent Service REST API, Semantic Kernel SDK, Copilot Studio, MCP</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../tech/microsoft.html">tech/microsoft</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech/microsoft</a><a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Azure AI — Agentic Platform</h1>
+
+<p>Microsoft's agentic AI stack in 2025/2026 centres on four layers:</p>
+
+<table><thead><tr><th>Layer</th><th>Technology</th><th>Role</th></tr></thead><tbody><tr><td><strong>Models</strong></td><td>Azure OpenAI (GPT-4o, o3, o1), Azure AI Foundry model catalog</td><td>Foundation models, reasoning, embeddings</td></tr><tr><td><strong>Agents</strong></td><td>Azure AI Agent Service</td><td>Managed threads, tool execution, file search, code interpreter</td></tr><tr><td><strong>Orchestration</strong></td><td>Semantic Kernel</td><td>Plugin routing, planner, multi-agent process framework</td></tr><tr><td><strong>Surface</strong></td><td>Copilot Studio / M365 Agents SDK</td><td>Expose agents in Teams, Outlook, Copilot Chat</td></tr></tbody></table>
+
+<p>The <strong>2nth.ai pattern</strong>: Workers AI classifies intent at the edge (zero latency) → Azure AI Agent handles the stateful, multi-step thread → results stream back through the Worker.</p>
+
+<h2>Azure OpenAI — calling from Workers</h2>
+
+<p>Azure OpenAI uses the same REST API shape as OpenAI but with a different base URL and <code>api-version</code> parameter. Auth via API key or Entra ID token.</p>
+
+<pre><code class="lang-typescript">// Chat completion — GPT-4o
+const res = await fetch(
+  `${env.AZURE_OPENAI_ENDPOINT}/openai/deployments/gpt-4o/chat/completions?api-version=2025-01-01-preview`,
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'api-key': env.AZURE_OPENAI_KEY,
+      // OR: Authorization: `Bearer ${await getAzureToken(env, 'https://cognitiveservices.azure.com/.default')}`
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages: [
+        { role: 'system', content: 'You are a helpful business assistant.' },
+        { role: 'user', content: userMessage },
+      ],
+      max_tokens: 1000,
+      temperature: 0.3,
+    }),
+  }
+);
+const data = await res.json();
+const reply = data.choices[0].message.content;</code></pre>
+
+<p><strong>Current model deployments (2025/2026):</strong></p>
+<table><thead><tr><th>Deployment name</th><th>Model</th><th>Best for</th></tr></thead><tbody><tr><td><code>gpt-4o</code></td><td>GPT-4o</td><td>General assistant, structured output, tool use</td></tr><tr><td><code>gpt-4o-mini</code></td><td>GPT-4o mini</td><td>Fast classification, low-cost tasks</td></tr><tr><td><code>o3-mini</code></td><td>o3-mini</td><td>Complex reasoning, coding, multi-step planning</td></tr><tr><td><code>o1</code></td><td>o1</td><td>Deep reasoning, long-context analysis</td></tr><tr><td><code>text-embedding-3-large</code></td><td>Embedding</td><td>RAG, semantic search, Vectorize</td></tr></tbody></table>
+
+<h3>Structured output (JSON schema)</h3>
+<pre><code class="lang-typescript">body: JSON.stringify({
+  model: 'gpt-4o',
+  messages: [...],
+  response_format: {
+    type: 'json_schema',
+    json_schema: {
+      name: 'invoice_extraction',
+      strict: true,
+      schema: {
+        type: 'object',
+        properties: {
+          vendor: { type: 'string' },
+          amount: { type: 'number' },
+          due_date: { type: 'string' },
+          line_items: { type: 'array', items: { type: 'object', properties: { description: { type: 'string' }, amount: { type: 'number' } }, required: ['description','amount'], additionalProperties: false } },
+        },
+        required: ['vendor','amount','due_date','line_items'],
+        additionalProperties: false,
+      },
+    },
+  },
+})</code></pre>
+
+<h2>Azure AI Agent Service</h2>
+
+<p>Managed agent infrastructure with persistent threads. Think OpenAI Assistants v2, hosted in Azure, with enterprise auth and Azure AI Search integration.</p>
+
+<h3>Concepts</h3>
+<ul><li><strong>Agent</strong> — a configured AI with a system prompt, model, and tools</li><li><strong>Thread</strong> — a persistent conversation session with a user (stored in Azure)</li><li><strong>Run</strong> — executing the agent against a thread; may involve multiple tool calls</li><li><strong>Tool</strong> — function (your Worker endpoint), file search (Azure AI Search), code interpreter</li></ul>
+
+<h3>Create an agent</h3>
+<pre><code class="lang-typescript">const agent = await fetch(
+  `${env.AZURE_AI_PROJECT_ENDPOINT}/agents/v1.0/agents`,
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'api-key': env.AZURE_AI_KEY },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      name: '2nth-erp-assistant',
+      instructions: `You are an ERP assistant for 2nth.ai clients. You can query invoices, 
+        check stock, and draft supplier communications. Always confirm before taking actions.`,
+      tools: [
+        { type: 'file_search' },
+        { type: 'code_interpreter' },
+        {
+          type: 'function',
+          function: {
+            name: 'query_invoices',
+            description: 'Query open invoices from the ERP system',
+            parameters: {
+              type: 'object',
+              properties: {
+                client_name: { type: 'string', description: 'Filter by client name' },
+                status: { type: 'string', enum: ['open', 'overdue', 'paid'] },
+              },
+            },
+          },
+        },
+      ],
+    }),
+  }
+).then(r =&gt; r.json());</code></pre>
+
+<h3>Thread lifecycle (Worker handler)</h3>
+<pre><code class="lang-typescript">export default {
+  async fetch(request: Request, env: Env): Promise&lt;Response&gt; {
+    const { message, threadId: existingThreadId } = await request.json() as {
+      message: string; threadId?: string;
+    };
+
+    const base = env.AZURE_AI_PROJECT_ENDPOINT + '/agents/v1.0';
+    const headers = { 'Content-Type': 'application/json', 'api-key': env.AZURE_AI_KEY };
+
+    // 1. Get or create thread
+    const threadId = existingThreadId ?? (
+      await fetch(`${base}/threads`, { method: 'POST', headers, body: '{}' })
+        .then(r =&gt; r.json()).then(d =&gt; d.id)
+    );
+
+    // 2. Add user message to thread
+    await fetch(`${base}/threads/${threadId}/messages`, {
+      method: 'POST', headers,
+      body: JSON.stringify({ role: 'user', content: message }),
+    });
+
+    // 3. Create a run
+    let run = await fetch(`${base}/threads/${threadId}/runs`, {
+      method: 'POST', headers,
+      body: JSON.stringify({ assistant_id: env.AZURE_AGENT_ID }),
+    }).then(r =&gt; r.json());
+
+    // 4. Poll until complete (handle tool calls)
+    while (run.status === 'queued' || run.status === 'in_progress' || run.status === 'requires_action') {
+      await new Promise(r =&gt; setTimeout(r, 800));
+      run = await fetch(`${base}/threads/${threadId}/runs/${run.id}`, { headers }).then(r =&gt; r.json());
+
+      if (run.status === 'requires_action') {
+        const toolCalls = run.required_action.submit_tool_outputs.tool_calls;
+        const outputs = await Promise.all(toolCalls.map(async (tc: any) =&gt; {
+          const args = JSON.parse(tc.function.arguments);
+          let output = '';
+
+          if (tc.function.name === 'query_invoices') {
+            // Call your own Worker/D1/ERPNext
+            const invoices = await env.DB.prepare(
+              'SELECT * FROM invoices WHERE status = ? LIMIT 10'
+            ).bind(args.status ?? 'open').all();
+            output = JSON.stringify(invoices.results);
+          }
+
+          return { tool_call_id: tc.id, output };
+        }));
+
+        // Submit tool outputs
+        await fetch(`${base}/threads/${threadId}/runs/${run.id}/submit_tool_outputs`, {
+          method: 'POST', headers,
+          body: JSON.stringify({ tool_outputs: outputs }),
+        });
+      }
+    }
+
+    // 5. Get the assistant reply
+    const messages = await fetch(
+      `${base}/threads/${threadId}/messages?order=desc&amp;limit=1`, { headers }
+    ).then(r =&gt; r.json());
+
+    const reply = messages.data[0].content[0].text.value;
+    return Response.json({ reply, threadId });
+  }
+};</code></pre>
+
+<h2>Semantic Kernel — orchestration layer</h2>
+
+<p>Semantic Kernel (SK) is Microsoft's orchestration SDK. Use it from a Cloud Run container (Node.js/Python) when you need multi-agent coordination, complex planning, or plugin chaining that's too stateful for a Worker.</p>
+
+<h3>Worker → Cloud Run → SK pattern</h3>
+<pre><code class="lang-typescript">// Cloudflare Worker: classify + route
+const intent = await classifyWithWorkersAI(message, env);
+
+if (intent === 'complex_multi_step') {
+  // Hand off to Cloud Run container running Semantic Kernel
+  const result = await fetch(env.SK_SERVICE_URL + '/orchestrate', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${await getCloudRunToken(env)}` },
+    body: JSON.stringify({ message, threadId, context }),
+  }).then(r =&gt; r.json());
+  return result;
+}
+// Simple → handle in Worker directly with Azure OpenAI</code></pre>
+
+<h3>SK plugin definition (TypeScript)</h3>
+<pre><code class="lang-typescript">import { kernel, KernelFunction, KernelArguments } from '@microsoft/semantic-kernel';
+
+class ERPPlugin {
+  @KernelFunction()
+  @kernel.function({ description: 'Get open invoices from ERPNext' })
+  async getOpenInvoices(
+    @kernel.parameter({ description: 'Client name filter', required: false })
+    clientName?: string
+  ): Promise&lt;string&gt; {
+    const res = await fetch(`${ERP_BASE_URL}/api/method/frappe.client.get_list`, {
+      headers: { Authorization: `token ${API_KEY}:${API_SECRET}` },
+      // ...
+    });
+    return JSON.stringify(await res.json());
+  }
+}
+
+// Register and invoke
+const k = kernel.builder()
+  .addAzureOpenAIChatCompletion('gpt-4o', endpoint, apiKey)
+  .build();
+k.importPluginFromObject(new ERPPlugin(), 'ERP');
+
+const result = await k.invokePromptAsync(
+  'Find all overdue invoices for {{$client}} and draft a payment reminder.',
+  new KernelArguments({ client: 'Acme Corp' })
+);</code></pre>
+
+<h2>Copilot Studio — MCP connector</h2>
+
+<p>Expose any 2nth.ai Worker as a tool in Microsoft Copilot Studio using the MCP protocol. Copilot Studio added native MCP support in 2025.</p>
+
+<pre><code class="lang-text">2nth Worker (MCP server)
+  → Copilot Studio MCP connector
+  → Microsoft 365 Copilot Chat
+  → Teams / Outlook / Word</code></pre>
+
+<h3>Worker as MCP server (minimal)</h3>
+<pre><code class="lang-typescript">// GET /.well-known/mcp — MCP server manifest
+// POST /mcp/tools/call — tool invocation
+
+export default {
+  async fetch(request: Request, env: Env): Promise&lt;Response&gt; {
+    const url = new URL(request.url);
+
+    if (url.pathname === '/.well-known/mcp') {
+      return Response.json({
+        schema_version: '2025-11-05',
+        name: '2nth-erp',
+        description: 'Query ERP data — invoices, stock, suppliers',
+        tools: [
+          {
+            name: 'query_invoices',
+            description: 'List invoices by status or client',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                status: { type: 'string', enum: ['open','overdue','paid'] },
+                client: { type: 'string' },
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    if (url.pathname === '/mcp/tools/call' &amp;&amp; request.method === 'POST') {
+      const { name, arguments: args } = await request.json() as any;
+      // ... dispatch to tool handlers
+      return Response.json({ content: [{ type: 'text', text: result }] });
+    }
+
+    return new Response('Not found', { status: 404 });
+  }
+};</code></pre>
+
+<h3>Register in Copilot Studio</h3>
+<pre><code class="lang-text">1. Copilot Studio → Your copilot → Tools → Add a tool → MCP
+2. Server URL: https://your-worker.workers.dev
+3. Auth: API key header (X-API-Key → your Worker secret)
+4. Copilot Studio auto-discovers tools from /.well-known/mcp
+5. Enable tool → test in Copilot Chat → publish to Teams/Outlook</code></pre>
+
+<h2>Azure AI Search — RAG retrieval</h2>
+
+<p>Azure AI Search is the enterprise RAG layer. Hybrid search (vector + BM25 keyword) outperforms pure vector search for most business document scenarios.</p>
+
+<pre><code class="lang-typescript">// Index a document
+await fetch(`${env.AZURE_SEARCH_ENDPOINT}/indexes/erp-docs/docs/index?api-version=2024-07-01`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'api-key': env.AZURE_SEARCH_KEY },
+  body: JSON.stringify({
+    value: [{
+      '@search.action': 'upload',
+      id: docId,
+      content: documentText,
+      contentVector: await getEmbedding(documentText, env), // text-embedding-3-large
+      source: 'erpnext',
+      clientId: 'acme-corp',
+    }],
+  }),
+});
+
+// Hybrid search
+const results = await fetch(
+  `${env.AZURE_SEARCH_ENDPOINT}/indexes/erp-docs/docs/search?api-version=2024-07-01`,
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'api-key': env.AZURE_SEARCH_KEY },
+    body: JSON.stringify({
+      search: userQuery,               // BM25 keyword
+      vectorQueries: [{
+        kind: 'vector',
+        vector: await getEmbedding(userQuery, env),
+        fields: 'contentVector',
+        k: 5,
+      }],
+      queryType: 'semantic',
+      semanticConfiguration: 'default',
+      top: 5,
+      select: 'id,content,source,clientId',
+    }),
+  }
+).then(r =&gt; r.json());</code></pre>
+
+<h2>2nth.ai agentic routing pattern</h2>
+
+<pre><code class="lang-text">User message (Web / Teams / WhatsApp)
+  → Cloudflare Worker
+      ↓
+  Workers AI (Llama 3.1 8B) — classify intent: simple | complex | erp | document
+      ↓
+  [simple]    → Azure OpenAI GPT-4o mini — direct answer, stream back
+  [complex]   → Azure AI Agent Service — create/resume thread, run with tools
+  [erp]       → Azure AI Agent + ERPNext function tool via Cloud Run
+  [document]  → Azure AI Agent + Azure AI Search file_search tool
+      ↓
+  D1 / KV — persist threadId per user session
+  R2 — store uploaded files before indexing</code></pre>
+
+<h2>Rate limits and quotas</h2>
+
+<table><thead><tr><th>Service</th><th>Default quota</th><th>Notes</th></tr></thead><tbody><tr><td>GPT-4o</td><td>450k TPM (tokens/min)</td><td>Request increase for production</td></tr><tr><td>GPT-4o mini</td><td>2M TPM</td><td>Good for classification/routing</td></tr><tr><td>o3-mini</td><td>150k TPM</td><td>Lower — use for complex tasks only</td></tr><tr><td>AI Agent Service</td><td>50 concurrent runs</td><td>Scales with quota request</td></tr><tr><td>Azure AI Search</td><td>3 indexes (free tier)</td><td>Standard S1: 50 indexes</td></tr></tbody></table>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong><code>api-version</code> is mandatory</strong> on every Azure OpenAI call — use <code>2025-01-01-preview</code> or latest stable; missing it returns 404</li><li><strong>Thread polling in Workers</strong> — Workers have a 30s CPU limit; for long-running agent runs (&gt;30s), return the <code>threadId</code> and let the client poll a <code>/status</code> endpoint</li><li><strong>Streaming from Workers</strong> — Azure OpenAI supports <code>stream: true</code>; use <code>TransformStream</code> in the Worker to stream SSE back to the browser</li><li><strong>Token caching</strong> — access tokens are valid 1 hour; cache in KV with <code>expirationTtl: 3500</code> to avoid a token fetch on every request</li><li><strong>MCP in Copilot Studio</strong> — requires the MCP server to be publicly reachable and respond to the manifest within 5s; Workers are ideal</li><li><strong>Azure AI Search free tier</strong> — 3 indexes, 50MB total; upgrade to Standard S1 for production RAG workloads</li><li><strong>Region availability</strong> — <code>eastus</code> and <code>westeurope</code> have the broadest model availability; <code>southafricanorth</code> has limited Azure OpenAI capacity — check before designing</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/microsoft/azure-ai/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

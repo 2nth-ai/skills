@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>South African Corporate Tax — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">South African Corporate Tax</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/fin/sa/tax/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">South African Corporate Tax</div>
+      <h1>SOUTH AFRICAN CORPORATE TAX</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../fin/sa.html">fin/sa</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">fin/accounting</a><a class="skill-chip" href="#">fin/modelling</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>South African Corporate Income Tax</h1>
+
+<p>Corporate income tax in South Africa is governed by the <strong>Income Tax Act 58 of 1962</strong>, administered by SARS. The standard corporate tax rate is <strong>27%</strong> (effective for companies with years of assessment ending on or after 31 March 2023; previously 28%).</p>
+
+<hr>
+
+<h2>Tax Rates</h2>
+
+<h3>Standard Companies</h3>
+<p><strong>27%</strong> on taxable income.</p>
+
+<h3>Small Business Corporations (SBC)</h3>
+<p>A more favourable sliding scale applies where the company meets ALL of the following:</p>
+<ul><li>All shareholders are natural persons</li><li>Annual taxable income does not exceed R20 million</li><li>No shareholder holds a shareholding in another company (with limited exceptions)</li><li>Not a personal service provider</li><li>Not an investment company</li></ul>
+
+<p><strong>2024/25 SBC Tax Table</strong>:</p>
+
+<table><thead><tr><th>Taxable Income</th><th>Rate</th></tr></thead><tbody><tr><td>R0 – R95,750</td><td>0%</td></tr><tr><td>R95,751 – R365,000</td><td>7% on the amount above R95,750</td></tr><tr><td>R365,001 – R550,000</td><td>R18,848 + 21% on the amount above R365,000</td></tr><tr><td>R550,001+</td><td>R57,698 + 27% on the amount above R550,000</td></tr></tbody></table>
+
+<h3>Personal Service Providers</h3>
+<p>Taxed at 27%. Cannot claim most employee-related deductions.</p>
+
+<h3>Dividends Tax</h3>
+<p><strong>20%</strong> withheld on dividends paid to shareholders. Dividend Tax is a withholding tax — the company withholds and pays to SARS on behalf of the shareholder.</p>
+
+<p>Exemptions:</p>
+<ul><li>Dividends paid to SA resident companies (inter-company dividends)</li><li>Dividends paid to certain public benefit organisations</li><li>Foreign dividends are exempt if the SA company holds ≥10% in the foreign company (subject to conditions)</li></ul>
+
+<hr>
+
+<h2>Provisional Tax</h2>
+
+<p>Provisional tax is a mechanism to pay income tax in advance during the tax year rather than as a lump sum. Companies are provisional taxpayers.</p>
+
+<h3>First Provisional Tax Return (IRP6 — First Period)</h3>
+<p>Due: <strong>Last day of the 6th month of the tax year</strong></p>
+<ul><li>Estimate: At least 80% of the actual tax liability for the year, or the basic amount (prior year's taxable income)</li><li>Minimum payment: Based on the basic amount (SARS's estimate from prior year)</li><li>Penalty for underpayment: 20% of the shortfall if less than 80% of actual liability</li></ul>
+
+<h3>Second Provisional Tax Return (IRP6 — Second Period)</h3>
+<p>Due: <strong>Last day of the tax year</strong></p>
+<ul><li>Estimate: At least 80% of actual tax liability</li><li>This is the critical estimate — if you pay too little here, penalties apply</li></ul>
+
+<h3>Third (Optional) Provisional Tax Return</h3>
+<p>Due: <strong>7 months after year-end</strong> (for February year-end: by 30 September)</p>
+<ul><li>Allows topping up to avoid the 20% underestimation penalty</li><li>Strongly recommended when actual tax liability will significantly exceed the second provisional estimate</li></ul>
+
+<h3>Example (February Year-End Company)</h3>
+<table><thead><tr><th>Event</th><th>Due Date</th></tr></thead><tbody><tr><td>1st Provisional</td><td>31 August</td></tr><tr><td>2nd Provisional</td><td>28/29 February</td></tr><tr><td>Optional 3rd</td><td>30 September</td></tr><tr><td>Tax Return (ITR14)</td><td>12 months after year-end</td></tr></tbody></table>
+
+<hr>
+
+<h2>Taxable Income Calculation</h2>
+
+<pre><code class="lang-text">Gross Income
+Less: Exempt Income
+= Income
+Less: Deductions (s11)
+Add: Recoupments and capital gains (CGT inclusion)
+= Taxable Income
+× Tax Rate
+= Normal Tax
+Less: Rebates (not applicable to companies)
+Less: Provisional Tax Paid
+= Tax Payable / (Refundable)</code></pre>
+
+<h3>Key Allowable Deductions (Section 11)</h3>
+<ul><li>Expenses <strong>actually incurred</strong> in the production of income</li><li>Not of a capital nature</li><li>Not prohibited by another section</li></ul>
+
+<p><strong>Common deductions</strong>:</p>
+<ul><li>Salaries and wages (including employer UIF and SDL)</li><li>Rent</li><li>Repairs and maintenance (not improvements)</li><li>Bad debts (written off, previously included in income)</li><li>Professional fees (accounting, legal)</li><li>Marketing and advertising</li><li>Travel (at SARS rate or actual cost with logbook)</li><li>Medical aid employer contributions (for employees)</li><li>Interest on borrowings used for trade purposes</li></ul>
+
+<h3>Capital vs Revenue Distinction</h3>
+<p>Capital expenditure is <strong>not immediately deductible</strong>. Instead:</p>
+<ul><li><strong>Section 11(e)</strong> — wear and tear allowance on plant, machinery, and equipment</li><li><strong>Section 12C</strong> — manufacturing plant: 40/20/20/20 or 20% per year</li><li><strong>Section 13</strong> — buildings: 5% per year for commercial, 10% for residential rental</li><li><strong>Section 12B</strong> — renewable energy assets: 100% in year 1 (solar, wind)</li></ul>
+
+<hr>
+
+<h2>Assessed Losses</h2>
+
+<p>A company that incurs a loss in a tax year may carry the <strong>assessed loss</strong> forward indefinitely, subject to the <strong>balance of assessed loss</strong> limitation:</p>
+
+<ul><li>From 1 April 2022: A company may only set off a balance of assessed loss against <strong>80% of taxable income</strong> in a given year</li><li>The remaining 20% of taxable income is always taxable, even where assessed losses exist</li><li>Example: Taxable income R1m, assessed loss R2m → Tax on R200,000 (20% of R1m is always taxable)</li></ul>
+
+<hr>
+
+<h2>Transfer Pricing</h2>
+
+<p>Applicable to transactions between connected persons (related parties):</p>
+<ul><li>Must be at <strong>arm's length</strong> (as if between unrelated parties)</li><li>Documentation required to support pricing decisions</li><li>SARS may adjust pricing to arm's length equivalent</li><li>Applies to cross-border and (under s31) certain domestic related-party transactions</li></ul>
+
+<hr>
+
+<h2>Common Tax Planning Considerations (Legitimate)</h2>
+
+<ul><li><strong>Timing of income recognition</strong>: Defer income to the next tax year where possible (subject to anti-avoidance rules)</li><li><strong>Accelerated depreciation</strong>: Use Section 12B for renewable energy assets (100% year 1)</li><li><strong>Research &amp; Development</strong>: Section 11D allows a 150% deduction for qualifying R&amp;D expenditure</li><li><strong>Learnership allowances</strong>: Section 12H — additional deductions for registered learnerships (NQF Level 1-6)</li><li><strong>Small Business Corporation</strong>: Structure to qualify if shareholders are natural persons</li><li><strong>Dividend vs Salary</strong>: At 27% CIT + 20% dividends tax (effective 41.6%) vs marginal income tax rates — analysis required per situation</li></ul>
+
+<hr>
+
+<h2>Annual Tax Return (ITR14)</h2>
+
+<p>Due <strong>12 months after the company's year-end</strong>. Filed on SARS eFiling.</p>
+
+<p>Requires:</p>
+<ul><li>Financial statements (IFRS for SMEs or full IFRS)</li><li>Reconciliation of accounting profit to taxable income</li><li>Supporting schedules for capital allowances, assessed losses, related party transactions</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/fin/sa/tax/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

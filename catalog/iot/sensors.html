@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sensors & Signal Conditioning — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Sensors & Signal Conditioning</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/iot/sensors/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Sensors & Signal Conditioning</div>
+      <h1>SENSORS & SIGNAL CONDITIONING</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../iot/hardware.html">iot/hardware</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Sensors &amp; Signal Conditioning</h1>
+
+<p>Sensors convert physical phenomena into electrical signals. The quality of the measurement is only as good as the sensor selection, signal conditioning chain, and calibration. Garbage in, garbage out — a beautifully designed wireless system transmitting inaccurate data helps nobody.</p>
+
+<hr>
+
+<h2>Sensor Selection Framework</h2>
+
+<p>Ask these questions before selecting any sensor:</p>
+
+<table><thead><tr><th>Question</th><th>Why It Matters</th></tr></thead><tbody><tr><td>What is the measurement range?</td><td>Full-scale range must cover worst-case physical value</td></tr><tr><td>What accuracy is required?</td><td>±0.1°C vs ±1°C → completely different sensor categories</td></tr><tr><td>What resolution is needed?</td><td>8-bit (256 steps) vs 16-bit (65,536 steps)</td></tr><tr><td>What is the operating environment?</td><td>Temperature, humidity, dust (IP rating), vibration, chemicals</td></tr><tr><td>What is the power budget?</td><td>Continuous vs duty-cycled; 1µA vs 1mA makes a huge battery difference</td></tr><tr><td>What interface is available on the MCU?</td><td>I²C, SPI, UART, ADC, pulse counter</td></tr><tr><td>What are the supply voltage constraints?</td><td>3.3V vs 5V vs 24V</td></tr><tr><td>Is a calibration certificate required?</td><td>Industrial/safety applications often require traceable calibration</td></tr><tr><td>What is the MTBF/lifetime requirement?</td><td>Consumer vs industrial grade</td></tr><tr><td>What is the cost target?</td><td>$0.50 vs $5 vs $50 per node changes design entirely</td></tr></tbody></table>
+
+<hr>
+
+<h2>Common Sensor Categories</h2>
+
+<h3>Temperature</h3>
+
+<table><thead><tr><th>Sensor Type</th><th>Range</th><th>Accuracy</th><th>Interface</th><th>Power</th><th>Use Case</th></tr></thead><tbody><tr><td>NTC Thermistor</td><td>−40 to +125°C</td><td>±0.5–2°C (cal'd)</td><td>ADC</td><td>nA (resistive)</td><td>Low cost; requires linearisation</td></tr><tr><td>PT100/PT1000 (RTD)</td><td>−200 to +850°C</td><td>±0.1–0.5°C</td><td>ADC + amp</td><td>µA</td><td>Industrial; high accuracy</td></tr><tr><td>DS18B20 (1-Wire)</td><td>−55 to +125°C</td><td>±0.5°C</td><td>1-Wire</td><td>1.5mA active</td><td>Watertight probe; multi-drop</td></tr><tr><td>SHT4x (Sensirion)</td><td>−40 to +125°C</td><td>±0.2°C</td><td>I²C</td><td>0.1µA sleep</td><td>Combined T+RH; excellent</td></tr><tr><td>TMP117 (TI)</td><td>−55 to +150°C</td><td>±0.1°C</td><td>I²C</td><td>3.5µA active</td><td>Precision; medical-grade option</td></tr><tr><td>K-type thermocouple + MAX31855</td><td>−200 to +1350°C</td><td>±2°C</td><td>SPI</td><td>1.5mA</td><td>High-temp industrial; motors</td></tr></tbody></table>
+
+<p><strong>NTC linearisation</strong>: Steinhart-Hart equation for accuracy:</p>
+<pre><code class="lang-c">// Steinhart-Hart: 1/T = A + B·ln(R) + C·(ln(R))³
+float steinhart_temp(float resistance) {
+    float A = 0.001129148f, B = 0.000234125f, C = 8.76741e-8f;
+    float logR = logf(resistance);
+    float T = 1.0f / (A + B * logR + C * logR * logR * logR);
+    return T - 273.15f;  // Convert Kelvin to Celsius
+}</code></pre>
+
+<p>Simpler but less accurate: Beta equation (use when ±1°C is acceptable).</p>
+
+<h3>Humidity</h3>
+
+<table><thead><tr><th>Sensor</th><th>Accuracy</th><th>Hysteresis</th><th>Notes</th></tr></thead><tbody><tr><td>SHT40 (Sensirion)</td><td>±1.8% RH</td><td>±0.1%</td><td>Best overall; pre-cal'd; I²C</td></tr><tr><td>SHT31</td><td>±2% RH</td><td>±0.1%</td><td>Previous generation; still excellent</td></tr><tr><td>DHT22 / AM2302</td><td>±2% RH</td><td>~0.5%</td><td>1-Wire-like; slow; cheap; adequate</td></tr><tr><td>BME280 (Bosch)</td><td>±3% RH</td><td>±1%</td><td>Combined T+RH+pressure; I²C or SPI</td></tr><tr><td>HIH6130</td><td>±4% RH</td><td></td><td>I²C; Honeywell industrial</td></tr></tbody></table>
+
+<p><strong>Condensation protection</strong>: Capacitive RH sensors fail when condensation forms on the sensing element. Use a hydrophobic membrane filter (Gore-Tex ePTFE) for outdoor deployments. Or use heated sensors (SHT35 with heater command) to prevent condensation.</p>
+
+<h3>Pressure</h3>
+
+<table><thead><tr><th>Type</th><th>Range</th><th>Interface</th><th>Application</th></tr></thead><tbody><tr><td>BMP390 (Bosch)</td><td>300–1250 hPa</td><td>SPI/I²C</td><td>Weather; altitude; drone</td></tr><tr><td>MS5637 (TE)</td><td>300–1200 hPa</td><td>I²C</td><td>High accuracy weather</td></tr><tr><td>MPX5700 (NXP)</td><td>0–700 kPa</td><td>Analogue</td><td>Tyre pressure; fluid pressure</td></tr><tr><td>Honeywell TBM</td><td>0–10 bar</td><td>Analogue/I²C</td><td>Industrial pipe pressure</td></tr><tr><td>Gems Sensors</td><td>0–1000 bar</td><td>4-20mA</td><td>Harsh industrial</td></tr></tbody></table>
+
+<p><strong>Differential pressure</strong>: For flow measurement (Bernoulli), air quality (filter monitoring), liquid level. Use MPXV7002 (±2kPa, analogue) or SDP810 (Sensirion, ±500Pa, I²C, low differential).</p>
+
+<h3>Motion &amp; Vibration</h3>
+
+<table><thead><tr><th>Sensor</th><th>Type</th><th>Range</th><th>Interface</th><th>Use Case</th></tr></thead><tbody><tr><td>MPU-6050/ICM-42688</td><td>IMU (accel+gyro)</td><td>±16g / ±2000°/s</td><td>I²C/SPI</td><td>Orientation, motion detection</td></tr><tr><td>ADXL345</td><td>Accelerometer</td><td>±16g</td><td>SPI/I²C</td><td>Low power; tap/freefall detect</td></tr><tr><td>LIS3DH</td><td>Accelerometer</td><td>±16g</td><td>SPI/I²C</td><td>2µA sleep; activity interrupt</td></tr><tr><td>IIS3DWB</td><td>Vibration</td><td>±16g</td><td>SPI</td><td>Wide-bandwidth (6kHz); industrial</td></tr><tr><td>HC-SR501</td><td>PIR</td><td>Passive IR</td><td>Digital GPIO</td><td>Motion detection; wide angle</td></tr><tr><td>RCWL-0516</td><td>Doppler microwave</td><td></td><td>Digital GPIO</td><td>Motion through walls; rain-resistant</td></tr></tbody></table>
+
+<p><strong>Vibration for predictive maintenance</strong>: Sample at ≥2× max frequency of interest (Nyquist). Motor bearings: 10kHz sample rate. Use FFT to identify bearing fault frequencies (BPFI, BPFO, BSF, FTF — calculated from bearing geometry).</p>
+
+<h3>Light &amp; Optical</h3>
+
+<table><thead><tr><th>Sensor</th><th>Wavelength</th><th>Output</th><th>Use Case</th></tr></thead><tbody><tr><td>BH1750</td><td>400–700nm (lux)</td><td>I²C</td><td>Ambient light; 16-bit</td></tr><tr><td>VEML7700</td><td>400–700nm (lux)</td><td>I²C</td><td>High dynamic range; 0.0036 to 120k lux</td></tr><tr><td>TSL2591</td><td>400–1000nm</td><td>I²C</td><td>Dual-channel; IR + visible; 600M:1 DR</td></tr><tr><td>AS7341</td><td>11-channel spectral</td><td>I²C</td><td>Colour/spectral analysis</td></tr><tr><td>OPT3001</td><td>300–1000nm (lux)</td><td>I²C</td><td>Texas Instruments; low power</td></tr><tr><td>APDS-9960</td><td>RGB + proximity + gesture</td><td>I²C</td><td>Gesture recognition; colour sensing</td></tr></tbody></table>
+
+<p><strong>IR distance/proximity</strong>: GP2Y0A21 (analogue, 10–80cm), VL53L1X (ToF, 0–4m, I²C, 10ms response), VL53L4CD (multi-zone ToF). ToF sensors are unaffected by target reflectivity — use for fluid level sensing.</p>
+
+<h3>Gas &amp; Air Quality</h3>
+
+<table><thead><tr><th>Sensor</th><th>Target Gas</th><th>Interface</th><th>Warm-Up</th><th>Notes</th></tr></thead><tbody><tr><td>SGP40 (Sensirion)</td><td>VOC index</td><td>I²C</td><td>10s</td><td>Relative VOC; pairs with SHT4x</td></tr><tr><td>SEN55 (Sensirion)</td><td>PM1/2.5/4/10 + VOC + T + RH</td><td>UART/I²C</td><td>1s</td><td>All-in-one air quality module</td></tr><tr><td>SCD40/41 (Sensirion)</td><td>CO₂ (NDIR)</td><td>I²C</td><td>0 (photoacoustic)</td><td>True CO₂; no drift; ±50ppm</td></tr><tr><td>MH-Z19C</td><td>CO₂ (NDIR)</td><td>UART/PWM</td><td>3 min</td><td>Cheap; self-calibrating; adequate</td></tr><tr><td>MQ-2/135/136</td><td>LPG/smoke/CO₂/NH₃</td><td>Analogue</td><td>24–48h</td><td>Cheap; drifty; need recalibration; 5V</td></tr><tr><td>MICS-6814</td><td>CO/NO₂/NH₃</td><td>Analogue</td><td>15 min</td><td>Compact; 3 sensors; use with care</td></tr><tr><td>SHT4x + SGP41</td><td>Humidity + VOC + NOₓ</td><td>I²C</td><td>10s</td><td>Sensirion indoor air quality combo</td></tr></tbody></table>
+
+<p><strong>Electrochemical gas sensors</strong> (CO, H₂S, SO₂): Higher accuracy for specific gases, but degrade over 2–5 years and require factory calibration. Used in industrial safety monitoring.</p>
+
+<h3>Soil &amp; Agricultural (SA Relevance)</h3>
+
+<table><thead><tr><th>Measurement</th><th>Sensor</th><th>Interface</th><th>Notes</th></tr></thead><tbody><tr><td>Soil moisture (capacitive)</td><td>Capacitive soil sensor v1.2</td><td>ADC</td><td>No corrosion; better than resistive</td></tr><tr><td>Soil moisture (FDR)</td><td>Sentek EnviroSCAN</td><td>SDI-12</td><td>Industrial; multi-depth</td></tr><tr><td>Soil temperature</td><td>DS18B20 in probe</td><td>1-Wire</td><td>Stainless steel probe; watertight</td></tr><tr><td>Soil EC (electrical conductivity)</td><td>Atlas Scientific EZO-EC</td><td>UART/I²C</td><td>±2%; requires calibration solutions</td></tr><tr><td>Leaf wetness</td><td>200SS-WS leaf wetness</td><td>Analogue</td><td>Grid resistance; simple</td></tr><tr><td>Rainfall</td><td>Tipping bucket rain gauge</td><td>Pulse count</td><td>0.2mm/tip; interrupt-driven counter</td></tr><tr><td>Wind speed</td><td>Anemometer (cup)</td><td>Pulse count</td><td>Calibrate: Hz → m/s curve</td></tr><tr><td>Water level</td><td>Ultrasonic (JSN-SR04T)</td><td>Trigger/Echo</td><td>Weatherproof; 20–600cm</td></tr></tbody></table>
+
+<p><strong>SA precision agriculture</strong>: Significant IoT deployments in Western Cape wine farms, Limpopo citrus, KZN sugarcane. LoRaWAN preferred (range, battery life). Local integrators: Aerobotics, Aerospec, WineMS.</p>
+
+<hr>
+
+<h2>Interface Protocols</h2>
+
+<h3>I²C</h3>
+
+<ul><li>Two-wire (SDA + SCL); multi-master capable; 100kHz / 400kHz / 1MHz / 3.4MHz</li><li>7-bit address space (128 devices; typically 20–50 usable after reserved)</li><li>Pull-up resistors: 4.7kΩ at 100kHz (3.3V); 2.2kΩ at 400kHz</li><li>Pull-up calculation: R_max = (Vcc − 0.4V) / 3mA; R_min = trise_max / Cbus</li><li>Clock stretching: slow sensors hold SCL low — ensure master supports it</li><li><strong>Address conflicts</strong>: multiple sensors with same address → use I²C multiplexer (TCA9548A)</li></ul>
+
+<pre><code class="lang-c">// I²C read example (STM32 HAL)
+uint8_t buf[2];
+HAL_I2C_Mem_Read(&amp;hi2c1, SENSOR_ADDR &lt;&lt; 1, REG_TEMP, I2C_MEMADD_SIZE_8BIT, buf, 2, HAL_MAX_DELAY);
+int16_t raw = (buf[0] &lt;&lt; 8) | buf[1];
+float temp_c = raw * 0.0078125f;  // SHT4x conversion</code></pre>
+
+<h3>SPI</h3>
+
+<ul><li>Four-wire (MOSI, MISO, SCLK, CS); single-master; up to 80MHz</li><li>CS active-low; one CS pin per device (no address conflict issue)</li><li>Clock polarity (CPOL) and phase (CPHA): check datasheet; CPOL=0/CPHA=0 is most common</li><li>Full-duplex: transmit and receive simultaneously</li><li>Better for high-speed ADCs, display drivers, high-resolution sensors</li></ul>
+
+<h3>UART</h3>
+
+<ul><li>Two-wire (TX, RX) + optional RTS/CTS; point-to-point</li><li>Baud rate must match exactly (common: 9600, 115200)</li><li>RS-232: ±12V signalling; long cable runs; needs level shifter</li><li>RS-485: differential; 32 nodes; 1.2km; 10Mbps; use for industrial multi-drop</li></ul>
+
+<h3>4-20mA Current Loop</h3>
+
+<p>Standard for industrial sensors. 4mA = zero, 20mA = full-scale. Immune to resistive cable losses (up to 1kΩ loop resistance). Dead band below 4mA indicates wire break.</p>
+
+<pre><code class="lang-text">ADC voltage = I_loop × R_sense
+Engineering value = (I_loop - 0.004) / 0.016 × full_scale_value</code></pre>
+
+<p>Use a 100–250Ω precision resistor as current sense. ADC input: 0.4V (4mA) to 2.0V (20mA) across 100Ω. Single-supply with 3.3V ADC.</p>
+
+<h3>SDI-12</h3>
+
+<p>Serial digital interface at 1200 baud. Used extensively in environmental and agricultural sensors (soil sensors, weather stations, water quality probes). One wire + ground. Up to 10 sensors per bus. ASCII command/response protocol.</p>
+
+<pre><code class="lang-text">Measurement command: aM!  (a = address 0-9, M = measure)
+Response: a&lt;ttt&gt;&lt;n&gt;&lt;cr&gt;&lt;lf&gt;  (ttt = seconds until ready, n = values)
+Data command: aD0!
+Response: a&lt;values&gt;&lt;cr&gt;&lt;lf&gt;</code></pre>
+
+<hr>
+
+<h2>ADC Design</h2>
+
+<h3>Resolution vs Noise</h3>
+
+<p>ADC effective resolution is limited by noise floor:</p>
+<pre><code class="lang-text">ENOB = (SNR - 1.76) / 6.02  (Effective Number of Bits)
+
+A 12-bit ADC (theoretical SNR = 74dB) rarely achieves ENOB &gt; 10-11 bits in practice</code></pre>
+
+<h3>Oversampling for Noise Reduction</h3>
+
+<p>Averaging N samples increases resolution by 0.5 bits per 4× oversampling:</p>
+<pre><code class="lang-text">Extra bits = log2(N) / 2
+For +2 bits: N = 16 samples averaged
+For +4 bits: N = 256 samples averaged</code></pre>
+
+<h3>ADC Reference Voltage</h3>
+
+<ul><li>Ratiometric: sensor and ADC share the same supply — noise cancels. Best for resistive dividers (thermistors, potentiometers).</li><li>Absolute: use a precision reference (LM4040, ADR3412). Required for absolute measurements.</li><li>Internal reference: most MCUs have 1.1V or 2.5V internal bandgap — adequate for many applications; check temperature coefficient.</li></ul>
+
+<hr>
+
+<h2>Calibration</h2>
+
+<h3>Two-Point Calibration</h3>
+
+<pre><code class="lang-python"># Apply at firmware or platform level
+def calibrate(raw, raw_low, raw_high, val_low, val_high):
+    slope = (val_high - val_low) / (raw_high - raw_low)
+    return val_low + slope * (raw - raw_low)
+
+# Example: CO₂ sensor at 400ppm ambient and known 2000ppm gas
+cal_400 = 512   # ADC reading in ambient air (~400ppm CO₂)
+cal_2000 = 1843 # ADC reading with 2000ppm reference gas
+current_ppm = calibrate(raw_reading, cal_400, cal_2000, 400, 2000)</code></pre>
+
+<h3>Calibration Storage</h3>
+
+<p>Store calibration coefficients in:</p>
+<ul><li>Non-volatile flash (internal MCU flash, last sector)</li><li>External EEPROM/FRAM (AT24C02, MB85RC)</li><li>NVS (Non-Volatile Storage) subsystem (ESP-IDF, Zephyr settings)</li><li>Platform database (retrieve on boot via MQTT/HTTPS — allows remote recalibration)</li></ul>
+
+<h3>Field Calibration Considerations</h3>
+
+<ul><li>Temperature drift: recalibrate at operating temperature, not bench temperature</li><li>Long-term drift: plan for annual recalibration visits on precision sensors</li><li>Sensor replacement: calibration coefficients are device-specific — don't share between units</li><li>Traceable calibration: ISO 17025 accredited lab for regulated industries (food safety, pharmaceutical, environmental compliance)</li></ul>
+
+<hr>
+
+<h2>Sensor Fusion</h2>
+
+<p>Combining multiple sensor readings to derive a higher-quality output than any single sensor provides.</p>
+
+<h3>Complementary Filter (Attitude Estimation)</h3>
+
+<p>Accelerometer gives absolute orientation but is noisy. Gyroscope gives smooth motion but drifts. Blend at a cutoff frequency:</p>
+
+<pre><code class="lang-c">float alpha = 0.98f;  // Trust gyro 98%, accelerometer 2%
+angle = alpha * (angle + gyro_rate * dt) + (1 - alpha) * accel_angle;</code></pre>
+
+<h3>Kalman Filter</h3>
+
+<p>Optimal state estimator for linear systems with Gaussian noise. Widely used in GPS+IMU fusion, motor control, environmental monitoring. Computationally heavier than complementary filter — justified when accuracy is critical.</p>
+
+<h3>Anomaly Detection at the Edge</h3>
+
+<p>Run a simple statistical outlier filter at the sensor node before transmitting:</p>
+<pre><code class="lang-c">// Z-score outlier rejection
+float mean = rolling_mean(history, N);
+float std  = rolling_std(history, N);
+if (fabs(new_reading - mean) &gt; 3.0f * std) {
+    // Outlier — discard or flag, don't transmit as valid reading
+    return;
+}</code></pre>
+<p>Reduces bandwidth, storage costs, and prevents spurious alerts from corrupt readings.</p>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/iot/sensors/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

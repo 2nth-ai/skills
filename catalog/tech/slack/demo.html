@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2nth.ai × Slack — Agentic Bot Pattern</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #003459; --navy-deep: #001F3F;
+  --cyan: #00A8E8; --cyan-dark: #0090C8; --cyan-light: #33BFEF;
+  --cyan-bg: rgba(0,168,232,0.07); --cyan-glow: rgba(0,168,232,0.15);
+  --slack: #4A154B; --slack-mid: #611f69; --slack-green: #007a5a;
+  --slack-yellow: #ECB22E; --slack-blue: #1264A3; --slack-red: #E01E5A;
+  --off: #F7F9FB; --gray: #F0F4F8;
+  --text: #0D1B2A; --text-2: #3D5A73; --text-3: #6B8299;
+  --border: #E2EAF1;
+  --success: #1A7A4A; --success-bg: #E8F5EE;
+  --sans: 'Plus Jakarta Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--off); font-family: var(--sans); color: var(--text); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* NAV */
+.nav { position: sticky; top: 0; z-index: 100; background: rgba(0,52,89,0.97); backdrop-filter: blur(16px); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 60px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.nav-brand { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
+.nav-brand span { color: var(--cyan-light); }
+.nav-links { display: flex; gap: 4px; }
+.nav-link { padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: rgba(255,255,255,0.5); text-decoration: none; transition: all 0.18s; cursor: pointer; }
+.nav-link:hover { background: rgba(255,255,255,0.08); color: white; }
+.nav-badge { padding: 4px 12px; border-radius: 100px; background: rgba(74,21,75,0.4); border: 1px solid rgba(154,64,156,0.4); font-size: 10px; font-weight: 600; color: #cf86d0; letter-spacing: 1px; }
+
+/* HERO */
+.hero { background: linear-gradient(160deg, var(--navy-deep) 0%, #1a0a1c 50%, #2d0f2f 100%); padding: 80px 40px 72px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(74,21,75,0.25) 0%, transparent 65%); pointer-events: none; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(74,21,75,0.3); border: 1px solid rgba(154,64,156,0.35); border-radius: 100px; padding: 6px 18px; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #cf86d0; margin-bottom: 28px; }
+.hero-badge .pulse { width: 6px; height: 6px; border-radius: 50%; background: #cf86d0; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+.hero h1 { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; color: white; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.5px; }
+.hero h1 span { color: #cf86d0; }
+.hero-sub { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 300; max-width: 600px; margin: 0 auto 40px; line-height: 1.8; }
+.hero-pills { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.hero-pill { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 9px 16px; }
+.hero-pill span { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.75); }
+.hero-arrow { font-size: 1rem; color: rgba(255,255,255,0.2); }
+
+/* SECTIONS */
+.section { padding: 72px 40px; max-width: 1080px; margin: 0 auto; }
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #9a409c; margin-bottom: 10px; }
+.section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; color: var(--text); margin-bottom: 12px; line-height: 1.2; letter-spacing: -0.3px; }
+.section-title span { color: #611f69; }
+.section-sub { font-size: 15px; color: var(--text-2); font-weight: 300; line-height: 1.8; max-width: 640px; margin-bottom: 48px; }
+.divider { border: none; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0; }
+
+/* ARCHITECTURE */
+.arch { display: grid; grid-template-columns: 1fr 56px 1fr 56px 1fr 56px 1fr; gap: 0; align-items: center; margin-bottom: 24px; }
+.arch-box { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 18px 14px; text-align: center; }
+.arch-box.highlight { border-color: #9a409c; box-shadow: 0 0 0 2px rgba(154,64,156,0.15); }
+.arch-icon { font-size: 1.5rem; margin-bottom: 8px; }
+.arch-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.arch-desc { font-size: 10px; color: var(--text-3); line-height: 1.5; }
+.arch-tag { display: inline-block; margin-top: 8px; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 100px; letter-spacing: 0.3px; }
+.tag-slack { background: rgba(74,21,75,0.1); color: var(--slack-mid); }
+.tag-cf { background: var(--cyan-bg); color: var(--cyan-dark); }
+.tag-ai { background: rgba(0,120,212,0.08); color: #1264a3; }
+.arch-arrow { text-align: center; }
+.arch-arrow-inner { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.arrow-label { font-size: 8px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-3); }
+.arrow-svg { color: #9a409c; font-size: 1.1rem; }
+.arch-note { grid-column: 1/-1; background: rgba(74,21,75,0.05); border: 1px solid rgba(154,64,156,0.15); border-radius: 10px; padding: 13px 18px; font-size: 12px; color: var(--text-2); display: flex; align-items: flex-start; gap: 10px; margin-top: 4px; }
+.arch-note strong { color: var(--navy); }
+
+/* CONNECTION WIZARD */
+.connect-card { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+.connect-header { background: var(--slack); padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; }
+.connect-title { font-size: 13px; font-weight: 600; color: white; }
+.connect-status { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; }
+.connect-status.idle { color: rgba(255,255,255,0.4); }
+.connect-status.connecting { color: #cf86d0; }
+.connect-status.connected { color: #4ade80; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.connect-status.connected .status-dot { animation: pulse 2s infinite; }
+.connect-body { padding: 28px; }
+.steps-list { display: flex; flex-direction: column; }
+.step-item { display: grid; grid-template-columns: 40px 1fr; gap: 16px; position: relative; }
+.step-item::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: -1px; width: 2px; background: var(--border); }
+.step-item:last-child::before { display: none; }
+.step-dot-col { display: flex; flex-direction: column; align-items: center; padding-top: 3px; }
+.step-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); background: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text-3); transition: all 0.4s; flex-shrink: 0; }
+.step-dot.done { background: var(--slack-mid); border-color: var(--slack-mid); color: white; }
+.step-dot.active { border-color: var(--slack-mid); color: var(--slack-mid); box-shadow: 0 0 0 3px rgba(97,31,105,0.15); }
+.step-content { padding-bottom: 28px; }
+.step-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.step-desc { font-size: 12px; color: var(--text-3); line-height: 1.65; margin-bottom: 10px; }
+.step-code { background: #0D1B2A; border-radius: 8px; padding: 14px 16px; font-family: var(--mono); font-size: 11px; color: #94c4e8; line-height: 1.8; display: none; }
+.step-code.visible { display: block; }
+.step-code .comment { color: #4a6580; }
+.step-code .key { color: #7dd3fc; }
+.step-code .val { color: #86efac; }
+.step-code .str { color: #fca5a5; }
+.step-code .success { color: #4ade80; }
+.connect-footer { padding: 18px 28px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.connect-btn { padding: 10px 22px; border-radius: 8px; border: none; font-family: var(--sans); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+.connect-btn.primary { background: var(--slack-mid); color: white; }
+.connect-btn.primary:hover { background: var(--slack); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(74,21,75,0.35); }
+.connect-btn.primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.connect-btn.ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
+.connect-btn.ghost:hover { border-color: var(--slack-mid); color: var(--slack-mid); }
+.connect-note { font-size: 11px; color: var(--text-3); }
+.spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* SLACK UI SIMULATION */
+.slack-sim { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
+.slack-titlebar { background: var(--slack); padding: 0 20px; height: 44px; display: flex; align-items: center; gap: 10px; }
+.slack-ws-name { font-size: 13px; font-weight: 700; color: white; }
+.slack-channel-bar { background: #3f0e40; padding: 0 20px; height: 38px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.slack-hash { color: rgba(255,255,255,0.4); font-size: 14px; }
+.slack-channel-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.85); }
+.slack-channel-desc { font-size: 11px; color: rgba(255,255,255,0.35); margin-left: 8px; }
+.slack-messages { padding: 20px; min-height: 360px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; max-height: 420px; }
+.slack-empty { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--text-3); text-align: center; padding: 40px; }
+.slack-empty p { font-size: 13px; }
+.slack-empty small { font-size: 11px; }
+.slack-msg { display: flex; gap: 10px; padding: 4px 0; animation: fadeUp 0.25s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+.slack-msg:hover { background: rgba(0,0,0,0.02); border-radius: 6px; margin: 0 -8px; padding: 4px 8px; }
+.slack-avatar { width: 34px; height: 34px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-top: 2px; }
+.av-user { background: #1264a3; }
+.av-bot { background: var(--slack-mid); }
+.av-system { background: #007a5a; }
+.slack-msg-body { flex: 1; min-width: 0; }
+.slack-msg-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 3px; }
+.slack-sender { font-size: 13px; font-weight: 700; color: var(--text); }
+.slack-sender.bot { color: var(--slack-mid); }
+.slack-sender.bot::after { content: 'APP'; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; background: rgba(74,21,75,0.12); color: var(--slack-mid); margin-left: 5px; vertical-align: middle; }
+.slack-time { font-size: 10px; color: var(--text-3); }
+.slack-text { font-size: 13px; color: var(--text); line-height: 1.55; }
+.slack-text code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; font-family: var(--mono); font-size: 11px; }
+.slack-text strong { font-weight: 700; }
+.slack-text em { color: var(--text-2); }
+
+/* Block Kit blocks */
+.bk-block { margin-top: 6px; }
+.bk-section { background: white; border-left: 3px solid #9a409c; border-radius: 0 6px 6px 0; padding: 10px 14px; margin-bottom: 4px; font-size: 13px; color: var(--text); line-height: 1.6; }
+.bk-divider { height: 1px; background: var(--border); margin: 6px 0; }
+.bk-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; }
+.bk-btn { padding: 6px 14px; border-radius: 4px; font-size: 12px; font-weight: 600; border: 1px solid; cursor: pointer; transition: all 0.15s; }
+.bk-btn.primary { background: #007a5a; border-color: #007a5a; color: white; }
+.bk-btn.primary:hover { background: #006548; }
+.bk-btn.default { background: white; border-color: var(--border-2, #C8D8E4); color: var(--text); }
+.bk-btn.default:hover { border-color: var(--slack-mid); color: var(--slack-mid); background: rgba(97,31,105,0.04); }
+.bk-context { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+.bk-context-icon { font-size: 13px; }
+.tool-event { background: rgba(0,122,90,0.06); border: 1px solid rgba(0,122,90,0.2); border-radius: 6px; padding: 7px 12px; font-family: var(--mono); font-size: 10px; color: #007a5a; margin: 4px 0; }
+.tool-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #007a5a; margin-bottom: 3px; }
+.thinking-msg { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3); font-style: italic; }
+.thinking-dots span { animation: blink 1.2s infinite; }
+.thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+
+/* Input bar */
+.slack-input-bar { padding: 14px 20px; border-top: 1px solid var(--border); background: white; }
+.slack-input-inner { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.slack-input-top { display: flex; gap: 8px; padding: 2px 4px; border-bottom: 1px solid var(--border); }
+.slack-format-btn { padding: 4px 8px; border: none; background: transparent; cursor: pointer; color: var(--text-3); font-size: 12px; border-radius: 4px; }
+.slack-format-btn:hover { background: var(--off); color: var(--text); }
+.slack-input-field { display: flex; align-items: center; gap: 8px; padding: 8px 12px; }
+.slack-input-field input { flex: 1; border: none; outline: none; font-family: var(--sans); font-size: 13px; color: var(--text); background: transparent; }
+.slack-send-btn { padding: 6px 14px; background: var(--slack-green); color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.slack-send-btn:hover { background: #006548; }
+.slack-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.sim-suggestions { padding: 8px 20px 0; display: flex; gap: 8px; flex-wrap: wrap; }
+.sim-chip { padding: 5px 12px; border-radius: 100px; background: var(--off); border: 1px solid var(--border); font-size: 11px; color: var(--text-2); cursor: pointer; transition: all 0.15s; }
+.sim-chip:hover { border-color: var(--slack-mid); color: var(--slack-mid); background: rgba(97,31,105,0.04); }
+
+/* CHANGE GRID */
+.change-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.change-card { border-radius: 12px; padding: 24px; }
+.change-card.before { background: #fef2f2; border: 1px solid #fecaca; }
+.change-card.after { background: var(--success-bg); border: 1px solid #bbf7d0; }
+.change-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+.change-card.before .change-label { color: #b91c1c; }
+.change-card.after .change-label { color: var(--success); }
+.change-list { display: flex; flex-direction: column; gap: 8px; }
+.change-item { font-size: 13px; display: flex; gap: 10px; line-height: 1.5; }
+.change-card.before .change-item::before { content: '✕'; color: #b91c1c; flex-shrink: 0; font-size: 11px; margin-top: 2px; }
+.change-card.after .change-item::before { content: '✓'; color: var(--success); flex-shrink: 0; font-size: 11px; margin-top: 2px; font-weight: 700; }
+.change-card.before .change-item { color: #7f1d1d; }
+.change-card.after .change-item { color: #14532d; }
+
+@media (max-width: 700px) {
+  .arch { grid-template-columns: 1fr; }
+  .arch-arrow { display: none; }
+  .change-grid { grid-template-columns: 1fr; }
+  .section { padding: 48px 20px; }
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">skills<span>.2nth.ai</span></div>
+  <div class="nav-links">
+    <a class="nav-link" onclick="scrollTo('arch')">Architecture</a>
+    <a class="nav-link" onclick="scrollTo('connect')">Connect</a>
+    <a class="nav-link" onclick="scrollTo('sim')">Simulator</a>
+    <a class="nav-link" onclick="scrollTo('after')">What changes</a>
+  </div>
+  <div class="nav-badge">Concept · Slack Agents</div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge"><div class="pulse"></div>AGENTIC INTEGRATION</div>
+  <h1>@mention the bot.<br><span>The agent does the work.</span></h1>
+  <p class="hero-sub">A Slack mention is a natural agent invocation. The Worker verifies, routes, and replies in thread — using Workers AI to classify and Claude to reason — without the user leaving Slack.</p>
+  <div class="hero-pills">
+    <div class="hero-pill"><span>#️⃣</span><span>@2nth in Slack</span></div>
+    <div class="hero-arrow">→</div>
+    <div class="hero-pill"><span>⚡</span><span>Worker verifies + routes</span></div>
+    <div class="hero-arrow">→</div>
+    <div class="hero-pill"><span>🧠</span><span>AI replies in thread</span></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="arch">
+  <div class="section-label">Architecture</div>
+  <h2 class="section-title">The <span>3-second rule</span> and how to beat it</h2>
+  <p class="section-sub">Slack kills any endpoint that doesn't respond in 3 seconds. AI takes 2–10 seconds. The pattern: ack instantly, process with <code style="font-family:var(--mono);font-size:13px;background:rgba(0,0,0,0.06);padding:1px 5px;border-radius:3px">ctx.waitUntil()</code>, post the reply via Web API when ready.</p>
+
+  <div class="arch">
+    <div class="arch-box">
+      <div class="arch-icon">💬</div>
+      <div class="arch-name">Slack</div>
+      <div class="arch-desc">User @mentions bot or runs /command</div>
+      <span class="arch-tag tag-slack">EVENT</span>
+    </div>
+    <div class="arch-arrow"><div class="arch-arrow-inner"><div class="arrow-label">HTTPS POST</div><div class="arrow-svg">→</div><div class="arrow-label">&lt;3s</div></div></div>
+    <div class="arch-box highlight">
+      <div class="arch-icon">⚡</div>
+      <div class="arch-name">Cloudflare Worker</div>
+      <div class="arch-desc">Verify signature, ack 200, classify intent</div>
+      <span class="arch-tag tag-cf">HMAC · waitUntil</span>
+    </div>
+    <div class="arch-arrow"><div class="arch-arrow-inner"><div class="arrow-label">ROUTE</div><div class="arrow-svg">→</div><div class="arrow-label">ASYNC</div></div></div>
+    <div class="arch-box">
+      <div class="arch-icon">🤖</div>
+      <div class="arch-name">Workers AI + Claude</div>
+      <div class="arch-desc">Classify → route → draft reply via AI Gateway</div>
+      <span class="arch-tag tag-ai">Llama + Claude</span>
+    </div>
+    <div class="arch-arrow"><div class="arch-arrow-inner"><div class="arrow-label">Web API</div><div class="arrow-svg">→</div><div class="arrow-label">chat.post</div></div></div>
+    <div class="arch-box">
+      <div class="arch-icon">🧵</div>
+      <div class="arch-name">Thread reply</div>
+      <div class="arch-desc">Block Kit message with actions posted in thread</div>
+      <span class="arch-tag tag-slack">Block Kit</span>
+    </div>
+    <div class="arch-note" style="grid-column:1/-1">
+      💡 <strong>Critical:</strong> The Worker sends an empty 200 response in &lt;100ms. Slack sees this as a successful delivery. The actual AI work runs inside <code style="font-family:var(--mono);font-size:11px">ctx.waitUntil()</code> — the Worker keeps running after the response is sent. The reply arrives in the thread 2–8 seconds later via <code style="font-family:var(--mono);font-size:11px">chat.postMessage</code>.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="connect">
+  <div class="section-label">Connection</div>
+  <h2 class="section-title">Three steps to a <span>live Slack bot</span></h2>
+  <p class="section-sub">Create the app, store two secrets, wire the Worker URL. No servers, no SDK, no OAuth dance for bot tokens.</p>
+
+  <div class="connect-card">
+    <div class="connect-header">
+      <div class="connect-title">Slack bot setup — 2nth-workspace</div>
+      <div class="connect-status idle" id="conn-status">
+        <div class="status-dot"></div>
+        <span id="conn-status-text">Not installed</span>
+      </div>
+    </div>
+    <div class="connect-body">
+      <div class="steps-list">
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot active" id="dot-1">1</div></div>
+          <div class="step-content">
+            <div class="step-title">Create Slack app from manifest</div>
+            <div class="step-desc">api.slack.com/apps → Create New App → From an app manifest. Paste the YAML — it configures scopes, event subscriptions, and slash commands in one step.</div>
+            <div class="step-code" id="code-1">
+<span class="comment"># slack-app-manifest.yaml</span>
+<span class="key">display_information</span>:
+  <span class="val">name</span>: <span class="str">2nth Assistant</span>
+  <span class="val">background_color</span>: <span class="str">"#4A154B"</span>
+
+<span class="key">features</span>:
+  <span class="val">bot_user</span>: { display_name: <span class="str">2nth</span>, always_online: <span class="str">true</span> }
+  <span class="val">slash_commands</span>:
+    - command: <span class="str">/ask</span>
+      url: <span class="str">https://your-worker.workers.dev/slack/command</span>
+
+<span class="key">oauth_config</span>:
+  scopes:
+    bot: [ <span class="str">app_mentions:read</span>, <span class="str">chat:write</span>,
+           <span class="str">commands</span>, <span class="str">channels:history</span>, <span class="str">users:read</span> ]
+
+<span class="key">settings</span>:
+  event_subscriptions:
+    request_url: <span class="str">https://your-worker.workers.dev/slack/events</span>
+    bot_events: [ <span class="str">app_mention</span>, <span class="str">message.im</span> ]
+  interactivity:
+    request_url: <span class="str">https://your-worker.workers.dev/slack/interact</span>
+
+<span class="success">✓ App created — Install to workspace to get the bot token</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot" id="dot-2">2</div></div>
+          <div class="step-content">
+            <div class="step-title">Store bot token + signing secret</div>
+            <div class="step-desc">After installing the app, copy the Bot Token from OAuth & Permissions and the Signing Secret from Basic Information. These are the only two credentials the Worker needs.</div>
+            <div class="step-code" id="code-2">
+<span class="comment"># Store as Worker secrets — never in wrangler.toml</span>
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">SLACK_BOT_TOKEN</span>
+<span class="comment"># → xoxb-YOUR-BOT-TOKEN-HERE</span>
+
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">SLACK_SIGNING_SECRET</span>
+<span class="comment"># → 8f742231b10e8888abcd99baed5f6149</span>
+
+<span class="comment"># Signature verification in the Worker (HMAC-SHA256)</span>
+<span class="key">const</span> sigBase = <span class="str">`v0:${timestamp}:${body}`</span>;
+<span class="key">const</span> key = await crypto.subtle.<span class="val">importKey</span>(
+  <span class="str">'raw'</span>, encoder.encode(env.SLACK_SIGNING_SECRET),
+  { name: <span class="str">'HMAC'</span>, hash: <span class="str">'SHA-256'</span> }, <span class="str">false</span>, [<span class="str">'sign'</span>]
+);
+<span class="key">const</span> hex = <span class="str">'v0='</span> + toHex(await crypto.subtle.<span class="val">sign</span>(<span class="str">'HMAC'</span>, key, encoder.encode(sigBase)));
+<span class="comment">// hex === X-Slack-Signature header → verified ✓</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot" id="dot-3">3</div></div>
+          <div class="step-content">
+            <div class="step-title">Verify URL + first @mention</div>
+            <div class="step-desc">Slack sends a challenge to the events URL on setup. The Worker responds with the challenge value. Then send a test @mention — the bot should reply in thread within a few seconds.</div>
+            <div class="step-code" id="code-3">
+<span class="comment"># Slack sends challenge on URL verification</span>
+<span class="key">POST</span> /slack/events
+<span class="val">{ "type": "url_verification", "challenge": "3eZbrw1oBIq..." }</span>
+<span class="success">→ 200 { "challenge": "3eZbrw1oBIq..." }</span>
+
+<span class="comment"># First app_mention event</span>
+<span class="key">POST</span> /slack/events
+<span class="val">{ "event": { "type": "app_mention",
+    "user": "U0LAN0Z89", "text": "&lt;@U061F7AUR&gt; show overdue invoices",
+    "channel": "C024BE91L", "ts": "1743500000.123456" } }</span>
+
+<span class="comment"># Worker acks instantly (&lt;100ms)</span>
+<span class="success">→ 200 OK (empty body)</span>
+
+<span class="comment"># ctx.waitUntil() → Workers AI → Claude → chat.postMessage</span>
+<span class="success">✓ Bot active — @2nth responding in #general · thread replies enabled</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="connect-footer">
+      <div class="connect-note" id="conn-note">Step through to simulate bot installation.</div>
+      <div style="display:flex;gap:10px">
+        <button class="connect-btn ghost" onclick="resetConn()">Reset</button>
+        <button class="connect-btn primary" id="next-btn" onclick="nextStep()"><span id="next-label">Create app →</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="sim">
+  <div class="section-label">Simulator</div>
+  <h2 class="section-title">Slack channel — <span>live simulation</span></h2>
+  <p class="section-sub">Send a message as a team member. Watch the Worker verify, classify, and reply with a Block Kit message — actions included.</p>
+
+  <div class="slack-sim">
+    <div class="slack-titlebar">
+      <span style="font-size:18px">💜</span>
+      <span class="slack-ws-name">2nth.ai Workspace</span>
+    </div>
+    <div class="slack-channel-bar">
+      <span class="slack-hash">#</span>
+      <span class="slack-channel-name">ops-ai</span>
+      <span class="slack-channel-desc">AI assistant for operations · powered by 2nth.ai</span>
+    </div>
+    <div class="slack-messages" id="slack-messages">
+      <div class="slack-empty" id="slack-empty">
+        <p>Mention <strong>@2nth</strong> to start a conversation</p>
+        <small>The bot will verify your request, classify intent, and reply in thread</small>
+      </div>
+    </div>
+    <div class="sim-suggestions" id="sim-chips">
+      <div class="sim-chip" onclick="sendChip(this)">@2nth show overdue invoices</div>
+      <div class="sim-chip" onclick="sendChip(this)">@2nth draft a payment reminder for Acme</div>
+      <div class="sim-chip" onclick="sendChip(this)">@2nth what's our Q1 revenue?</div>
+      <div class="sim-chip" onclick="sendChip(this)">@2nth summarise last week's support tickets</div>
+    </div>
+    <div class="slack-input-bar">
+      <div class="slack-input-inner">
+        <div class="slack-input-top">
+          <button class="slack-format-btn">𝐁</button>
+          <button class="slack-format-btn">𝘐</button>
+          <button class="slack-format-btn">⌘</button>
+          <button class="slack-format-btn">≡</button>
+          <button class="slack-format-btn">🔗</button>
+        </div>
+        <div class="slack-input-field">
+          <input type="text" id="slack-input" placeholder="Message #ops-ai" onkeydown="if(event.key==='Enter') sendSlack()">
+          <button class="slack-send-btn" id="slack-send" onclick="sendSlack()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="after">
+  <div class="section-label">Before &amp; After</div>
+  <h2 class="section-title">What adding <span>an AI bot changes</span></h2>
+  <div class="change-grid">
+    <div class="change-card before">
+      <div class="change-label">Without the bot</div>
+      <div class="change-list">
+        <div class="change-item">Team switches context to check the ERP for every stock or invoice question</div>
+        <div class="change-item">Managers chase updates in threads manually — no structured data, just chat</div>
+        <div class="change-item">Slash command ideas require a full backend build to implement</div>
+        <div class="change-item">Alerts and notifications require separate monitoring tools and manual copy-paste into Slack</div>
+        <div class="change-item">AI tools are separate tabs — ChatGPT, Claude.ai — not where the work is happening</div>
+        <div class="change-item">Report requests become calendar invites and spreadsheet emails</div>
+      </div>
+    </div>
+    <div class="change-card after">
+      <div class="change-label">With 2nth Slack bot</div>
+      <div class="change-list">
+        <div class="change-item">@2nth answers ERP, invoice, and stock queries in the channel where the conversation already is</div>
+        <div class="change-item">Structured Block Kit replies with action buttons — save to D1, open in ERP, send to client</div>
+        <div class="change-item">/ask spins up a slash command instantly — Workers AI classifies, Claude drafts, zero infrastructure</div>
+        <div class="change-item">GCP Pub/Sub → Worker → Incoming Webhook sends overdue alerts automatically to #ops-ai</div>
+        <div class="change-item">AI is in Slack — the tool the team already uses all day, not another tab to switch to</div>
+        <div class="change-item">Reports drafted and posted on schedule via Cloud Scheduler → Worker → chat.postMessage</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// ─── CONNECTION WIZARD ───
+let step = 0;
+function scrollTo(id) { document.getElementById(id)?.scrollIntoView({ behavior:'smooth', block:'start' }); }
+function nextStep() {
+  const btn = document.getElementById('next-btn');
+  const label = document.getElementById('next-label');
+  const note = document.getElementById('conn-note');
+  if (step === 0) {
+    step = 1;
+    document.getElementById('code-1').classList.add('visible');
+    document.getElementById('dot-1').classList.add('active');
+    document.getElementById('dot-2').classList.add('active');
+    label.textContent = 'Store secrets →';
+    note.textContent = 'App created. Now install it to the workspace and store the two secrets.';
+    setStatus('connecting', 'Installing...');
+  } else if (step === 1) {
+    step = 2;
+    markDone(1);
+    document.getElementById('code-2').classList.add('visible');
+    label.textContent = 'Verify URL →';
+    note.textContent = 'Secrets stored. Now point Slack at the Worker URL to verify.';
+  } else if (step === 2) {
+    step = 3;
+    markDone(2);
+    document.getElementById('dot-3').classList.add('active');
+    document.getElementById('code-3').classList.add('visible');
+    btn.disabled = true;
+    label.innerHTML = '<div class="spinner"></div> Verifying...';
+    note.textContent = 'Slack is sending the URL verification challenge...';
+    setStatus('connecting', 'Verifying...');
+    setTimeout(() => {
+      markDone(3);
+      btn.disabled = true;
+      label.textContent = 'Bot active ✓';
+      note.textContent = '@2nth is live in #ops-ai — try it in the simulator below.';
+      setStatus('connected', 'Bot active');
+    }, 2200);
+  }
+}
+function markDone(n) {
+  const d = document.getElementById('dot-' + n);
+  d.className = 'step-dot done';
+  d.textContent = '✓';
+}
+function setStatus(cls, txt) {
+  const el = document.getElementById('conn-status');
+  el.className = 'connect-status ' + cls;
+  document.getElementById('conn-status-text').textContent = txt;
+}
+function resetConn() {
+  step = 0;
+  ['code-1','code-2','code-3'].forEach(id => document.getElementById(id).classList.remove('visible'));
+  ['1','2','3'].forEach(n => { const d = document.getElementById('dot-'+n); d.className='step-dot'; d.textContent=n; });
+  document.getElementById('dot-1').classList.add('active');
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-label').textContent = 'Create app →';
+  document.getElementById('conn-note').textContent = 'Step through to simulate bot installation.';
+  setStatus('idle', 'Not installed');
+}
+
+// ─── SLACK SIMULATOR ───
+const USERS = ['Craig', 'Angela', 'Sipho', 'Riana'];
+const currentUser = USERS[Math.floor(Math.random() * USERS.length)];
+let msgCount = 0;
+let busy = false;
+const now = () => { const d = new Date(); return d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0'); };
+
+const RESPONSES = {
+  'overdue invoices': {
+    route: 'erp_query',
+    tool: { name: 'query_invoices', args: '{ "status": "overdue" }' },
+    reply: `Found *3 overdue invoices* in the ERP:\n\n• *Acme Corp* — R 24,500 · 18 days overdue\n• *Buildmax SA* — R 8,200 · 7 days overdue\n• *Retail Pro* — R 61,000 · 31 days overdue\n\nTotal outstanding: *R 93,700*`,
+    actions: ['👍 Helpful', '✏️ Draft reminders', '📋 Save to D1']
+  },
+  'payment reminder': {
+    route: 'draft_email',
+    tool: { name: 'get_client_details', args: '{ "client": "Acme Corp" }' },
+    reply: `Here's a draft payment reminder for *Acme Corp*:\n\n_Subject: Payment reminder — Invoice #INV-2024-0847 (R 24,500)_\n\nDear Acme Corp team, this is a friendly reminder that invoice #INV-2024-0847 for R 24,500 was due 18 days ago. Please advise on expected payment at your earliest convenience.\n\nKind regards, 2nth.ai`,
+    actions: ['✅ Send it', '✏️ Edit', '📋 Save draft']
+  },
+  'q1 revenue': {
+    route: 'report',
+    tool: { name: 'run_bigquery', args: '{ "period": "Q1-2026", "metric": "revenue" }' },
+    reply: `*Q1 2026 Revenue Summary*\n\nTotal: *R 482,000* (+18% vs Q1 2025)\n• Cloudflare services: R 186k\n• ERP implementations: R 194k\n• AI consulting: R 102k\n\nGross margin: 68% (up from 64% Q1 2025)`,
+    actions: ['📊 Full report', '📤 Share in #finance', '📋 Save to D1']
+  },
+  'support tickets': {
+    route: 'report',
+    tool: { name: 'query_helpdesk', args: '{ "period": "last_week" }' },
+    reply: `*Last week's support summary* (7 Apr – 13 Apr)\n\n• 23 tickets opened · 21 resolved (91% SLA)\n• Top topics: Cloudflare deploy (8), ERP login (6), API errors (5)\n• Avg resolution: 4.2 hours\n• 2 tickets still open: #SUP-0441, #SUP-0447`,
+    actions: ['👍 Helpful', '📤 Post to #support', '📋 Save report']
+  },
+};
+
+function getResponse(text) {
+  const t = text.toLowerCase();
+  if (t.includes('overdue') || t.includes('invoice')) return RESPONSES['overdue invoices'];
+  if (t.includes('reminder') || t.includes('acme')) return RESPONSES['payment reminder'];
+  if (t.includes('q1') || t.includes('revenue')) return RESPONSES['q1 revenue'];
+  if (t.includes('ticket') || t.includes('support')) return RESPONSES['support tickets'];
+  return {
+    route: 'general',
+    tool: null,
+    reply: `I processed your message _"${text.replace(/@\w+\s*/,'').trim()}"_ — in a live deployment I'd classify this with Workers AI and route to the appropriate tool or draft a reply with Claude. Try one of the suggested messages to see a full simulation.`,
+    actions: ['👍 Got it', '🔄 Try again']
+  };
+}
+
+function sendChip(el) {
+  document.getElementById('slack-input').value = el.textContent;
+  sendSlack();
+}
+
+function sendSlack() {
+  if (busy) return;
+  const input = document.getElementById('slack-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  busy = true;
+  document.getElementById('slack-send').disabled = true;
+
+  const msgs = document.getElementById('slack-messages');
+  const empty = document.getElementById('slack-empty');
+  if (empty) empty.remove();
+
+  // User message
+  const ts = now();
+  addUserMsg(currentUser, text, ts);
+
+  const resp = getResponse(text);
+  const threadTs = ts;
+
+  // Worker ack indicator
+  setTimeout(() => {
+    addSystemEvent(`⚡ Worker received event — signature verified — 200 OK sent in &lt;100ms — processing async`);
+  }, 300);
+
+  // Classification
+  setTimeout(() => {
+    addSystemEvent(`🤖 Workers AI classified: <strong>${resp.route}</strong> — routing to ${resp.tool ? 'tool call + Claude' : 'Claude direct'}`);
+  }, 800);
+
+  // Tool call if applicable
+  if (resp.tool) {
+    setTimeout(() => {
+      addToolCall(resp.tool.name, resp.tool.args);
+    }, 1400);
+  }
+
+  // Thinking
+  const thinkDelay = resp.tool ? 2200 : 1200;
+  setTimeout(() => {
+    addThinking();
+  }, thinkDelay);
+
+  // Bot reply
+  const replyDelay = thinkDelay + (resp.tool ? 2000 : 1800);
+  setTimeout(() => {
+    removeThinking();
+    addBotReply(resp.reply, resp.actions, threadTs);
+    busy = false;
+    document.getElementById('slack-send').disabled = false;
+    msgCount++;
+  }, replyDelay);
+}
+
+function addUserMsg(name, text, ts) {
+  const msgs = document.getElementById('slack-messages');
+  const el = document.createElement('div');
+  el.className = 'slack-msg';
+  const initials = name[0];
+  el.innerHTML = `
+    <div class="slack-avatar av-user">${initials}</div>
+    <div class="slack-msg-body">
+      <div class="slack-msg-header">
+        <span class="slack-sender">${name}</span>
+        <span class="slack-time">${ts}</span>
+      </div>
+      <div class="slack-text">${text.replace('@2nth', '<strong>@2nth</strong>')}</div>
+    </div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addSystemEvent(html) {
+  const msgs = document.getElementById('slack-messages');
+  const el = document.createElement('div');
+  el.style.cssText = 'padding:3px 0 3px 44px;font-size:11px;color:var(--text-3);animation:fadeUp 0.2s ease';
+  el.innerHTML = html;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addToolCall(name, args) {
+  const msgs = document.getElementById('slack-messages');
+  const el = document.createElement('div');
+  el.style.cssText = 'padding:3px 0 3px 44px;animation:fadeUp 0.2s ease';
+  el.innerHTML = `<div class="tool-event"><div class="tool-label">→ tool call: ${name}</div>${args}</div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addThinking() {
+  const msgs = document.getElementById('slack-messages');
+  const el = document.createElement('div');
+  el.className = 'slack-msg';
+  el.id = 'thinking-el';
+  el.innerHTML = `
+    <div class="slack-avatar av-bot">2</div>
+    <div class="slack-msg-body">
+      <div class="slack-msg-header"><span class="slack-sender bot">2nth</span><span class="slack-time">${now()}</span></div>
+      <div class="thinking-msg">Claude is drafting <div class="thinking-dots"><span>●</span><span>●</span><span>●</span></div></div>
+    </div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeThinking() {
+  document.getElementById('thinking-el')?.remove();
+}
+
+function addBotReply(text, actions, threadTs) {
+  const msgs = document.getElementById('slack-messages');
+  const el = document.createElement('div');
+  el.className = 'slack-msg';
+  const actionBtns = actions.map((a,i) => `<button class="bk-btn ${i===0?'primary':'default'}" onclick="this.textContent='✓ Done';this.disabled=true">${a}</button>`).join('');
+  const formatted = text
+    .replace(/\*([^*]+)\*/g, '<strong>$1</strong>')
+    .replace(/_([^_]+)_/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+  el.innerHTML = `
+    <div class="slack-avatar av-bot">2</div>
+    <div class="slack-msg-body">
+      <div class="slack-msg-header">
+        <span class="slack-sender bot">2nth</span>
+        <span class="slack-time">${now()}</span>
+        <span style="font-size:10px;color:var(--text-3);margin-left:4px">↩ replying in thread</span>
+      </div>
+      <div class="bk-block">
+        <div class="bk-section">${formatted}</div>
+        <div class="bk-divider"></div>
+        <div class="bk-actions">${actionBtns}</div>
+        <div class="bk-context"><span class="bk-context-icon">⚡</span>Powered by 2nth.ai · Workers AI + Claude · ${now()}</div>
+      </div>
+    </div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+</body>
+</html>

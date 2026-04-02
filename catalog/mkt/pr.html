@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Public Relations & Communications — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Public Relations & Communications</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/mkt/pr/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Public Relations & Communications</div>
+      <h1>PUBLIC RELATIONS & COMMUNICATIONS</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../mkt.html">mkt</a><a class="skill-chip" href="../../mkt/brand.html">mkt/brand</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Public Relations &amp; Communications</h1>
+
+<p>PR is earned media — coverage that money cannot directly buy and that readers trust more than advertising because of it. A well-placed article in Business Day or a keynote slot at AfricaCom does more for brand credibility than any equivalent spend on display advertising. The CMO's job is to build a PR function that consistently generates these outcomes, not one that sends press releases into the void.</p>
+
+<hr>
+
+<h2>The SA Media Landscape</h2>
+
+<h3>Business and Financial Media</h3>
+<p>The publications that reach South Africa's decision-makers:</p>
+
+<table><thead><tr><th>Publication</th><th>Audience</th><th>Format</th></tr></thead><tbody><tr><td>Business Day</td><td>C-suite, finance, listed companies</td><td>Daily print + digital</td></tr><tr><td>Financial Mail</td><td>Investment, business strategy</td><td>Weekly magazine + digital</td></tr><tr><td>Mail &amp; Guardian</td><td>Policy, society, investigative</td><td>Weekly + digital</td></tr><tr><td>Sunday Times Business</td><td>Broad business readership</td><td>Sunday supplement</td></tr><tr><td>Moneyweb</td><td>Finance, investment, markets</td><td>Digital-first; high traffic</td></tr><tr><td>BizNews</td><td>Business, investment, anti-corruption</td><td>Digital</td></tr><tr><td>BizCommunity</td><td>Marketing, advertising, media industry</td><td>Digital; industry-specific</td></tr></tbody></table>
+
+<h3>Technology and Innovation Media</h3>
+<table><thead><tr><th>Publication</th><th>Focus</th></tr></thead><tbody><tr><td>ITWeb</td><td>Enterprise IT, software, telecoms</td></tr><tr><td>MyBroadband</td><td>Consumer tech, broadband, mobile</td></tr><tr><td>BusinessTech</td><td>Consumer business/tech hybrid</td></tr><tr><td>TechCentral</td><td>Telecoms and enterprise tech</td></tr><tr><td>Ventureburn</td><td>Startups and venture ecosystem</td></tr></tbody></table>
+
+<h3>Broadcast (for brand and major announcements)</h3>
+<ul><li><strong>SABC</strong> (SABC News, Morning Live): Significant reach; harder to access for commercial brands</li><li><strong>eNCA</strong>: Business news segments; accessible for business leaders with a strong story</li><li><strong>Jacaranda FM, Talk Radio 702</strong>: Consumer brands; interview opportunities for relevant stories</li></ul>
+
+<hr>
+
+<h2>The PR Story Pyramid</h2>
+
+<p>Not everything is a press release. Media relations require understanding what journalists actually want to publish.</p>
+
+<p><strong>Tier 1 — Newsworthy (high interest)</strong></p>
+<ul><li>Major funding round or acquisition</li><li>Significant new client (named, with permission)</li><li>Original research or survey data with SA relevance</li><li>Response to a major current event in your category</li><li>Executive appointment at C-suite level</li><li>Launch that affects a broad audience</li></ul>
+
+<p><strong>Tier 2 — Interesting (possible placement with right angle)</strong></p>
+<ul><li>Product launch with a genuine differentiator</li><li>Case study with quantified results (customer must be named)</li><li>Expert commentary on a trending news story</li><li>Award or recognition from a credible body</li></ul>
+
+<p><strong>Tier 3 — Not news (internal milestone)</strong></p>
+<ul><li>General company updates without external impact</li><li>Minor product features</li><li>Standard partnership announcements without a story</li><li>Rebrands with no strategic narrative</li></ul>
+
+<p><strong>Rule</strong>: Write a Tier 3 story and you will not get placed. Write a Tier 1 story and journalists will find you.</p>
+
+<hr>
+
+<h2>Building Media Relationships</h2>
+
+<p>South Africa's business media community is small. The same journalists cover a category for years. Relationship-based PR — knowing the right journalist before you have a story — is worth more than any press release.</p>
+
+<p><strong>How to build media relationships:</strong></p>
+<ul><li>Follow key journalists on LinkedIn and engage genuinely with their work (not just on days you have a story)</li><li>Offer them a briefing on your category, no story required — become a background source</li><li>Share data or insights that make their job easier</li><li>Respond immediately when they reach out for comment on breaking news</li><li>Introduce them to interesting founders or executives in your network</li></ul>
+
+<p><strong>What not to do:</strong></p>
+<ul><li>Blast a press release to 200 journalists with no personalisation</li><li>Follow up a non-response with six chase emails</li><li>Pitch a story that is obviously only interesting to your company</li><li>Ask for approval of the article before publication (journalists will decline)</li></ul>
+
+<hr>
+
+<h2>Press Releases</h2>
+
+<p>A press release is a last-resort tool, not a first step. Use it when:</p>
+<ul><li>The news is genuinely newsworthy (Tier 1)</li><li>You need a paper trail for compliance reasons</li><li>You are distributing through a wire service (PR Newswire, African Newsroom) for SEO or investor purposes</li></ul>
+
+<p><strong>Press release structure:</strong></p>
+<ul><li><strong>Headline</strong>: What happened, in one sentence, in the active voice. Not "XYZ Company Announces Strategic Partnership" — try "XYZ and ABC Combine to Bring AI-Powered Lending to South African SMEs"</li><li><strong>Lead paragraph</strong>: Who, what, when, where, why — everything a reader needs in the first 50 words</li><li><strong>Quote (key executive)</strong>: A genuine quote with a point of view, not a corporate platitude</li><li><strong>Context</strong>: Industry background, company context, deal terms if relevant</li><li><strong>Customer/partner quote</strong>: If applicable</li><li><strong>Boilerplate</strong>: Standard company description paragraph; keeps it consistent</li><li><strong>Contact</strong>: Journalist contact (PR manager or agency, not CEO)</li></ul>
+
+<hr>
+
+<h2>Thought Leadership Placement</h2>
+
+<p>Getting executives published in business media is one of the highest-value PR activities. A bylined article in Business Day or Moneyweb:</p>
+<ul><li>Is trusted more than advertising</li><li>Lives online permanently (SEO value)</li><li>Can be shared in sales conversations</li><li>Positions the executive as a category authority</li></ul>
+
+<p><strong>How to land a placement:</strong></p>
+<ol><li><strong>Pitch the editor, not the press release inbox</strong>: Find the section editor for the topic and email them directly with a 3-sentence pitch (topic, angle, why your executive is the right person to write this)</li><li><strong>Lead with a contrarian point of view</strong>: "Why South African CFOs are wrong about AI" will get more interest than "The benefits of AI for finance"</li><li><strong>Tie to a news hook</strong>: Connect the piece to something already in the news cycle</li><li><strong>Do not pitch what has already been published</strong>: Read the publication; check if the angle is fresh</li></ol>
+
+<p><strong>SA placement fees</strong>: Business Day and Moneyweb do not pay for contributed articles from companies. Mail &amp; Guardian occasionally commissions. BizCommunity accepts free contributions. ITWeb accepts contributed content for their platform.</p>
+
+<hr>
+
+<h2>Crisis Communications</h2>
+
+<p>A crisis is any event that could significantly damage the brand's reputation if not managed correctly. The Marketing Director owns the communications response; they do not own the crisis decision (that is the CEO and legal).</p>
+
+<p><strong>Crisis classification:</strong></p>
+<ul><li><strong>Tier 1 (Immediate)</strong>: Data breach, serious employee incident, product failure causing harm, regulatory investigation. Act within hours.</li><li><strong>Tier 2 (Urgent)</strong>: Significant customer complaint going viral, media investigation, executive misconduct allegation. Act within 24 hours.</li><li><strong>Tier 3 (Managed)</strong>: Negative coverage, minor social media backlash, disgruntled former employee. Monitor and respond proportionally.</li></ul>
+
+<p><strong>Crisis communications principles:</strong></p>
+
+<ol><li><strong>Respond, do not react</strong>: Gather facts before speaking. A wrong statement is worse than a delayed one — but silence for more than a few hours reads as guilt.</li><li><strong>One spokesperson, one message</strong>: Contradictory statements from different executives are catastrophic.</li><li><strong>Acknowledge first, explain later</strong>: "We are aware and are investigating" is always better than defending the indefensible before you know what happened.</li><li><strong>Do not escalate it</strong>: Responding aggressively to media or customer criticism on social media turns a small fire into an inferno.</li><li><strong>Fix the problem, then tell people you fixed it</strong>: Reputational recovery requires a demonstrated change, not just an apology.</li></ol>
+
+<p><strong>Crisis response template:</strong></p>
+<blockquote>"We are aware of [issue]. We take this seriously and have [immediate action taken]. We are investigating fully and will provide an update within [timeframe]. Our first priority is [affected party/resolution]."</blockquote>
+
+<hr>
+
+<h2>Measurement</h2>
+
+<table><thead><tr><th>PR metric</th><th>What it indicates</th></tr></thead><tbody><tr><td>Media placements (volume)</td><td>Activity level</td></tr><tr><td>Tier of publication</td><td>Quality of coverage</td></tr><tr><td>Reach / potential impressions</td><td>Audience exposure</td></tr><tr><td>Share of voice vs competitors</td><td>Relative brand presence in media</td></tr><tr><td>Message pull-through</td><td>% of coverage containing your key messages</td></tr><tr><td>Sentiment (positive/neutral/negative)</td><td>Reputation health</td></tr><tr><td>Backlinks from coverage</td><td>SEO value of earned media</td></tr><tr><td>Inbound enquiries citing coverage</td><td>Direct commercial impact</td></tr></tbody></table>
+
+<p><strong>Avoid AVE (Advertising Value Equivalent)</strong>: The practice of valuing editorial coverage as if it were advertising space. Industry bodies globally have deprecated this metric. Use reach, sentiment, and message pull-through instead.</p>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/mkt/pr/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

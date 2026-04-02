@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>South African PAYE, UIF & SDL — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">South African PAYE, UIF & SDL</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/fin/sa/paye/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">South African PAYE, UIF & SDL</div>
+      <h1>SOUTH AFRICAN PAYE, UIF & SDL</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../fin/sa.html">fin/sa</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">fin/accounting</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>South African PAYE, UIF &amp; SDL</h1>
+
+<p>Employers in South Africa must register with SARS for PAYE (Pay As You Earn), UIF (Unemployment Insurance Fund), and SDL (Skills Development Levy) as soon as they employ staff. All three are reported and paid monthly via the <strong>EMP201 return</strong>.</p>
+
+<hr>
+
+<h2>PAYE — Pay As You Earn</h2>
+
+<p>PAYE is income tax withheld by the employer from employee remuneration and paid to SARS on behalf of the employee.</p>
+
+<h3>Remuneration Includes</h3>
+<ul><li>Basic salary</li><li>Overtime pay</li><li>Commissions</li><li>Bonuses (including 13th cheque and performance bonuses)</li><li>Fringe benefits (company car, medical aid subsidy, housing allowance)</li><li>Director's fees</li><li>Subsistence allowances above SARS prescribed amounts</li></ul>
+
+<h3>PAYE Calculation</h3>
+<p>Use the <strong>SARS Tax Tables</strong> (updated annually in the Budget):</p>
+<ol><li>Annualise the monthly remuneration</li><li>Apply the individual tax brackets</li><li>Subtract rebates (Primary Rebate: R17,235 for 2024/25)</li><li>De-annualise (divide by 12) for monthly withholding</li></ol>
+
+<p><strong>2024/25 Individual Tax Brackets</strong>:</p>
+
+<table><thead><tr><th>Taxable Income</th><th>Rate</th></tr></thead><tbody><tr><td>R0 – R237,100</td><td>18%</td></tr><tr><td>R237,101 – R370,500</td><td>R42,678 + 26% above R237,100</td></tr><tr><td>R370,501 – R512,800</td><td>R77,362 + 31% above R370,500</td></tr><tr><td>R512,801 – R673,000</td><td>R121,475 + 36% above R512,800</td></tr><tr><td>R673,001 – R857,900</td><td>R179,147 + 39% above R673,000</td></tr><tr><td>R857,901 – R1,817,000</td><td>R251,258 + 41% above R857,900</td></tr><tr><td>R1,817,001+</td><td>R644,489 + 45% above R1,817,000</td></tr></tbody></table>
+
+<p><strong>Primary Rebate</strong>: R17,235 (all taxpayers) <strong>Secondary Rebate</strong>: R9,444 (taxpayers 65 years and older) <strong>Tertiary Rebate</strong>: R3,145 (taxpayers 75 years and older)</p>
+
+<p><strong>Tax Thresholds</strong> (below which no tax is payable):</p>
+<ul><li>Under 65: R95,750</li><li>65–74: R148,217</li><li>75+: R165,689</li></ul>
+
+<h3>IRP5 / IT3(a)</h3>
+<p>At year-end, the employer issues each employee an <strong>IRP5</strong> (tax certificate) reflecting total remuneration and PAYE deducted. This forms the basis of the employee's personal tax return (ITR12).</p>
+
+<h3>Fringe Benefits (Paragraph 2–14 of 7th Schedule)</h3>
+<p>Must be included in remuneration for PAYE purposes:</p>
+
+<table><thead><tr><th>Benefit</th><th>Taxable Amount</th></tr></thead><tbody><tr><td>Company car</td><td>3.5% of determined value per month (or 3.25% if maintaining logbook; reduces if employee bears fuel costs)</td></tr><tr><td>Medical aid subsidy</td><td>Employer contribution above prescribed amount</td></tr><tr><td>Low-interest loans</td><td>Difference between official rate (8.25% p.a. per SARS) and actual interest charged</td></tr><tr><td>Residential accommodation</td><td>Formula-based (R value or market value)</td></tr><tr><td>Use of company assets</td><td>15% of cash equivalent per annum</td></tr></tbody></table>
+
+<hr>
+
+<h2>UIF — Unemployment Insurance Fund</h2>
+
+<p>UIF provides short-term relief to workers who become unemployed, ill, or go on maternity leave.</p>
+
+<h3>Contributions</h3>
+<ul><li><strong>Employee</strong>: 1% of remuneration</li><li><strong>Employer</strong>: 1% of remuneration (employer's own contribution — not deducted from employee)</li><li><strong>Total</strong>: 2% per employee per month</li></ul>
+
+<h3>UIF Ceiling (2024/25)</h3>
+<p>Monthly remuneration is capped at <strong>R17,712</strong> for UIF purposes. Maximum monthly UIF contribution per employee: R354.24 (employee) + R354.24 (employer) = R708.48 total.</p>
+
+<h3>Excluded from UIF</h3>
+<ul><li>Employees earning less than R17,712/month (UIF applies, just capped)</li><li>Employees working fewer than 24 hours per month</li><li>Public servants (have their own Government Employees Pension Fund)</li><li>Foreigners on temporary employment</li></ul>
+
+<h3>UIF Registration and TERS</h3>
+<p>Employers must register employees with UIF via uFiling or SARS eFiling. The COVID-19 TERS (Temporary Employer/Employee Relief Scheme) was administered via UIF — maintain employer and employee registration to access future relief schemes.</p>
+
+<hr>
+
+<h2>SDL — Skills Development Levy</h2>
+
+<p>SDL funds skills development through the <strong>SETAs</strong> (Sector Education and Training Authorities). Employers can recover up to <strong>70% of SDL paid</strong> by submitting Workplace Skills Plans (WSP) and Annual Training Reports (ATR) to their relevant SETA.</p>
+
+<h3>Levy Rate</h3>
+<p><strong>1%</strong> of total leviable amount (remuneration paid to employees).</p>
+
+<h3>Exemption</h3>
+<p>Employers with an annual payroll of <strong>R500,000 or less</strong> are exempt from SDL.</p>
+
+<h3>Leviable Amount</h3>
+<p>Total remuneration paid to all employees, including:</p>
+<ul><li>Salaries and wages</li><li>Overtime</li><li>Leave pay</li><li>Bonuses</li><li>Commissions</li><li>Fringe benefits</li></ul>
+
+<p>Excludes: Pension fund contributions, reimbursements for actual expenditure.</p>
+
+<h3>SETA Recovery</h3>
+<p><strong>Mandatory Grant (20%)</strong>: Submitted via Employer Registration Form to SETA. <strong>Discretionary Grant (50%)</strong>: Submitted with Workplace Skills Plan and Annual Training Report. Deadline: <strong>30 April</strong> annually.</p>
+
+<hr>
+
+<h2>EMP201 — Monthly Employer Return</h2>
+
+<p>Due: <strong>7th of the following month</strong> (e.g., January PAYE due by 7 February). If the 7th falls on a weekend or public holiday, due the last business day before.</p>
+
+<p>The EMP201 consolidates:</p>
+<ul><li>PAYE withheld</li><li>SDL payable</li><li>UIF contributions (employer + employee)</li></ul>
+
+<p>Payment must accompany the return. Late payment attracts <strong>10% penalty + interest</strong> at the prescribed rate.</p>
+
+<hr>
+
+<h2>EMP501 — Employer Annual Reconciliation</h2>
+
+<p>Reconciles monthly EMP201 payments against the total IRP5s issued to employees.</p>
+
+<table><thead><tr><th>Period</th><th>Submission Deadline</th></tr></thead><tbody><tr><td>Interim (March–August)</td><td>31 October</td></tr><tr><td>Annual (March–February)</td><td>31 May</td></tr></tbody></table>
+
+<p>The EMP501 reconciliation must balance exactly. Common reconciling items:</p>
+<ul><li>Bonus payments that fall in one month but were estimated in another</li><li>Corrections to fringe benefit values</li><li>Employees who joined or left mid-year</li><li>Leave pay on termination</li></ul>
+
+<p>SARS's <strong>Auto-Assessment</strong> system uses IRP5 data from the EMP501 to pre-populate employee tax returns — accuracy is critical.</p>
+
+<hr>
+
+<h2>Practical Payroll Compliance Checklist</h2>
+
+<ul><li>[ ] PAYE registration number obtained from SARS (PAYE, SDL, UIF)</li><li>[ ] Payroll system calculates PAYE from correct tax tables (updated February each year)</li><li>[ ] All fringe benefits included in remuneration and taxed</li><li>[ ] EMP201 submitted and paid by the 7th monthly</li><li>[ ] EMP501 reconciliation completed and submitted (May and October)</li><li>[ ] IRP5s issued to all employees by 28 February</li><li>[ ] UIF employer and employee registration current on uFiling</li><li>[ ] SDL paid to SETA if payroll &gt;R500,000; WSP/ATR submitted by 30 April</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/fin/sa/paye/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

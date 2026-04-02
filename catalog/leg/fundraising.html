@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fundraising & Investment Documentation — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Fundraising & Investment Documentation</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/leg/fundraising/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Fundraising & Investment Documentation</div>
+      <h1>FUNDRAISING & INVESTMENT DOCUMENTATION</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../leg.html">leg</a><a class="skill-chip" href="../../leg/corporate.html">leg/corporate</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Fundraising &amp; Investment Documentation</h1>
+
+<p>Raising capital is one of the highest-stakes legal events in a company's life. Every clause in a term sheet will be negotiated into definitive documents that govern the investor relationship for years. Founders who do not understand the terms they sign often lose control of the business before they realise it.</p>
+
+<blockquote>Leo outlines term sheet concepts and flags unfavourable terms. For completing a funding round, engage a commercial attorney experienced in venture transactions.</blockquote>
+
+<hr>
+
+<h2>The Funding Round Stack</h2>
+
+<p>A South African funding round typically involves:</p>
+
+<ol><li><strong>Term Sheet / Letter of Intent (LOI)</strong> — Non-binding summary of deal terms; sets the commercial framework before legal costs are incurred</li><li><strong>Subscription Agreement</strong> — The primary investment contract; governs the issue of new shares</li><li><strong>Amended MOI</strong> — Updates the company's Memorandum of Incorporation to reflect new share classes and rights</li><li><strong>Shareholders' Agreement (SHA)</strong> — Governs the relationship between all shareholders post-investment</li><li><strong>CIPC filings</strong> — Share issuances, director changes, MOI amendments filed with CIPC</li></ol>
+
+<p>In early-stage rounds, <strong>SAFE notes</strong> (Simple Agreement for Future Equity) or <strong>convertible loan notes</strong> are increasingly used to defer valuation negotiations until a priced round.</p>
+
+<hr>
+
+<h2>The Term Sheet</h2>
+
+<p>A term sheet is non-binding (except for exclusivity and confidentiality clauses) but sets the terms that will appear in definitive documents. Fight hard here — it is much harder to renegotiate once definitive documents are being drafted.</p>
+
+<h3>Valuation</h3>
+
+<p><strong>Pre-money valuation</strong>: The company's value before the investment. If the pre-money valuation is R20m and the investor puts in R5m, the post-money valuation is R25m and the investor owns 20%.</p>
+
+<p><strong>Post-money valuation</strong> = Pre-money valuation + Investment amount</p>
+
+<p><strong>Dilution</strong>: Every new share issued dilutes existing shareholders proportionally. A fully diluted cap table shows dilution including all option pools, convertible notes, and warrants.</p>
+
+<p><strong>Option pool shuffle</strong>: Investors often require an option pool to be created or topped up <strong>before</strong> their investment (pre-money), which dilutes founders but not the investor. Negotiate for the option pool to be created post-money or sized only for the immediate 12-month hiring plan.</p>
+
+<h3>Share Classes</h3>
+
+<p>South African investment rounds commonly use <strong>preference shares</strong> (not ordinary shares):</p>
+
+<table><thead><tr><th>Feature</th><th>Ordinary Shares</th><th>Preference Shares</th></tr></thead><tbody><tr><td>Voting</td><td>Yes (1 vote per share)</td><td>Often non-voting or limited</td></tr><tr><td>Dividends</td><td>Discretionary</td><td>Priority (often non-cumulative at early stage)</td></tr><tr><td>Liquidation</td><td>Residual</td><td>Priority return before ordinary shareholders</td></tr></tbody></table>
+
+<p><strong>Liquidation preference</strong>: The investor receives their investment back (and sometimes a multiple) before ordinary shareholders in a liquidation or exit. Types:</p>
+<ul><li><strong>Non-participating preferred</strong>: Investor gets their money back OR converts to ordinary shares for a proportional share — whichever is higher. Founder-friendly.</li><li><strong>Participating preferred</strong>: Investor gets their money back AND THEN participates pro-rata in remaining proceeds with ordinary shareholders. Founder-unfriendly — avoid or cap participation.</li><li><strong>2x liquidation preference</strong>: Investor gets 2x their investment back before founders see anything — common in downrounds and distressed raises; red flag in normal rounds.</li></ul>
+
+<h3>Anti-dilution</h3>
+
+<p>Protects investors if new shares are issued at a lower valuation (a "down round"):</p>
+<ul><li><strong>Full ratchet</strong>: Investor's price resets to the new lower price — extremely punitive for founders</li><li><strong>Broad-based weighted average</strong>: The adjustment reflects the actual dilution impact. Market standard. Accept this; resist full ratchet.</li><li><strong>Narrow-based weighted average</strong>: Partially founder-friendly variant; sometimes negotiable</li></ul>
+
+<h3>Protective Provisions (Investor Vetoes)</h3>
+
+<p>Investors typically require shareholder approval (via preference share vote) for:</p>
+<ul><li>New share issuances</li><li>Debt above a threshold</li><li>Changes to the MOI affecting preference share rights</li><li>Acquisitions or disposals above a threshold</li><li>Liquidation or winding up</li><li>Changes to the business (pivot)</li></ul>
+
+<p><strong>Founders' position</strong>: Accept protective provisions for material transactions (the list above is reasonable). Resist provisions that would require investor consent for operational decisions (hiring above a salary, any new contract above R500k, etc.).</p>
+
+<h3>Board Composition</h3>
+
+<p>Investors typically negotiate board representation:</p>
+<ul><li><strong>Seed round</strong>: Observer rights (attend, no vote) or one board seat</li><li><strong>Series A</strong>: One board seat (sometimes two if investor owns &gt;30%)</li><li><strong>Majority investor</strong>: May seek a majority or veto on the board</li></ul>
+
+<p>An independent director (acceptable to both parties) is valuable — breaks deadlocks and provides governance credibility.</p>
+
+<hr>
+
+<h2>SAFE Notes and Convertible Loans</h2>
+
+<h3>SAFE Note (Simple Agreement for Future Equity)</h3>
+
+<p>Originated by Y Combinator. No maturity date, no interest. Converts to equity at the next priced round, typically at a discount or with a valuation cap.</p>
+
+<p><strong>Discount</strong>: SAFE holder converts at a discount to the price paid by the new investors (typically 15–25%). Rewards early risk.</p>
+
+<p><strong>Valuation cap</strong>: The SAFE converts at the lower of the cap or the new round price. Protects the SAFE holder if the company raises at a high valuation.</p>
+
+<p><strong>Pro-rata rights</strong>: SAFE holders may have the right to invest further in the next priced round to maintain their ownership percentage.</p>
+
+<p>South African SAFEs require adaptation — the US SAFE contemplates Delaware corporations; a South African version must align with Companies Act share issuance mechanics.</p>
+
+<h3>Convertible Loan Note</h3>
+
+<p>A loan with an interest rate (typically 8–15% per annum) that converts to equity at the next round (or a defined trigger). More common in South Africa than SAFEs due to familiarity.</p>
+
+<p><strong>Maturity date</strong>: If conversion has not occurred by maturity, the loan becomes repayable. This is leverage over the company — investors often use it to force a round or renegotiate terms.</p>
+
+<p><strong>Conversion mechanics</strong>: Must comply with Companies Act Section 43 (debentures) and require a board resolution to issue.</p>
+
+<hr>
+
+<h2>Investor Rights (Post-Investment)</h2>
+
+<h3>Information Rights</h3>
+
+<p>Investors typically require:</p>
+<ul><li>Monthly management accounts (within 15–20 business days of month-end)</li><li>Annual audited financials (within 120 days of year-end)</li><li>Annual budget (30 days before year-start)</li><li>Notice of material events (litigation, key person departure, regulatory action)</li></ul>
+
+<p><strong>Threshold-based rights</strong>: Minor investors (&lt; 5–10%) often have information rights but no board rights. Negotiate thresholds to limit the administrative burden.</p>
+
+<h3>Pre-emptive Rights (Anti-dilution — New Shares)</h3>
+
+<p>Before issuing new shares to third parties, existing investors have the right to subscribe for their pro-rata share at the same price. Standard and reasonable — accept this.</p>
+
+<h3>Tag-Along and Drag-Along</h3>
+
+<ul><li><strong>Tag-along</strong>: If a majority shareholder sells, the minority investor may sell their shares on the same terms. Protects minority investors.</li><li><strong>Drag-along</strong>: If shareholders representing a qualifying majority (e.g., 75%) agree to sell, they can compel the minority to sell on the same terms. Enables clean exits. Ensure the drag threshold is high enough that a single investor cannot drag the company into an unwanted sale.</li></ul>
+
+<h3>Right of First Refusal (ROFR)</h3>
+
+<p>Before selling shares to a third party, the seller must first offer them to existing shareholders (or the company) at the same price. Standard — accept it.</p>
+
+<hr>
+
+<h2>Cap Table Management</h2>
+
+<p>The cap table tracks who owns what, on a fully diluted basis:</p>
+
+<pre><code class="lang-text">Founder A         30.0%  1,500,000 ordinary shares
+Founder B         25.0%  1,250,000 ordinary shares
+Investor X        20.0%  1,000,000 preference A shares (R5m @ R20m pre)
+Employee pool     15.0%    750,000 unallocated options
+Angel (SAFE)       5.0%    250,000 estimated (unconverted)
+ESOP allocated     5.0%    250,000 options (vested + unvested)
+─────────────────────────────────────────────────────
+Total (fully diluted)    5,000,000 shares</code></pre>
+
+<p><strong>Fully diluted</strong> means including all options (vested and unvested), warrants, unconverted SAFEs, and convertible notes as if they had all been exercised or converted today.</p>
+
+<p><strong>Tool</strong>: Use a spreadsheet with scenario modelling for each round. Free tools: Pulley (ZA-compatible), Carta (US-focused but usable).</p>
+
+<hr>
+
+<h2>Founder Vesting</h2>
+
+<p>Investors almost universally require founder vesting — a mechanism that returns unvested founder shares to the company if the founder exits early.</p>
+
+<p><strong>Standard vesting schedule</strong>: 4 years, with a 1-year cliff.</p>
+<ul><li>If founder leaves in year 1: 0% vested, 100% returned</li><li>At the 1-year cliff: 25% vests immediately</li><li>Thereafter: Monthly vesting over the remaining 36 months</li></ul>
+
+<p><strong>Good leaver / bad leaver</strong>:</p>
+<ul><li><strong>Good leaver</strong> (retrenchment, serious illness): Keeps vested shares; unvested may be bought at fair market value</li><li><strong>Bad leaver</strong> (resignation, misconduct, breach): Keeps only vested shares; unvested returned at cost (or nominal value)</li></ul>
+
+<hr>
+
+<h2>South Africa-Specific Issues</h2>
+
+<h3>Exchange Control (SARB)</h3>
+
+<p>Issuing shares to non-resident investors requires South African Reserve Bank (SARB) approval via an Authorised Dealer (commercial bank). Required before the shares are issued. File Form DP(a) (inward investment). Processing: 2–6 weeks.</p>
+
+<h3>B-BBEE Impact</h3>
+
+<p>Foreign investment can reduce B-BBEE ownership scores. If the company sells products or services to government or state-owned entities, B-BBEE compliance is a commercial requirement. Model the B-BBEE impact of each investment round on your scorecard.</p>
+
+<h3>Securities Transfer Tax (STT)</h3>
+
+<p>Share transfers (not new issuances) attract STT at 0.25% of the market value of the shares transferred, collected by the transferring broker or party.</p>
+
+<h3>SARS Section 8C</h3>
+
+<p>If shares are issued to employees (including founders) subject to restrictions (vesting conditions), Section 8C of the Income Tax Act defers the tax event until the restrictions lapse. Founder vesting shares fall under Section 8C — tax is triggered when shares vest, not when issued. Founders should be aware of the tax liability that arises with each vesting tranche.</p>
+
+<hr>
+
+<h2>Term Sheet Red Flags</h2>
+
+<table><thead><tr><th>Term</th><th>Risk</th><th>Negotiation Position</th></tr></thead><tbody><tr><td>Full ratchet anti-dilution</td><td>Catastrophic dilution in down round</td><td>Broad-based weighted average only</td></tr><tr><td>2x participating liquidation preference</td><td>Founders get nothing until investor gets 2x + participates</td><td>Non-participating 1x at most</td></tr><tr><td>Investor approval for operational decisions</td><td>Loss of operational control</td><td>Restrict vetoes to material transactions only</td></tr><tr><td>Drag-along at 51%</td><td>Single investor can force a sale</td><td>Drag threshold ≥ 75% of all shareholders</td></tr><tr><td>No time limit on ROFR</td><td>Investor holds up any secondary sale</td><td>20–30 business day exercise period</td></tr><tr><td>Pay-to-play without notice</td><td>Forced participation in future rounds or punitive conversion</td><td>Ensure notice period and negotiable threshold</td></tr></tbody></table>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/leg/fundraising/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

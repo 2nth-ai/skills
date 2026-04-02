@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media Strategy — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Social Media Strategy</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/mkt/social/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Social Media Strategy</div>
+      <h1>SOCIAL MEDIA STRATEGY</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../mkt.html">mkt</a><a class="skill-chip" href="../../mkt/content.html">mkt/content</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Social Media Strategy</h1>
+
+<p>Social media is simultaneously the most misunderstood and most under-leveraged channel in B2B marketing. Most companies treat it as a broadcast channel — pushing announcements and product content. The brands that win treat it as a conversation channel — building relationships, demonstrating expertise, and earning trust with the people who will eventually buy from them.</p>
+
+<hr>
+
+<h2>SA Social Media Landscape</h2>
+
+<p>Understanding who is on which platform in South Africa is the foundation of platform selection:</p>
+
+<table><thead><tr><th>Platform</th><th>SA active users (est.)</th><th>Key demographics</th><th>B2B value</th></tr></thead><tbody><tr><td>Facebook</td><td>18–20 million</td><td>Broad; 25–54 strongest; all income groups</td><td>Medium — good for community and events</td></tr><tr><td>WhatsApp</td><td>24+ million</td><td>Near-universal; dominant messaging app</td><td>High — private channel; business accounts growing</td></tr><tr><td>YouTube</td><td>14–16 million</td><td>Broad; strong 18–34; growing rural</td><td>High — second search engine; long-form content</td></tr><tr><td>Instagram</td><td>5–7 million</td><td>Urban 18–35; lifestyle and consumer brands</td><td>Low-Medium for B2B</td></tr><tr><td>LinkedIn</td><td>6–8 million</td><td>Professionals, decision-makers, graduates</td><td>Very High for B2B</td></tr><tr><td>TikTok</td><td>5–7 million</td><td>Under 30; growing; entertainment-first</td><td>Low for B2B currently</td></tr><tr><td>X/Twitter</td><td>2–3 million</td><td>Tech, media, politics; declining</td><td>Low; good for news monitoring</td></tr></tbody></table>
+
+<p><strong>The WhatsApp reality</strong>: WhatsApp is where South Africans actually communicate. B2B referrals, customer service, informal sales conversations — all happen on WhatsApp. WhatsApp Business API (for larger organisations) enables structured customer comms, while WhatsApp Groups are a critical community-building tool.</p>
+
+<hr>
+
+<h2>Platform Strategy by Business Type</h2>
+
+<h3>B2B Technology / Professional Services</h3>
+<p><strong>Primary</strong>: LinkedIn (organic + paid) <strong>Secondary</strong>: YouTube (thought leadership video), X/Twitter (monitoring and occasional engagement) <strong>Community</strong>: WhatsApp Business for customer groups <strong>Avoid</strong>: Spreading thin across all platforms with no clear strategy</p>
+
+<h3>B2C Consumer / Retail</h3>
+<p><strong>Primary</strong>: Facebook + Instagram (connected via Meta Business Suite) <strong>Secondary</strong>: TikTok (growing; essential for under-30 audiences) <strong>Community</strong>: Facebook Groups, WhatsApp newsletters <strong>Commerce</strong>: Instagram Shopping, Facebook Shops for ecommerce</p>
+
+<h3>SMB / Local Services</h3>
+<p><strong>Primary</strong>: Facebook (highest SA reach, local business tools) <strong>Secondary</strong>: Google Business Profile (reviews, local search) — technically not social but managed alongside social <strong>Community</strong>: WhatsApp Business</p>
+
+<hr>
+
+<h2>LinkedIn Organic Strategy (B2B Priority)</h2>
+
+<p>LinkedIn is the highest-value social platform for B2B in South Africa. An effective LinkedIn presence:</p>
+
+<h3>Company page</h3>
+<ul><li>Consistent posting: minimum 3× per week</li><li>Content mix: 40% thought leadership, 30% company news / culture, 20% product / service, 10% engagement (polls, questions)</li><li>Employee advocacy: company posts get 2–5× more reach when employees engage with them in the first hour of posting</li><li>Native LinkedIn articles outperform external links in feed distribution</li></ul>
+
+<h3>Founder / executive personal brand</h3>
+<p>Personal profiles almost always outreach company pages by 10–20×. The CEO, CMO, or subject matter expert with an active personal brand is the brand's most effective social asset.</p>
+<ul><li>Post frequency: minimum 3–5× per week to grow; 1–2× per week to maintain</li><li>Hook in first line: LinkedIn cuts off at "...see more" — first 1–2 sentences must earn the click</li><li>Content types that perform on SA LinkedIn: contrarian opinions, behind-the-scenes, data/research, carousels, short personal stories with a business lesson</li><li>Engage with comments: comments within the first 60 minutes dramatically increase post reach</li></ul>
+
+<hr>
+
+<h2>Content Formats and Performance</h2>
+
+<p><strong>LinkedIn</strong>:</p>
+<ul><li>Text posts with strong hooks perform consistently</li><li>Carousels (image posts with swipe-through slides) have high engagement</li><li>Native video (uploaded directly, not YouTube links) gets 3–5× more reach than external links</li><li>Polls generate high engagement but low depth</li></ul>
+
+<p><strong>YouTube</strong>:</p>
+<ul><li>Thumbnails are more important than titles for click-through rate</li><li>Optimal length for B2B: 8–15 minutes (long enough to be substantive; short enough to watch in one session)</li><li>Chapters and timestamps improve retention and search indexing</li><li>Always add captions (SA audience diversity; many users watch without sound)</li></ul>
+
+<p><strong>Instagram</strong>:</p>
+<ul><li>Reels get significantly higher reach than static posts</li><li>Stories for daily touchpoints; highlights for evergreen brand content</li><li>Carousels have high save rates (a signal Instagram weights positively)</li></ul>
+
+<hr>
+
+<h2>Influencer Marketing</h2>
+
+<p>In South Africa, influencer marketing is most effective for B2C consumer brands. B2B influencer marketing (sometimes called "expert marketing") works differently.</p>
+
+<h3>B2C influencer tiers in SA</h3>
+
+<table><thead><tr><th>Tier</th><th>Followers</th><th>CPP (cost per post)</th><th>Best use</th></tr></thead><tbody><tr><td>Mega (celebrity)</td><td>500K+</td><td>R30,000–R200,000+</td><td>Mass awareness campaigns</td></tr><tr><td>Macro</td><td>100K–500K</td><td>R8,000–R30,000</td><td>Broad category reach</td></tr><tr><td>Mid-tier</td><td>30K–100K</td><td>R2,000–R8,000</td><td>Niche audience targeting</td></tr><tr><td>Micro</td><td>5K–30K</td><td>R500–R2,000</td><td>High engagement, authentic</td></tr><tr><td>Nano</td><td>1K–5K</td><td>R0–R500 / gifting</td><td>Hyper-local, community trust</td></tr></tbody></table>
+
+<p><strong>SA influencer market nuances:</strong></p>
+<ul><li>Authenticity threshold is lower with SA audiences than US/UK — creators who are visibly paid but genuine still convert</li><li>Diversity and representation: SA audiences respond negatively to campaigns that do not reflect SA's demographics</li><li>FAN/FTC equivalent: the Advertising Regulatory Board (ARB) requires disclosure of paid partnerships (#ad, #sponsored, or "paid partnership" label)</li><li>Micro-influencers (5K–30K) often deliver better ROI per rand than macro-influencers in SA due to lower costs and higher engagement rates</li></ul>
+
+<h3>B2B "expert marketing"</h3>
+<p>In B2B, the influencers are subject matter experts with LinkedIn audiences, podcast listeners, or conference followings — not traditional Instagram influencers. Partnering with:</p>
+<ul><li>Industry analysts and consultants</li><li>Media editors and journalists</li><li>Conference speakers</li><li>Respected practitioners with large personal brand followings</li></ul>
+
+<p>These partnerships work through guest content, co-authored research, speaking alongside them, or sponsoring their events.</p>
+
+<hr>
+
+<h2>Community Management</h2>
+
+<p>A brand's social presence is not just content publishing — it is managing the conversations that happen around the brand.</p>
+
+<p><strong>Response SLAs (standards)</strong>:</p>
+<ul><li>Direct messages: within 4 hours during business hours</li><li>Public comments (positive): acknowledge within 24 hours</li><li>Public complaints: respond within 2 hours; move to DM for resolution</li><li>Reviews (Google, Hellopeter, social): respond to every review, positive or negative</li></ul>
+
+<p><strong>Hellopeter</strong>: South Africa's dominant consumer review platform. B2C brands must actively monitor and respond — a pattern of unaddressed negative reviews is a major trust issue in SA.</p>
+
+<p><strong>Crisis social media</strong>:</p>
+<ol><li>Monitor proactively: Google Alerts, Mention, or Brandwatch for brand mentions</li><li>Pre-approved response templates for common complaint types</li><li>Escalation path: when to take offline, when to involve legal/PR</li><li>A social media crisis is any issue that is spreading faster than you can respond — mobilise immediately; delayed responses become the story</li></ol>
+
+<hr>
+
+<h2>Social Media KPIs</h2>
+
+<table><thead><tr><th>KPI</th><th>What it measures</th><th>Target benchmark</th></tr></thead><tbody><tr><td>Reach</td><td>How many unique accounts see content</td><td>Growing MoM</td></tr><tr><td>Impressions</td><td>Total content views</td><td>3–5× reach ratio normal</td></tr><tr><td>Engagement rate</td><td>Likes + comments + shares / reach</td><td>LinkedIn 2–5%; Instagram 1–4%</td></tr><tr><td>Follower growth</td><td>Audience building</td><td>5–10% MoM early stage</td></tr><tr><td>Share of voice</td><td>Your mentions vs competitors</td><td>Growing against category</td></tr><tr><td>Leads from social</td><td>Pipeline attributed to social</td><td>Track via UTM + CRM</td></tr><tr><td>Community response rate</td><td>% of comments/messages responded to</td><td>&gt;90%</td></tr></tbody></table>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/mkt/social/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

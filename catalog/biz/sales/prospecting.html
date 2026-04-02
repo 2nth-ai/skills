@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Prospecting — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Sales Prospecting</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/biz/sales/prospecting/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Sales Prospecting</div>
+      <h1>SALES PROSPECTING</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../biz/sales.html">biz/sales</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">biz/crm</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Sales Prospecting</h1>
+
+<p>Prospecting is the deliberate, systematic generation of new pipeline. Relying on inbound and referrals alone creates revenue fragility. A proactive outbound motion is the difference between a sales team and an order-taking team.</p>
+
+<h2>Ideal Customer Profile (ICP)</h2>
+
+<p>The ICP is the foundation of all prospecting. Without a clear ICP, prospecting is random and conversion is low.</p>
+
+<h3>ICP Definition Framework</h3>
+
+<p><strong>Firmographic</strong>:</p>
+<ul><li>Industry / vertical (where you win and where you don't)</li><li>Company size: revenue range, headcount range</li><li>Geography</li><li>Stage: startup, scale-up, enterprise, public</li></ul>
+
+<p><strong>Technographic</strong>:</p>
+<ul><li>Current tools and systems (what they use that you integrate with or replace)</li><li>Technical maturity signal (do they have an IT team? Engineering team?)</li></ul>
+
+<p><strong>Situational triggers</strong> (companies in a situation where your solution is needed):</p>
+<ul><li>Recent funding round</li><li>New executive hire (especially in the relevant function)</li><li>Recent expansion (new market, new product)</li><li>Regulatory change affecting their industry</li><li>Rapid headcount growth</li><li>Public complaints about the problem you solve</li></ul>
+
+<p><strong>Negative ICP</strong> (who to explicitly avoid):</p>
+<ul><li>Industries or sizes where you consistently lose or churn</li><li>Companies with procurement complexity that exceeds deal value</li></ul>
+
+<hr>
+
+<h2>Account Targeting</h2>
+
+<p><strong>Tier 1 accounts</strong> (10–20): High-fit, high-value. Full multi-channel, personalised outreach. Named account strategy.</p>
+
+<p><strong>Tier 2 accounts</strong> (50–100): Good fit. Semi-personalised sequencing with industry-level customisation.</p>
+
+<p><strong>Tier 3 accounts</strong> (100+): Broad fit. Automated sequencing with personalisation tokens.</p>
+
+<p>Build your target list from:</p>
+<ul><li>LinkedIn Sales Navigator (firmographic + seniority filters)</li><li>Intent data (companies researching relevant topics)</li><li>Trigger events (funding, hiring, expansion news)</li><li>CRM: look-alike to your best existing customers</li></ul>
+
+<hr>
+
+<h2>Cold Email Framework</h2>
+
+<p><strong>Subject line</strong>: Specific, not clever. Reference their company or role. Under 6 words.</p>
+<ul><li>"Question about [Company]'s [function]"</li><li>"[Mutual connection] suggested I reach out"</li><li>"[Trigger event] — thought of you"</li></ul>
+
+<p><strong>Email structure</strong> (under 100 words):</p>
+<ol><li><strong>Pattern interrupt</strong>: One sentence that proves you know something specific about them</li><li><strong>Problem</strong>: Name the pain you suspect they have (based on ICP triggers)</li><li><strong>Proof</strong>: One-line credibility statement (who else you've helped)</li><li><strong>CTA</strong>: One specific, low-commitment ask — not a demo, not a meeting, a question</li></ol>
+
+<p><strong>Example</strong>:</p>
+<blockquote>"Noticed [Company] just opened three new sales positions — usually signals the team is scaling faster than the process.</blockquote>
+<blockquote>We help RevOps teams at similar-stage companies cut ramp time by 40% by standardising the qualification process before headcount grows.</blockquote>
+<blockquote>Worth a 15-minute call to see if we can help?"</blockquote>
+
+<hr>
+
+<h2>Sequencing</h2>
+
+<p>A sequence is a multi-touch, multi-channel outreach programme for a specific account or persona.</p>
+
+<p><strong>Standard 8-touch sequence over 3 weeks</strong>:</p>
+
+<table><thead><tr><th>Day</th><th>Channel</th><th>Action</th></tr></thead><tbody><tr><td>1</td><td>Email</td><td>First touch — problem-led</td></tr><tr><td>2</td><td>LinkedIn</td><td>Connect request (no note)</td></tr><tr><td>4</td><td>Email</td><td>Follow-up — different angle (insight, not chase)</td></tr><tr><td>6</td><td>LinkedIn</td><td>Message if connected — brief, specific</td></tr><tr><td>8</td><td>Phone</td><td>Call + voicemail if no answer</td></tr><tr><td>11</td><td>Email</td><td>Case study or relevant content</td></tr><tr><td>14</td><td>Phone</td><td>Second call attempt</td></tr><tr><td>18</td><td>Email</td><td>Break-up email — "closing the loop"</td></tr></tbody></table>
+
+<p><strong>Break-up email</strong> performs best as the final touch:</p>
+<blockquote>"I've reached out a few times without hearing back — I'll assume the timing isn't right. If [problem] becomes a priority, I'm easy to find. Best of luck."</blockquote>
+
+<p>This email frequently generates replies from previously silent prospects.</p>
+
+<hr>
+
+<h2>Cold Calling</h2>
+
+<p><strong>Pre-call research</strong>: Know their role, company, and at least one reason to call (trigger event, ICP fit, relevant pain).</p>
+
+<p><strong>Opening</strong> (first 10 seconds):</p>
+<ul><li>State your name and company confidently</li><li>Ask if you've caught them at a bad time (not "is this a good time" — frame for a yes)</li><li>Lead with a specific, relevant observation — not a generic pitch</li></ul>
+
+<p><strong>Voicemail</strong>: Under 20 seconds. Name, company, specific reason for calling, callback number said clearly twice. Don't ask them to call back — say you'll try again.</p>
+
+<p><strong>Gatekeeper</strong>: Treat as an ally, not an obstacle. "I was hoping you could help me — I'm trying to reach [name] about [specific topic]. Is there a better time to reach them directly?"</p>
+
+<hr>
+
+<h2>Metrics</h2>
+
+<table><thead><tr><th>Metric</th><th>Benchmark</th></tr></thead><tbody><tr><td>Emails sent per booked meeting</td><td>50–100</td></tr><tr><td>Calls made per booked meeting</td><td>20–50</td></tr><tr><td>Meeting to opportunity conversion</td><td>40–60%</td></tr><tr><td>Sequence reply rate (positive)</td><td>3–8%</td></tr></tbody></table>
+
+<p>Track by sequence, persona, and ICP tier. Optimise the lowest-converting step first.</p>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/biz/sales/prospecting/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

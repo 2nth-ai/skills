@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power Systems & Energy Management — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Power Systems & Energy Management</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/iot/power/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Power Systems & Energy Management</div>
+      <h1>POWER SYSTEMS & ENERGY MANAGEMENT</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../iot/hardware.html">iot/hardware</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Power Systems &amp; Energy Management</h1>
+
+<p>Power is the constraint that defines IoT design. A device that runs out of battery, dies during load shedding, or draws too much current to run from a solar panel is a failed deployment regardless of its features. Design power first.</p>
+
+<hr>
+
+<h2>Power Budget — Start Here</h2>
+
+<p>Before selecting any component, build the power budget:</p>
+
+<pre><code class="lang-text">Average Current (mA) = Σ [ Component_current(mA) × Duty_cycle(%) ]
+
+Battery life (hours) = Battery_capacity(mAh) / Average_current(mA)</code></pre>
+
+<h3>Example Budget: LoRaWAN soil moisture sensor</h3>
+
+<table><thead><tr><th>State</th><th>Current</th><th>Duty Cycle</th><th>Contribution</th></tr></thead><tbody><tr><td>Deep sleep (MCU + sensor off)</td><td>8 µA</td><td>99.7%</td><td>7.98 µA</td></tr><tr><td>Sensor wake + measurement</td><td>3.2 mA</td><td>0.1%</td><td>3.2 µA</td></tr><tr><td>LoRa TX (SF9, +14dBm)</td><td>38 mA</td><td>0.05%</td><td>19 µA</td></tr><tr><td>LoRa RX window</td><td>11 mA</td><td>0.15%</td><td>16.5 µA</td></tr><tr><td><strong>Average</strong></td><td></td><td></td><td><strong>~47 µA</strong></td></tr></tbody></table>
+
+<p>With 3× AA alkaline (6,000 mAh usable after Peukert): <strong>~14.5 years</strong> — theoretical. Real-world target: 5–7 years after derating for temperature, self-discharge, and Peukert losses.</p>
+
+<hr>
+
+<h2>Battery Technologies</h2>
+
+<h3>Primary (Non-Rechargeable)</h3>
+
+<table><thead><tr><th>Chemistry</th><th>Voltage</th><th>Energy Density</th><th>Temp Range</th><th>Self-Discharge</th><th>Best For</th></tr></thead><tbody><tr><td><strong>Alkaline (AA/AAA)</strong></td><td>1.5V</td><td>150 Wh/kg</td><td>−20°C to +55°C</td><td>~2%/year</td><td>Low-cost indoor sensors</td></tr><tr><td><strong>Lithium AA (LiFeS₂)</strong></td><td>1.5V</td><td>300 Wh/kg</td><td>−40°C to +60°C</td><td>~1%/year</td><td>Outdoor; wide temp range</td></tr><tr><td><strong>Li-SOCl₂ (ER26500)</strong></td><td>3.6V</td><td>500 Wh/kg</td><td>−60°C to +85°C</td><td>&lt;1%/10 years</td><td>Industrial; 10yr deployments</td></tr><tr><td><strong>Li-MnO₂ (CR2032)</strong></td><td>3V</td><td>270 Wh/kg</td><td>−30°C to +70°C</td><td>&lt;1%/year</td><td>Small coin cell; BLE beacons</td></tr></tbody></table>
+
+<p><strong>Li-SOCl₂ passivation</strong>: These cells form a passivation layer at rest, causing a voltage drop on first pulse. Use a supercapacitor in parallel to handle transmit pulses — critical for LoRa and NB-IoT which have high instantaneous current peaks (100–500mA).</p>
+
+<pre><code class="lang-text">Li-SOCl₂ cell → 10Ω series resistor → 1F supercapacitor
+                                            ↓
+                                        MCU + Radio</code></pre>
+
+<h3>Rechargeable</h3>
+
+<table><thead><tr><th>Chemistry</th><th>Nominal V</th><th>Capacity (typical)</th><th>Cycle Life</th><th>Temp (charging)</th><th>Notes</th></tr></thead><tbody><tr><td><strong>LiPo / Li-ion</strong></td><td>3.7V</td><td>100–10,000 mAh</td><td>300–500</td><td>0°C to +45°C</td><td>Most IoT devices; requires BMS</td></tr><tr><td><strong>LiFePO₄</strong></td><td>3.2V</td><td>500–5,000 mAh</td><td>2,000+</td><td>−10°C to +45°C</td><td>Safer; longer cycle life; lower energy density</td></tr><tr><td><strong>NiMH</strong></td><td>1.2V</td><td>600–3,000 mAh</td><td>500–1,000</td><td>0°C to +40°C</td><td>Robust; wide temp; simple charging</td></tr><tr><td><strong>Lead Acid</strong></td><td>12V</td><td>7–200 Ah</td><td>200–500</td><td>0°C to +40°C</td><td>UPS/backup; heavy; cheap; tolerates abuse</td></tr><tr><td><strong>Supercapacitor</strong></td><td>2.7V</td><td>1–100F</td><td>500,000+</td><td>−40°C to +70°C</td><td>Pulse buffering; not for storage</td></tr></tbody></table>
+
+<hr>
+
+<h2>Battery Management Systems (BMS)</h2>
+
+<p>Any LiPo/Li-ion deployment requires a BMS for:</p>
+
+<h3>BMS Functions</h3>
+
+<table><thead><tr><th>Function</th><th>Why Critical</th></tr></thead><tbody><tr><td><strong>Overvoltage protection</strong></td><td>Li-ion above 4.2V → thermal runaway → fire</td></tr><tr><td><strong>Undervoltage cutoff</strong></td><td>Below 2.5V → irreversible capacity loss</td></tr><tr><td><strong>Overcurrent protection</strong></td><td>Short circuit → heating → fire</td></tr><tr><td><strong>Temperature monitoring</strong></td><td>No charging below 0°C or above 45°C</td></tr><tr><td><strong>Cell balancing</strong> (multi-cell)</td><td>Prevents weakest cell from limiting pack</td></tr><tr><td><strong>State of Charge (SoC)</strong></td><td>Coulomb counting + OCV lookup</td></tr></tbody></table>
+
+<h3>Common BMS ICs</h3>
+
+<table><thead><tr><th>IC</th><th>Cells</th><th>Features</th><th>Notes</th></tr></thead><tbody><tr><td>TP4056</td><td>1S</td><td>Charge only; 4.2V, 1A max</td><td>Ubiquitous; no protection — add DW01A</td></tr><tr><td>MCP73831</td><td>1S</td><td>Charge only; 4.2V or 4.35V; 500mA</td><td>Low cost; compact</td></tr><tr><td>BQ25895</td><td>1S</td><td>Charge + OTG + boost; 5A; I²C</td><td>Feature-rich; USB-PD input</td></tr><tr><td>BQ76920</td><td>3–5S</td><td>AFE; protection; SoC via host</td><td>Industrial; pairs with MCU for full BMS</td></tr><tr><td>MAX17048</td><td>1S</td><td>Fuel gauge (ModelGauge); SoC/SoH; I²C</td><td>Excellent SoC accuracy; 3µA quiescent</td></tr></tbody></table>
+
+<hr>
+
+<h2>Energy Harvesting</h2>
+
+<p>When no battery replacement is acceptable or the deployment is in an unreachable location.</p>
+
+<h3>Solar</h3>
+
+<p><strong>Sizing formula</strong>:</p>
+<pre><code class="lang-text">Panel power (W) = Average_load(W) × Hours_per_day / (PSH × η_system)
+
+PSH = Peak Sun Hours (SA average: 5.5–6.0 h/day coastal; 5.0–5.5 inland)
+η_system = charge controller efficiency × battery efficiency (typically 0.75–0.85)</code></pre>
+
+<p><strong>Example</strong>: 50mA average load, 3.3V system, SA inland site</p>
+<pre><code class="lang-text">Load = 0.05A × 3.3V = 165mW = 0.165W
+Panel = 0.165W × 24h / (5.5h × 0.80) = 0.9W → use 1–2W panel with margin</code></pre>
+
+<p><strong>SA solar resource</strong>: South Africa has some of the best solar irradiance globally (Northern Cape 6+ PSH/day). Even in winter (Highveld: ~4.5 PSH), solar is viable for low-power IoT.</p>
+
+<p><strong>MPPT vs PWM charge controller</strong>:</p>
+<ul><li>PWM: simple, cheap, wastes panel capacity below battery voltage — avoid on small systems</li><li>MPPT: tracks maximum power point, 15–30% more energy extracted, required for any serious deployment</li></ul>
+
+<p><strong>Cold start problem</strong>: System must start from a fully discharged state (no battery, no supercap). Add a comparator that prevents MCU boot until panel output is sufficient.</p>
+
+<h3>Thermal (TEG)</h3>
+
+<p>Seebeck effect: ΔT of 10°C → ~10–50mV (module-dependent). Useful in: industrial pipes, machinery, geothermal vents. Requires ΔT &gt; 5°C sustained. Output power: µW to mW range. Use a boost converter (BQ25504) with minimum start voltage as low as 130mV.</p>
+
+<h3>Vibration / Piezoelectric</h3>
+
+<p>Cantilever piezo harvesters: 10–1,000 µW from sustained vibration. Frequency must match mechanical resonance (typically 50–200 Hz). Practical for: rotating machinery monitoring, rail vibration, HVAC fans.</p>
+
+<h3>RF Energy Harvesting</h3>
+
+<p>Rectenna harvesting from ambient RF (GSM, WiFi). Power: 1–100 µW at typical urban RF density. Only viable for ultra-ultra-low-power sensors with months between readings. Not reliable as primary power.</p>
+
+<hr>
+
+<h2>Voltage Regulation</h2>
+
+<h3>LDO (Low-Dropout Regulator)</h3>
+
+<pre><code class="lang-text">Efficiency = Vout / Vin  (best case — ignores quiescent current)
+Power dissipated = (Vin - Vout) × Iload</code></pre>
+
+<table><thead><tr><th>IC</th><th>Vin</th><th>Vout</th><th>Iq</th><th>Notes</th></tr></thead><tbody><tr><td>MCP1700</td><td>2.3–6V</td><td>Adj</td><td>1.6 µA</td><td>Ultra-low Iq; ideal for battery</td></tr><tr><td>LP5907</td><td>2.2–5.5V</td><td>Fixed/Adj</td><td>75 µA</td><td>Low noise; RF applications</td></tr><tr><td>AMS1117</td><td>4.75–15V</td><td>3.3V/5V/Adj</td><td>5 mA</td><td>Common, cheap; poor Iq</td></tr><tr><td>TPS7A02</td><td>1.4–5.5V</td><td>Adj</td><td>25 nA</td><td>Record-low Iq; 200mA</td></tr></tbody></table>
+
+<p><strong>When to use LDO</strong>: Small voltage drop (Vin−Vout &lt; 1V), low current (&lt;100mA), noise-sensitive (RF, ADC), simplicity.</p>
+
+<p><strong>When NOT to use</strong>: Large input-output differential with significant load — heat becomes a design problem. Switch to buck converter.</p>
+
+<h3>Buck (Step-Down) Switching Regulator</h3>
+
+<p>Inductor sizing:</p>
+<pre><code class="lang-text">L = (Vin - Vout) × Vout / (ΔIL × fs × Vin)
+
+ΔIL = ripple current (typically 20–40% of Iload)
+fs = switching frequency</code></pre>
+
+<p>Output capacitor for stability:</p>
+<pre><code class="lang-text">Cout_min = ΔIL / (8 × fs × ΔVout)
+ESR &lt; ΔVout / ΔIL</code></pre>
+
+<table><thead><tr><th>IC</th><th>Vin</th><th>Vout</th><th>Iq</th><th>fs</th><th>Notes</th></tr></thead><tbody><tr><td>TPS62840</td><td>1.8–6.5V</td><td>0.4–3.3V</td><td>60 nA</td><td>4 MHz</td><td>Ultra-low Iq; IoT goldstandard</td></tr><tr><td>RT9013</td><td>2.2–5.5V</td><td>Adj</td><td>55 µA</td><td></td><td>Actually LDO — common confusion</td></tr><tr><td>SY8009A</td><td>2.5–5.5V</td><td>0.6–5V</td><td>40 µA</td><td>1.5 MHz</td><td>Cheap; JLCPCB basic part</td></tr><tr><td>MAX17222</td><td>0.7–5.5V</td><td>Adj</td><td>300 nA</td><td>4 MHz</td><td>Nano-power boost/buck</td></tr></tbody></table>
+
+<hr>
+
+<h2>Load Shedding-Resilient Power Design</h2>
+
+<p>South Africa's load shedding (up to Stage 8: 8–12h/day without power) demands that IoT devices designed for grid-connected deployments handle extended grid outages.</p>
+
+<h3>Design Strategies</h3>
+
+<table><thead><tr><th>Strategy</th><th>Complexity</th><th>Cost</th><th>Best For</th></tr></thead><tbody><tr><td><strong>Battery backup only</strong></td><td>Low</td><td>Low</td><td>Sensors; &lt; 4h runtime needed</td></tr><tr><td><strong>Battery + MPPT solar</strong></td><td>Medium</td><td>Medium</td><td>Outdoor; extended outages; remote</td></tr><tr><td><strong>UPS topology (mains + battery)</strong></td><td>Medium</td><td>Medium</td><td>Indoor; permanent infrastructure</td></tr><tr><td><strong>Supercapacitor bridge</strong></td><td>Low</td><td>Low</td><td>Short outages (&lt; 30min); ride-through</td></tr><tr><td><strong>Generator input</strong></td><td>Low (device side)</td><td>High (generator)</td><td>Critical infrastructure; data centres</td></tr></tbody></table>
+
+<h3>UPS Design for IoT Gateway</h3>
+
+<pre><code class="lang-text">Mains (230V AC)
+    → AC/DC adapter → 12V or 5V DC bus
+                           ↓
+                    Ideal diode OR        ← Battery (LiFePO₄ or SLA)
+                    Power path controller     charged by charger IC
+                           ↓
+                    5V → 3.3V (LDO)
+                           ↓
+                    MCU + Radio + Sensors</code></pre>
+
+<p>Key ICs for seamless switchover:</p>
+<ul><li><strong>BQ24650</strong> — MPPT solar charger; 26V input; 1A–10A charge current; accurate voltage regulation</li><li><strong>LTC4412</strong> — ideal diode controller; near-zero forward drop; automatic switchover</li><li><strong>MCP73213</strong> — dual-cell Li-ion charger with input overvoltage protection</li></ul>
+
+<h3>Load Shedding Schedule Awareness</h3>
+
+<p>Integrate the Eskom load shedding schedule API into IoT gateway firmware:</p>
+<ul><li>Fetch schedule for the device's supply area (suburb → area code)</li><li>Pre-charge to 100% before expected outage</li><li>Reduce transmit frequency during battery operation to extend runtime</li><li>Alert platform when battery drops below threshold</li><li>Resume normal operation on mains restoration</li></ul>
+
+<p><strong>SA load shedding API sources</strong>: EskomSePush API (community-maintained), loadshedding.eskom.co.za (official but unreliable), municipalities publish their own schedules.</p>
+
+<hr>
+
+<h2>Power Measurement &amp; Profiling</h2>
+
+<p>You cannot optimise what you cannot measure.</p>
+
+<h3>Hardware Tools</h3>
+
+<table><thead><tr><th>Tool</th><th>Range</th><th>Resolution</th><th>Cost</th><th>Notes</th></tr></thead><tbody><tr><td><strong>nRF PPK2</strong> (Nordic Power Profiler Kit 2)</td><td>800nA–1A</td><td>1 µA</td><td>~$40</td><td>Best IoT power tool; USB; nRF Connect app</td></tr><tr><td><strong>µCurrent Gold</strong></td><td>1nA–1A</td><td>nA</td><td>~$100</td><td>Shunt-based; use with DMM or scope</td></tr><tr><td><strong>Otii Arc</strong></td><td>0.1µA–5A</td><td>0.1 µA</td><td>~$200</td><td>Simultaneous voltage + current + UART</td></tr><tr><td><strong>Keysight N6705C</strong></td><td>µA–20A</td><td>nA</td><td>&gt;$5,000</td><td>Lab bench; gold standard</td></tr><tr><td><strong>INA219 / INA3221</strong></td><td>0–3.2A</td><td>~1 mA</td><td>~$2</td><td>On-board current sensing; I²C; production monitoring</td></tr></tbody></table>
+
+<h3>Firmware Power Profiling Pattern</h3>
+
+<p>Use a GPIO pin toggled at each power state transition — measure on oscilloscope alongside current:</p>
+
+<pre><code class="lang-c">// Toggle GPIO high before high-power operation
+HAL_GPIO_WritePin(PROBE_GPIO, PROBE_PIN, GPIO_PIN_SET);
+lora_transmit(packet, len);
+HAL_GPIO_WritePin(PROBE_GPIO, PROBE_PIN, GPIO_PIN_RESET);</code></pre>
+
+<p>Correlate GPIO trace with current waveform to identify:</p>
+<ul><li>Unexpected wake-ups</li><li>Peripheral not entering sleep</li><li>Transmit current spikes higher than spec</li><li>Sleep current floor higher than expected</li></ul>
+
+<hr>
+
+<h2>Enclosure Thermal Management</h2>
+
+<p>Battery and electronics performance degrades at temperature extremes common in SA deployments (outdoor enclosures: −5°C to +70°C; in direct sun: up to +85°C enclosure interior).</p>
+
+<h3>Thermal Rules</h3>
+
+<ul><li><strong>LiPo charging</strong>: Never charge below 0°C — lithium plating → short circuit risk. Add NTC thermistor in charge controller feedback path.</li><li><strong>LiPo discharge</strong>: Capacity drops ~20% at 0°C; ~40% at −10°C. Derate battery life calculations for cold climates (Drakensberg, Highveld winter nights).</li><li><strong>High temperature</strong>: Every 10°C above 25°C halves electrolytic capacitor life. Use polymer capacitors for outdoor designs.</li><li><strong>Passive thermal dissipation</strong>: Add thermal vias under switching regulators and power FETs. Copper pours on both sides for heat spreading.</li><li><strong>White enclosures</strong>: Reflective white vs black enclosure reduces internal temperature by 15–20°C in direct sunlight. Critical for solar-powered outdoor nodes.</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/iot/power/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

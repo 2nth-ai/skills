@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent Communication Protocols — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">AI Agent Communication Protocols</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/agent-protocols/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">AI Agent Communication Protocols</div>
+      <h1>AI AGENT COMMUNICATION PROTOCOLS</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../tech/architecture.html">tech/architecture</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>AI Agent Communication Protocols</h1>
+
+<p>Multi-agent systems move AI from isolated question-answering to distributed work: one agent plans, another retrieves data, another executes code, another verifies output. Getting agents to communicate reliably requires agreed-upon protocols — the same reason HTTP exists for browsers and servers.</p>
+
+<p>As of 2025, three open protocols have emerged as the dominant standards:</p>
+
+<table><thead><tr><th>Protocol</th><th>Originator</th><th>Scope</th><th>Status</th></tr></thead><tbody><tr><td><strong>MCP</strong> (Model Context Protocol)</td><td>Anthropic</td><td>Model ↔ tools/data</td><td>Widely adopted; de facto standard</td></tr><tr><td><strong>A2A</strong> (Agent-to-Agent)</td><td>Google</td><td>Agent ↔ Agent</td><td>Open spec; growing adoption</td></tr><tr><td><strong>ACP</strong> (Agent Communication Protocol)</td><td>Linux Foundation / IBM</td><td>Agent ↔ Agent (REST)</td><td>Early adoption; enterprise focus</td></tr></tbody></table>
+
+<p>These protocols are complementary, not competing. MCP handles how an agent accesses tools and data. A2A and ACP handle how agents talk to each other.</p>
+
+<hr>
+
+<h2>MCP — Model Context Protocol</h2>
+
+<h3>What It Is</h3>
+
+<p>MCP is an open standard (MIT licence) for connecting AI models to external context — tools, data sources, and prompts. Think of it as USB-C for AI: one protocol that any model can use to plug into any tool.</p>
+
+<p>Published by Anthropic in November 2024. Adopted by: Claude, Cursor, Windsurf, Cline, Sourcegraph, Zed, and dozens of third-party servers.</p>
+
+<h3>Architecture</h3>
+
+<pre><code class="lang-text">┌─────────────────────────────────┐
+│         MCP HOST                │
+│  (Claude Desktop, Cursor, etc.) │
+│                                 │
+│  ┌──────────────────────────┐   │
+│  │      MCP CLIENT          │   │
+│  │  (manages connections)   │   │
+│  └──────┬───────────────────┘   │
+└─────────│───────────────────────┘
+          │  JSON-RPC 2.0
+          │  (stdio / SSE / HTTP)
+          ▼
+┌─────────────────────┐
+│     MCP SERVER      │
+│  (your tool/data)   │
+│                     │
+│  ├── Resources      │  ← files, DB rows, API responses
+│  ├── Tools          │  ← functions the model can call
+│  ├── Prompts        │  ← reusable prompt templates
+│  └── Sampling       │  ← server asks model to generate text
+└─────────────────────┘</code></pre>
+
+<h3>The Four MCP Primitives</h3>
+
+<p><strong>Resources</strong> — Expose data the model can read:</p>
+<pre><code class="lang-json">{
+  "uri": "file:///project/src/agents.ts",
+  "mimeType": "text/typescript",
+  "text": "export const AGENTS = [...]"
+}</code></pre>
+
+<p><strong>Tools</strong> — Functions the model can invoke:</p>
+<pre><code class="lang-json">{
+  "name": "query_database",
+  "description": "Run a SQL query against the data warehouse",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "sql": { "type": "string" },
+      "database": { "type": "string", "enum": ["production", "analytics"] }
+    },
+    "required": ["sql"]
+  }
+}</code></pre>
+
+<p><strong>Prompts</strong> — Reusable prompt templates with arguments:</p>
+<pre><code class="lang-json">{
+  "name": "code_review",
+  "arguments": [
+    { "name": "language", "required": true },
+    { "name": "focus", "required": false }
+  ]
+}</code></pre>
+
+<p><strong>Sampling</strong> — Server requests a model completion (enables recursive agent patterns):</p>
+<pre><code class="lang-json">{
+  "method": "sampling/createMessage",
+  "params": {
+    "messages": [...],
+    "maxTokens": 1024
+  }
+}</code></pre>
+
+<h3>Transport Options</h3>
+
+<table><thead><tr><th>Transport</th><th>Use Case</th><th>Notes</th></tr></thead><tbody><tr><td><strong>stdio</strong></td><td>Local processes; CLI tools</td><td>Most common for local MCP servers</td></tr><tr><td><strong>HTTP + SSE</strong></td><td>Remote servers; cloud-hosted tools</td><td>Use for production deployments</td></tr><tr><td><strong>WebSocket</strong></td><td>Bidirectional real-time</td><td>Lower overhead than SSE for high-frequency calls</td></tr></tbody></table>
+
+<h3>Building an MCP Server (TypeScript)</h3>
+
+<pre><code class="lang-typescript">import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+
+const server = new Server(
+  { name: 'skills-server', version: '1.0.0' },
+  { capabilities: { tools: {}, resources: {} } }
+);
+
+// Register a tool
+server.setRequestHandler('tools/call', async (request) =&gt; {
+  if (request.params.name === 'resolve_skill') {
+    const { path } = request.params.arguments;
+    const content = await fetchSkill(path);
+    return { content: [{ type: 'text', text: content }] };
+  }
+  throw new Error(`Unknown tool: ${request.params.name}`);
+});
+
+// Register a resource
+server.setRequestHandler('resources/read', async (request) =&gt; {
+  const skill = await fetchSkill(request.params.uri.replace('skill://', ''));
+  return { contents: [{ uri: request.params.uri, text: skill }] };
+});
+
+const transport = new StdioServerTransport();
+await server.connect(transport);</code></pre>
+
+<h3>MCP Security Model</h3>
+
+<ul><li>Servers cannot initiate connections — clients connect to servers</li><li>Tool calls require explicit model invocation — the model decides when to call a tool</li><li>Human-in-the-loop: hosts (like Claude Desktop) can require user approval before tool execution</li><li>Servers should validate all inputs; never trust tool arguments without sanitisation</li><li>OAuth 2.1 is the recommended auth mechanism for remote MCP servers</li></ul>
+
+<hr>
+
+<h2>A2A — Agent-to-Agent Protocol</h2>
+
+<h3>What It Is</h3>
+
+<p>A2A (published by Google, April 2025, open spec at google.github.io/A2A) defines how AI agents discover and communicate with other AI agents. Where MCP connects agents to tools, A2A connects agents to agents.</p>
+
+<h3>Core Concepts</h3>
+
+<p><strong>Agent Card</strong> — A machine-readable capability manifest. Every A2A agent publishes one at <code>/.well-known/agent.json</code>:</p>
+
+<pre><code class="lang-json">{
+  "name": "Grant — Financial Agent",
+  "description": "Cash flow, P&amp;L, runway, and South African tax compliance.",
+  "url": "https://agents.2nth.ai/agents/grant",
+  "version": "1.0.0",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false
+  },
+  "skills": [
+    {
+      "id": "fin/cash-flow",
+      "name": "Cash Flow Management",
+      "description": "13-week rolling forecast, working capital, runway planning",
+      "examples": ["What is my current runway?", "Build a 13-week cash flow forecast"]
+    }
+  ],
+  "authentication": {
+    "schemes": ["bearer"]
+  }
+}</code></pre>
+
+<p><strong>Task</strong> — The unit of work in A2A:</p>
+
+<pre><code class="lang-json">{
+  "id": "task-uuid-1234",
+  "sessionId": "session-uuid-5678",
+  "status": {
+    "state": "working",
+    "timestamp": "2025-04-01T10:00:00Z"
+  },
+  "message": {
+    "role": "user",
+    "parts": [{ "text": "Analyse our Q1 cash position and flag any risks." }]
+  }
+}</code></pre>
+
+<p><strong>Task lifecycle</strong>:</p>
+<pre><code class="lang-text">submitted → working → [input-required] → working → completed
+                                                  ↘ failed
+                                                  ↘ cancelled</code></pre>
+
+<h3>A2A Request/Response Flow</h3>
+
+<pre><code class="lang-text">Client Agent (Katharine — CRO)
+    │
+    │  POST /tasks/send
+    │  { message: "What is our current runway?", sessionId: "..." }
+    ▼
+Server Agent (Grant — CFO)
+    │
+    ├── Returns: { status: "working" }  (if streaming: SSE begins)
+    │
+    ├── SSE events during processing:
+    │   data: { type: "working", artifact: { parts: [{ text: "Analysing..." }] } }
+    │
+    └── Final: { status: "completed", artifact: { parts: [{ text: "Runway: 8.3 months..." }] } }</code></pre>
+
+<h3>Agent Discovery</h3>
+
+<p>Agents discover each other either:</p>
+<ol><li><strong>Static</strong>: Hard-coded agent URLs in an agent registry</li><li><strong>Dynamic</strong>: Search an Agent Directory (a catalogue of Agent Cards)</li></ol>
+
+<pre><code class="lang-typescript">// Fetch an agent's capabilities before routing
+const agentCard = await fetch('https://agents.2nth.ai/.well-known/agent.json').then(r =&gt; r.json());
+const canHandleTask = agentCard.skills.some(s =&gt; s.id === requiredSkillId);</code></pre>
+
+<hr>
+
+<h2>ACP — Agent Communication Protocol</h2>
+
+<h3>What It Is</h3>
+
+<p>ACP (Linux Foundation AI &amp; Data, 2025) is a REST-based protocol for agent-to-agent communication in enterprise environments. It is more prescriptive than A2A about message structure, error handling, and observability.</p>
+
+<h3>Key Differences from A2A</h3>
+
+<table><thead><tr><th></th><th>A2A</th><th>ACP</th></tr></thead><tbody><tr><td><strong>Message format</strong></td><td>JSON with <code>parts</code> array</td><td>Structured <code>Message</code> with typed attachments</td></tr><tr><td><strong>Discovery</strong></td><td>Agent Cards at <code>/.well-known/agent.json</code></td><td>Agent Registry service</td></tr><tr><td><strong>Auth</strong></td><td>OAuth 2.1</td><td>OAuth 2.1 + API keys</td></tr><tr><td><strong>Streaming</strong></td><td>SSE</td><td>SSE + WebSocket</td></tr><tr><td><strong>Focus</strong></td><td>General agent interop</td><td>Enterprise, regulated industries</td></tr></tbody></table>
+
+<h3>ACP Message Structure</h3>
+
+<pre><code class="lang-json">{
+  "message_id": "msg-uuid",
+  "created_at": "2025-04-01T10:00:00Z",
+  "sender": {
+    "agent_id": "agent-katharine",
+    "run_id": "run-uuid"
+  },
+  "content": [
+    { "type": "text/plain", "data": "What is our Q1 pipeline conversion rate?" }
+  ],
+  "metadata": {
+    "session_id": "session-uuid",
+    "correlation_id": "corr-uuid"
+  }
+}</code></pre>
+
+<hr>
+
+<h2>Agent Orchestration Topologies</h2>
+
+<p>Protocols define how agents communicate. Topology defines how they are arranged.</p>
+
+<h3>1. Sequential Chain</h3>
+
+<p>Each agent processes output from the prior agent. Simple, predictable.</p>
+
+<pre><code class="lang-text">User → Agent A → Agent B → Agent C → Response</code></pre>
+
+<p><strong>Use when</strong>: Tasks have a clear linear dependency. Example: Research → Summarise → Format.</p>
+
+<p><strong>Risk</strong>: A failure at any step blocks the whole chain.</p>
+
+<h3>2. Supervisor / Orchestrator</h3>
+
+<p>One agent decomposes a task and routes subtasks to specialist agents. Collects and synthesises results.</p>
+
+<pre><code class="lang-text">         ┌─── Specialist A (data retrieval)
+User → Orchestrator ─── Specialist B (analysis)     → Synthesised Response
+         └─── Specialist C (formatting)</code></pre>
+
+<p><strong>Use when</strong>: Tasks require multiple independent capabilities. Example: 2nth.ai agents — Leo routes legal questions, Grant handles financials, Katharine handles revenue.</p>
+
+<p><strong>Implementation</strong>: Orchestrator holds conversation context; specialists are stateless. Orchestrator decides routing based on intent classification.</p>
+
+<h3>3. Peer-to-Peer with Handoff</h3>
+
+<p>Agents handle tasks directly but can hand off to peers when out of domain. Conversation history travels with the handoff.</p>
+
+<pre><code class="lang-text">User → Agent A
+       Agent A detects out-of-domain
+       Agent A → [handoff with context] → Agent B
+                                          Agent B continues</code></pre>
+
+<p><strong>This is what agents.2nth.ai implements</strong> via the <code>__handoff__</code> JSON signal in responses.</p>
+
+<h3>4. Hierarchical Multi-Tier</h3>
+
+<p>Director agents manage specialist agents; specialist agents may manage worker agents. Mirrors human org structure.</p>
+
+<pre><code class="lang-text">Director Agent (strategic decomposition)
+    ├── Domain Agent A (tactical planning)
+    │       ├── Worker A1 (tool execution)
+    │       └── Worker A2 (tool execution)
+    └── Domain Agent B (tactical planning)
+            └── Worker B1 (tool execution)</code></pre>
+
+<p><strong>Use when</strong>: Tasks are large enough to require independent sub-teams. Example: a software project where an architect agent delegates to frontend, backend, and data agents.</p>
+
+<h3>5. Critic / Debate Pattern</h3>
+
+<p>Two agents produce competing outputs; a judge agent evaluates and selects or synthesises.</p>
+
+<pre><code class="lang-text">User → Generator A → Critic
+       Generator B ↗       → Final Response</code></pre>
+
+<p><strong>Use when</strong>: Output quality and accuracy are paramount. Example: legal contract review where two analysis agents identify issues and a synthesis agent produces the final report.</p>
+
+<hr>
+
+<h2>Practical Implementation Patterns</h2>
+
+<h3>Structured Handoff Payload</h3>
+
+<p>When an agent hands off to another, include full context:</p>
+
+<pre><code class="lang-typescript">interface Handoff {
+  to_agent: string;          // target agent identifier
+  reason: string;            // why the handoff is happening
+  conversation: Message[];   // full conversation history
+  context: {                 // structured context to prime the new agent
+    original_intent: string;
+    completed_steps: string[];
+    pending_task: string;
+    relevant_artifacts?: Record&lt;string, unknown&gt;;
+  };
+}</code></pre>
+
+<h3>Agent Registry</h3>
+
+<p>A registry maps capability requirements to agent endpoints:</p>
+
+<pre><code class="lang-typescript">const AGENT_REGISTRY = {
+  'fin/*':    { url: 'https://agents.2nth.ai/agents/grant',    card: '...' },
+  'leg/*':    { url: 'https://agents.2nth.ai/agents/leo',      card: '...' },
+  'mkt/*':    { url: 'https://agents.2nth.ai/agents/penny',    card: '...' },
+  'data/*':   { url: 'https://agents.2nth.ai/agents/alex',     card: '...' },
+  'biz/sales': { url: 'https://agents.2nth.ai/agents/katharine', card: '...' },
+};
+
+async function routeTask(task: string, intentPath: string): Promise&lt;AgentEndpoint&gt; {
+  const match = Object.entries(AGENT_REGISTRY).find(([pattern]) =&gt;
+    minimatch(intentPath, pattern)
+  );
+  if (!match) throw new Error(`No agent registered for: ${intentPath}`);
+  return match[1];
+}</code></pre>
+
+<h3>Idempotent Task IDs</h3>
+
+<p>In distributed agent chains, the same task may be submitted more than once (network retries, orchestrator restarts). Design task handling to be idempotent:</p>
+
+<pre><code class="lang-typescript">// Use a deterministic task ID based on content + session
+const taskId = crypto.subtle.digest(
+  'SHA-256',
+  new TextEncoder().encode(`${sessionId}:${taskContent}`)
+).then(hash =&gt; btoa(String.fromCharCode(...new Uint8Array(hash))));</code></pre>
+
+<h3>Streaming in Agent Chains</h3>
+
+<p>Prefer streaming at every hop so the user sees progress as it happens, not just a final result after all agents finish:</p>
+
+<pre><code class="lang-text">User's browser ←SSE── Orchestrator ←SSE── Specialist Agent
+                           ↑
+                       Re-streams specialist events
+                       with agent attribution metadata</code></pre>
+
+<p>Each streamed event should include <code>agent_id</code> so the UI can attribute partial outputs to the correct agent.</p>
+
+<h3>Error Propagation</h3>
+
+<p>Define what happens when an agent in a chain fails:</p>
+
+<pre><code class="lang-typescript">enum AgentFailurePolicy {
+  FAIL_FAST = 'fail_fast',      // Abort the whole chain
+  SKIP = 'skip',                // Continue with remaining agents
+  RETRY = 'retry',              // Retry up to N times with backoff
+  FALLBACK = 'fallback',        // Route to a backup agent
+  HUMAN_ESCALATION = 'escalate' // Pause chain; notify human
+}</code></pre>
+
+<p>For production agent chains: use <code>RETRY</code> (max 3, exponential backoff) for transient failures, <code>FALLBACK</code> for agent unavailability, <code>HUMAN_ESCALATION</code> for ambiguous inputs that no agent can handle confidently.</p>
+
+<hr>
+
+<h2>Observability for Agent Chains</h2>
+
+<p>Distributed agents fail in distributed ways. Observability is non-negotiable.</p>
+
+<h3>Trace Context</h3>
+
+<p>Every task must carry a trace ID through the entire chain (W3C Trace Context format):</p>
+
+<pre><code class="lang-text">traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
+              │  └── trace-id (16 bytes)           └── span-id   │
+              │                                                   └── flags
+              └── version</code></pre>
+
+<p>Inject this header at the chain entry point; propagate to every downstream agent call.</p>
+
+<h3>What to Log per Agent Invocation</h3>
+
+<pre><code class="lang-typescript">{
+  trace_id: string,
+  span_id: string,
+  parent_span_id: string,
+  agent_id: string,
+  task_id: string,
+  input_tokens: number,
+  output_tokens: number,
+  model: string,
+  latency_ms: number,
+  status: 'success' | 'failure' | 'timeout',
+  error?: string,
+  tool_calls?: { name: string; latency_ms: number }[],
+  timestamp: string
+}</code></pre>
+
+<h3>Metrics to Track</h3>
+
+<table><thead><tr><th>Metric</th><th>Alert Threshold</th></tr></thead><tbody><tr><td>End-to-end chain latency</td><td>P95 &gt; 30s</td></tr><tr><td>Per-agent success rate</td><td>&lt; 98%</td></tr><tr><td>Token consumption rate</td><td>&gt; budget per task type</td></tr><tr><td>Handoff rate by agent</td><td>Sudden spike = routing bug</td></tr><tr><td>Task abandonment rate</td><td>&gt; 5% = UX or capability gap</td></tr></tbody></table>
+
+<hr>
+
+<h2>Protocol Selection Guide</h2>
+
+<table><thead><tr><th>Scenario</th><th>Recommended Protocol</th></tr></thead><tbody><tr><td>Agent needs to call external tools (APIs, DBs, files)</td><td><strong>MCP</strong></td></tr><tr><td>Agent needs to delegate to another agent</td><td><strong>A2A</strong></td></tr><tr><td>Enterprise regulated environment; audit trail required</td><td><strong>ACP</strong></td></tr><tr><td>Internal agents in the same codebase</td><td>Direct function calls + typed interfaces</td></tr><tr><td>Agent chain with streaming to end-user</td><td>A2A over SSE</td></tr><tr><td>Discovery of unknown agents at runtime</td><td>A2A Agent Cards</td></tr><tr><td>Custom protocol within a single platform</td><td>Handoff JSON + SSE (current 2nth.ai pattern)</td></tr></tbody></table>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/agent-protocols/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

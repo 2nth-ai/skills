@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Discovery — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Sales Discovery</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/biz/sales/discovery/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Sales Discovery</div>
+      <h1>SALES DISCOVERY</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../biz/sales.html">biz/sales</a><a class="skill-chip" href="../../../biz/sales/qualification.html">biz/sales/qualification</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Sales Discovery</h1>
+
+<p>Discovery is the most important phase of a B2B sale. It is not a qualification call — it is the process of deeply understanding the buyer's world, surfacing pain they may not have fully articulated, and building the shared understanding of impact that justifies action.</p>
+
+<p>The seller who discovers best, wins most.</p>
+
+<h2>SPIN Selling (Neil Rackham, 1988)</h2>
+
+<p>The most research-validated discovery framework. Based on analysis of 35,000 sales calls. SPIN works because it leads the buyer to articulate their own pain and desired outcome — which is far more persuasive than the seller asserting it.</p>
+
+<h3>S — Situation Questions</h3>
+<p>Establish context. Use sparingly — buyers find excessive situation questions annoying.</p>
+<ul><li>"How does your team currently handle X?"</li><li>"How many people are involved in this process?"</li><li>"What systems do you use today for Y?"</li><li><strong>Rule</strong>: Do your research before the call. Only ask situation questions you cannot answer from public information.</li></ul>
+
+<h3>P — Problem Questions</h3>
+<p>Surface explicit and implicit problems. This is where discovery earns its keep.</p>
+<ul><li>"Where does that process break down?"</li><li>"What's the biggest challenge with how you handle X today?"</li><li>"How often does that create problems for your team?"</li><li>"What happens when Y goes wrong?"</li><li><strong>Goal</strong>: Get the buyer to state the problem in their own words. Their language becomes your language.</li></ul>
+
+<h3>I — Implication Questions</h3>
+<p>Explore the consequences and cost of the problem. This builds urgency.</p>
+<ul><li>"What does that mean for your team when that happens?"</li><li>"How does that affect your ability to hit your quarterly targets?"</li><li>"If that keeps happening, what's the downstream impact on the business?"</li><li>"How much time is spent dealing with the fallout from that?"</li><li><strong>Goal</strong>: Quantify pain. Connect the operational problem to a business outcome (revenue, cost, risk, time).</li></ul>
+
+<h3>N — Need-Payoff Questions</h3>
+<p>Get the buyer to articulate the value of solving the problem.</p>
+<ul><li>"If you could eliminate that bottleneck, what would that mean for your team?"</li><li>"How valuable would it be if you could reduce that from X to Y?"</li><li>"If this were solved, what would you be able to do that you can't do now?"</li><li><strong>Goal</strong>: The buyer describes the value of your solution — in their words, before you've pitched.</li></ul>
+
+<hr>
+
+<h2>Gap Selling (Keenan)</h2>
+
+<p>Complements SPIN with a focus on the gap between current state and future state:</p>
+
+<p><strong>Current State</strong>: Where they are now (with pain, cost, and risk quantified) <strong>Future State</strong>: Where they want to be (with metrics attached) <strong>Gap</strong>: The distance between the two — this is what you sell into</p>
+
+<p>The seller's job is to make the gap vivid, real, and costly enough that inaction is more painful than change.</p>
+
+<p>Key principle: <strong>People buy change, not products.</strong> They buy the movement from current state to future state.</p>
+
+<hr>
+
+<h2>Challenger Sale — Teaching Insight</h2>
+
+<p>For complex sales, discovery alone is not enough. The Challenger approach adds a <em>commercial insight</em> that reframes how the buyer thinks about their problem.</p>
+
+<p>Structure:</p>
+<ol><li><strong>Warm up</strong>: Build credibility with industry knowledge</li><li><strong>Reframe</strong>: Introduce a perspective the buyer hasn't considered</li><li><strong>Rational drowning</strong>: Show the data that makes the problem concrete and urgent</li><li><strong>Emotional impact</strong>: Connect to something the buyer personally cares about</li><li><strong>New way</strong>: Introduce your solution as the natural resolution</li></ol>
+
+<p>Use when: the buyer doesn't know they have a problem, or underestimates its severity.</p>
+
+<hr>
+
+<h2>Discovery Call Structure</h2>
+
+<p><strong>Pre-call</strong>: Research company, person, industry. Know their likely pains before they tell you.</p>
+
+<p><strong>Opening</strong> (2 min): Set agenda, confirm time, ask permission to take notes.</p>
+
+<p><strong>Situation</strong> (5 min): Confirm current state — minimal questions, lean on research.</p>
+
+<p><strong>Problem</strong> (15 min): SPIN P and I questions. Listen more than you talk. Reflect back what you hear. Probe every pain for depth.</p>
+
+<p><strong>Future state</strong> (5 min): Need-payoff questions. Get them describing the ideal outcome.</p>
+
+<p><strong>Next steps</strong> (3 min): Confirm what you've heard, propose a specific next step with a date.</p>
+
+<hr>
+
+<h2>Discovery Anti-Patterns</h2>
+
+<ul><li><strong>Pitching during discovery</strong>: Kills the conversation. Defer all "here's what we do" until you've finished uncovering pain.</li><li><strong>Accepting surface pain</strong>: "We need better reporting" is not pain — it's a symptom. Dig: why, what happens without it, what does that cost?</li><li><strong>Not quantifying</strong>: Unquantified pain produces unqualified deals. Always push to a number.</li><li><strong>Talking too much</strong>: Best discovery calls are 70% buyer talking, 30% seller.</li><li><strong>No next step</strong>: Discovery without a committed next step is a conversation, not a sales call.</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/biz/sales/discovery/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

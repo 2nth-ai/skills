@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Go-to-Market Strategy — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Go-to-Market Strategy</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/mkt/go-to-market/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Go-to-Market Strategy</div>
+      <h1>GO TO MARKET STRATEGY</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../mkt.html">mkt</a><a class="skill-chip" href="../../mkt/brand.html">mkt/brand</a><a class="skill-chip" href="../../mkt/demand-gen.html">mkt/demand-gen</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Go-to-Market Strategy</h1>
+
+<p>A go-to-market (GTM) strategy is the plan for how a product reaches its target customers. Every new product launch, market entry, and significant pivot needs a GTM strategy — otherwise the business builds something, calls it "marketing's job to figure out", and wonders why adoption is slow.</p>
+
+<p>The Marketing Director owns the GTM strategy in collaboration with Sales and Product. Marketing is not a support function at launch time — it is a core architect of how the product reaches the market.</p>
+
+<hr>
+
+<h2>GTM Strategy Framework</h2>
+
+<p>A complete GTM strategy answers six questions:</p>
+
+<ol><li><strong>Who is the target customer?</strong> (ICP — not a broad statement, a specific definition)</li><li><strong>What problem does the product solve?</strong> (In the customer's words, not the product team's)</li><li><strong>What is the positioning?</strong> (Why this product, not a competitor or the status quo)</li><li><strong>How will the customer discover and buy the product?</strong> (Channels and motion)</li><li><strong>What does success look like and when?</strong> (Milestones and metrics)</li><li><strong>What does each team need to do and by when?</strong> (Execution plan)</li></ol>
+
+<hr>
+
+<h2>Market Segmentation and ICP Prioritisation</h2>
+
+<p>Before launching, define the priority segment — the beachhead. Every successful market expansion starts narrow and expands.</p>
+
+<p><strong>Segmentation criteria:</strong></p>
+<ul><li><strong>Pain severity</strong>: Which segment has the most acute problem that this product solves?</li><li><strong>Budget accessibility</strong>: Which segment has the budget and willingness to pay?</li><li><strong>Sales motion fit</strong>: Which segment can be reached through the motion we can execute?</li><li><strong>Competitive white space</strong>: Where are we most differentiated vs the status quo?</li><li><strong>Reference-ability</strong>: Which segment, if won, creates the most compelling reference customers?</li></ul>
+
+<p><strong>SA market segmentation considerations:</strong></p>
+<ul><li>Tier the market by size: enterprise (R5B+ revenue), upper mid-market (R500M–R5B), mid-market (R50M–R500M), SME</li><li>Enterprise SA often requires formal procurement (tender processes, preferred vendor lists, long timelines)</li><li>Mid-market is the fastest-growing segment and most accessible to challenger products</li><li>Government and SOE (State-Owned Enterprises): high value but extremely long cycles; procurement compliance is non-negotiable (PFMA, PPPFA)</li></ul>
+
+<hr>
+
+<h2>Channel Strategy</h2>
+
+<p>The channel strategy determines how the product gets from the company to the customer. For B2B:</p>
+
+<h3>Direct (Company to Customer)</h3>
+<ul><li>Inside sales (SDR/BDR → AE motion)</li><li>Field sales (enterprise, high-touch, in-person in SA)</li><li>Self-serve / product-led growth (PLG): customer signs up and buys without sales involvement</li></ul>
+
+<h3>Indirect (via Partners)</h3>
+<ul><li>Resellers and value-added resellers (VARs): partners resell your product, typically adding services</li><li>Systems integrators (SIs): large consulting firms that embed your product in implementations</li><li>Technology partners: complementary products that bundle or refer</li><li>Distributors: for hardware or high-volume software licensing</li></ul>
+
+<p><strong>SA channel specifics:</strong></p>
+<ul><li>Reseller networks are important for enterprise SA — large IT distributors (Axiz, Tarsus Technology, First Distribution) have established relationships with corporate buyers</li><li>SI relationships: Deloitte, Accenture, PwC, Dimension Data, T-Systems all have significant SA enterprise footprint</li><li>Government sales almost always require a local partner with SITA accreditation or Transversal contract</li><li>B-BBEE status of channel partners affects the buyer's own B-BBEE scorecard — a B-BBEE Level 1 or 2 partner is a commercial advantage</li></ul>
+
+<hr>
+
+<h2>Pricing Positioning</h2>
+
+<p>Pricing is a marketing decision as much as a commercial one — the price communicates value, segment, and positioning.</p>
+
+<p><strong>Pricing models for software/services in SA:</strong></p>
+<table><thead><tr><th>Model</th><th>When to use</th></tr></thead><tbody><tr><td>Flat subscription</td><td>Simple, predictable; best for SME/mid-market</td></tr><tr><td>Per seat/user</td><td>Scales with customer growth; common in B2B SaaS</td></tr><tr><td>Usage-based</td><td>Aligns cost to value; strong PLG fit</td></tr><tr><td>Tiered (Good/Better/Best)</td><td>Serves multiple segments; anchoring effect</td></tr><tr><td>Enterprise custom</td><td>Complex deployments; relationship-based</td></tr></tbody></table>
+
+<p><strong>ZAR pricing considerations:</strong></p>
+<ul><li>Price anchoring in ZAR, not USD, for SA SME and mid-market (USD pricing creates friction for non-finance buyers)</li><li>Enterprise SA often prices in USD for contract stability given ZAR volatility</li><li>VAT: all B2B prices should be stated as ex-VAT; add 15% on the invoice</li></ul>
+
+<p><strong>Value-based pricing</strong>: Set price based on the value delivered to the customer, not cost-plus. A product that saves a customer R5M per year can be priced at R500K (10× ROI) — which is only expensive relative to cost, not relative to value.</p>
+
+<hr>
+
+<h2>The Launch Plan</h2>
+
+<p>A product launch is not a single event — it is a 3-phase process:</p>
+
+<h3>Phase 1 — Pre-launch (6–8 weeks before)</h3>
+<ul><li><strong>Seed the market</strong>: Brief key journalists and analysts under embargo; share with beta customers for case studies</li><li><strong>Build the launch assets</strong>: Website updates, sales collateral, email templates, social posts, press release, demo video</li><li><strong>Prepare sales team</strong>: Training, battlecards, objection handling, demo certification</li><li><strong>Build the launch list</strong>: Email contacts, social audiences, media targets, partner contacts who will amplify</li></ul>
+
+<h3>Phase 2 — Launch week</h3>
+<ul><li><strong>Day 1</strong>: Press release + media outreach; social announcement; email to existing customers and list; sales team outreach to warm pipeline</li><li><strong>Day 2–3</strong>: Partner announcements, customer amplification (ask happy customers to share)</li><li><strong>Week 1</strong>: LinkedIn live or webinar covering the product; content publishing (blog, video)</li></ul>
+
+<h3>Phase 3 — Post-launch (4–8 weeks)</h3>
+<ul><li>Monitor and respond: news coverage, social mentions, customer feedback</li><li>Amplify: find the coverage and comments that are getting traction; support them</li><li>Gather signal: which segments are converting? Which messages are resonating? Adjust</li><li>Feed product: capture objections and friction from early adopters; route to product team</li></ul>
+
+<hr>
+
+<h2>Market Entry (New Geography or Segment)</h2>
+
+<p>Entering a new geography (e.g., a SA company expanding to Kenya, Nigeria, or the UK) requires a separate GTM strategy, not just a language change on the website.</p>
+
+<p><strong>Market entry checklist:</strong></p>
+<ul><li>[ ] Local regulatory requirements understood (company registration, data residency, VAT/tax)</li><li>[ ] Pricing model adapted to local market purchasing power and competitive set</li><li>[ ] Target segment defined (same ICP as SA? Or different segment for market entry?)</li><li>[ ] Channel partners identified (local distributor, reseller, or SI relationship)</li><li>[ ] Local PR and media contacts established</li><li>[ ] Initial reference customers targeted (win 2–3 lighthouse customers before scaling)</li><li>[ ] Local language and cultural adaptation assessed (not just translation)</li><li>[ ] Go-live milestone defined: what does "success in year 1" look like?</li></ul>
+
+<p><strong>Pan-African expansion specifics:</strong></p>
+<ul><li>Each African market is distinct — strategies that work in SA do not translate directly to Nigeria, Kenya, or Egypt</li><li>Currency risk in markets with volatile currencies (NGN, KES, EGP) — price in USD for enterprise; in local currency for SME</li><li>Payment infrastructure varies dramatically — M-Pesa in Kenya, local bank transfer in Nigeria, card acceptance patchy across markets</li></ul>
+
+<hr>
+
+<h2>GTM Metrics</h2>
+
+<table><thead><tr><th>Phase</th><th>Metric</th><th>Target</th></tr></thead><tbody><tr><td>Pre-launch</td><td>Launch asset completion</td><td>100% by launch day</td></tr><tr><td>Launch</td><td>Media placements</td><td>Minimum 3 Tier 1 or 2 placements</td></tr><tr><td>Launch</td><td>Email open rate</td><td>&gt;25% for launch announcement</td></tr><tr><td>Launch</td><td>Website traffic spike</td><td>2–5× baseline in launch week</td></tr><tr><td>30 days post</td><td>MQLs generated</td><td>vs target set in plan</td></tr><tr><td>60 days post</td><td>SQL conversion rate</td><td>&gt;20% MQL → SQL</td></tr><tr><td>90 days post</td><td>Pipeline sourced</td><td>R-value of opportunities created</td></tr><tr><td>6 months</td><td>First customer cohort CAC</td><td>vs business case</td></tr><tr><td>6 months</td><td>First customer cohort LTV signal</td><td>Retention rate, upsell</td></tr></tbody></table>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/mkt/go-to-market/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

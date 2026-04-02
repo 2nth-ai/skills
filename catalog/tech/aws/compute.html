@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/aws/compute — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><a href="#">aws</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">compute</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/aws/compute/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/aws/compute</div>
+      <h1>COMPUTE</h1>
+      <p class="skill-desc">AWS compute skill. Use when: (1) deploying serverless functions with Lambda — event-driven, pay-per-invocation,</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">AWS CLI v2, CDK v2, SDK v3 (TypeScript/Python), Terraform</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../tech/aws.html">tech/aws</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech/aws</a><a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>AWS Compute</h1>
+
+<p>AWS is the 2nth.ai choice for compute-heavy workloads that exceed the Cloudflare edge model — event-driven functions (Lambda), containerised services (ECS Fargate), and persistent VMs (EC2). The pattern is: <strong>Cloudflare at the edge → AWS for the heavy lift</strong>. Lambda handles burst workloads and async processing; Fargate runs long-lived containers without managing servers; EC2 covers workloads that need full OS control or persistent state.</p>
+
+<h2>Services in scope</h2>
+
+<table><thead><tr><th>Service</th><th>Purpose</th><th>When to use</th></tr></thead><tbody><tr><td><strong>Lambda</strong></td><td>Serverless functions, pay per invocation</td><td>Event-driven logic, API backends, async jobs</td></tr><tr><td><strong>API Gateway</strong></td><td>Managed HTTP/REST/WebSocket endpoints</td><td>Expose Lambda as an API, throttling, auth</td></tr><tr><td><strong>ECS Fargate</strong></td><td>Serverless containers, no EC2 management</td><td>Long-lived services, containers needing &gt;15min runtime</td></tr><tr><td><strong>EC2</strong></td><td>Virtual machines, full OS control</td><td>Stateful workloads, custom kernels, GPU, Frappe</td></tr><tr><td><strong>Auto Scaling Group (ASG)</strong></td><td>Elastic fleet of EC2 instances</td><td>Traffic-based scale-out/in</td></tr><tr><td><strong>Application Load Balancer (ALB)</strong></td><td>L7 load balancer</td><td>Route to EC2/Fargate, health checks, TLS termination</td></tr><tr><td><strong>CloudWatch</strong></td><td>Logs, metrics, alarms</td><td>Observability across all compute services</td></tr></tbody></table>
+
+<h2>Authentication</h2>
+
+<h3>Local setup</h3>
+
+<pre><code class="lang-bash"># Install AWS CLI v2 (macOS)
+brew install awscli
+
+# Configure default profile (interactive)
+aws configure
+# AWS Access Key ID:     AKIA...
+# AWS Secret Access Key: ...
+# Default region:        af-south-1
+# Output format:         json
+
+# Or configure a named profile
+aws configure --profile my-project
+export AWS_PROFILE=my-project
+
+# Use environment variables (CI/CD, Cloudflare Workers secrets)
+export AWS_ACCESS_KEY_ID=AKIA...
+export AWS_SECRET_ACCESS_KEY=...
+export AWS_DEFAULT_REGION=af-south-1</code></pre>
+
+<h3>SSO login (recommended for team accounts)</h3>
+
+<pre><code class="lang-bash"># Configure SSO once
+aws configure sso
+# SSO session name: my-sso
+# SSO start URL:    https://my-org.awsapps.com/start
+# SSO region:       af-south-1
+
+# Log in
+aws sso login --profile my-sso-profile
+
+# Use the profile
+aws s3 ls --profile my-sso-profile</code></pre>
+
+<h3>Assume-role pattern (cross-account / least privilege)</h3>
+
+<pre><code class="lang-bash"># Assume a role and export credentials
+CREDS=$(aws sts assume-role \
+  --role-arn arn:aws:iam::123456789012:role/DeployRole \
+  --role-session-name deploy-session \
+  --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
+  --output text)
+
+export AWS_ACCESS_KEY_ID=$(echo $CREDS | awk '{print $1}')
+export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | awk '{print $2}')
+export AWS_SESSION_TOKEN=$(echo $CREDS | awk '{print $3}')
+
+# Verify identity
+aws sts get-caller-identity</code></pre>
+
+<h3>Preferred region</h3>
+
+<p>Use <code>af-south-1</code> (Cape Town) for SA-based clients. Note: not all AWS services are available in <code>af-south-1</code> — check availability before committing to a region. See Gotchas for known gaps.</p>
+
+<hr>
+
+<h2>Lambda</h2>
+
+<p>Lambda runs code in response to events. Pay per invocation and per GB-second of execution time. Max timeout 15 minutes. No servers to manage.</p>
+
+<h3>Architecture choice: ARM64 vs x86</h3>
+
+<p>Prefer <strong>ARM64 (Graviton2)</strong> for new functions — it costs ~20% less and often runs faster for compute-bound code. Use x86 only if your dependencies include compiled binaries that don't have ARM builds.</p>
+
+<pre><code class="lang-bash"># Create a function (ARM64, Node.js 20)
+aws lambda create-function \
+  --function-name my-function \
+  --runtime nodejs20.x \
+  --architectures arm64 \
+  --role arn:aws:iam::123456789012:role/lambda-exec-role \
+  --handler index.handler \
+  --zip-file fileb://function.zip \
+  --timeout 30 \
+  --memory-size 512 \
+  --region af-south-1</code></pre>
+
+<h3>Memory / timeout tradeoffs</h3>
+
+<table><thead><tr><th>Memory</th><th>vCPU share</th><th>Use case</th></tr></thead><tbody><tr><td>128 MB</td><td>~0.07 vCPU</td><td>Lightweight event routing, tiny transforms</td></tr><tr><td>512 MB</td><td>~0.28 vCPU</td><td>API handlers, typical business logic</td></tr><tr><td>1024 MB</td><td>~0.56 vCPU</td><td>Image processing, moderate computation</td></tr><tr><td>3008 MB</td><td>1.75 vCPU</td><td>Heavy computation, PDF generation</td></tr><tr><td>10240 MB</td><td>6 vCPU</td><td>Maximum — ML inference, large file processing</td></tr></tbody></table>
+
+<p>Increasing memory also increases CPU proportionally. If a function is slow, doubling memory halves duration, which may cost the same or less.</p>
+
+<h3>TypeScript handler pattern</h3>
+
+<pre><code class="lang-typescript">// src/handler.ts
+import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
+
+export const handler = async (
+  event: APIGatewayProxyEventV2
+): Promise&lt;APIGatewayProxyResultV2&gt; =&gt; {
+  console.log(JSON.stringify({ level: 'info', event: event.requestContext.http.method, path: event.rawPath }));
+
+  try {
+    const body = event.body ? JSON.parse(event.body) : {};
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ok: true, received: body }),
+    };
+  } catch (err) {
+    console.error(JSON.stringify({ level: 'error', message: (err as Error).message }));
+    return { statusCode: 500, body: JSON.stringify({ error: 'Internal error' }) };
+  }
+};</code></pre>
+
+<pre><code class="lang-bash"># Build and package
+npx tsc --outDir dist &amp;&amp; cd dist &amp;&amp; zip -r ../function.zip . &amp;&amp; cd ..
+
+# Update code
+aws lambda update-function-code \
+  --function-name my-function \
+  --zip-file fileb://function.zip
+
+# Update environment variables
+aws lambda update-function-configuration \
+  --function-name my-function \
+  --environment "Variables={DB_URL=postgres://...,API_KEY=secret}"
+
+# Invoke directly from CLI
+aws lambda invoke \
+  --function-name my-function \
+  --payload '{"path":"/test"}' \
+  --cli-binary-format raw-in-base64-out \
+  response.json &amp;&amp; cat response.json</code></pre>
+
+<h3>Lambda Layers</h3>
+
+<p>Layers allow sharing dependencies across functions — avoid bundling large packages (e.g. AWS SDK, Sharp) into every zip.</p>
+
+<pre><code class="lang-bash"># Publish a layer
+aws lambda publish-layer-version \
+  --layer-name my-deps \
+  --compatible-runtimes nodejs20.x \
+  --compatible-architectures arm64 \
+  --zip-file fileb://layer.zip
+
+# Attach layer to a function
+aws lambda update-function-configuration \
+  --function-name my-function \
+  --layers arn:aws:lambda:af-south-1:123456789012:layer:my-deps:1</code></pre>
+
+<h3>Cold start mitigation: Provisioned Concurrency</h3>
+
+<p>Lambda cold starts add 200–800ms for Node.js. For latency-sensitive functions, use provisioned concurrency to keep N instances warm.</p>
+
+<pre><code class="lang-bash"># Publish a version
+aws lambda publish-version --function-name my-function
+
+# Set provisioned concurrency on the version
+aws lambda put-provisioned-concurrency-config \
+  --function-name my-function \
+  --qualifier 1 \
+  --provisioned-concurrent-executions 5</code></pre>
+
+<p>Provisioned concurrency is billed even when idle — use only for p99 latency requirements, not batch jobs.</p>
+
+<h3>Event sources</h3>
+
+<pre><code class="lang-bash"># API Gateway trigger — see next section
+
+# SQS trigger (batch processing)
+aws lambda create-event-source-mapping \
+  --function-name my-function \
+  --event-source-arn arn:aws:sqs:af-south-1:123456789012:my-queue \
+  --batch-size 10 \
+  --function-response-types ReportBatchItemFailures
+
+# S3 trigger (object upload)
+aws s3api put-bucket-notification-configuration \
+  --bucket my-bucket \
+  --notification-configuration '{
+    "LambdaFunctionConfigurations": [{
+      "LambdaFunctionArn": "arn:aws:lambda:af-south-1:123456789012:function:my-function",
+      "Events": ["s3:ObjectCreated:*"]
+    }]
+  }'
+
+# EventBridge scheduled rule (cron)
+aws events put-rule \
+  --name my-schedule \
+  --schedule-expression "rate(5 minutes)"
+
+aws events put-targets \
+  --rule my-schedule \
+  --targets '[{"Id":"1","Arn":"arn:aws:lambda:af-south-1:123456789012:function:my-function"}]'</code></pre>
+
+<hr>
+
+<h2>API Gateway + Lambda</h2>
+
+<h3>HTTP API vs REST API</h3>
+
+<table><thead><tr><th></th><th>HTTP API</th><th>REST API</th></tr></thead><tbody><tr><td>Cost</td><td>~$1/million req</td><td>~$3.50/million req</td></tr><tr><td>Latency</td><td>~10ms lower</td><td>Standard</td></tr><tr><td>Features</td><td>JWT auth, CORS, proxy</td><td>Full: usage plans, API keys, transforms, WAF</td></tr><tr><td>When to use</td><td>Most cases</td><td>Need WAF, API keys, or payload transforms</td></tr></tbody></table>
+
+<p>Prefer <strong>HTTP API</strong> unless you specifically need REST API features.</p>
+
+<h3>Create an HTTP API with Lambda proxy integration</h3>
+
+<pre><code class="lang-bash"># Create HTTP API
+API_ID=$(aws apigatewayv2 create-api \
+  --name my-http-api \
+  --protocol-type HTTP \
+  --target arn:aws:lambda:af-south-1:123456789012:function:my-function \
+  --cors-configuration AllowOrigins='["*"]',AllowMethods='["GET","POST","OPTIONS"]',AllowHeaders='["Content-Type","Authorization"]' \
+  --query 'ApiId' --output text)
+
+echo "API ID: $API_ID"
+echo "Endpoint: https://${API_ID}.execute-api.af-south-1.amazonaws.com"
+
+# Grant API Gateway permission to invoke Lambda
+aws lambda add-permission \
+  --function-name my-function \
+  --statement-id apigw-invoke \
+  --action lambda:InvokeFunction \
+  --principal apigateway.amazonaws.com \
+  --source-arn "arn:aws:execute-api:af-south-1:123456789012:${API_ID}/*"</code></pre>
+
+<h3>Custom domain</h3>
+
+<pre><code class="lang-bash"># Register a custom domain (cert must be in us-east-1 for edge, or same region for regional)
+aws apigatewayv2 create-domain-name \
+  --domain-name api.example.com \
+  --domain-name-configurations CertificateArn=arn:aws:acm:af-south-1:123456789012:certificate/abc123,EndpointType=REGIONAL
+
+# Map to API
+aws apigatewayv2 create-api-mapping \
+  --domain-name api.example.com \
+  --api-id $API_ID \
+  --stage '$default'</code></pre>
+
+<h3>Throttling</h3>
+
+<pre><code class="lang-bash"># Set throttle on route (HTTP API)
+aws apigatewayv2 update-stage \
+  --api-id $API_ID \
+  --stage-name '$default' \
+  --default-route-settings ThrottlingRateLimit=1000,ThrottlingBurstLimit=500</code></pre>
+
+<h3>Calling Lambda / API Gateway from Cloudflare Workers with SigV4</h3>
+
+<p>When invoking AWS Lambda directly (not via public API Gateway) from Cloudflare Workers, you must sign the request with AWS Signature Version 4. No SDK required — pure <code>fetch</code>.</p>
+
+<pre><code class="lang-typescript">// utils/aws-sigv4.ts — SigV4 signing for Cloudflare Workers (Web Crypto API)
+async function sha256Hex(data: string): Promise&lt;string&gt; {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
+  return Array.from(new Uint8Array(buf)).map(b =&gt; b.toString(16).padStart(2, '0')).join('');
+}
+
+async function hmacSha256(key: ArrayBuffer, data: string): Promise&lt;ArrayBuffer&gt; {
+  const k = await crypto.subtle.importKey('raw', key, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  return crypto.subtle.sign('HMAC', k, new TextEncoder().encode(data));
+}
+
+async function getSigningKey(secret: string, date: string, region: string, service: string): Promise&lt;ArrayBuffer&gt; {
+  const kDate    = await hmacSha256(new TextEncoder().encode('AWS4' + secret), date);
+  const kRegion  = await hmacSha256(kDate, region);
+  const kService = await hmacSha256(kRegion, service);
+  return hmacSha256(kService, 'aws4_request');
+}
+
+export async function signedFetch(
+  url: string,
+  method: string,
+  body: string,
+  env: { AWS_ACCESS_KEY_ID: string; AWS_SECRET_ACCESS_KEY: string; AWS_REGION: string },
+  service = 'lambda'
+): Promise&lt;Response&gt; {
+  const parsed   = new URL(url);
+  const now      = new Date();
+  const dateStr  = now.toISOString().replace(/[:-]|\.\d{3}/g, '').slice(0, 15) + 'Z'; // 20240101T120000Z
+  const dateOnly = dateStr.slice(0, 8);
+
+  const payloadHash = await sha256Hex(body);
+
+  const headers: Record&lt;string, string&gt; = {
+    'Content-Type': 'application/json',
+    'host': parsed.host,
+    'x-amz-date': dateStr,
+    'x-amz-content-sha256': payloadHash,
+  };
+
+  const signedHeaderNames = Object.keys(headers).sort().join(';');
+  const canonicalHeaders  = Object.keys(headers).sort().map(k =&gt; `${k}:${headers[k]}\n`).join('');
+
+  const canonicalRequest = [
+    method,
+    parsed.pathname,
+    parsed.search.slice(1),
+    canonicalHeaders,
+    signedHeaderNames,
+    payloadHash,
+  ].join('\n');
+
+  const credentialScope = `${dateOnly}/${env.AWS_REGION}/${service}/aws4_request`;
+  const stringToSign    = `AWS4-HMAC-SHA256\n${dateStr}\n${credentialScope}\n${await sha256Hex(canonicalRequest)}`;
+
+  const signingKey = await getSigningKey(env.AWS_SECRET_ACCESS_KEY, dateOnly, env.AWS_REGION, service);
+  const sigBuf     = await hmacSha256(signingKey, stringToSign);
+  const signature  = Array.from(new Uint8Array(sigBuf)).map(b =&gt; b.toString(16).padStart(2, '0')).join('');
+
+  const authorization = `AWS4-HMAC-SHA256 Credential=${env.AWS_ACCESS_KEY_ID}/${credentialScope}, SignedHeaders=${signedHeaderNames}, Signature=${signature}`;
+
+  return fetch(url, {
+    method,
+    headers: { ...headers, Authorization: authorization },
+    body: body || undefined,
+  });
+}
+
+// Usage — invoke Lambda directly from a Cloudflare Worker
+// wrangler.toml: [vars] AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION
+export default {
+  async fetch(request: Request, env: Env): Promise&lt;Response&gt; {
+    const payload = JSON.stringify({ path: '/process', body: await request.text() });
+
+    const lambdaUrl = `https://lambda.${env.AWS_REGION}.amazonaws.com/2015-03-31/functions/my-function/invocations`;
+    const res = await signedFetch(lambdaUrl, 'POST', payload, env, 'lambda');
+
+    const result = await res.json();
+    return Response.json(result);
+  },
+};</code></pre>
+
+<hr>
+
+<h2>ECS Fargate</h2>
+
+<p>Fargate runs containers without managing EC2. You define CPU/memory at the task level and pay per vCPU-second and GB-second. Ideal for services that need more than 15 minutes runtime, require persistent TCP connections, or need container-level networking.</p>
+
+<h3>CPU / memory sizing</h3>
+
+<table><thead><tr><th>vCPU</th><th>Memory options</th><th>Typical use</th></tr></thead><tbody><tr><td>0.25</td><td>0.5–2 GB</td><td>Lightweight services, cron jobs</td></tr><tr><td>0.5</td><td>1–4 GB</td><td>API services, Node.js apps</td></tr><tr><td>1</td><td>2–8 GB</td><td>Medium workloads, Java services</td></tr><tr><td>2</td><td>4–16 GB</td><td>Heavy services, ML inference</td></tr><tr><td>4</td><td>8–30 GB</td><td>High-throughput processing</td></tr></tbody></table>
+
+<h3>Task definition</h3>
+
+<pre><code class="lang-json">{
+  "family": "my-service",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+  "taskRoleArn":      "arn:aws:iam::123456789012:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "my-service",
+      "image": "123456789012.dkr.ecr.af-south-1.amazonaws.com/my-service:latest",
+      "portMappings": [{ "containerPort": 3000, "protocol": "tcp" }],
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" }
+      ],
+      "secrets": [
+        { "name": "DB_URL", "valueFrom": "arn:aws:secretsmanager:af-south-1:123456789012:secret:db-url" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group":  "/ecs/my-service",
+          "awslogs-region": "af-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"],
+        "interval": 30, "timeout": 5, "retries": 3
+      }
+    }
+  ]
+}</code></pre>
+
+<h3>Cluster, service, and ALB wiring</h3>
+
+<pre><code class="lang-bash"># Register task definition
+aws ecs register-task-definition \
+  --cli-input-json file://task-def.json
+
+# Create cluster
+aws ecs create-cluster --cluster-name my-cluster
+
+# Create service with ALB target group
+aws ecs create-service \
+  --cluster my-cluster \
+  --service-name my-service \
+  --task-definition my-service:1 \
+  --desired-count 2 \
+  --launch-type FARGATE \
+  --network-configuration "awsvpcConfiguration={subnets=[subnet-abc,subnet-def],securityGroups=[sg-xyz],assignPublicIp=ENABLED}" \
+  --load-balancers "targetGroupArn=arn:aws:elasticloadbalancing:af-south-1:123456789012:targetgroup/my-tg/abc,containerName=my-service,containerPort=3000" \
+  --deployment-configuration "minimumHealthyPercent=100,maximumPercent=200" \
+  --health-check-grace-period-seconds 60
+
+# Rolling deploy: update service with new task definition revision
+aws ecs update-service \
+  --cluster my-cluster \
+  --service my-service \
+  --task-definition my-service:2</code></pre>
+
+<h3>Push image to ECR</h3>
+
+<pre><code class="lang-bash"># Authenticate Docker to ECR
+aws ecr get-login-password --region af-south-1 \
+  | docker login --username AWS --password-stdin 123456789012.dkr.ecr.af-south-1.amazonaws.com
+
+# Create repository
+aws ecr create-repository --repository-name my-service --region af-south-1
+
+# Build, tag, push
+docker build -t my-service .
+docker tag my-service:latest 123456789012.dkr.ecr.af-south-1.amazonaws.com/my-service:latest
+docker push 123456789012.dkr.ecr.af-south-1.amazonaws.com/my-service:latest</code></pre>
+
+<h3>Fargate Spot for cost savings</h3>
+
+<p>Use Fargate Spot for non-critical or fault-tolerant workloads (batch jobs, background workers). Up to 70% cheaper, but can be interrupted.</p>
+
+<pre><code class="lang-bash">aws ecs create-service \
+  --cluster my-cluster \
+  --service-name my-batch-service \
+  --capacity-provider-strategy "capacityProvider=FARGATE_SPOT,weight=1" \
+  --task-definition my-service:1 \
+  --desired-count 3 \
+  --network-configuration "awsvpcConfiguration={subnets=[subnet-abc],securityGroups=[sg-xyz],assignPublicIp=ENABLED}"</code></pre>
+
+<hr>
+
+<h2>EC2</h2>
+
+<p>EC2 provides full virtual machines. Use when you need persistent state, GPU, custom kernel, or workloads that run continuously at high utilisation (reserved pricing beats Lambda/Fargate).</p>
+
+<h3>Instance types</h3>
+
+<table><thead><tr><th>Type</th><th>vCPU</th><th>RAM</th><th>Use case</th></tr></thead><tbody><tr><td>t3.micro</td><td>2</td><td>1 GB</td><td>Dev/test, burstable</td></tr><tr><td>t3.small</td><td>2</td><td>2 GB</td><td>Light web servers</td></tr><tr><td>t3.medium</td><td>2</td><td>4 GB</td><td>General purpose small apps</td></tr><tr><td>c6g.large</td><td>2</td><td>4 GB</td><td>Compute-optimised, ARM (Graviton2)</td></tr><tr><td>c6g.xlarge</td><td>4</td><td>8 GB</td><td>Heavy compute, ARM</td></tr><tr><td>m6i.xlarge</td><td>4</td><td>16 GB</td><td>Balanced, x86</td></tr><tr><td>r6g.large</td><td>2</td><td>16 GB</td><td>Memory-intensive, ARM</td></tr></tbody></table>
+
+<p>Use <strong>Graviton (c6g, m6g, r6g)</strong> for best price/performance on Linux workloads.</p>
+
+<h3>Launch an instance</h3>
+
+<pre><code class="lang-bash"># Create key pair
+aws ec2 create-key-pair \
+  --key-name my-key \
+  --query 'KeyMaterial' \
+  --output text &gt; ~/.ssh/my-key.pem
+chmod 400 ~/.ssh/my-key.pem
+
+# Create security group
+SG_ID=$(aws ec2 create-security-group \
+  --group-name my-sg \
+  --description "My security group" \
+  --query 'GroupId' --output text)
+
+# Allow HTTPS inbound (prefer SSM over SSH — no port 22 needed)
+aws ec2 authorize-security-group-ingress \
+  --group-id $SG_ID \
+  --protocol tcp --port 443 --cidr 0.0.0.0/0
+
+# Launch instance with user data (Amazon Linux 2023)
+aws ec2 run-instances \
+  --image-id ami-0c1c7d8c6f9a2b3e4 \
+  --instance-type t3.medium \
+  --key-name my-key \
+  --security-group-ids $SG_ID \
+  --iam-instance-profile Name=SSMInstanceProfile \
+  --user-data '#!/bin/bash
+    dnf update -y
+    dnf install -y nodejs npm
+    npm install -g pm2
+    cd /app &amp;&amp; npm ci &amp;&amp; pm2 start index.js --name app' \
+  --block-device-mappings '[{"DeviceName":"/dev/xvda","Ebs":{"VolumeSize":20,"VolumeType":"gp3"}}]' \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=my-server}]'</code></pre>
+
+<h3>Systems Manager Session Manager (no SSH required)</h3>
+
+<p>Prefer SSM over SSH — no key management, no port 22, full audit trail in CloudTrail.</p>
+
+<pre><code class="lang-bash"># Ensure instance has AmazonSSMManagedInstanceCore policy attached
+# Then connect:
+aws ssm start-session --target i-0abc123def456789
+
+# Port-forward a remote port to local (e.g. a DB)
+aws ssm start-session \
+  --target i-0abc123def456789 \
+  --document-name AWS-StartPortForwardingSession \
+  --parameters '{"portNumber":["5432"],"localPortNumber":["5432"]}'</code></pre>
+
+<h3>Attach EBS volume</h3>
+
+<pre><code class="lang-bash"># Create and attach
+VOLUME_ID=$(aws ec2 create-volume \
+  --availability-zone af-south-1a \
+  --size 50 --volume-type gp3 \
+  --query 'VolumeId' --output text)
+
+aws ec2 attach-volume \
+  --volume-id $VOLUME_ID \
+  --instance-id i-0abc123def456789 \
+  --device /dev/sdf
+
+# On the instance: format and mount
+# mkfs.ext4 /dev/nvme1n1 &amp;&amp; mount /dev/nvme1n1 /data</code></pre>
+
+<hr>
+
+<h2>Auto Scaling</h2>
+
+<p>Auto Scaling dynamically adjusts EC2 fleet size based on demand. Pair with an ALB for traffic distribution.</p>
+
+<h3>Launch template</h3>
+
+<pre><code class="lang-bash">aws ec2 create-launch-template \
+  --launch-template-name my-lt \
+  --version-description "v1" \
+  --launch-template-data '{
+    "ImageId": "ami-0c1c7d8c6f9a2b3e4",
+    "InstanceType": "t3.medium",
+    "SecurityGroupIds": ["sg-xyz"],
+    "IamInstanceProfile": {"Name": "SSMInstanceProfile"},
+    "UserData": "'$(base64 -w0 userdata.sh)'",
+    "BlockDeviceMappings": [{
+      "DeviceName": "/dev/xvda",
+      "Ebs": {"VolumeSize": 20, "VolumeType": "gp3", "DeleteOnTermination": true}
+    }],
+    "TagSpecifications": [{
+      "ResourceType": "instance",
+      "Tags": [{"Key": "Name", "Value": "asg-instance"}]
+    }]
+  }'</code></pre>
+
+<h3>Auto Scaling Group with ALB</h3>
+
+<pre><code class="lang-bash"># Create ASG
+aws autoscaling create-auto-scaling-group \
+  --auto-scaling-group-name my-asg \
+  --launch-template "LaunchTemplateName=my-lt,Version=\$Latest" \
+  --min-size 1 --max-size 10 --desired-capacity 2 \
+  --target-group-arns arn:aws:elasticloadbalancing:af-south-1:123456789012:targetgroup/my-tg/abc \
+  --vpc-zone-identifier "subnet-abc,subnet-def" \
+  --health-check-type ELB --health-check-grace-period 120 \
+  --default-cooldown 300
+
+# Target tracking: keep average CPU at 60%
+aws autoscaling put-scaling-policy \
+  --auto-scaling-group-name my-asg \
+  --policy-name cpu-target-tracking \
+  --policy-type TargetTrackingScaling \
+  --target-tracking-configuration '{
+    "PredefinedMetricSpecification": {"PredefinedMetricType": "ASGAverageCPUUtilization"},
+    "TargetValue": 60.0,
+    "ScaleInCooldown": 300,
+    "ScaleOutCooldown": 60
+  }'</code></pre>
+
+<h3>Lifecycle hook (drain before termination)</h3>
+
+<pre><code class="lang-bash">aws autoscaling put-lifecycle-hook \
+  --auto-scaling-group-name my-asg \
+  --lifecycle-hook-name drain-hook \
+  --lifecycle-transition autoscaling:EC2_INSTANCE_TERMINATING \
+  --heartbeat-timeout 120 \
+  --default-result CONTINUE</code></pre>
+
+<hr>
+
+<h2>CloudWatch</h2>
+
+<p>CloudWatch is the observability layer for all AWS compute. Use structured JSON logs from Lambda and containers — CloudWatch Logs Insights can query them efficiently.</p>
+
+<h3>Log groups and tailing</h3>
+
+<pre><code class="lang-bash"># Create log group
+aws logs create-log-group \
+  --log-group-name /my-app/production \
+  --region af-south-1
+
+# Set retention (avoid unbounded log accumulation)
+aws logs put-retention-policy \
+  --log-group-name /my-app/production \
+  --retention-in-days 30
+
+# Tail logs in real time (excellent for debugging Lambda)
+aws logs tail /aws/lambda/my-function --follow --format short
+
+# Query logs with Logs Insights
+aws logs start-query \
+  --log-group-name /aws/lambda/my-function \
+  --start-time $(date -d '1 hour ago' +%s) \
+  --end-time $(date +%s) \
+  --query-string 'fields @timestamp, @message | filter level = "error" | sort @timestamp desc | limit 50'</code></pre>
+
+<h3>Structured logging pattern (Lambda / Node.js)</h3>
+
+<pre><code class="lang-typescript">// Log every request as a structured JSON line — CloudWatch Logs Insights can filter on any field
+const log = (level: 'info' | 'warn' | 'error', message: string, extra?: object) =&gt; {
+  console.log(JSON.stringify({ level, message, timestamp: new Date().toISOString(), ...extra }));
+};
+
+// In handler:
+log('info', 'request', { method: event.requestContext.http.method, path: event.rawPath });
+log('error', 'db_failed', { error: err.message, query: 'SELECT ...' });</code></pre>
+
+<h3>Metric filter and alarm</h3>
+
+<pre><code class="lang-bash"># Create metric filter on structured logs
+aws logs put-metric-filter \
+  --log-group-name /aws/lambda/my-function \
+  --filter-name error-count \
+  --filter-pattern '{ $.level = "error" }' \
+  --metric-transformations metricName=ErrorCount,metricNamespace=MyApp,metricValue=1,defaultValue=0
+
+# Alarm when error rate &gt; 10 in 5 minutes
+aws cloudwatch put-metric-alarm \
+  --alarm-name lambda-errors \
+  --metric-name ErrorCount \
+  --namespace MyApp \
+  --statistic Sum \
+  --period 300 --evaluation-periods 1 --threshold 10 \
+  --comparison-operator GreaterThanThreshold \
+  --alarm-actions arn:aws:sns:af-south-1:123456789012:alerts \
+  --treat-missing-data notBreaching</code></pre>
+
+<hr>
+
+<h2>Cost model</h2>
+
+<h3>Lambda pricing (af-south-1)</h3>
+
+<table><thead><tr><th>Component</th><th>Price</th></tr></thead><tbody><tr><td>Requests</td><td>$0.20 per 1M requests</td></tr><tr><td>Duration (x86)</td><td>$0.0000166667 per GB-second</td></tr><tr><td>Duration (ARM64)</td><td>$0.0000133334 per GB-second (~20% cheaper)</td></tr><tr><td>Free tier</td><td>1M requests + 400,000 GB-seconds/month</td></tr></tbody></table>
+
+<p>Example: 10M req/month, 512MB, avg 100ms = ~$8.50/month (ARM64).</p>
+
+<h3>Fargate pricing (af-south-1)</h3>
+
+<table><thead><tr><th>Component</th><th>Price</th></tr></thead><tbody><tr><td>vCPU</td><td>~$0.04856 per vCPU-hour</td></tr><tr><td>Memory</td><td>~$0.00532 per GB-hour</td></tr><tr><td>Fargate Spot</td><td>Up to 70% discount (interruptible)</td></tr></tbody></table>
+
+<p>Example: 1 vCPU + 2 GB, running 24/7 = ~$43/month on-demand, ~$13 on Spot.</p>
+
+<h3>EC2 pricing (approximate, af-south-1)</h3>
+
+<table><thead><tr><th>Instance</th><th>On-demand/hr</th><th>1-yr Reserved</th><th>Spot (est.)</th></tr></thead><tbody><tr><td>t3.micro</td><td>~$0.011</td><td>~$0.007</td><td>~$0.004</td></tr><tr><td>t3.medium</td><td>~$0.044</td><td>~$0.028</td><td>~$0.013</td></tr><tr><td>c6g.xlarge</td><td>~$0.136</td><td>~$0.088</td><td>~$0.041</td></tr><tr><td>m6i.xlarge</td><td>~$0.192</td><td>~$0.124</td><td>~$0.058</td></tr></tbody></table>
+
+<p>af-south-1 is generally ~10–20% more expensive than us-east-1 due to lower utilisation. For cost-sensitive workloads, weigh the data sovereignty/latency benefit against the premium. t3.micro in af-south-1 is approximately $0.011/hr (us-east-1 ~$0.0104/hr).</p>
+
+<h3>Cost hierarchy: cheapest to most expensive per unit of work</h3>
+
+<ol><li><strong>Lambda (ARM64)</strong> — zero idle cost, best for bursty/event-driven</li><li><strong>Fargate Spot</strong> — containerised, interruptible, ~70% savings over on-demand</li><li><strong>Fargate on-demand</strong> — predictable containers, no EC2 ops</li><li><strong>EC2 Spot</strong> — cheapest persistent compute, interruptible</li><li><strong>EC2 Reserved</strong> — continuous high-utilisation workloads</li><li><strong>EC2 On-demand</strong> — avoid for steady-state; use only for unpredictable peaks without commitment</li></ol>
+
+<hr>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong>Lambda cold starts</strong>: Node.js cold starts are 200–500ms; JVM (Java) can be 2–5s. Use ARM64 + keep packages small. Use provisioned concurrency only when p99 latency matters — it is billed 24/7.</li><li><strong>Lambda timeout max 15 minutes</strong>: Any workload exceeding this must move to ECS Fargate or an EC2 batch job. Design for idempotency and checkpointing if processing can be chunked.</li><li><strong>ECS task role vs execution role</strong>: The <strong>execution role</strong> is used by the ECS agent to pull images from ECR and write logs to CloudWatch. The <strong>task role</strong> is what your application code uses to call other AWS services (S3, DynamoDB, etc.). Mixing these up is the most common ECS IAM mistake.</li><li><strong>Lambda in VPC adds latency</strong>: Attaching Lambda to a VPC for private resource access (RDS, ElastiCache) adds ~1s cold start due to ENI provisioning. Mitigate with Lambda SnapStart (Java) or provisioned concurrency.</li><li><strong>Fargate image pull from public ECR</strong>: Pulling from Docker Hub or public ECR incurs NAT Gateway charges if your task is in a private subnet. Use a VPC endpoint for ECR or cache images in a private ECR repository.</li><li><strong>af-south-1 service gaps</strong>: Some services are not yet available in Cape Town — including Lambda SnapStart, some Bedrock model endpoints, certain EC2 instance families, and ElastiCache Serverless. Always verify availability at <a href="https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/" target="_blank" rel="noopener">https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/</a> before designing.</li><li><strong>SigV4 signing from Cloudflare Workers</strong>: The Web Crypto API (<code>crypto.subtle</code>) is available in Workers but uses <code>ArrayBuffer</code> not <code>Buffer</code>. The signing snippet in this skill is written for Workers — do not copy Node.js SDK signing utilities directly.</li><li><strong>API Gateway payload limit</strong>: API Gateway has a 10MB payload limit for both HTTP API and REST API. Lambda itself has a 6MB synchronous invocation payload limit. For large files, use S3 presigned URLs instead of passing through API Gateway.</li><li><strong>ASG cooldown vs instance warmup</strong>: Default cooldown (300s) prevents scale-out thrashing. If your instance takes longer to be application-ready, set <code>defaultInstanceWarmup</code> to avoid premature scale-in before the new instance is serving traffic.</li></ul>
+
+<h2>See Also</h2>
+
+<ul><li><a href="../SKILL.md" target="_blank" rel="noopener">AWS auth and IAM</a></li><li><a href="../../cloudflare/SKILL.md" target="_blank" rel="noopener">Cloudflare Workers</a></li><li><a href="../../iac/SKILL.md" target="_blank" rel="noopener">Infrastructure as Code (CDK/Terraform)</a></li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/aws/compute/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>South African Healthcare Landscape — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">South African Healthcare Landscape</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/health/sa/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">South African Healthcare Landscape</div>
+      <h1>SOUTH AFRICAN HEALTHCARE LANDSCAPE</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>South African Healthcare Landscape</h1>
+
+<p>South Africa operates a stark two-tier healthcare system: a well-resourced private sector serving approximately 16% of the population (those with medical aid or able to pay out-of-pocket), and a chronically under-resourced public sector serving the remaining 84%. Understanding this divide — and the policy trajectory toward NHI — is foundational for any strategic healthcare decision in South Africa.</p>
+
+<hr>
+
+<h2>The Two-Tier System at a Glance</h2>
+
+<table><thead><tr><th></th><th>Public Sector</th><th>Private Sector</th></tr></thead><tbody><tr><td><strong>Population served</strong></td><td>~84% (50M people)</td><td>~16% (9.5M medical aid beneficiaries + OOP)</td></tr><tr><td><strong>Facilities</strong></td><td>~3,900 clinics, ~400 hospitals</td><td>~200 private hospitals, ~4,000 day clinics</td></tr><tr><td><strong>Funding</strong></td><td>DoH budget (~R270bn/year)</td><td>Medical aid schemes + OOP</td></tr><tr><td><strong>Staffing</strong></td><td>Severe shortages; migration to private</td><td>Better paid; attracts SA-trained talent</td></tr><tr><td><strong>Access</strong></td><td>Free at point of care (often)</td><td>Costly; medical aid or cash</td></tr><tr><td><strong>Quality range</strong></td><td>Highly variable; some excellent academic hospitals</td><td>Generally higher; internationally accredited facilities</td></tr></tbody></table>
+
+<hr>
+
+<h2>Regulatory Bodies</h2>
+
+<h3>HPCSA (Health Professions Council of South Africa)</h3>
+
+<p>The HPCSA regulates 13 health professional boards under the Health Professions Act 56 of 1974:</p>
+
+<table><thead><tr><th>Board</th><th>Professions</th></tr></thead><tbody><tr><td>Medical and Dental</td><td>Medical practitioners, dentists, specialists</td></tr><tr><td>Pharmacy</td><td>Pharmacists (see also SAPC)</td></tr><tr><td>Nursing</td><td>→ Separate: SANC</td></tr><tr><td>Allied Health</td><td>Physiotherapy, OT, dietetics, speech therapy, audiology, optometry, podiatry, biokinetics</td></tr><tr><td>Psychology</td><td>Psychologists, registered counsellors</td></tr><tr><td>Emergency Care</td><td>Paramedics (AEA, ILS, CCA, EMRS)</td></tr><tr><td>Radiography</td><td>Radiographers, nuclear medicine technologists</td></tr><tr><td>Environmental Health</td><td>Environmental health officers</td></tr></tbody></table>
+
+<p><strong>Conduct complaints</strong>: Filed with the relevant professional board. Investigation → disciplinary hearing → sanctions (caution, conditions, suspension, removal from register). Separate from criminal proceedings and clinical governance processes.</p>
+
+<p><strong>Continuing Professional Development (CPD)</strong>: All registered professionals must accumulate CPD points annually. Non-compliance leads to registration suspension.</p>
+
+<h3>SANC (South African Nursing Council)</h3>
+
+<p>Regulates nursing under the Nursing Act 33 of 2005:</p>
+<ul><li>Professional nurses (4-year degree or diploma)</li><li>Enrolled nurses (2-year diploma)</li><li>Enrolled auxiliary nurses (1-year certificate)</li><li>Nurse practitioners (advanced practice — increasingly recognised)</li><li>Community service: 1 year compulsory after qualification</li></ul>
+
+<h3>CMS (Council for Medical Schemes)</h3>
+
+<p>Regulates open and restricted medical aid schemes under the Medical Schemes Act 131 of 1998:</p>
+<ul><li>Approximately 70 open schemes and 21 restricted/closed schemes registered</li><li>Enforces Prescribed Minimum Benefits (PMBs)</li><li>Investigates scheme complaints</li><li>Publishes annual Industry Report (key benchmarking data)</li><li>Accredits managed care organisations and brokers</li></ul>
+
+<h3>SAPC (South African Pharmacy Council)</h3>
+
+<p>Regulates pharmacists and pharmacy premises under the Pharmacy Act 53 of 1974. Separate from HPCSA for historical reasons.</p>
+
+<h3>OHSC (Office of Health Standards Compliance)</h3>
+
+<p>Monitors and enforces compliance with health establishment norms and standards. Inspects public and private healthcare facilities against the National Core Standards (NCS). Issues compliance certificates. Referred non-compliant facilities to the Health Ombud.</p>
+
+<h3>Health Ombud</h3>
+
+<p>Investigates complaints about quality of healthcare that OHSC refers or that are directly lodged. Notable cases: Life Esidimeni (2016–2018 — 144 mental health patients died after NGO transfers).</p>
+
+<hr>
+
+<h2>National Health Insurance (NHI)</h2>
+
+<h3>Current Status (as of 2025)</h3>
+
+<p>The NHI Act 20 of 2019 was signed into law in May 2024 by President Ramaphosa. Implementation is in early phases.</p>
+
+<h3>What NHI Proposes</h3>
+
+<ul><li>A single national purchaser (NHI Fund) that buys healthcare services on behalf of all South Africans</li><li>Benefits package to be determined by a Benefits Advisory Committee</li><li>Primary healthcare: contracted through Contracting Units for Primary Healthcare (CUPs) — GP practices and clinics</li><li>Hospital services: contracted from accredited public and private providers</li><li>Medical aid schemes: role significantly curtailed (may only cover benefits outside the NHI benefit package)</li><li>Tax-funded: payroll tax (employer + employee), surcharge on personal income tax, elimination of medical tax credits</li></ul>
+
+<h3>Key Controversies</h3>
+
+<table><thead><tr><th>Issue</th><th>Pro-NHI</th><th>Anti-NHI</th></tr></thead><tbody><tr><td>Medical aid future</td><td>Reduced to top-up; more equitable</td><td>Scheme members cross-subsidise without choice</td></tr><tr><td>Private hospital contracting</td><td>Revenue guaranteed</td><td>NHI tariffs may be below cost of delivery</td></tr><tr><td>Quality of public facilities</td><td>Investment will improve quality</td><td>Administrative capacity lacking</td></tr><tr><td>Constitutionality</td><td>Right to health s27</td><td>s27(2) progressive realisation; property rights s25</td></tr><tr><td>Fiscal space</td><td>Reprioritisation possible</td><td>R200bn+ funding gap; GDP headwinds</td></tr></tbody></table>
+
+<p><strong>Practical reality</strong>: Full implementation is widely expected to take 10–15 years. Medical aid schemes continue operating. Strategic planning should account for transitional models, not imminent full NHI.</p>
+
+<hr>
+
+<h2>Major Medical Aid Schemes</h2>
+
+<h3>Open Schemes (Largest by Beneficiaries)</h3>
+
+<table><thead><tr><th>Scheme</th><th>Administrator</th><th>Beneficiaries (approx.)</th><th>Notable</th></tr></thead><tbody><tr><td><strong>Discovery Health Medical Scheme</strong></td><td>Discovery Health</td><td>~3.5M</td><td>Largest; Vitality programme; integrated wellness</td></tr><tr><td><strong>GEMS</strong> (Government Employees Medical Scheme)</td><td>Discovery Health (admin)</td><td>~1.9M</td><td>Restricted to government employees; subsidised</td></tr><tr><td><strong>Bonitas</strong></td><td>Medscheme</td><td>~750K</td><td>Mid-market focus</td></tr><tr><td><strong>Medihelp</strong></td><td>Medihelp</td><td>~350K</td><td>Strong in government sector</td></tr><tr><td><strong>Bestmed</strong></td><td>Bestmed</td><td>~200K</td><td>Mid-market</td></tr><tr><td><strong>Momentum Health</strong></td><td>Momentum</td><td>~450K</td><td>Multiply wellness integration</td></tr><tr><td><strong>Fedhealth</strong></td><td>Medscheme</td><td>~170K</td><td>Strong hospital networks</td></tr></tbody></table>
+
+<h3>Key Medical Aid Concepts</h3>
+
+<p><strong>Benefit options</strong>: Each scheme offers multiple plans (e.g., Discovery: KeyCare, Classic, Executive). Plans differ in: hospital cover (network vs any private), chronic benefit (self-payment gap), day-to-day benefit (savings account vs pooled), and annual premium.</p>
+
+<p><strong>Network hospitals</strong>: Medical aids negotiate preferential tariffs with specific hospital groups. Members using network hospitals pay less or nothing above the scheme rate. Out-of-network triggers co-payments.</p>
+
+<p><strong>Medical savings account (MSA)</strong>: Day-to-day benefits on many plans are accessed via a personal savings account (15–25% of premium). Once exhausted, member pays OOP until annual threshold, then Above Threshold Benefit (ATB) kicks in.</p>
+
+<p><strong>Gap cover</strong>: Separate short-term insurance that covers the shortfall between medical aid tariff and specialist billing (specialists often bill 200–400% of scheme rate). Regulated separately by the FSCA.</p>
+
+<hr>
+
+<h2>Private Hospital Groups</h2>
+
+<table><thead><tr><th>Group</th><th>Hospitals</th><th>Beds (approx.)</th><th>Ownership</th></tr></thead><tbody><tr><td><strong>Netcare</strong></td><td>~60</td><td>~10,000</td><td>JSE-listed (NTC)</td></tr><tr><td><strong>Mediclinic Southern Africa</strong></td><td>~50</td><td>~8,000</td><td>Remgro-controlled; JSE-listed (MEI)</td></tr><tr><td><strong>Life Healthcare</strong></td><td>~50</td><td>~8,000</td><td>JSE-listed (LHC)</td></tr><tr><td><strong>Clicks Clinics / Dis-Chem Clinics</strong></td><td>~100+</td><td>Day clinics</td><td>Retail health</td></tr><tr><td><strong>Intercare</strong></td><td>~20</td><td>Day hospitals + primary care</td><td>Private equity</td></tr><tr><td><strong>Clinix Health Group</strong></td><td>~10</td><td>~2,500</td><td>Black-owned; growth-stage</td></tr></tbody></table>
+
+<h3>Private Hospital Economics</h3>
+
+<ul><li>Revenue predominantly from medical aid (70–80%) and managed care organisations (MCOs)</li><li>Key cost drivers: nurses (shortage-driven inflation), electricity (load shedding → generators → diesel), medical consumables (USD-denominated imports)</li><li>Theatre revenue per case significantly higher than ward revenue — theatre utilisation drives profitability</li><li>PMB obligation: private hospitals must treat PMB conditions regardless of benefit exhaustion</li></ul>
+
+<hr>
+
+<h2>Public Sector Structure</h2>
+
+<h3>National Department of Health (NDoH)</h3>
+
+<p>Develops national health policy, sets norms and standards, manages national programmes (HIV/TB, immunisation, EPI), procures ARVs nationally, manages NHI implementation.</p>
+
+<h3>Provincial Health Departments</h3>
+
+<p>Healthcare is a concurrent national-provincial function. Provinces are responsible for delivery:</p>
+
+<table><thead><tr><th>Province</th><th>Population</th><th>Key Challenges</th></tr></thead><tbody><tr><td>Gauteng</td><td>~16M</td><td>Urban congestion; Tshwane and JHB health districts under pressure</td></tr><tr><td>KwaZulu-Natal</td><td>~12M</td><td>High HIV burden; rural service delivery</td></tr><tr><td>Eastern Cape</td><td>~7M</td><td>Poor infrastructure; historically disadvantaged</td></tr><tr><td>Limpopo</td><td>~6M</td><td>Rural; cross-border patient flows</td></tr><tr><td>Western Cape</td><td>~7M</td><td>Best-performing province; high private sector presence in Cape Town</td></tr></tbody></table>
+
+<h3>Levels of Care (Public Sector)</h3>
+
+<table><thead><tr><th>Level</th><th>Facility Type</th><th>Services</th></tr></thead><tbody><tr><td><strong>Primary</strong></td><td>Clinic, CHC (Community Health Centre)</td><td>PHC, immunisation, PMTCT, chronic disease (ART, TB, HTN, DM)</td></tr><tr><td><strong>District (Level 1)</strong></td><td>District Hospital (50–200 beds)</td><td>General surgery, general medicine, obstetrics, paediatrics, psychiatry (limited)</td></tr><tr><td><strong>Regional (Level 2)</strong></td><td>Regional Hospital (200–400 beds)</td><td>All Level 1 + orthopaedics, internal medicine subspecialties, more complex surgery</td></tr><tr><td><strong>Tertiary (Level 3)</strong></td><td>Tertiary/Academic Hospital (400–1,000+ beds)</td><td>Highly specialised services; training platform; research</td></tr><tr><td><strong>Central (Level 4)</strong></td><td>Central Hospital (1,000+ beds)</td><td>Organ transplantation, quaternary neurosurgery, complex oncology</td></tr></tbody></table>
+
+<hr>
+
+<h2>Key Health Legislation Summary</h2>
+
+<table><thead><tr><th>Act</th><th>Key Provisions</th></tr></thead><tbody><tr><td><strong>National Health Act 61 of 2003</strong></td><td>Framework for health system; rights of users; establishment of OHSC; health information system</td></tr><tr><td><strong>Medical Schemes Act 131 of 1998</strong></td><td>Open enrolment; community rating; PMBs; CMS establishment</td></tr><tr><td><strong>Medicines and Related Substances Act 101 of 1965</strong></td><td>SAHPRA; scheduling; SEP; clinical trials</td></tr><tr><td><strong>Health Professions Act 56 of 1974</strong></td><td>HPCSA establishment; professional boards; scope of practice</td></tr><tr><td><strong>Mental Health Care Act 17 of 2002</strong></td><td>Voluntary/assisted/involuntary admission; Review Boards; user rights</td></tr><tr><td><strong>Nursing Act 33 of 2005</strong></td><td>SANC; scope of practice; community service</td></tr><tr><td><strong>Pharmacy Act 53 of 1974</strong></td><td>SAPC; pharmacy premises; dispensing rights</td></tr><tr><td><strong>NHI Act 20 of 2019</strong></td><td>NHI Fund; benefit package; scheme restrictions</td></tr><tr><td><strong>Choice on Termination of Pregnancy Act 92 of 1996</strong></td><td>CTOP services; gestational limits; facility requirements</td></tr><tr><td><strong>National Integrated EMS Act (in progress)</strong></td><td>Rationalising EMS across public/private</td></tr></tbody></table>
+
+<hr>
+
+<h2>Healthcare Labour Relations</h2>
+
+<h3>NEHAWU (National Education, Health and Allied Workers Union)</h3>
+
+<p>The dominant union in public sector healthcare. Industrial action (strikes) in public healthcare is common and legally complex. Essential services designation: healthcare workers may not legally strike without providing minimum staffing levels (essential services determination by CCMA).</p>
+
+<h3>Nursing Shortages</h3>
+
+<p>SA trains approximately 4,500 nurses per year but loses significant numbers to the UK, Australia, Middle East, and Canada. The Nursing Act community service requirement creates a pipeline but not retention. HPCSA estimates ~285,000 registered nurses nationally, but vacancy rates in public sector are 30–40%.</p>
+
+<h3>Medical Officers</h3>
+
+<p>Junior doctors (community service, medical officers) are chronically underpaid in the public sector relative to private. The average medical specialist salary in public sector is 40–60% of private equivalent. Retention strategies: housing allowance, scarce skills supplement, CPD funding, rural allowance.</p>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/health/sa/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

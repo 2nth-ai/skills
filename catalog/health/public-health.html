@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Public Health & Epidemiology — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Public Health & Epidemiology</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/health/public-health/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Public Health & Epidemiology</div>
+      <h1>PUBLIC HEALTH & EPIDEMIOLOGY</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Public Health &amp; Epidemiology</h1>
+
+<p>South Africa carries one of the world's most complex disease burdens — simultaneously managing the largest HIV epidemic globally, the highest TB incidence per capita, a rising tide of non-communicable diseases, and pervasive injury from violence and road traffic crashes. This skill provides the epidemiological frameworks, SA-specific disease data, PHC system architecture, and health metric knowledge required for a fractional Healthcare Director operating at district, regional, or national level.</p>
+
+<p>All outputs support qualified public health practitioners and health managers. Clinical recommendations require qualified medical or public health officer review. Epidemiological figures carry uncertainty intervals — treat point estimates as references, not absolutes.</p>
+
+<hr>
+
+<h2>1. Epidemiology Fundamentals</h2>
+
+<h3>Core Measures of Disease Frequency</h3>
+
+<table><thead><tr><th>Measure</th><th>Definition</th><th>Formula</th><th>Typical Use</th></tr></thead><tbody><tr><td><strong>Prevalence</strong></td><td>Proportion of population with condition at a point in time</td><td>Cases / Population at risk</td><td>Chronic diseases, HIV, HTN</td></tr><tr><td><strong>Incidence rate</strong></td><td>New cases per population per time unit</td><td>New cases / Person-time at risk</td><td>TB notification rate, cholera outbreaks</td></tr><tr><td><strong>Cumulative incidence</strong></td><td>Proportion developing condition over period</td><td>New cases / Population at risk (start)</td><td>Vaccine trial endpoints</td></tr><tr><td><strong>Attack rate</strong></td><td>Cumulative incidence in outbreak setting</td><td>Cases / Exposed population</td><td>Foodborne outbreak, measles cluster</td></tr><tr><td><strong>Case Fatality Rate (CFR)</strong></td><td>Proportion of cases that die</td><td>Deaths / Confirmed cases</td><td>Ebola, COVID-19 severity tracking</td></tr><tr><td><strong>Infection Fatality Rate (IFR)</strong></td><td>Deaths / All infected (including undiagnosed)</td><td>Deaths / Estimated all infections</td><td>Harder to measure; requires seroprevalence data</td></tr></tbody></table>
+
+<p><strong>Prevalence vs Incidence relationship:</strong></p>
+<pre><code class="lang-text">Prevalence ≈ Incidence Rate × Average Duration of Disease</code></pre>
+<p>A high prevalence can reflect either high incidence OR long disease duration (or both). HIV has both high incidence and long duration with ART — hence 7.8M PLHIV despite decades of epidemic.</p>
+
+<h3>Crude vs Adjusted Rates</h3>
+
+<ul><li><strong>Crude rate</strong>: Uses total population in denominator. Distorted by age structure differences between populations.</li><li><strong>Age-standardised (age-adjusted) rate</strong>: Controls for age distribution using a reference population. Required when comparing TB or cancer rates between provinces with different demographic profiles.</li><li><strong>Direct standardisation</strong>: Apply age-specific rates from study population to reference population.</li><li><strong>Indirect standardisation</strong>: Produces Standardised Mortality Ratio (SMR) — used when age-specific rates are unstable due to small numbers.</li></ul>
+
+<p>SA context: The Western Cape has an older age profile than Limpopo. Crude mortality comparisons will systematically understate mortality burden in younger provinces if not age-adjusted.</p>
+
+<h3>Epidemic Curves and Transmission Patterns</h3>
+
+<table><thead><tr><th>Curve Type</th><th>Shape</th><th>Implication</th><th>SA Example</th></tr></thead><tbody><tr><td><strong>Common-source (point)</strong></td><td>Sharp peak, rapid decline</td><td>Single exposure event</td><td>Listeriosis outbreak 2017–2018 (polony)</td></tr><tr><td><strong>Common-source (continuous)</strong></td><td>Sustained plateau</td><td>Ongoing exposure source</td><td>Contaminated water supply</td></tr><tr><td><strong>Propagated (person-to-person)</strong></td><td>Multiple successive waves, each larger</td><td>Human-to-human transmission</td><td>Measles, COVID-19 waves</td></tr><tr><td><strong>Mixed</strong></td><td>Initial sharp peak + propagated tail</td><td>Index case triggers secondary spread</td><td>Ebola nosocomial + community spread</td></tr></tbody></table>
+
+<h3>Reproductive Numbers</h3>
+
+<ul><li><strong>R0 (basic reproduction number)</strong>: Average secondary cases from one case in a fully susceptible population. Biological property of pathogen-host interaction.</li><li><strong>Rt (effective reproduction number)</strong>: Real-time R accounting for population immunity and interventions. Rt &lt; 1 means epidemic is declining.</li></ul>
+
+<table><thead><tr><th>Pathogen</th><th>Approximate R0</th><th>Implications</th></tr></thead><tbody><tr><td>Measles</td><td>12–18</td><td>Requires ~94% population immunity to halt transmission</td></tr><tr><td>COVID-19 (original strain)</td><td>2–3</td><td>Herd immunity threshold ~50–67%</td></tr><tr><td>TB (Mtb)</td><td>1–2 (slow)</td><td>Long infectious period sustains transmission at low R0</td></tr><tr><td>HIV</td><td>2–5 (without interventions)</td><td>R0 depends heavily on behaviour and viral load</td></tr></tbody></table>
+
+<h3>Bias and Confounding in Health Data</h3>
+
+<p><strong>Selection bias</strong>: Non-random selection into study or surveillance system.</p>
+<ul><li>SA example: Facility-based surveillance underrepresents rural populations and those who self-treat.</li></ul>
+
+<p><strong>Information bias</strong>: Systematic error in measuring exposure or outcome.</p>
+<ul><li>Recall bias: Patients underreport stigmatised behaviours (alcohol, drug use).</li><li>Misclassification: TB cases lost to follow-up recorded as "transferred out" rather than treatment failure.</li></ul>
+
+<p><strong>Confounding</strong>: Third variable associated with both exposure and outcome.</p>
+<ul><li>SA example: Poverty confounds the TB–HIV relationship (poverty drives both; not just HIV causing TB independently).</li></ul>
+
+<p><strong>Controlling confounding</strong>: Stratification, multivariate regression, matching, restriction. In SA public health, age, sex, HIV status, and geography are near-universal confounders.</p>
+
+<hr>
+
+<h2>2. Disease Burden in South Africa — The Quadruple Burden</h2>
+
+<p>South Africa is uniquely challenged by simultaneous epidemics across four categories, with social determinants (poverty, inequality, unemployment, housing) driving all four.</p>
+
+<h3>2.1 HIV/AIDS</h3>
+
+<table><thead><tr><th>Indicator</th><th>Value (2023/2024 estimates)</th><th>Source</th></tr></thead><tbody><tr><td>People living with HIV (PLHIV)</td><td>~7.8 million</td><td>HSRC/SANAC</td></tr><tr><td>Adult (15–49) HIV prevalence</td><td>~19%</td><td>HSRC 2022 Household Survey</td></tr><tr><td>New infections per year</td><td>~170,000–200,000</td><td>UNAIDS</td></tr><tr><td>People on ART</td><td>~5.9 million</td><td>NDOH ART statistics</td></tr><tr><td>HIV+ pregnant women on PMTCT</td><td>&gt;95%</td><td>DHIS2</td></tr><tr><td>Mother-to-child transmission rate</td><td>~1.4% (at 10 weeks)</td><td>NDOH</td></tr></tbody></table>
+
+<p>SA has the largest ART programme in the world. The 90-90-90 UNAIDS targets (now updated to 95-95-95):</p>
+<ul><li><strong>First 90/95</strong>: 95% of PLHIV know their status</li><li><strong>Second 90/95</strong>: 95% of those who know their status on ART</li><li><strong>Third 90/95</strong>: 95% of those on ART virally suppressed</li></ul>
+
+<p>SA performance (2023): approximately 94-78-88. The second 95 (ART coverage) remains the key gap — people who test positive but do not link to or remain in care.</p>
+
+<p><strong>Key programmatic terms:</strong></p>
+<ul><li><strong>PMTCT</strong>: Prevention of Mother-to-Child Transmission</li><li><strong>VL</strong>: Viral Load — undetectable VL (&lt;50 copies/mL) = virally suppressed = cannot transmit</li><li><strong>PrEP</strong>: Pre-Exposure Prophylaxis (tenofovir/emtricitabine) — rolled out in SA since 2016</li><li><strong>U=U</strong>: Undetectable = Untransmittable — public health messaging cornerstone</li><li><strong>PEPFAR</strong>: US President's Emergency Plan for AIDS Relief — primary external funder of SA HIV programme</li></ul>
+
+<h3>2.2 Tuberculosis</h3>
+
+<table><thead><tr><th>Indicator</th><th>Value</th><th>Context</th></tr></thead><tbody><tr><td>TB incidence rate</td><td>~520/100,000 population</td><td>Highest in world per capita (WHO 2023)</td></tr><tr><td>New TB cases notified annually</td><td>~270,000–300,000</td><td>NDOH</td></tr><tr><td>TB/HIV co-infection</td><td>~50–60% of new TB cases</td><td>A defining feature of SA epidemic</td></tr><tr><td>MDR-TB cases</td><td>~8,000–9,000/year</td><td>Drug-resistant burden is significant</td></tr><tr><td>XDR-TB</td><td>~450–600/year</td><td>Extensively drug-resistant; limited treatment options</td></tr><tr><td>TB treatment success rate (DS-TB)</td><td>~82–85%</td><td>Below 90% WHO target</td></tr></tbody></table>
+
+<p><strong>Drug-resistant TB definitions:</strong></p>
+
+<table><thead><tr><th>Category</th><th>Resistance Profile</th></tr></thead><tbody><tr><td>DS-TB (Drug-susceptible)</td><td>Sensitive to rifampicin and isoniazid</td></tr><tr><td>RR-TB (Rifampicin-resistant)</td><td>Resistant to rifampicin (most important first-line drug)</td></tr><tr><td>MDR-TB</td><td>Resistant to at least rifampicin + isoniazid</td></tr><tr><td>Pre-XDR-TB</td><td>MDR + resistant to any fluoroquinolone</td></tr><tr><td>XDR-TB</td><td>Pre-XDR + resistant to at least one Group A drug (bedaquiline or linezolid)</td></tr></tbody></table>
+
+<p><strong>SA TB programme architecture:</strong></p>
+<ul><li>GeneXpert (Xpert MTB/RIF) as first-line diagnostic — detects TB and rifampicin resistance in 2 hours</li><li>BPaL (bedaquiline, pretomanid, linezolid) regimen for XDR-TB — SA was a trial site</li><li>Community-based treatment supporters (treatment buddies/DOT supporters)</li><li>TB contact tracing — household contacts of index cases screened and offered INH preventive therapy (IPT)</li></ul>
+
+<h3>2.3 Non-Communicable Diseases (NCDs)</h3>
+
+<table><thead><tr><th>NCD</th><th>Prevalence (Adults)</th><th>Key Drivers</th><th>SA Programme</th></tr></thead><tbody><tr><td>Hypertension</td><td>~48% of adults (SANHANES)</td><td>Obesity, salt, stress, alcohol</td><td>Chronic Disease Management (CDM) at PHC level</td></tr><tr><td>Diabetes (Type 2)</td><td>~13% of adults</td><td>Obesity, diet, sedentary lifestyle</td><td>CDM, foot care clinics</td></tr><tr><td>Cardiovascular disease</td><td>Leading cause of death in 35–64 age group</td><td>HTN, diabetes, smoking, dyslipidaemia</td><td>Risk factor screening at PHC</td></tr><tr><td>Cancer</td><td>~100,000 new cases/year (NCRSA)</td><td>Cervical (HPV), breast, prostate, lung, oesophageal</td><td>NHLS pathology, oncology referral pathway</td></tr><tr><td>Chronic Respiratory Disease</td><td>~COPD, asthma underdiagnosed</td><td>Occupational exposure (mining), tobacco, TB sequelae</td><td>PHC spirometry pilot sites</td></tr><tr><td>Obesity</td><td>~68% of adult women overweight/obese</td><td>Urbanisation, ultra-processed foods</td><td>HEALA advocacy, food labelling regulations</td></tr></tbody></table>
+
+<p><strong>NCD double burden in SA:</strong> NCDs and communicable diseases are not competing — they are synergistic. HIV accelerates cardiovascular disease; TB causes lung destruction; poverty drives both.</p>
+
+<h3>2.4 Injuries — The "Fourth Epidemic"</h3>
+
+<table><thead><tr><th>Injury Category</th><th>SA Rate</th><th>Benchmark</th></tr></thead><tbody><tr><td>Interpersonal violence (homicide)</td><td>~45/100,000 (one of highest globally)</td><td>Global average ~6/100,000</td></tr><tr><td>Road traffic deaths</td><td>~25.9/100,000</td><td>More than double WHO target</td></tr><tr><td>Femicide</td><td>~5× global average</td><td>GBV crisis declared national emergency</td></tr><tr><td>Drowning</td><td>High paediatric burden</td><td>Unguarded pools, rivers</td></tr></tbody></table>
+
+<p>Injuries are the leading cause of death in 15–44 year age group in SA — YLLs (Years of Life Lost) are disproportionate to absolute numbers.</p>
+
+<h3>DALY Framework</h3>
+
+<p><strong>Disability-Adjusted Life Year (DALY)</strong> = Years of Life Lost (YLL) + Years Lived with Disability (YLD)</p>
+
+<ul><li>YLL: Deaths × standard life expectancy remaining at age of death</li><li>YLD: Cases × disability weight × duration</li></ul>
+
+<p>SA leading causes of DALYs (IHME/SAMRC data):</p>
+<ol><li>HIV/AIDS and STIs</li><li>Lower respiratory infections</li><li>TB</li><li>Diarrhoeal diseases</li><li>Road injuries</li><li>Interpersonal violence</li><li>Hypertensive heart disease</li><li>Diabetes</li><li>Neonatal conditions</li><li>Depressive disorders</li></ol>
+
+<hr>
+
+<h2>3. South African Primary Healthcare System</h2>
+
+<h3>PHC Re-Engineering (2011 onwards)</h3>
+
+<p>PHC re-engineering is the NDoH's strategy to shift SA from a hospital-centric to a community-based health system. Three streams:</p>
+
+<p><strong>Stream 1 — Ward-Based Outreach Teams (WBOTs)</strong></p>
+<ul><li>Each team covers approximately 1,000–1,500 households per ward</li><li>Composition: Community Health Workers (CHWs) + Professional Nurse (team leader)</li><li>Functions: household registration, chronic disease follow-up, PMTCT support, TB contact tracing, maternal and child health monitoring, health promotion</li><li>CHWs receive a stipend (not a salary) — ongoing advocacy issue for professionalisation and salary scale</li></ul>
+
+<p><strong>Stream 2 — School Health Teams</strong></p>
+<ul><li>Nurses deployed to schools for the Integrated School Health Programme (ISHP)</li><li>Vision, hearing, oral health, HIV testing, immunisation catch-up</li></ul>
+
+<p><strong>Stream 3 — District Clinical Specialist Teams (DCSTs)</strong></p>
+<ul><li>Each district has a multidisciplinary specialist team: obstetrician/gynaecologist, paediatrician, anaesthetist, family physician, PHC/midwife specialist</li><li>Support district and sub-district facilities with clinical governance, mentorship, and complex case management</li></ul>
+
+<h3>Health System Hierarchy</h3>
+
+<pre><code class="lang-text">National Department of Health (NDoH)
+    ↓
+Provincial Department of Health (9 provinces)
+    ↓
+District Health System (~52 health districts)
+    ↓
+Sub-district / Local Municipality
+    ↓
+Community Health Centre (CHC) — 24hr facility
+    ↓
+Fixed Clinic / Satellite Clinic
+    ↓
+Mobile Clinic / WBOT / Community Health Worker</code></pre>
+
+<h3>District Health System</h3>
+
+<p>The District Health System (DHS) is the operational unit of PHC delivery:</p>
+<ul><li>Each district has a District Management Team (DMT) headed by a District Director</li><li>District Health Expenditure per capita is a key accountability metric (target: equitable share per population)</li><li>District Hospital is the referral node for PHC facilities — 24hr casualty, surgical, obstetric, medical, paediatric wards</li><li>Sub-district structure below district: Facility Management Teams at each PHC facility</li></ul>
+
+<h3>Ideal Clinic Programme</h3>
+
+<p>The Ideal Clinic Realisation and Maintenance (ICRM) programme assesses clinics against a set of standards across 10 components:</p>
+
+<table><thead><tr><th>Component</th><th>Examples</th></tr></thead><tbody><tr><td>Administration</td><td>Clinic committee, pharmacy stock, personnel lists</td></tr><tr><td>Human Resources</td><td>Staff ratios, leave management</td></tr><tr><td>Finance</td><td>Budget management, petty cash</td></tr><tr><td>Facility/Infrastructure</td><td>Maintenance, HVAC, waiting areas</td></tr><tr><td>Medicine and Supplies</td><td>Essential Medicines List compliance, cold chain</td></tr><tr><td>Equipment</td><td>Calibration records, service schedules</td></tr><tr><td>Connectivity/IT</td><td>HPRS/DHIS2, computer infrastructure</td></tr><tr><td>Quality of Care</td><td>Clinical protocols, adverse event reporting</td></tr><tr><td>Infection Prevention &amp; Control (IPC)</td><td>Hand hygiene, PPE, waste management</td></tr><tr><td>Community Interface</td><td>Health committees, outreach</td></tr></tbody></table>
+
+<p>Status rating: Ideal, Silver, Gold, or suboptimal. Target: all clinics to attain Ideal status.</p>
+
+<hr>
+
+<h2>4. Disease Surveillance</h2>
+
+<h3>NICD — National Institute for Communicable Diseases</h3>
+
+<p>The NICD (part of NHLS) is SA's national public health institute for communicable disease intelligence:</p>
+<ul><li>Reference laboratory function — confirms novel pathogens, does whole genome sequencing</li><li>GERMS-SA: Group for Enteric, Respiratory and Meningeal disease Surveillance</li><li>SIRESS: Syndromic Surveillance (influenza-like illness, severe acute respiratory illness)</li><li>ISARIC/South African SARI surveillance network</li><li>Issues weekly Communicable Diseases Communique and outbreak alerts</li></ul>
+
+<h3>Notifiable Medical Conditions (NMCs)</h3>
+
+<p>The Notifiable Medical Conditions Regulations (R. 883 of 2017) list 47 conditions requiring mandatory reporting to the DoH. Health professionals, laboratories, and facilities all have reporting obligations.</p>
+
+<p><strong>Category 1 — Immediate notification (within 24 hours):</strong></p>
+
+<table><thead><tr><th>Condition</th><th>Notes</th></tr></thead><tbody><tr><td>Anthrax</td><td>Bioterrorism risk</td></tr><tr><td>Botulism</td><td></td></tr><tr><td>Cholera</td><td></td></tr><tr><td>Diphtheria</td><td></td></tr><tr><td>Ebola</td><td>Viral haemorrhagic fever</td></tr><tr><td>Human influenza (novel subtype)</td><td>Pandemic potential</td></tr><tr><td>Meningococcal meningitis/septicaemia</td><td></td></tr><tr><td>Plague</td><td></td></tr><tr><td>Rabies</td><td></td></tr><tr><td>Severe Acute Respiratory Syndrome (SARS)</td><td></td></tr><tr><td>Smallpox</td><td></td></tr><tr><td>Viral haemorrhagic fevers (Marburg, Lassa, Crimean-Congo)</td><td></td></tr><tr><td>Yellow fever</td><td></td></tr></tbody></table>
+
+<p><strong>Category 2 — Within 5 days:</strong> Includes TB (all forms), HIV (newly diagnosed), typhoid, measles, rubella, pertussis, tetanus, polio, malaria, brucellosis, food poisoning, Hepatitis A/B/C/E, listeriosis, leptospirosis, typhus, and others.</p>
+
+<p><strong>Reporting pathway:</strong></p>
+<pre><code class="lang-text">Clinician/Lab → District Disease Surveillance Officer
+    → Provincial Health Department
+    → NDoH Epidemiology cluster
+    → WHO (for IHR-notifiable conditions)</code></pre>
+
+<h3>NHLS — National Health Laboratory Service</h3>
+
+<ul><li>Processes ~65 million tests per year from public sector facilities</li><li>CD4 count, viral load, GeneXpert, culture and DST for TB — all through NHLS</li><li>Laboratory data feeds TIER.Net (HIV programme data) and DATIM</li></ul>
+
+<h3>Sentinel vs Mandatory Surveillance</h3>
+
+<table><thead><tr><th>Type</th><th>Description</th><th>SA Examples</th></tr></thead><tbody><tr><td><strong>Mandatory/Passive</strong></td><td>All cases must be reported</td><td>NMC list — TB, cholera, measles</td></tr><tr><td><strong>Sentinel/Active</strong></td><td>Selected sites report all cases (more complete but limited sites)</td><td>Influenza (SARI) sentinels, maternal mortality (NCCEMD)</td></tr><tr><td><strong>Syndromic</strong></td><td>Report clinical syndrome without waiting for lab confirmation</td><td>ILI/SARI — faster signal for emerging threats</td></tr></tbody></table>
+
+<h3>DATIM — Data for Accountability, Transparency, and Impact Monitoring</h3>
+
+<p>DATIM is the PEPFAR-mandated data system for HIV/AIDS programme monitoring:</p>
+<ul><li>SA reports quarterly to DATIM on PEPFAR-funded indicators</li><li>Key indicators: HTS_TST (HIV testing), TX_NEW (new ART initiations), TX_CURR (current on ART), VL_SUPPRESSION (viral load suppression)</li><li>Used alongside DHIS2 (government system) — two parallel systems create data reconciliation burden</li></ul>
+
+<hr>
+
+<h2>5. National Health Insurance (NHI) and Primary Care Financing</h2>
+
+<h3>NHI Act 20 of 2019</h3>
+
+<p>The NHI Act establishes a single-payer national health insurance system. Core architecture:</p>
+
+<table><thead><tr><th>Element</th><th>Detail</th></tr></thead><tbody><tr><td>Fund structure</td><td>Single NHI Fund — public entity, governed by Board</td></tr><tr><td>Purchasing model</td><td>Monopsony purchaser of healthcare services</td></tr><tr><td>Provider contracting</td><td>Both public and private providers accredited and contracted</td></tr><tr><td>Benefit package</td><td>Defined by Advisory Committees — comprehensive PHC + essential hospital</td></tr><tr><td>Financing</td><td>General tax revenue + payroll levy (Fiscus contribution)</td></tr><tr><td>Medical schemes</td><td>Role significantly curtailed — cannot cover services covered by NHI</td></tr></tbody></table>
+
+<p><strong>Constitutional challenge status (as of 2024–2025):</strong> Multiple legal challenges lodged by DA, SAMA, BHF. ConCourt challenge on medical scheme provisions anticipated. Implementation is phased — full NHI fund functionality is a multi-year horizon.</p>
+
+<h3>Implementation Phases</h3>
+
+<table><thead><tr><th>Phase</th><th>Period</th><th>Key Milestones</th></tr></thead><tbody><tr><td>Phase 1 (complete)</td><td>2012–2017</td><td>Pilots in 10 districts, Ideal Clinic programme</td></tr><tr><td>Phase 2 (underway)</td><td>2017–2022</td><td>GP contracting pilots (CUPs), health system strengthening</td></tr><tr><td>Phase 3 (in progress)</td><td>2023+</td><td>NHI Fund establishment, provider accreditation framework</td></tr><tr><td>Full implementation</td><td>2030+ (est.)</td><td>Subject to fiscal envelope and legal resolution</td></tr></tbody></table>
+
+<h3>Contracting Units for Primary Healthcare (CUPs)</h3>
+
+<p>CUPs are the geographic unit for PHC contracting under NHI:</p>
+<ul><li>Each CUP covers approximately 10,000 population</li><li>A GP (general practitioner) registers with the CUP and is contracted to provide PHC services</li><li>Patient registers with a GP at the CUP — gatekeeping function</li><li>GPs paid on a blended capitation + fee-for-service basis (under NHI pilot design)</li></ul>
+
+<h3>PHC Benefit Package</h3>
+
+<p>Under NHI, the PHC benefit package is intended to be comprehensive:</p>
+<ul><li>Preventive services: immunisations, antenatal care, family planning, cervical screening</li><li>Curative: acute illness management, chronic disease management (HTN, diabetes, HIV, TB, asthma)</li><li>Rehabilitative: physiotherapy referral, occupational therapy</li><li>Palliative care: pain management, end-of-life care</li></ul>
+
+<p>Reference price setting for NHI services is done by the Office of Health Products and Technologies (OHPT) — previously the Pricing Committee.</p>
+
+<hr>
+
+<h2>6. Health Promotion</h2>
+
+<h3>Ottawa Charter Framework (1986)</h3>
+
+<p>The WHO Ottawa Charter remains the foundational framework for health promotion globally and is explicitly referenced in SA health policy:</p>
+
+<table><thead><tr><th>Action Area</th><th>SA Application</th></tr></thead><tbody><tr><td><strong>Build healthy public policy</strong></td><td>Tobacco Products and Electronic Delivery Systems Act, sugar tax (Health Promotion Levy), food labelling regulations</td></tr><tr><td><strong>Create supportive environments</strong></td><td>Safe urban design, school nutrition, housing programmes</td></tr><tr><td><strong>Strengthen community action</strong></td><td>WBOTs, ward-based health committees, Community Health Workers</td></tr><tr><td><strong>Develop personal skills</strong></td><td>Health literacy programmes, lifeskills in schools</td></tr><tr><td><strong>Reorient health services</strong></td><td>PHC re-engineering, wellness screening at workplaces</td></tr></tbody></table>
+
+<h3>Upstream vs Downstream Interventions</h3>
+
+<pre><code class="lang-text">UPSTREAM (Structural/Social determinants)
+    Poverty reduction, housing, education, employment
+    Clean water and sanitation (Blue Drop/Green Drop)
+    Food security programmes (SNAP, school nutrition)
+              ↓
+MIDSTREAM (Community/Behavioural)
+    WBOT health promotion visits
+    Community support groups (PLHIV, TB, DM)
+    School health education
+              ↓
+DOWNSTREAM (Individual/Clinical)
+    ART, TB treatment, chronic disease medication
+    Surgical interventions
+    Hospital-based care</code></pre>
+
+<p>Health promotion theory holds that downstream interventions are necessary but insufficient — upstream structural change is required for sustained population health improvement. SA's quadruple burden is largely an upstream failure (apartheid spatial planning, inequality, poverty).</p>
+
+<h3>SA Health Promotion Priorities</h3>
+
+<p><strong>Tobacco control:</strong></p>
+<ul><li>Tobacco Products and Electronic Delivery Systems Control Act (2022) — plain packaging, vaping restrictions</li><li>CTPA (Cigarette Tax Policy Advocacy) context: sin taxes raised annually in Budget</li><li>SA smoking prevalence ~18% adults (declining)</li></ul>
+
+<p><strong>Substance abuse:</strong></p>
+<ul><li>Alcohol: SA has one of the highest per capita consumption rates globally; FASD (Foetal Alcohol Spectrum Disorder) in Northern Cape and Western Cape is a crisis</li><li>Methamphetamine (tik): epidemic in Western Cape — Tygerberg catchment overwhelmed</li><li>Nyaope (whoonga): heroin + cannabis + antiretrovirals — prevalent in Gauteng and KZN townships</li><li>Central Drug Authority (CDA) coordinates policy; SANCA (SA National Council on Alcoholism and Drug Dependence) provides treatment referral</li></ul>
+
+<p><strong>Gender-based violence:</strong></p>
+<ul><li>GBV declared national crisis by President Ramaphosa (2019)</li><li>Thuthuzela Care Centres (TCCs) — one-stop GBV response centres at hospitals (183 sites)</li><li>Femicide rate 5× global average</li></ul>
+
+<p><strong>Obesity and NCDs:</strong></p>
+<ul><li>HEALA (Healthy Living Alliance) leads civil society advocacy on food environments</li><li>Health Promotion Levy (sugar tax) introduced 2018 — R2.21/gram of sugar above 4g/100ml</li><li>Front-of-pack food labelling regulations (R3337 of 2023) — mandatory from 2025</li></ul>
+
+<hr>
+
+<h2>7. Key Population Health Metrics</h2>
+
+<h3>Life Expectancy and Mortality</h3>
+
+<table><thead><tr><th>Indicator</th><th>SA Value</th><th>Comparators</th></tr></thead><tbody><tr><td>Life expectancy at birth (overall)</td><td>~64.6 years (2023 est.)</td><td>Sub-Saharan Africa avg ~61; Global avg ~73</td></tr><tr><td>Life expectancy — female</td><td>~68 years</td><td></td></tr><tr><td>Life expectancy — male</td><td>~61 years</td><td></td></tr><tr><td>Under-5 mortality rate (U5MR)</td><td>~34/1,000 live births</td><td>MDG5 target achieved; SDG target &lt;25</td></tr><tr><td>Infant mortality rate (IMR)</td><td>~25/1,000 live births</td><td>Neonatal deaths (first 28 days) drive IMR</td></tr><tr><td>Neonatal mortality rate (NMR)</td><td>~12/1,000 live births</td><td>Prematurity, birth asphyxia, infections</td></tr><tr><td>Maternal mortality ratio (MMR)</td><td>~119/100,000 live births</td><td>NCCEMD Triennial Report; target &lt;70</td></tr><tr><td>Stillbirth rate</td><td>~22/1,000 births</td><td>High compared to income peers</td></tr></tbody></table>
+
+<p><strong>Maternal mortality leading causes in SA (NCCEMD data):</strong></p>
+<ol><li>Non-pregnancy-related infections (mostly HIV/TB) — ~43% of maternal deaths</li><li>Obstetric haemorrhage</li><li>Hypertension/eclampsia</li><li>Pregnancy-related sepsis</li><li>Pre-existing medical conditions</li></ol>
+
+<p>The NCCEMD (National Committee on Confidential Enquiries into Maternal Deaths) produces triennial "Saving Mothers" reports — essential reference for district maternal health management.</p>
+
+<h3>Immunisation Coverage — EPI Schedule</h3>
+
+<p>The Expanded Programme on Immunisation (EPI) schedule for SA:</p>
+
+<table><thead><tr><th>Age</th><th>Vaccines</th></tr></thead><tbody><tr><td>Birth</td><td>BCG, OPV 0 (birth dose)</td></tr><tr><td>6 weeks</td><td>DTaP-IPV-Hib-HepB (hexavalent), PCV13, RV1 (rotavirus)</td></tr><tr><td>10 weeks</td><td>DTaP-IPV-Hib-HepB, PCV13</td></tr><tr><td>14 weeks</td><td>DTaP-IPV-Hib-HepB, PCV13, RV1</td></tr><tr><td>6 months</td><td>MenAfriVac (meningococcal A — northern border areas)</td></tr><tr><td>9 months</td><td>Measles 1, MenAfriVac</td></tr><tr><td>12 months</td><td>PCV13 (booster)</td></tr><tr><td>18 months</td><td>Measles 2, DTaP-IPV booster</td></tr><tr><td>6 years (Grade R)</td><td>Td (tetanus-diphtheria)</td></tr><tr><td>9 years (Grade 4)</td><td>HPV1 (Cervarix — girls only; NDOH piloting gender-neutral)</td></tr><tr><td>10 years (Grade 5)</td><td>HPV2</td></tr></tbody></table>
+
+<p><strong>Coverage targets:</strong> WHO recommends ≥95% coverage for all antigens. SA DTP3 coverage is ~90–93% nationally but with significant subnational variation (rural districts lower).</p>
+
+<p><strong>Cold chain</strong>: 2–8°C for most vaccines; BCG and MMR cannot be frozen. Cold chain failures are a quality-of-care indicator monitored under Ideal Clinic.</p>
+
+<h3>TB Programme Metrics</h3>
+
+<table><thead><tr><th>Metric</th><th>SA Performance</th><th>Target</th></tr></thead><tbody><tr><td>TB case detection rate</td><td>~76% (estimated vs notified)</td><td>90%</td></tr><tr><td>Treatment success rate (DS-TB)</td><td>~82–85%</td><td>90%</td></tr><tr><td>MDR-TB treatment success</td><td>~55–65%</td><td>75%</td></tr><tr><td>TB preventive therapy (TPT) coverage in PLHIV</td><td>~78%</td><td>90%</td></tr><tr><td>Contact screening completion</td><td>Variable (~40–70% district-dependent)</td><td>90%</td></tr></tbody></table>
+
+<h3>Antenatal Care (ANC) Coverage</h3>
+
+<table><thead><tr><th>Indicator</th><th>SA Value</th></tr></thead><tbody><tr><td>ANC 1st visit before 20 weeks</td><td>~78%</td></tr><tr><td>ANC 4+ visits</td><td>~91%</td></tr><tr><td>Facility delivery</td><td>~97%</td></tr><tr><td>Postnatal care within 6 days</td><td>~88%</td></tr></tbody></table>
+
+<p>High facility delivery rate is an SA strength — institutional deliveries reduce perinatal mortality. Challenge is quality of care at delivery, not access.</p>
+
+<hr>
+
+<h2>Common Gotchas</h2>
+
+<ul><li><strong>Confusing TB notification rate with incidence</strong>: SA's ~520/100,000 TB incidence is estimated from modelling; notification rate (cases actually reported) is ~300/100,000. The gap represents missed cases and is the target for active case finding.</li><li><strong>HIV prevalence ≠ PLHIV who know status</strong>: The 19% adult prevalence means many people are living with undiagnosed HIV — particularly men aged 25–40 who engage with health services less.</li><li><strong>CFR vs IFR conflation</strong>: During outbreaks (COVID-19, mpox) reporting often confuses case fatality rate (deaths/confirmed cases) with infection fatality rate — CFR is always higher early when only severe cases are confirmed.</li><li><strong>WBOTs staffing reality</strong>: Policy says one CHW per 250–300 households; implementation reality in most provinces is 1:500–1:800. Don't design programmes assuming full WBOT coverage.</li><li><strong>NHI implementation timeline</strong>: The Act was signed in 2024 but full fund operationalisation is years away. Do not plan PHC financing strategies assuming NHI is operational.</li><li><strong>DATIM vs DHIS2 discordance</strong>: HIV programme numbers in DATIM (PEPFAR-funded reporting) and DHIS2 (government DHIS2) routinely differ by 10–20% due to different denominator definitions and reporting periods. Always specify which system figures come from.</li><li><strong>Maternal mortality undercounting</strong>: SA MMR of ~119/100,000 is based on NCCEMD confidential enquiry data; vital registration undercount means true MMR may be higher.</li><li><strong>Nyaope/whoonga composition varies by province</strong>: In KZN it often contains HIV antiretrovirals (specifically efavirenz); in Gauteng composition differs. Clinical management implications vary.</li></ul>
+
+<hr>
+
+<h2>See Also</h2>
+
+<ul><li>NICD Communicable Diseases Communique (weekly): nicd.ac.za</li><li>SAMRC South African Burden of Disease Study (2023)</li><li>NCCEMD "Saving Mothers" Triennial Reports (latest: 2020–2022)</li><li>WHO Global TB Report (annual)</li><li>UNAIDS Data (annual) — HIV statistics</li><li>StatsSA Mortality and Causes of Death (annual P0309.3)</li><li>NDoH District Health Barometer (annual) — district-level performance metrics</li><li>HSRC HIV/AIDS/STI/TB National Survey (SABSSM — every 5 years)</li><li>SANHANES-1 (SA National Health and Nutrition Examination Survey) — NCD prevalence baseline</li><li>NDOH NHI White Paper and NHI Act 20 of 2019</li><li><code>/health/SKILL.md</code> — parent domain manifest</li><li><code>/health/clinical/SKILL.md</code> — clinical systems complement</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/health/public-health/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

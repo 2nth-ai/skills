@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mental Health Services — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Mental Health Services</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/health/mental-health/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Mental Health Services</div>
+      <h1>MENTAL HEALTH SERVICES</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Mental Health Services</h1>
+
+<p>South Africa's mental health system operates under the Mental Health Care Act 17 of 2002 (MHCA), which provides the legislative framework for voluntary, assisted, and involuntary care. The system is severely under-resourced — SA has approximately 400 psychiatrists for 60 million people — and depends on task-shifting, community mental health infrastructure, and integration into PHC. Understanding the MHCA admission categories, Review Board processes, and the cascade from community to specialised care is essential for any healthcare director managing mental health services.</p>
+
+<p>This skill supports healthcare managers, clinicians, and policy staff. It does not provide clinical diagnosis or prescribing guidance — those require registered psychiatric practitioners.</p>
+
+<hr>
+
+<h2>1. Mental Health Care Act 17 of 2002</h2>
+
+<h3>Overview</h3>
+
+<p>The MHCA replaced the Mental Health Act 18 of 1973 and introduced a rights-based framework aligned with the Constitution and the UN Principles for the Protection of Persons with Mental Illness. Key principles:</p>
+<ul><li>Mental health care users retain rights including dignity, privacy, informed consent, and appeal</li><li>Involuntary care is a last resort — least restrictive care principle</li><li>Community-based care is preferred over institutionalisation</li><li>Mental Health Review Boards (MHRBs) provide independent oversight</li></ul>
+
+<h3>Three Categories of Mental Health Care User</h3>
+
+<table><thead><tr><th>Category</th><th>Definition</th><th>Consent</th><th>Legal Authority</th></tr></thead><tbody><tr><td><strong>Voluntary</strong> (s9–s10)</td><td>Person who applies for care themselves; has capacity to consent</td><td>Self-consenting</td><td>None required beyond clinical admission</td></tr><tr><td><strong>Assisted</strong> (s26–s27)</td><td>Person who lacks capacity but there is no opposition to care; a nominated representative (or court) consents on their behalf</td><td>Nominated person/court</td><td>Head of health establishment authorises</td></tr><tr><td><strong>Involuntary</strong> (s33–s40)</td><td>Person who needs treatment, lacks capacity to consent, AND refuses; requires formal process</td><td>Not required</td><td>Magistrate's court order (after 72h assessment)</td></tr></tbody></table>
+
+<h3>Voluntary Admission (s9–s10)</h3>
+
+<ul><li>User has legal capacity and consents to care</li><li>Standard healthcare admission process applies</li><li>User retains right to discharge themselves (except where clinical risk warrants reclassification)</li><li>Head of Establishment must be informed if voluntary user wishes to leave against medical advice and clinician believes it would result in serious harm</li></ul>
+
+<h3>Assisted Care (s26–s27)</h3>
+
+<p>Assisted care applies when a person:</p>
+<ol><li>Has a mental illness</li><li>Lacks capacity to consent to care</li><li>Does NOT actively resist care</li></ol>
+
+<p><strong>Process:</strong></p>
+<pre><code class="lang-text">Application → Head of Establishment reviews (with clinical team)
+    → 72-hour assessment period
+    → If continued care warranted: application to MHRB
+    → MHRB reviews within 30 days
+    → Authorises, amends, or refuses continued assisted care</code></pre>
+
+<p>Nominated persons who can consent for assisted users: spouse, partner, parent, family member, curator, or where none available, the Head of Establishment.</p>
+
+<h3>Involuntary Admission (s33–s40)</h3>
+
+<p>Involuntary admission is the most legally complex pathway and is frequently misapplied in practice.</p>
+
+<p><strong>Criteria (all three must be met):</strong></p>
+<ol><li>The person has a mental illness (as defined — disorder of thought, perception, mood, behaviour)</li><li>The person lacks capacity to consent to treatment</li><li>The person refuses care OR would do so if capable</li></ol>
+
+<p><strong>Standard involuntary admission process:</strong></p>
+
+<pre><code class="lang-text">Step 1: Application to Head of Establishment (s33)
+    — Any person (clinician, family, police, social worker) submits Form 4
+
+Step 2: 72-hour assessment (s33)
+    — Within 72 hours, at least two mental health practitioners (one must be a
+      medical practitioner) assess the user
+    — If criteria met: Form 5 (continued assessment)
+    — If not met: discharge (or convert to voluntary/assisted)
+
+Step 3: 28-day observation period (s35)
+    — Facility submits application to MHRB for further observation
+    — MHRB must hold hearing within 30 days
+
+Step 4: MHRB hearing
+    — If continued involuntary care warranted: MHRB authorises for further period
+    — Maximum first authorisation: 12 months
+    — Annual review thereafter
+
+Step 5: Discharge or continued authorisation
+    — Review Board can order discharge, conditional discharge, or continued care</code></pre>
+
+<h3>Emergency Admission — Section 40</h3>
+
+<p>S40 provides for emergency admission without the full s33 Form 4 application process:</p>
+
+<ul><li>Triggered when a person: is a danger to themselves or others, is mentally ill, AND requires immediate care</li><li>A police officer or nursing professional may take the person to a designated health establishment</li><li>Formal 72-hour assessment must commence immediately on arrival</li><li>S40 is not a substitute for the full involuntary admission process — it is a bridge to get the person assessed urgently</li></ul>
+
+<p><strong>Practical note:</strong> S40 admissions are the commonest route through emergency departments. Many facilities incorrectly hold patients beyond 72 hours without progressing the MHRB application — this is unlawful detention and a governance risk.</p>
+
+<h3>Mental Health Review Boards (MHRBs)</h3>
+
+<p>MHRBs are independent statutory bodies established under the MHCA for each province.</p>
+
+<table><thead><tr><th>Aspect</th><th>Detail</th></tr></thead><tbody><tr><td>Composition</td><td>Minimum 3 members: one judge/magistrate (chair), one psychiatrist or medical practitioner, one mental health care user representative/civil society member</td></tr><tr><td>Jurisdiction</td><td>All involuntary and assisted care admissions in their province</td></tr><tr><td>Timelines</td><td>Must convene within 30 days of application; must review annually</td></tr><tr><td>Powers</td><td>Authorise, amend (change category), discharge, or refer to court</td></tr><tr><td>Appeals</td><td>User or family may appeal MHRB decision to High Court</td></tr></tbody></table>
+
+<p><strong>MHRB as governance lever for health directors:</strong> MHRB hearings are where documentation quality, assessment rigor, and patient rights compliance are scrutinised. Facilities with poor mental health governance face MHRB censure and potential legal liability.</p>
+
+<h3>Rights of Mental Health Care Users (s8–s10)</h3>
+
+<table><thead><tr><th>Right</th><th>Practical Application</th></tr></thead><tbody><tr><td>Dignity and respect</td><td>No seclusion/restraint except as last resort; documented</td></tr><tr><td>Confidentiality</td><td>POPIA applies; mental health diagnosis is special personal information</td></tr><tr><td>Informed consent</td><td>Capacity assessment before treatment; document if capacity absent</td></tr><tr><td>Access to legal representation</td><td>User must be informed they can access legal counsel at MHRB</td></tr><tr><td>Correspondence and communication</td><td>User may communicate with MHRB, Ombudsman, family</td></tr><tr><td>Protection from exploitation</td><td>No uncompensated labour; no degrading conditions</td></tr><tr><td>Least restrictive care</td><td>Prefer community over hospital; prefer voluntary over involuntary</td></tr></tbody></table>
+
+<hr>
+
+<h2>2. SA Mental Health Burden</h2>
+
+<h3>Epidemiology</h3>
+
+<p>South Africa has limited nationally representative mental health prevalence data. Best estimates draw from the South African Stress and Health (SASH) study (Herman et al.) and SADAG data.</p>
+
+<table><thead><tr><th>Indicator</th><th>Estimate</th><th>Source</th></tr></thead><tbody><tr><td>Lifetime prevalence of any mental disorder</td><td>~30% of adults</td><td>SASH study</td></tr><tr><td>12-month prevalence</td><td>~16.5% (~1 in 6)</td><td>SASH</td></tr><tr><td>Treatment gap (receive no treatment)</td><td>75%+</td><td>WHO/SASH</td></tr><tr><td>Suicide mortality rate</td><td>~23.5/100,000 (2019 WHO)</td><td>Among highest globally</td></tr><tr><td>Suicide attempts</td><td>Estimated 10× completed suicides</td><td></td></tr><tr><td>GBV-related PTSD</td><td>High but unquantified systemically</td><td>SAMRC</td></tr></tbody></table>
+
+<h3>Suicide</h3>
+
+<p>SA's suicide rate of ~23.5/100,000 is among the highest globally (global average ~9/100,000). Key features:</p>
+<ul><li>Males die by suicide at 3–4× the rate of females (males use more lethal means)</li><li>Females attempt at higher rates</li><li>Youth (15–24) and older adults (65+) are high-risk groups</li><li>Methods: hanging (most common), firearms, pesticide ingestion (rural)</li><li>SADAG (South African Depression and Anxiety Group) crisis line: 0800 456 789 (24hr)</li><li>Lifeline SA: 0861 322 322</li></ul>
+
+<p><strong>Suicide risk in SA context:</strong></p>
+<ul><li>Unemployment (SA unemployment ~33%) is a documented risk factor</li><li>GBV survivors have elevated suicide risk</li><li>LGBTQI+ individuals face elevated risk in context of social stigma</li><li>HIV diagnosis without adequate psychosocial support increases risk — integrated mental health support at ART initiation is evidence-based practice</li></ul>
+
+<h3>Substance Use Disorders</h3>
+
+<table><thead><tr><th>Substance</th><th>Pattern</th><th>Geographic Concentration</th></tr></thead><tbody><tr><td>Alcohol</td><td>Hazardous/harmful use widespread; binge drinking pattern</td><td>All provinces; Northern Cape (FASD belt)</td></tr><tr><td>Methamphetamine (tik)</td><td>Stimulant epidemic — acute psychosis, violence</td><td>Western Cape (Tygerberg, Mitchells Plain)</td></tr><tr><td>Nyaope/whoonga</td><td>Opioid-dominant polysubstance; withdrawal severe</td><td>Gauteng, KZN, Limpopo townships</td></tr><tr><td>Cannabis</td><td>High prevalence; SA-grown (dagga); psychosis in vulnerable users</td><td>Nationwide</td></tr><tr><td>Heroin</td><td>Increasing in coastal cities</td><td>Durban, Cape Town, Johannesburg</td></tr><tr><td>Cocaine/crack</td><td>Urban affluent + township dual markets</td><td>Johannesburg, Cape Town</td></tr></tbody></table>
+
+<p><strong>Treatment resources:</strong></p>
+<ul><li>SANCA (SA National Council on Alcoholism and Drug Dependence): 0861 4 SANCA — inpatient rehabilitation referral</li><li>Central Drug Authority (CDA): national policy coordination</li><li>NICRO (National Institute for Crime Prevention and Reintegration): community reintegration</li><li>State-funded rehabilitation: Stikland Hospital (WC), Weskoppies (GP), Umzimkhulu (KZN) — beds severely limited</li></ul>
+
+<p><strong>FASD (Foetal Alcohol Spectrum Disorder):</strong> SA Western Cape has the highest reported FASD prevalence in the world (~11–17% in some communities). This is a public health emergency with lifelong neurodevelopmental consequences. Prevention requires upstream intervention on alcohol availability, not only individual behaviour change.</p>
+
+<hr>
+
+<h2>3. Service Delivery Levels</h2>
+
+<h3>Mental Health Care Continuum</h3>
+
+<pre><code class="lang-text">Community (Outpatient/Day Care)
+    ↓
+District Hospital (Acute Psychiatric Unit)
+    ↓
+Regional Hospital (Acute Psychiatric Unit)
+    ↓
+Specialised Psychiatric Hospital (Long-stay/Forensic)
+    ↕ (private parallel system)
+Private Psychiatric Hospital / General Hospital Psychiatric Unit</code></pre>
+
+<h3>Level 1 — Community Mental Health</h3>
+
+<table><thead><tr><th>Facility Type</th><th>Functions</th><th>Staffing</th></tr></thead><tbody><tr><td>PHC Clinic</td><td>Mental health screening, mhGAP protocols, medication dispensing, referral</td><td>PHC nurse (trained in mhGAP)</td></tr><tr><td>Community Day Centre (CDC)</td><td>Day programme for stabilised patients; occupational therapy; social skills</td><td>Occupational therapist, social worker, community PSW</td></tr><tr><td>Community Mental Health Team (CMHT)</td><td>Assertive community treatment, home visits, medication compliance, crisis response</td><td>Psychiatric nurse, social worker, CHW</td></tr><tr><td>WBOT</td><td>Mental health awareness, flagging for referral, support for family carers</td><td>CHW with mhGAP orientation</td></tr></tbody></table>
+
+<h3>Level 2 — District Hospital Psychiatric Unit</h3>
+
+<ul><li><strong>Norm</strong>: 23 psychiatric beds per 100,000 population (NDoH guideline)</li><li>Reality: Most districts are significantly below norm; some rural districts have zero psychiatric beds</li><li>Functions: acute stabilisation, 72-hour assessments under MHCA, initiation of pharmacotherapy, MHRB applications</li><li>Referral from: PHC clinics, ED, CMHT, police (s40)</li><li>Referral to: Regional hospital (if not responding to treatment), specialised hospital (long-stay)</li></ul>
+
+<h3>Level 3 — Regional Hospital Acute Psychiatric Unit</h3>
+
+<ul><li>Handles complex and treatment-resistant presentations</li><li>Access to consultation psychiatry (for medical comorbidities)</li><li>Electro-Convulsive Therapy (ECT) — available at some regional and all central hospitals</li><li>Functions as intermediary between district acute care and specialised long-stay</li></ul>
+
+<h3>Level 4 — Specialised Psychiatric Hospitals</h3>
+
+<p>Major specialised psychiatric hospitals in SA:</p>
+
+<table><thead><tr><th>Province</th><th>Institution</th><th>Notes</th></tr></thead><tbody><tr><td>Gauteng</td><td>Weskoppies Hospital</td><td>Long-stay; forensic unit</td></tr><tr><td>Gauteng</td><td>Sterkfontein Hospital</td><td>Long-stay</td></tr><tr><td>Western Cape</td><td>Valkenberg Hospital</td><td>Forensic; acute</td></tr><tr><td>Western Cape</td><td>Stikland Hospital</td><td>Substance use disorders + general</td></tr><tr><td>KwaZulu-Natal</td><td>Town Hill Hospital</td><td>Long-stay; forensic</td></tr><tr><td>KwaZulu-Natal</td><td>Umzimkhulu Hospital</td><td></td></tr><tr><td>Limpopo</td><td>Evuxakeni Hospital</td><td></td></tr></tbody></table>
+
+<p><strong>Life Esidimeni tragedy (2016):</strong> 144 vulnerable mental health patients died when the Gauteng DoH moved patients from licensed NGO care facilities to unlicensed facilities. An Arbitration Award was made in 2018 — R1.2 billion in compensation. This remains the defining governance failure in SA mental health and informs all provincial mental health audits.</p>
+
+<h3>Private Psychiatric Services</h3>
+
+<ul><li>Medical aid schemes must cover psychiatric admissions as a Prescribed Minimum Benefit (PMB) condition (Regulation 8 of the Medical Schemes Act)</li><li>PMB for mental health: acute stabilisation — minimum 21 days inpatient (CMS guideline)</li><li>In practice, schemes aggressively manage psychiatric admissions; most authorise 7–14 days with case management</li><li>Pre-authorisation required for all private psychiatric admissions</li><li>Funders use DRG (Diagnosis-Related Group) or per diem funding models</li><li>Common insurers in psychiatric space: Discovery Health, Bonitas, GEMS (Government Employees Medical Scheme)</li></ul>
+
+<hr>
+
+<h2>4. Clinical Frameworks</h2>
+
+<h3>DSM-5 vs ICD-10 in SA Context</h3>
+
+<table><thead><tr><th>Framework</th><th>Use</th><th>SA Context</th></tr></thead><tbody><tr><td><strong>ICD-10</strong></td><td>International Classification of Diseases, 10th revision</td><td>SA statutory requirement — death certificates, medicolegal reports, MHRBs, court proceedings must use ICD-10 codes</td></tr><tr><td><strong>DSM-5</strong></td><td>Diagnostic and Statistical Manual, 5th edition</td><td>Preferred in private psychiatric practice and clinical research; more granular</td></tr><tr><td><strong>ICD-11</strong></td><td>Released 2022 — significant mental health changes</td><td>SA transitioning; not yet mandatory</td></tr></tbody></table>
+
+<p><strong>Key difference for practitioners:</strong> MHRB documentation and medicolegal reports should use ICD-10 coding. Clinical notes may use DSM-5 — but legal documents require ICD-10.</p>
+
+<h3>High-Prevalence Conditions in SA</h3>
+
+<table><thead><tr><th>Condition</th><th>ICD-10</th><th>SA-Specific Features</th></tr></thead><tbody><tr><td>Major Depressive Disorder (MDD)</td><td>F32/F33</td><td>Comorbid with HIV (prevalence 2–3× general population in PLHIV); high suicide risk</td></tr><tr><td>Bipolar Disorder</td><td>F31</td><td>Often misdiagnosed as schizophrenia in acute presentations; high in private sector</td></tr><tr><td>Schizophrenia Spectrum</td><td>F20–F29</td><td>Cannabis-induced psychosis is significant; tik psychosis mimics schizophrenia</td></tr><tr><td>PTSD</td><td>F43.1</td><td>High prevalence due to GBV, violence exposure, childhood trauma; often undiagnosed</td></tr><tr><td>Anxiety Disorders (GAD, panic, social)</td><td>F40–F41</td><td>SADAG estimates ~15% of adults; undertreated at PHC level</td></tr><tr><td>ADHD</td><td>F90</td><td>Underdiagnosed in adults; significant in school-age children</td></tr><tr><td>Substance Use Disorders</td><td>F10–F19</td><td>See Section 2 — significant polysubstance pattern</td></tr><tr><td>Neurocognitive Disorders (dementia)</td><td>F00–F03</td><td>Ageing population; HIV-associated neurocognitive disorder (HAND) adds burden</td></tr></tbody></table>
+
+<h3>PTSD in SA</h3>
+
+<p>PTSD prevalence in SA is exceptionally high due to:</p>
+<ul><li>High rates of interpersonal violence (witnessing violence, being a victim)</li><li>GBV — intimate partner violence, sexual assault</li><li>Childhood trauma (adverse childhood experiences — ACEs)</li><li>Community violence (especially Cape Flats, Johannesburg townships)</li><li>SA police service members — operational trauma exposure</li></ul>
+
+<p>Trauma-informed care is not yet systematically implemented in most SA public sector facilities. The NCTSN (National Child Traumatic Stress Network) framework and EMDR (Eye Movement Desensitisation and Reprocessing) are used in specialised NGO settings but are scarce in the public system.</p>
+
+<hr>
+
+<h2>5. Psychotropic Medication in SA</h2>
+
+<h3>Essential Medicines List (EML) — Psychiatric Medicines</h3>
+
+<p>The SA National EML (updated 2022) includes the following psychiatric medicines for primary care and hospital level:</p>
+
+<p><strong>Primary Care (PHC) Level:</strong></p>
+
+<table><thead><tr><th>Medicine</th><th>Indication</th><th>Notes</th></tr></thead><tbody><tr><td>Amitriptyline</td><td>Depression, neuropathic pain</td><td>Tricyclic — watch QTc in cardiac patients</td></tr><tr><td>Fluoxetine</td><td>Depression, anxiety, OCD</td><td>SSRI — first-line PHC antidepressant</td></tr><tr><td>Haloperidol</td><td>Acute psychosis</td><td>Typical antipsychotic; EPS risk</td></tr><tr><td>Chlorpromazine</td><td>Psychosis (sedation needed)</td><td>Typical; photosensitivity, metabolic effects</td></tr><tr><td>Carbamazepine</td><td>Bipolar (mood stabiliser), epilepsy</td><td>Monitor FBC, LFTs, drug interactions</td></tr><tr><td>Diazepam</td><td>Acute anxiety, alcohol withdrawal</td><td>Short-term only; dependence risk</td></tr></tbody></table>
+
+<p><strong>Hospital Level (District and above):</strong></p>
+
+<table><thead><tr><th>Medicine</th><th>Indication</th><th>Notes</th></tr></thead><tbody><tr><td>Risperidone</td><td>Psychosis, mania</td><td>Second-generation; metabolic monitoring</td></tr><tr><td>Olanzapine</td><td>Psychosis, mania, agitation</td><td>High metabolic risk; weight, glucose</td></tr><tr><td>Quetiapine</td><td>Psychosis, bipolar depression</td><td>Sedating; less EPS</td></tr><tr><td>Clozapine</td><td>Treatment-resistant schizophrenia</td><td>Requires strict FBC monitoring (see below)</td></tr><tr><td>Lithium carbonate</td><td>Bipolar disorder (mood stabiliser)</td><td>Narrow therapeutic index (see below)</td></tr><tr><td>Valproate (sodium valproate)</td><td>Bipolar, epilepsy</td><td>Teratogenic — avoid in women of childbearing age without contraception</td></tr><tr><td>Sertraline</td><td>Depression, PTSD, anxiety</td><td>SSRI — preferred in comorbid cardiac disease</td></tr><tr><td>Venlafaxine</td><td>Depression, anxiety, PTSD</td><td>SNRI — used when SSRIs fail</td></tr><tr><td>Methylphenidate</td><td>ADHD</td><td>Schedule 6 in SA — restricted prescribing</td></tr></tbody></table>
+
+<h3>Depot Antipsychotics (Long-Acting Injectables — LAIs)</h3>
+
+<p>Critical for community mental health where oral medication adherence is poor:</p>
+
+<table><thead><tr><th>Depot</th><th>Frequency</th><th>SA Availability</th></tr></thead><tbody><tr><td>Flupenthixol decanoate (Fluanxol Depot)</td><td>Every 2–4 weeks</td><td>EML, widely available</td></tr><tr><td>Haloperidol decanoate</td><td>Every 4 weeks</td><td>EML</td></tr><tr><td>Zuclopenthixol decanoate (Clopixol Depot)</td><td>Every 2–4 weeks</td><td>Hospital EML</td></tr><tr><td>Risperidone LAI (Risperdal Consta)</td><td>Every 2 weeks</td><td>Available; cost limits public sector use</td></tr><tr><td>Paliperidone palmitate (Invega Sustenna/Trinza)</td><td>Monthly or 3-monthly</td><td>Private sector primarily</td></tr></tbody></table>
+
+<p><strong>Governance note:</strong> Depot clinics (community mental health) are a key service indicator. Districts should monitor: number of patients on depot registers, missed injections &gt;=30 days, and relapse/rehospitalisation rates for depot patients.</p>
+
+<h3>Clozapine Monitoring Requirements</h3>
+
+<p>Clozapine is the only medication proven superior to other antipsychotics for treatment-resistant schizophrenia (TRS) — defined as failure of two adequate antipsychotic trials. It carries a risk of agranulocytosis (potentially fatal) and requires strict haematological monitoring.</p>
+
+<p><strong>SA NDOH Clozapine Monitoring Protocol:</strong></p>
+
+<table><thead><tr><th>Period</th><th>Frequency</th></tr></thead><tbody><tr><td>First 18 weeks</td><td>FBC weekly</td></tr><tr><td>Weeks 19–52</td><td>FBC every 2 weeks</td></tr><tr><td>After 1 year (if stable)</td><td>FBC monthly</td></tr></tbody></table>
+
+<p><strong>Stopping rules:</strong></p>
+<ul><li>WBC &lt; 3.0 x 10^9/L: stop clozapine, monitor daily FBC, haematology consult</li><li>Neutrophil count &lt; 1.5 x 10^9/L: stop immediately, agranulocytosis protocol</li><li>Neutrophil count &lt; 0.5 x 10^9/L: medical emergency — G-CSF, haematology, isolation</li></ul>
+
+<p><strong>Other clozapine risks requiring monitoring:</strong></p>
+<ul><li>Myocarditis (especially in first month): weekly troponin/ECG in some protocols</li><li>Metabolic syndrome: weight, glucose, lipids — monthly for first 3 months</li><li>Seizures (dose-related): EEG consideration at doses &gt;500mg/day</li><li>Constipation/ileus: bowel habit monitoring; laxatives prophylactically</li></ul>
+
+<p><strong>Governance implication:</strong> Clozapine can only be managed in a facility with reliable FBC access. Prescribing without monitoring infrastructure is negligence. District facilities initiating clozapine must have documented monitoring protocols.</p>
+
+<h3>Lithium Monitoring</h3>
+
+<p>Lithium remains a first-line mood stabiliser for bipolar disorder. It has a narrow therapeutic index.</p>
+
+<table><thead><tr><th>Parameter</th><th>Target Range</th><th>Monitoring Frequency</th></tr></thead><tbody><tr><td>Serum lithium level</td><td>0.6–1.0 mmol/L (maintenance)</td><td>Every 3–6 months when stable</td></tr><tr><td>Serum lithium — acute mania</td><td>0.8–1.0 mmol/L</td><td>Every 5–7 days until stable</td></tr><tr><td>Thyroid function (TFTs)</td><td>Normal TSH</td><td>Every 6 months (lithium causes hypothyroidism)</td></tr><tr><td>Renal function (eGFR, creatinine)</td><td>eGFR &gt;=60</td><td>Every 6 months (lithium is nephrotoxic long-term)</td></tr><tr><td>Calcium</td><td>Normal range</td><td>Annually (hyperparathyroidism risk)</td></tr><tr><td>ECG</td><td>Sinus rhythm</td><td>Baseline; if arrhythmia symptoms</td></tr></tbody></table>
+
+<p><strong>Lithium toxicity signs (level &gt;1.5 mmol/L):</strong> tremor, nausea, vomiting, diarrhoea, ataxia, confusion, seizures (&gt;2.0 mmol/L). Stop lithium, IV hydration, urgent renal consult. Haemodialysis for severe toxicity (&gt;4.0 mmol/L or symptomatic severe toxicity).</p>
+
+<p><strong>SA practical note:</strong> Dehydration (common in heat, gastroenteritis) rapidly raises lithium levels. Patients must be counselled on adequate fluid intake, and lithium held during gastroenteritis. NSAIDs and ACE inhibitors raise lithium levels — drug interaction alert.</p>
+
+<hr>
+
+<h2>6. Workforce and Integration</h2>
+
+<h3>Psychiatrist Shortage</h3>
+
+<p>SA has approximately 400 registered psychiatrists for ~60 million people — a ratio of approximately 1:150,000. WHO recommends 1:10,000 at minimum. This places SA among the most under-resourced countries globally for specialist psychiatric care.</p>
+
+<table><thead><tr><th>Cadre</th><th>Estimated Numbers</th><th>PHC Role</th></tr></thead><tbody><tr><td>Psychiatrists</td><td>~400</td><td>Mostly secondary/tertiary; some outreach</td></tr><tr><td>Clinical Psychologists</td><td>~6,000 (but most private sector)</td><td>Psychotherapy, assessment; PHC limited</td></tr><tr><td>Psychiatric Nurses (specialist)</td><td>~4,000</td><td>Community mental health; district hospitals</td></tr><tr><td>Occupational Therapists (psych)</td><td>~2,000</td><td>CDCs, community reintegration</td></tr><tr><td>Social Workers</td><td>Widespread but underfunded</td><td>Psychosocial support, statutory work</td></tr><tr><td>Community Health Workers</td><td>50,000+ (WBOT)</td><td>Mental health promotion; referral</td></tr></tbody></table>
+
+<h3>Task-Shifting</h3>
+
+<p>Given the psychiatrist shortage, SA's mental health system depends on task-shifting — delegating appropriately supervised tasks to less specialised cadres:</p>
+
+<ul><li><strong>PHC nurses trained in mhGAP</strong> assess and manage depression, psychosis, alcohol use disorders, epilepsy, and suicide risk at clinic level</li><li><strong>Psychiatric nurses</strong> manage complex community cases, depot clinics, and MDT coordination without direct psychiatrist oversight</li><li><strong>Social workers</strong> conduct MHCA s33 applications and support MHRB processes</li><li><strong>Clinical associates</strong> (mid-level practitioners) manage mental health in district hospitals in some provinces</li></ul>
+
+<h3>mhGAP — Mental Health Gap Action Programme</h3>
+
+<p>The WHO's mhGAP (adapted for SA context) is the primary framework for integrating mental health into PHC:</p>
+
+<table><thead><tr><th>mhGAP Priority Condition</th><th>PHC Intervention</th></tr></thead><tbody><tr><td>Depression</td><td>Assess, prescribe fluoxetine/amitriptyline, problem-solving therapy</td></tr><tr><td>Psychosis</td><td>Assess, initiate haloperidol, refer to district psychiatric unit</td></tr><tr><td>Bipolar disorder</td><td>Stabilise, refer, maintain on EML mood stabiliser</td></tr><tr><td>Epilepsy</td><td>Treat (carbamazepine, phenobarbitone); overlap with mental health</td></tr><tr><td>Alcohol and substance use</td><td>Brief intervention (SBIRT — Screening, Brief Intervention, Referral to Treatment)</td></tr><tr><td>Self-harm/suicide</td><td>Risk assessment, safety planning, urgent referral</td></tr><tr><td>Child and adolescent disorders</td><td>ADHD, conduct disorder, intellectual disability</td></tr></tbody></table>
+
+<p><strong>mhGAP training in SA:</strong> NDoH has trained thousands of PHC nurses in mhGAP-IG (Intervention Guide). Key challenge is supervision — nurses need ongoing clinical supervision post-training to maintain competence. Supervision ratios in most provinces are inadequate.</p>
+
+<h3>School Mental Health</h3>
+
+<ul><li>Integrated School Health Programme (ISHP) includes mental health component — screening for learning disabilities, ADHD, emotional difficulties</li><li>SASSA (South African Social Security Agency) interfaces: child grants, disability grants for severe psychiatric conditions</li><li>School social workers are the primary referral pathway for learner mental health — but posts are severely under-funded</li><li>SA Council for Educators (SACE) does not cover mental health first aid as a standard teacher competency — advocacy gap</li></ul>
+
+<hr>
+
+<h2>7. Workplace Mental Health</h2>
+
+<h3>Employee Assistance Programmes (EAPs)</h3>
+
+<p>EAPs provide confidential counselling and referral services for employees:</p>
+
+<table><thead><tr><th>EAP Element</th><th>Detail</th></tr></thead><tbody><tr><td>Counselling sessions</td><td>Typically 3–6 sessions per presenting problem; face-to-face or telephonic</td></tr><tr><td>Referral</td><td>To clinical psychologist, psychiatrist, substance use programme, financial counsellor</td></tr><tr><td>Confidentiality</td><td>EAP data must not be accessible to employer without employee consent; POPIA-compliant</td></tr><tr><td>24hr crisis line</td><td>Standard for all EAPs</td></tr><tr><td>Trauma debriefing</td><td>Post-critical incident (robbery, GBV, workplace violence, death) — mandatory for healthcare employers</td></tr></tbody></table>
+
+<p><strong>Healthcare worker context:</strong> SA healthcare workers face extreme occupational stress — under-staffing, violence in facilities, high patient loads, moral injury, and personal HIV/TB exposure risk. Healthcare worker burnout is a patient safety issue, not only an HR issue.</p>
+
+<p><strong>SA EAP landscape:</strong> Major providers include ICAS (Integrated Care Assistance), Intercare EAP, and Umvula. Many large metros and provincial departments have in-house EAP units — quality varies significantly.</p>
+
+<h3>Occupational Health — OHSAS / OHS Act</h3>
+
+<p>The Occupational Health and Safety Act (OHSA) 85 of 1993 and its Regulations impose duties on employers relevant to workplace mental health:</p>
+
+<table><thead><tr><th>Provision</th><th>Mental Health Relevance</th></tr></thead><tbody><tr><td>Section 8 — general duty</td><td>Employer must provide safe environment — includes psychological safety</td></tr><tr><td>Section 8(2)(c) — hazards</td><td>Psychosocial hazards (bullying, harassment, workload) are occupational hazards</td></tr><tr><td>Hazardous Biological Agents Regulations</td><td>Requires risk assessment — relevant to healthcare worker infection anxiety</td></tr><tr><td>Construction Regulations</td><td>Fatigue management provisions applicable to shift workers</td></tr></tbody></table>
+
+<p><strong>Reporting:</strong> Occupational injuries (including psychological injuries from traumatic events) are reportable to the Compensation Commissioner (COIDA — Compensation for Occupational Injuries and Diseases Act). Occupational PTSD is a compensable condition under COIDA.</p>
+
+<h3>Healthcare Worker Burnout</h3>
+
+<p>The South African healthcare system has extremely high burnout rates. Contributing factors:</p>
+
+<table><thead><tr><th>Factor</th><th>Detail</th></tr></thead><tbody><tr><td>Staffing ratios</td><td>Nurse-to-patient ratios in public hospitals frequently 1:30–1:60</td></tr><tr><td>Infrastructure</td><td>Broken equipment, drug stock-outs, unreliable water/electricity</td></tr><tr><td>Violence</td><td>&gt;60% of SA nurses report workplace violence; perpetrators often patients/family</td></tr><tr><td>Moral injury</td><td>Unable to deliver acceptable standard of care due to system failures</td></tr><tr><td>Personal disease burden</td><td>Healthcare workers have high HIV and TB rates</td></tr><tr><td>Hierarchical culture</td><td>Fear of raising concerns; limited psychological safety</td></tr></tbody></table>
+
+<p><strong>Burnout measurement:</strong> Maslach Burnout Inventory (MBI) is the gold-standard tool. Three dimensions: emotional exhaustion, depersonalisation (cynicism), and reduced personal accomplishment. Healthcare director intervention: regular MBI or validated equivalent screening at department level; proactive EAP referral; psychological debriefing post-critical incidents.</p>
+
+<h3>GEPF Disability Claims for Mental Health</h3>
+
+<p>Government employees (public sector healthcare workers) are covered by the Government Employees Pension Fund (GEPF):</p>
+
+<table><thead><tr><th>Claim Type</th><th>Threshold</th><th>Mental Health Conditions</th></tr></thead><tbody><tr><td>Temporary incapacity</td><td>Unable to work temporarily</td><td>Depression, acute PTSD, burnout — paid sick leave, then temporary incapacity leave (TIL)</td></tr><tr><td>Permanent incapacity</td><td>Unable to work indefinitely</td><td>Severe treatment-resistant depression, schizophrenia, bipolar disorder — medical boarding</td></tr></tbody></table>
+
+<p><strong>Process for medical boarding:</strong></p>
+<pre><code class="lang-text">Sick leave exhausted (36 days/3-year cycle)
+    → Temporary Incapacity Leave (TIL) application — HOD approval + health assessment
+    → Extended TIL (Incapacity Leave Investigating Committee review)
+    → If permanent incapacity: GEPF medical boarding application
+    → Independent medical assessment
+    → GEPF Board decision: full or partial benefit</code></pre>
+
+<p><strong>SA context:</strong> Mental health conditions are increasingly recognised in GEPF disability claims, particularly PTSD and burnout. Workplace aggression documentation is critical — a psychiatrist's report supported by occupational health assessment and documented incident reports is the standard evidential bundle.</p>
+
+<hr>
+
+<h2>Common Gotchas</h2>
+
+<ul><li><strong>S40 is not a stand-alone admission category</strong>: S40 of the MHCA is an emergency conveyance provision — it must be followed by a full 72-hour assessment and, if continued, a formal s33 application. Holding a patient beyond 72 hours under "s40" without progressing the process is unlawful detention. This is a common compliance failure.</li><li><strong>Clozapine without monitoring infrastructure is negligence</strong>: Never initiate clozapine in a facility that cannot guarantee weekly FBC for the first 18 weeks. Many district hospitals that wish to initiate clozapine lack reliable lab turnaround — this must be resolved before first dose.</li><li><strong>ICD-10 in legal/medicolegal documents</strong>: SA courts and the MHRB require ICD-10 codes, not DSM-5. A medicolegal report using only DSM-5 terminology may be challenged. Know both systems.</li><li><strong>Private medical aid PMB psychiatric days are not guaranteed 21 days</strong>: The CMS PMB framework requires schemes to cover the PMB condition, not a fixed number of days. Schemes will manage to clinical necessity. Expect 7–10 days in practice; plan discharge and community care from day 1.</li><li><strong>FASD is not ADHD</strong>: FASD in SA is dramatically underdiagnosed and misdiagnosed as ADHD. Stimulants are less effective in FASD. A neurodevelopmental history including maternal alcohol exposure is essential before ADHD diagnosis in any child from a high-prevalence community.</li><li><strong>mhGAP training without supervision erodes rapidly</strong>: Nurses trained in mhGAP without ongoing clinical supervision revert to pre-training practice within 6–12 months. Training spend without supervision infrastructure is waste.</li><li><strong>Lithium and dehydration</strong>: In SA's climate, and during gastroenteritis (very common in children and adults), lithium levels can spike to toxic range within 24–48 hours. Sick-day rules (hold lithium, hydrate, seek care) must be explicitly counselled at every dispensing.</li><li><strong>Life Esidimeni compliance obligation</strong>: All provincial DoH mental health programmes are subject to the Arbitration Award conditions. Moving or discharging involuntary patients to non-accredited facilities is prohibited and a direct governance liability for facility and programme managers.</li></ul>
+
+<hr>
+
+<h2>See Also</h2>
+
+<ul><li>Mental Health Care Act 17 of 2002 (and Regulations — Government Gazette)</li><li>NDOH National Mental Health Policy Framework and Strategic Plan 2023–2030</li><li>SADAG (South African Depression and Anxiety Group): sadag.org / 0800 456 789</li><li>SANCA (SA National Council on Alcoholism and Drug Dependence): sanca.org.za</li><li>WHO mhGAP Intervention Guide v2.0 (adapted for SA)</li><li>SAMRC Mental Health Research and Policy brief series</li><li>Life Esidimeni Arbitration Award (Justice Moseneke) — 2018 — mandatory reading for mental health programme managers</li><li>CMS (Council for Medical Schemes) PMB circular on mental health conditions</li><li>GEPF Incapacity/Medical Boarding guidelines: gepf.co.za</li><li>NICD mental health surveillance data (where applicable to communicable disease overlap — e.g. HIV-associated neurocognitive disorder)</li><li><code>/health/SKILL.md</code> — parent domain manifest</li><li><code>/health/public-health/SKILL.md</code> — epidemiology and PHC system complement</li><li><code>/health/clinical/SKILL.md</code> — clinical systems and protocols</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/health/mental-health/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commercial Property & Leases — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Commercial Property & Leases</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/leg/property/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Commercial Property & Leases</div>
+      <h1>COMMERCIAL PROPERTY & LEASES</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../leg.html">leg</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Commercial Property &amp; Leases</h1>
+
+<p>A commercial lease is typically a 3–5 year commitment and one of the largest fixed costs in the business. Unlike residential leases, commercial tenants receive minimal statutory protection — the lease terms govern almost everything. Negotiate hard before you sign; your leverage disappears the moment ink hits paper.</p>
+
+<blockquote>Leo reviews lease terms and flags risk. For complex lease negotiations or disputes, engage a commercial property attorney or specialist lease negotiator.</blockquote>
+
+<hr>
+
+<h2>Key Lease Clauses to Understand and Negotiate</h2>
+
+<h3>1. Rental Structure</h3>
+
+<p><strong>Base Rent</strong>: The monthly rental, usually quoted per square metre per month (R/m²/month).</p>
+
+<p><strong>Escalation</strong>: Annual rental increases. Standard in South Africa: <strong>8–10% per annum</strong> (sometimes CPI-linked). Push for:</p>
+<ul><li>CPI-linked escalation (not fixed %)</li><li>Escalation capped at 8%</li><li>Escalation starting from the second anniversary (not year 1)</li></ul>
+
+<p><strong>Deposit</strong>: Typically 1–3 months' rent held interest-free. Negotiate:</p>
+<ul><li>Interest-bearing deposit (yours, not the landlord's)</li><li>Reduction or waiver for creditworthy tenants or longer lease terms</li></ul>
+
+<p><strong>Gross vs Net Lease</strong>:</p>
+<ul><li><strong>Gross lease</strong>: Rental includes rates, water, electricity, building insurance — simpler; you know your cost</li><li><strong>Net lease</strong>: You pay base rent <strong>plus</strong> proportional share of rates, levies, building insurance — hidden escalation risk; cap your exposure or get past actuals</li></ul>
+
+<h3>2. Occupation Commencement and Fitting Out</h3>
+
+<p><strong>Rent-free period</strong>: Negotiate a rent-free fitting-out period (30–90 days is standard for first-time tenants) to allow occupation and setup before trading rent begins.</p>
+
+<p><strong>Tenant installation allowance (TIA)</strong>: Landlord contribution to fit-out costs. Often R500–R2,000/m² for long leases in competitive buildings. Get it in writing — trigger, payment terms, and what happens if you vacate early.</p>
+
+<p><strong>Handover condition</strong>: Specify the condition in which premises must be handed over (shell, grey box, white box). Document the condition at handover with photographs — this becomes the baseline for restoring at exit.</p>
+
+<h3>3. Permitted Use</h3>
+
+<p>The lease will specify a permitted use clause (e.g., "retail clothing store", "software development office"). This matters because:</p>
+<ul><li>Using the premises for any other purpose is a breach</li><li>A narrow clause restricts subletting and assignment</li><li>Negotiate the widest permitted use that is honest (e.g., "technology and related services" rather than "web development")</li></ul>
+
+<h3>4. Maintenance and Repairs</h3>
+
+<p><strong>Tenant obligations</strong>: Internal maintenance, fixtures, and fittings are almost always the tenant's responsibility.</p>
+
+<p><strong>Landlord obligations</strong>: Structural, roof, external walls, lifts, HVAC, and common areas. These must be <strong>explicit in the lease</strong> — do not accept "fair wear and tear" without clarity.</p>
+
+<p><strong>Service level commitments</strong>: Get response times for critical systems (HVAC failure, plumbing) in writing. Landlords will resist; push for a remedy clause if services are down for more than 48 hours.</p>
+
+<h3>5. Assignment and Subletting</h3>
+
+<p>Can you assign the lease to a new business or sublet part of the space? Most landlords:</p>
+<ul><li>Require written consent (not to be unreasonably withheld)</li><li>Charge a consent fee (2–4 weeks' rent is typical)</li></ul>
+
+<p><strong>Why it matters</strong>: If the business pivots, is acquired, or needs to downsize, assignment and subletting rights become critical. Negotiate this before signing, not when you need to use it.</p>
+
+<h3>6. Renewal Options</h3>
+
+<p>A renewal option gives you the right (but not obligation) to renew the lease at expiry.</p>
+
+<p><strong>Good clause</strong>: Option to renew for one further period of [X] years at rental to be agreed or at [agreed formula].</p>
+
+<p><strong>Watch for</strong>:</p>
+<ul><li>Option must be exercised 6–12 months before expiry — set a calendar reminder the day you sign</li><li>"Rental to be market-related" — negotiate a cap or agreed escalation formula instead</li><li>Renewal at the landlord's discretion — not an option; walk away from this</li></ul>
+
+<h3>7. Early Termination</h3>
+
+<p>Commercial leases almost never allow free early exit. Negotiate:</p>
+
+<p><strong>Break clause</strong>: Right to terminate at a specified date (e.g., end of year 3 of a 5-year lease) with [X] months' notice.</p>
+
+<p><strong>Without a break clause</strong>: Early termination liability is typically:</p>
+<ul><li>All rent for the balance of the lease term, or</li><li>Rent until the landlord relets the space (whichever is earlier) — the landlord has a duty to mitigate</li></ul>
+
+<p><strong>Assignment as exit</strong>: Even without a break clause, the ability to assign the lease to an acquirer or new tenant is the practical exit route.</p>
+
+<h3>8. Landlord's Lien</h3>
+
+<p>South African common law gives landlords a tacit hypothec (lien) over movable property on the premises for unpaid rent. This means the landlord can attach your equipment, stock, and furniture if you fall behind on rent — without going to court first.</p>
+
+<p><strong>Mitigation</strong>: Keep rent payments current. If business declines, engage the landlord early — they prefer a paying tenant over litigation.</p>
+
+<hr>
+
+<h2>Red Flags in Lease Agreements</h2>
+
+<table><thead><tr><th>Clause</th><th>Red Flag</th><th>What to Push For</th></tr></thead><tbody><tr><td>Escalation &gt; 10% fixed annually</td><td>Compounding cost explosion</td><td>CPI-linked or capped at 8%</td></tr><tr><td>No building maintenance SLA</td><td>HVAC/plumbing failure with no remedy</td><td>48-hour response commitment</td></tr><tr><td>Landlord can terminate at will</td><td>Zero security of tenure</td><td>Fixed term with defined termination rights only</td></tr><tr><td>Pro-rata building costs uncapped</td><td>Unknown liability spike</td><td>Cap on pro-rata costs or past 3 years' actuals</td></tr><tr><td>No renewal option</td><td>Forced exit at term end</td><td>Right of first refusal at minimum</td></tr><tr><td>Restoration to original condition</td><td>Cost of stripping fit-out</td><td>Reasonable restoration only; exclude structural changes</td></tr><tr><td>Personal guarantee</td><td>Director personally liable</td><td>Cap guarantee to 6 months' rent; time-limit it</td></tr></tbody></table>
+
+<hr>
+
+<h2>Lease Checklist Before Signing</h2>
+
+<ul><li>[ ] Confirmed gross lettable area (GLA) with as-built floor plan — verify you're paying for what you're getting</li><li>[ ] Rent-free fitting-out period negotiated and in the lease</li><li>[ ] TIA amount, triggers, and payment terms confirmed</li><li>[ ] Handover condition documented (photos taken on date of handover)</li><li>[ ] Escalation rate and basis confirmed (fixed % vs CPI)</li><li>[ ] Renewal option with notice period calendared</li><li>[ ] Assignment and subletting consent terms acceptable</li><li>[ ] Break clause dates calendared</li><li>[ ] Personal guarantee capped and time-limited</li><li>[ ] Rates, levies, and utility costs confirmed (gross vs net lease) and past actuals reviewed</li><li>[ ] HVAC and maintenance obligations allocated</li><li>[ ] Exit restoration obligations understood and costed</li></ul>
+
+<hr>
+
+<h2>End of Lease — Practical Steps</h2>
+
+<ol><li><strong>Give notice on time</strong> — most leases require 3–6 months' notice. Late notice = automatic renewal.</li><li><strong>Restoration scope</strong>: Clarify with the landlord what restoration is required before committing to reinstatement costs. Landlords often accept a cash settlement in lieu of physical restoration.</li><li><strong>Deposit recovery</strong>: The landlord must return the deposit within a reasonable time (typically 30–60 days) after exit and accounting for any legitimate deductions.</li><li><strong>Document condition at exit</strong>: Photographs and signed joint inspection report — prevents disputed claims months later.</li></ol>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/leg/property/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

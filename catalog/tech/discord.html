@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/discord — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">discord</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/discord/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/discord</div>
+      <h1>DISCORD</h1>
+      <p class="skill-desc">Discord integration skill.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Discord REST API v10, Interactions Endpoint, Cloudflare Workers, Ed25519</span>
+        
+      </div>
+      
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Discord Integration</h1>
+
+<p>Discord bots work differently to Slack bots. Rather than polling a WebSocket gateway (which Workers can't maintain), Discord supports an <strong>Interactions Endpoint URL</strong> — Discord pushes every slash command and button click to your HTTP endpoint. Cloudflare Workers are ideal.</p>
+
+<p>The key difference from Slack: Discord uses <strong>Ed25519</strong> (not HMAC-SHA256) for request verification. You also respond differently — a <strong>deferred response</strong> (type 5) tells Discord to show "Bot is thinking..." while your Worker processes asynchronously and patches the message when ready.</p>
+
+<p>The <strong>2nth.ai pattern</strong>: <code>/ask</code> → Worker verifies Ed25519 → responds type 5 → <code>waitUntil</code> → Workers AI classify → Claude draft → PATCH original interaction response.</p>
+
+<h2>App setup</h2>
+
+<h3>1. Create the app</h3>
+<ol><li>Go to <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">discord.com/developers/applications</a> → New Application</li><li>Name it (e.g. <code>2nth Assistant</code>) → Create</li><li><strong>Bot</strong> → Add Bot → copy the <strong>Bot Token</strong></li><li><strong>General Information</strong> → copy the <strong>Application ID</strong> and <strong>Public Key</strong></li><li><strong>OAuth2 → URL Generator</strong> → scopes: <code>bot</code>, <code>applications.commands</code> → copy invite URL → add to server</li></ol>
+
+<h3>2. Set Interactions Endpoint URL</h3>
+<p><strong>General Information</strong> → Interactions Endpoint URL → <code>https://your-worker.workers.dev/discord</code></p>
+
+<p>Discord will immediately POST a PING to verify the URL. Your Worker must verify the signature and respond with <code>{ "type": 1 }</code> (PONG).</p>
+
+<h3>Required secrets</h3>
+<pre><code class="lang-bash">wrangler secret put DISCORD_PUBLIC_KEY    # from General Information → Public Key
+wrangler secret put DISCORD_BOT_TOKEN     # from Bot → Token (xoxb-style, starts with Bot prefix)
+wrangler secret put DISCORD_APP_ID        # Application ID (snowflake)</code></pre>
+
+<h2>Ed25519 signature verification</h2>
+
+<p>Discord uses Ed25519, not HMAC. The signed message is <code>timestamp + body</code> (concatenated, not separated).</p>
+
+<pre><code class="lang-typescript">function hexToBytes(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i &lt; hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.slice(i, i + 2), 16);
+  }
+  return bytes;
+}
+
+async function verifyDiscordSignature(request: Request, env: Env): Promise&lt;{ valid: boolean; body: string }&gt; {
+  const signature = request.headers.get('X-Signature-Ed25519') ?? '';
+  const timestamp  = request.headers.get('X-Signature-Timestamp') ?? '';
+  const body = await request.text();
+
+  if (!signature || !timestamp) return { valid: false, body };
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    hexToBytes(env.DISCORD_PUBLIC_KEY),
+    { name: 'Ed25519', namedCurve: 'Ed25519' },
+    false,
+    ['verify']
+  );
+
+  const valid = await crypto.subtle.verify(
+    'Ed25519',
+    key,
+    hexToBytes(signature),
+    new TextEncoder().encode(timestamp + body)
+  );
+
+  return { valid, body };
+}</code></pre>
+
+<h2>Main Worker handler</h2>
+
+<pre><code class="lang-typescript">export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise&lt;Response&gt; {
+    if (request.method !== 'POST') return new Response('Method not allowed', { status: 405 });
+
+    const { valid, body } = await verifyDiscordSignature(request, env);
+    if (!valid) return new Response('Invalid signature', { status: 401 });
+
+    const interaction = JSON.parse(body);
+
+    // Type 1 — Discord PING (sent on URL setup and periodically)
+    if (interaction.type === 1) {
+      return Response.json({ type: 1 }); // PONG
+    }
+
+    // Type 2 — Application Command (slash command)
+    if (interaction.type === 2) {
+      return handleSlashCommand(interaction, env, ctx);
+    }
+
+    // Type 3 — Message Component (button/select menu click)
+    if (interaction.type === 3) {
+      return handleComponent(interaction, env, ctx);
+    }
+
+    // Type 5 — Modal submit
+    if (interaction.type === 5) {
+      return handleModalSubmit(interaction, env, ctx);
+    }
+
+    return new Response('Unknown interaction type', { status: 400 });
+  }
+};</code></pre>
+
+<h2>Deferred responses — the AI pattern</h2>
+
+<p>Discord expects a response within <strong>3 seconds</strong>. AI takes longer. Respond with type 5 (DEFERRED) immediately, then patch the response when the AI is ready. Discord shows "Bot is thinking…" to the user in the meantime.</p>
+
+<pre><code class="lang-typescript">async function handleSlashCommand(
+  interaction: any,
+  env: Env,
+  ctx: ExecutionContext
+): Promise&lt;Response&gt; {
+  const commandName = interaction.data.name;
+  const options = interaction.data.options ?? [];
+  const query = options.find((o: any) =&gt; o.name === 'question')?.value ?? '';
+
+  // DEFER immediately — Discord sees this as a valid response &lt; 3s
+  const deferResponse = Response.json({
+    type: 5,  // DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
+    data: { flags: 0 }, // 0 = public, 64 = ephemeral (only visible to user)
+  });
+
+  // Process async after response is sent
+  ctx.waitUntil(processSlashCommand(interaction, query, env));
+
+  return deferResponse;
+}
+
+async function processSlashCommand(interaction: any, query: string, env: Env) {
+  const { application_id, token } = interaction;
+
+  try {
+    // 1. Classify with Workers AI
+    const classification = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+      messages: [
+        { role: 'system', content: 'Classify as: erp_query | report | general | help. One word only.' },
+        { role: 'user', content: query.slice(0, 500) },
+      ],
+    });
+    const intent = classification.response.trim().toLowerCase();
+
+    // 2. Draft reply with Claude
+    const reply = await draftWithClaude(query, intent, env);
+
+    // 3. PATCH the deferred response with the real content
+    await patchInteractionResponse(application_id, token, {
+      embeds: [buildEmbed(query, reply, intent)],
+      components: [buildActionRow()],
+    }, env);
+
+  } catch (err) {
+    // Patch with error message if something goes wrong
+    await patchInteractionResponse(application_id, token, {
+      content: '⚠️ Something went wrong. Please try again.',
+    }, env);
+  }
+}
+
+async function patchInteractionResponse(appId: string, token: string, data: any, env: Env) {
+  await fetch(
+    `https://discord.com/api/v10/webhooks/${appId}/${token}/messages/@original`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bot ${env.DISCORD_BOT_TOKEN}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+}</code></pre>
+
+<h2>Registering slash commands</h2>
+
+<p>Commands must be registered via the REST API before Discord shows them to users. Do this once on deploy, or on app boot for guild-specific commands.</p>
+
+<pre><code class="lang-typescript">// Register commands globally (takes up to 1 hour to propagate)
+async function registerCommands(env: Env) {
+  const commands = [
+    {
+      name: 'ask',
+      description: 'Ask the 2nth AI assistant anything',
+      options: [
+        {
+          name: 'question',
+          description: 'Your question',
+          type: 3, // STRING
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'invoice',
+      description: 'Query invoice status',
+      options: [
+        { name: 'client', description: 'Client name', type: 3, required: false },
+        { name: 'status', description: 'Status filter', type: 3, required: false,
+          choices: [
+            { name: 'Open', value: 'open' },
+            { name: 'Overdue', value: 'overdue' },
+            { name: 'Paid', value: 'paid' },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'report',
+      description: 'Generate a business report',
+      options: [
+        { name: 'type', description: 'Report type', type: 3, required: true,
+          choices: [
+            { name: 'Revenue', value: 'revenue' },
+            { name: 'Invoices', value: 'invoices' },
+            { name: 'Support', value: 'support' },
+          ],
+        },
+      ],
+    },
+  ];
+
+  await fetch(`https://discord.com/api/v10/applications/${env.DISCORD_APP_ID}/commands`, {
+    method: 'PUT', // PUT replaces all global commands atomically
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bot ${env.DISCORD_BOT_TOKEN}`,
+    },
+    body: JSON.stringify(commands),
+  });
+}
+
+// Register to a specific guild (instant, good for development)
+async function registerGuildCommands(guildId: string, env: Env) {
+  await fetch(
+    `https://discord.com/api/v10/applications/${env.DISCORD_APP_ID}/guilds/${guildId}/commands`,
+    { /* same as above */ }
+  );
+}</code></pre>
+
+<h2>Embeds — rich message formatting</h2>
+
+<p>Embeds are Discord's equivalent of Block Kit. Use a left-border colour to indicate intent.</p>
+
+<pre><code class="lang-typescript">function buildEmbed(question: string, answer: string, intent: string) {
+  const colours: Record&lt;string, number&gt; = {
+    erp_query: 0x007a5a,  // green
+    report:    0x1264a3,  // blue
+    general:   0x5865F2,  // discord blurple
+    help:      0xFEE75C,  // yellow
+  };
+
+  return {
+    color: colours[intent] ?? 0x5865F2,
+    author: {
+      name: '2nth Assistant',
+      icon_url: 'https://skills.2nth.ai/logo.png',
+    },
+    description: answer,
+    footer: {
+      text: `Powered by 2nth.ai · Workers AI + Claude`,
+    },
+    timestamp: new Date().toISOString(),
+    fields: question ? [
+      { name: 'Question', value: `&gt; ${question}`, inline: false },
+    ] : [],
+  };
+}</code></pre>
+
+<h2>Message components — buttons and select menus</h2>
+
+<pre><code class="lang-typescript">function buildActionRow() {
+  return {
+    type: 1, // ACTION_ROW
+    components: [
+      {
+        type: 2, // BUTTON
+        style: 3, // SUCCESS (green)
+        label: '👍 Helpful',
+        custom_id: 'feedback_positive',
+      },
+      {
+        type: 2, // BUTTON
+        style: 2, // SECONDARY
+        label: '✏️ Refine',
+        custom_id: 'feedback_refine',
+      },
+      {
+        type: 2,
+        style: 2,
+        label: '📋 Save',
+        custom_id: 'save_response',
+      },
+    ],
+  };
+}
+
+// Handle button clicks
+async function handleComponent(interaction: any, env: Env, ctx: ExecutionContext): Promise&lt;Response&gt; {
+  const customId = interaction.data.custom_id;
+
+  if (customId === 'save_response') {
+    // Get the message content from the interaction
+    const content = interaction.message.embeds[0]?.description ?? '';
+    await env.DB.prepare(
+      'INSERT INTO saved_responses (user_id, content, guild_id, saved_at) VALUES (?,?,?,?)'
+    ).bind(interaction.member?.user?.id, content, interaction.guild_id, Date.now()).run();
+
+    // Update message — remove buttons, add saved confirmation
+    return Response.json({
+      type: 7, // UPDATE_MESSAGE
+      data: {
+        embeds: interaction.message.embeds,
+        components: [{
+          type: 1,
+          components: [{
+            type: 2, style: 2,
+            label: '✅ Saved to database',
+            custom_id: 'saved_done',
+            disabled: true,
+          }],
+        }],
+      },
+    });
+  }
+
+  // Acknowledge other button clicks with a hidden message
+  return Response.json({
+    type: 4, // CHANNEL_MESSAGE_WITH_SOURCE
+    data: {
+      content: customId === 'feedback_positive' ? '✅ Glad it helped!' : '✏️ What would you like changed?',
+      flags: 64, // EPHEMERAL — only visible to the button clicker
+    },
+  });
+}</code></pre>
+
+<h2>Webhooks — simple one-way notifications</h2>
+
+<p>Webhooks don't require a bot token. Create one in any Discord channel and POST to it for alerts.</p>
+
+<pre><code class="lang-typescript">// Create webhook in Discord: Channel settings → Integrations → Webhooks → New Webhook
+async function sendWebhook(webhookUrl: string, content: string, embed?: object) {
+  await fetch(webhookUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      username: '2nth Alerts',
+      avatar_url: 'https://skills.2nth.ai/logo.png',
+      content,
+      embeds: embed ? [embed] : [],
+    }),
+  });
+}
+
+// From a Pub/Sub trigger (GCP → Worker):
+await sendWebhook(env.DISCORD_WEBHOOK_OPS, '', {
+  color: 0xE01E5A, // red = alert
+  title: '⚠️ Overdue Invoice Alert',
+  description: 'Acme Corp owes **R 24,500** — 18 days overdue',
+  fields: [
+    { name: 'Invoice', value: '#INV-2024-0847', inline: true },
+    { name: 'Due date', value: '14 Mar 2026', inline: true },
+    { name: 'Action', value: '[View in ERP](https://erp.2nth.ai/invoices/0847)', inline: false },
+  ],
+  timestamp: new Date().toISOString(),
+});</code></pre>
+
+<h2>AI draft helper</h2>
+
+<pre><code class="lang-typescript">async function draftWithClaude(query: string, intent: string, env: Env): Promise&lt;string&gt; {
+  const systemPrompts: Record&lt;string, string&gt; = {
+    erp_query: 'You are an ERP assistant. Answer concisely with key data points. Use Discord markdown formatting.',
+    report:    'You are a business analyst. Provide structured summaries with bullet points and bold key figures.',
+    general:   'You are a helpful business assistant. Be concise and direct. Use Discord markdown.',
+    help:      'You are explaining the 2nth.ai Discord bot. List commands and capabilities clearly.',
+  };
+
+  const res = await fetch(env.AI_GATEWAY_URL + '/anthropic/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 500,
+      system: systemPrompts[intent] ?? systemPrompts.general,
+      messages: [{ role: 'user', content: query }],
+    }),
+  }).then(r =&gt; r.json());
+
+  return res.content[0].text;
+}</code></pre>
+
+<h2>Interaction response type reference</h2>
+
+<table><thead><tr><th>Type</th><th>Name</th><th>When to use</th></tr></thead><tbody><tr><td><code>1</code></td><td>PONG</td><td>Reply to Discord's PING on URL setup</td></tr><tr><td><code>4</code></td><td>CHANNEL_MESSAGE_WITH_SOURCE</td><td>Instant reply (&lt; 3s, no AI)</td></tr><tr><td><code>5</code></td><td>DEFERRED_CHANNEL_MESSAGE</td><td>Show "thinking…" — use for AI, PATCH later</td></tr><tr><td><code>6</code></td><td>DEFERRED_UPDATE_MESSAGE</td><td>Defer update to an existing message</td></tr><tr><td><code>7</code></td><td>UPDATE_MESSAGE</td><td>Replace a component message in-place</td></tr></tbody></table>
+
+<p>Ephemeral flag (<code>flags: 64</code>) makes a reply only visible to the user who triggered it. Use for feedback confirmations and error messages.</p>
+
+<h2>Rate limits</h2>
+
+<table><thead><tr><th>Endpoint</th><th>Limit</th><th>Notes</th></tr></thead><tbody><tr><td>Global</td><td>50 req/sec per bot</td><td>Across all endpoints</td></tr><tr><td><code>POST /messages</code> per channel</td><td>5 req/5s</td><td>Back off with exponential retry</td></tr><tr><td>Webhook</td><td>30 req/min</td><td>Per webhook URL</td></tr><tr><td><code>PATCH /messages/@original</code></td><td>5 req/sec</td><td>Followup to deferred interaction</td></tr><tr><td>Global commands <code>PUT</code></td><td>2 per day</td><td>Use guild commands in development</td></tr></tbody></table>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong>Ed25519, not HMAC</strong> — Discord verification is completely different to Slack. Using the wrong algorithm will always fail. The signed message is <code>timestamp + body</code> with no separator.</li><li><strong>PING must respond immediately</strong> — Discord sends a type 1 PING both on URL setup and periodically. It must get a type 1 PONG with no async delay.</li><li><strong>Deferred = no content</strong> — When you respond with type 5, you cannot include <code>content</code> or <code>embeds</code>. They go in the PATCH followup only.</li><li><strong>Interaction token expiry</strong> — The <code>token</code> in an interaction expires after <strong>15 minutes</strong>. Store tasks accordingly; you can't patch after that.</li><li><strong>Global command propagation</strong> — <code>PUT /applications/{id}/commands</code> for global commands can take up to 1 hour. During development, always use guild commands (<code>/guilds/{guildId}/commands</code>) which are instant.</li><li><strong><code>PUT</code> replaces all commands</strong> — Using PUT on global or guild commands atomically replaces the full set. Don't use PATCH for updates in bulk.</li><li><strong>Ephemeral messages can't be patched</strong> — Ephemeral (flags: 64) deferred responses can't be patched. If you need to update an ephemeral message, use type 6 (DEFERRED_UPDATE_MESSAGE) instead.</li><li><strong>Bot token prefix</strong> — The Authorization header must be <code>Bot <token></code>, not <code>Bearer <token></code>. Easy to miss when coming from OAuth APIs.</li><li><strong>No Gateway in Workers</strong> — The Discord Gateway uses WebSockets which Workers don't support. Use Interactions Endpoint for slash commands; use webhooks for posting. If you need real-time events (reactions, joins), use a Durable Object or Cloud Run container.</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/discord/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

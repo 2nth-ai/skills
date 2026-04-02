@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCMA Process & Dispute Resolution — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">CCMA Process & Dispute Resolution</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/leg/employment/ccma/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">CCMA Process & Dispute Resolution</div>
+      <h1>CCMA PROCESS & DISPUTE RESOLUTION</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../leg/employment.html">leg/employment</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>CCMA — Commission for Conciliation, Mediation and Arbitration</h1>
+
+<p>The CCMA is South Africa's primary forum for resolving employment disputes. It is free to use, relatively fast, and strongly employee-favoured in practice. Every employer with South African staff will face a CCMA matter at some point. Knowing the process, timelines, and defences is essential.</p>
+
+<hr>
+
+<h2>What the CCMA Handles</h2>
+
+<ul><li><strong>Unfair dismissal</strong> (the most common claim)</li><li><strong>Unfair labour practices</strong> (unfair demotion, suspension, failure to promote)</li><li><strong>Constructive dismissal</strong> (employee resigns and claims working conditions were intolerable)</li><li><strong>Automatically unfair dismissal</strong> (dismissal for union membership, pregnancy, whistleblowing)</li><li><strong>Severance pay disputes</strong></li><li><strong>Mutual interest disputes</strong> (wages, working conditions — precursor to industrial action)</li></ul>
+
+<p>The CCMA does <strong>not</strong> handle:</p>
+<ul><li>Claims for monies owed (unpaid salary, leave pay — these go to the Labour Court or BCEA complaint)</li><li>Disciplinary hearings</li><li>Disputes about the terms of a contract (contractual claims go to ordinary civil courts)</li></ul>
+
+<hr>
+
+<h2>The CCMA Process</h2>
+
+<h3>Step 1 — Referral (LRA Form 7.11)</h3>
+<p>The employee files a <strong>Form 7.11</strong> with the CCMA within:</p>
+<ul><li><strong>30 days</strong> of dismissal (unfair dismissal)</li><li><strong>90 days</strong> of the unfair labour practice (unfair labour practice)</li></ul>
+
+<p>Late referrals may be condoned at the CCMA's discretion. The CCMA serves the referral on the employer — <strong>respond promptly</strong>. Non-response does not make the matter go away.</p>
+
+<h3>Step 2 — Conciliation</h3>
+<p>A CCMA commissioner facilitates a <strong>conciliation</strong> (mediation) between the parties. Both parties must attend (senior representative with authority to settle; legal representation generally not permitted at conciliation).</p>
+
+<p><strong>Objective</strong>: Reach a settlement without proceeding to arbitration. Most disputes settle at conciliation.</p>
+
+<p><strong>Common settlements</strong>:</p>
+<ul><li>Agreed separation package (weeks of remuneration per year of service, typically 2–4 weeks)</li><li>Reinstatement (rare; usually avoided by the employer through a financial settlement)</li><li>Withdrawal of the referral with or without payment</li></ul>
+
+<p>If conciliation fails, the commissioner issues a <strong>Certificate of Non-Resolution</strong>. The matter may then proceed to arbitration.</p>
+
+<h3>Step 3 — Arbitration</h3>
+<p>A formal hearing before a CCMA commissioner acting as arbitrator. Both parties present evidence and argument. The arbitrator issues a binding <strong>arbitration award</strong>.</p>
+
+<p><strong>Key differences from conciliation</strong>:</p>
+<ul><li>Legal representatives are permitted (but not by right — must be agreed or granted)</li><li>Evidence under oath</li><li>Cross-examination permitted</li><li>Outcome is binding</li></ul>
+
+<p><strong>Outcome options</strong>:</p>
+<ul><li>Reinstatement (the default remedy for unfair dismissal)</li><li>Re-employment</li><li>Compensation (maximum 12 months' remuneration for procedurally and substantively unfair dismissal; up to 24 months for automatically unfair dismissal)</li></ul>
+
+<p><strong>Note on reinstatement</strong>: If reinstatement is ordered, the employer may substitute compensation if reinstatement is impractical or undesirable — but this requires justification. Resist reinstatement orders through the arbitration process; do not wait for the award.</p>
+
+<hr>
+
+<h2>Defending an Unfair Dismissal Claim</h2>
+
+<h3>Two-Limb Test</h3>
+<p>The employer must prove:</p>
+<ol><li><strong>Substantive fairness</strong>: Was there a valid reason to dismiss?</li><li><strong>Procedural fairness</strong>: Was a fair process followed?</li></ol>
+
+<p>If the employer fails on procedure but succeeds on substance (valid reason but flawed process), compensation is typically 1–3 months' remuneration. If the employer fails on substance, reinstatement or up to 12 months' compensation is the risk.</p>
+
+<h3>Employer Preparation for Arbitration</h3>
+<ul><li>Gather all documentation: employment contract, disciplinary notices, hearing minutes, outcome letter</li><li>Identify and brief witnesses (the person who chaired the hearing, the investigating officer)</li><li>Prepare a bundle of documents for the commissioner</li><li>Timeline of events from first warning to dismissal</li><li>Evidence of progressive discipline (prior warnings still in effect)</li></ul>
+
+<h3>Common Employer Mistakes</h3>
+<table><thead><tr><th>Mistake</th><th>Consequence</th></tr></thead><tbody><tr><td>No written notice of disciplinary hearing</td><td>Procedurally unfair dismissal</td></tr><tr><td>Hearing chaired by the complainant</td><td>Procedurally unfair — must be independent</td></tr><tr><td>No right to representation at hearing</td><td>Procedurally unfair</td></tr><tr><td>Summary dismissal for a minor offence</td><td>Substantively unfair — sanction disproportionate</td></tr><tr><td>No opportunity to respond to charges</td><td>Procedurally unfair</td></tr><tr><td>Undocumented verbal warnings</td><td>Cannot prove progressive discipline</td></tr><tr><td>Failure to attend CCMA</td><td>Default award against employer</td></tr></tbody></table>
+
+<hr>
+
+<h2>Settlement Strategy</h2>
+
+<p>Settling at conciliation is almost always preferable to arbitration:</p>
+<ul><li>Arbitration is time-consuming (half to full day, often multiple sessions)</li><li>Legal costs at arbitration are not recoverable (no costs order)</li><li>The outcome at arbitration is unpredictable</li><li>A settlement is confidential; an arbitration award is on the public record</li></ul>
+
+<p><strong>Reasonable settlement range</strong>: 1–3 months' remuneration for a procedurally flawed but substantively sound dismissal. More if reinstatement is a realistic risk (employee has long service, clean record, strong case).</p>
+
+<p><strong>What not to settle</strong>: Matters where the employee's conduct was so egregious that a settlement would set a damaging precedent for other staff. Communicate this decision to the workforce appropriately.</p>
+
+<hr>
+
+<h2>Labour Court and Labour Appeal Court</h2>
+
+<p>If either party is dissatisfied with a CCMA arbitration award, they may apply to the <strong>Labour Court</strong> to review the award (not an automatic appeal — must show the arbitrator committed a reviewable irregularity).</p>
+
+<p><strong>Automatically unfair dismissals</strong> (pregnancy, union membership, whistleblowing) go directly to the <strong>Labour Court</strong>, not the CCMA.</p>
+
+<p>The Labour Court also has jurisdiction for urgent interdict applications (interdicting unlawful strikes, enforcing restraints of trade, urgent reinstatement).</p>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/leg/employment/ccma/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

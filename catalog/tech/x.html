@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/x — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">x</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/x/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/x</div>
+      <h1>X</h1>
+      <p class="skill-desc">X (Twitter) API v2 skill.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">X API v2, OAuth 2.0 PKCE, Cloudflare Workers, Cron Triggers</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../tech.html">tech</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>X (Twitter) API v2</h1>
+
+<p>X is the real-time public conversation layer. For B2B and tech audiences, AI-powered mention monitoring and reply automation drives engagement and response time to near-zero.</p>
+
+<p><strong>Tier reality check — pick your approach based on access:</strong></p>
+
+<table><thead><tr><th>Tier</th><th>Cost</th><th>Filtered stream</th><th>Monthly tweet cap</th><th>DMs</th></tr></thead><tbody><tr><td>Free</td><td>$0</td><td>✗</td><td>1,500 (write only)</td><td>✗</td></tr><tr><td>Basic</td><td>$100/mo</td><td>✗</td><td>3,000 write / 10k read</td><td>✓</td></tr><tr><td>Pro</td><td>$5,000/mo</td><td>✓ (500k rules)</td><td>300k write / 1M read</td><td>✓</td></tr><tr><td>Enterprise</td><td>Custom</td><td>✓ (full firehose)</td><td>Unlimited</td><td>✓</td></tr></tbody></table>
+
+<p><strong>2nth.ai pattern for Basic tier:</strong> Cron Trigger polls <code>GET /2/tweets/search/recent</code> every 5 minutes. For Pro+: filtered stream with a persistent Worker.</p>
+
+<h2>Architecture</h2>
+
+<pre><code class="lang-text">BASIC TIER (Cron polling):
+  Cron Trigger (*/5 * * * *)
+    → GET /2/tweets/search/recent?query=@youraccount
+    → Filter: skip retweets, own tweets, already-processed IDs
+    → Workers AI: classify intent
+    → Claude via AI Gateway: draft reply
+    → POST /2/tweets (reply_to tweet ID)
+    → Store tweet ID in KV (dedup, 7-day TTL)
+
+PRO TIER (Filtered stream):
+  Worker fetch() with streaming response
+    → GET /2/tweets/search/stream (persistent connection)
+    → Parse SSE lines, extract tweet data
+    → Same classify → draft → reply pipeline
+    → ctx.waitUntil() for async processing</code></pre>
+
+<h2>Authentication</h2>
+
+<p>X uses three auth flows depending on what you're doing.</p>
+
+<h3>App-only (Bearer token) — read public data</h3>
+<pre><code class="lang-typescript">// No user context needed. Read-only. Store as BEARER_TOKEN secret.
+const headers = { Authorization: `Bearer ${env.BEARER_TOKEN}` };</code></pre>
+
+<h3>OAuth 2.0 PKCE — post tweets, DMs (user context)</h3>
+<pre><code class="lang-typescript">// Step 1: generate code verifier + challenge
+function generatePKCE(): { verifier: string; challenge: string } {
+  const verifier = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+  // In practice, challenge = SHA-256 of verifier, but for Workers use:
+  return { verifier, challenge: verifier }; // plain method for simplicity
+}
+
+// Step 2: redirect user to X auth
+const authUrl = new URL('https://twitter.com/i/oauth2/authorize');
+authUrl.searchParams.set('response_type', 'code');
+authUrl.searchParams.set('client_id', env.X_CLIENT_ID);
+authUrl.searchParams.set('redirect_uri', env.X_REDIRECT_URI);
+authUrl.searchParams.set('scope', 'tweet.read tweet.write users.read dm.read dm.write offline.access');
+authUrl.searchParams.set('state', crypto.randomUUID());
+authUrl.searchParams.set('code_challenge', pkce.challenge);
+authUrl.searchParams.set('code_challenge_method', 'plain');
+
+// Step 3: exchange code for tokens
+async function exchangeCode(code: string, verifier: string, env: Env) {
+  const res = await fetch('https://api.twitter.com/2/oauth2/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${btoa(`${env.X_CLIENT_ID}:${env.X_CLIENT_SECRET}`)}`,
+    },
+    body: new URLSearchParams({
+      code,
+      grant_type: 'authorization_code',
+      client_id: env.X_CLIENT_ID,
+      redirect_uri: env.X_REDIRECT_URI,
+      code_verifier: verifier,
+    }),
+  });
+  const { access_token, refresh_token, expires_in } = await res.json();
+
+  // Cache token in KV — refresh 5 min before expiry
+  await env.KV.put('x_access_token', access_token, { expirationTtl: expires_in - 300 });
+  await env.KV.put('x_refresh_token', refresh_token);
+  return access_token;
+}
+
+// Step 4: refresh when expired
+async function getXToken(env: Env): Promise&lt;string&gt; {
+  const cached = await env.KV.get('x_access_token');
+  if (cached) return cached;
+
+  const refresh = await env.KV.get('x_refresh_token');
+  if (!refresh) throw new Error('Not authenticated — re-run OAuth flow');
+
+  const res = await fetch('https://api.twitter.com/2/oauth2/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${btoa(`${env.X_CLIENT_ID}:${env.X_CLIENT_SECRET}`)}`,
+    },
+    body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: refresh }),
+  });
+  const { access_token, refresh_token: newRefresh, expires_in } = await res.json();
+  await env.KV.put('x_access_token', access_token, { expirationTtl: expires_in - 300 });
+  await env.KV.put('x_refresh_token', newRefresh);
+  return access_token;
+}</code></pre>
+
+<h2>Required secrets</h2>
+<pre><code class="lang-bash">wrangler secret put BEARER_TOKEN        # App-only token (read public data)
+wrangler secret put X_CLIENT_ID         # OAuth 2.0 client ID
+wrangler secret put X_CLIENT_SECRET     # OAuth 2.0 client secret
+wrangler secret put X_REDIRECT_URI      # OAuth callback URL
+wrangler secret put X_OWN_USER_ID       # Your account user ID (skip own tweets)</code></pre>
+
+<h2>Cron Trigger — mention polling (Basic tier)</h2>
+
+<p>Add to <code>wrangler.toml</code>:</p>
+<pre><code class="lang-toml">[triggers]
+crons = ["*/5 * * * *"]   # every 5 minutes</code></pre>
+
+<pre><code class="lang-typescript">export default {
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+    ctx.waitUntil(pollMentions(env));
+  },
+
+  async fetch(request: Request, env: Env): Promise&lt;Response&gt; {
+    // OAuth callback handler
+    const url = new URL(request.url);
+    if (url.pathname === '/callback') return handleOAuthCallback(url, env);
+    return new Response('X Bot Worker');
+  }
+};
+
+async function pollMentions(env: Env) {
+  // Get since_id from KV to avoid reprocessing
+  const sinceId = await env.KV.get('x_since_id');
+
+  const params = new URLSearchParams({
+    query: `@${env.X_HANDLE} -is:retweet -from:${env.X_OWN_USER_ID}`,
+    'tweet.fields': 'author_id,created_at,conversation_id,in_reply_to_user_id',
+    'user.fields': 'username,name',
+    expansions: 'author_id',
+    max_results: '10',
+    ...(sinceId ? { since_id: sinceId } : {}),
+  });
+
+  const res = await fetch(`https://api.twitter.com/2/tweets/search/recent?${params}`, {
+    headers: { Authorization: `Bearer ${env.BEARER_TOKEN}` },
+  });
+
+  if (res.status === 429) {
+    const reset = res.headers.get('x-rate-limit-reset');
+    console.log(`Rate limited. Resets at ${new Date(Number(reset) * 1000).toISOString()}`);
+    return;
+  }
+
+  const data = await res.json() as XSearchResponse;
+  if (!data.data?.length) return;
+
+  // Update since_id — newest tweet is first
+  await env.KV.put('x_since_id', data.data[0].id, { expirationTtl: 86400 * 30 });
+
+  const usersMap = Object.fromEntries(
+    (data.includes?.users ?? []).map(u =&gt; [u.id, u])
+  );
+
+  // Process oldest-first (data comes newest-first)
+  for (const tweet of [...data.data].reverse()) {
+    await processMention(tweet, usersMap[tweet.author_id], env);
+  }
+}
+
+async function processMention(tweet: XTweet, author: XUser | undefined, env: Env) {
+  // Dedup — skip if already processed
+  const seen = await env.KV.get(`x_processed:${tweet.id}`);
+  if (seen) return;
+
+  // Mark as processed immediately
+  await env.KV.put(`x_processed:${tweet.id}`, '1', { expirationTtl: 86400 * 7 });
+
+  const text = tweet.text.replace(/@\w+\s*/g, '').trim(); // strip @mentions
+  if (!text) return;
+
+  // Load thread context
+  const ctxKey = `x_ctx:${tweet.conversation_id ?? tweet.id}`;
+  const context = JSON.parse(await env.KV.get(ctxKey) ?? '[]') as string[];
+
+  // Classify
+  const { response: intent } = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+    messages: [
+      { role: 'system', content: 'Classify as: product | support | feedback | spam | general. One word.' },
+      { role: 'user', content: text.slice(0, 400) },
+    ],
+  });
+
+  if (intent.trim() === 'spam') return; // don't engage with spam
+
+  // Draft reply
+  const username = author?.username ?? 'there';
+  const reply = await draftReply(text, intent.trim(), username, context, env);
+
+  // Post reply
+  await postTweet(reply, tweet.id, env);
+
+  // Update context
+  context.push(`@${username}: ${text}`, `Bot: ${reply}`);
+  await env.KV.put(ctxKey, JSON.stringify(context.slice(-8)), { expirationTtl: 86400 * 2 });
+
+  // Store in D1
+  await env.DB.prepare(
+    'INSERT OR IGNORE INTO x_mentions (tweet_id, author_id, username, text, intent, ts) VALUES (?,?,?,?,?,?)'
+  ).bind(tweet.id, tweet.author_id, username, text, intent.trim(), Date.now()).run();
+}</code></pre>
+
+<h2>Filtered stream (Pro tier)</h2>
+
+<pre><code class="lang-typescript">// Add rules for what to stream
+async function addStreamRule(value: string, tag: string, env: Env) {
+  await fetch('https://api.twitter.com/2/tweets/search/stream/rules', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.BEARER_TOKEN}` },
+    body: JSON.stringify({ add: [{ value, tag }] }),
+  });
+}
+
+// @youraccount mentions — excluding retweets and own tweets
+await addStreamRule(`@2nthai -is:retweet -from:${ownUserId}`, 'mentions');
+await addStreamRule(`"2nth.ai" -is:retweet lang:en`, 'brand');
+
+// Connect to stream — NOTE: Workers have a 30s CPU limit per request
+// Use a Durable Object or Queue for true persistent streaming
+async function connectStream(env: Env) {
+  const res = await fetch(
+    'https://api.twitter.com/2/tweets/search/stream?tweet.fields=author_id,created_at&amp;expansions=author_id',
+    { headers: { Authorization: `Bearer ${env.BEARER_TOKEN}` } }
+  );
+
+  if (!res.body) return;
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value);
+    for (const line of chunk.split('\n')) {
+      if (!line.trim() || line.trim() === '{}') continue; // heartbeat
+      try {
+        const event = JSON.parse(line) as XStreamEvent;
+        await processMention(event.data, event.includes?.users?.[0], env);
+      } catch { /* partial line — accumulate */ }
+    }
+  }
+}</code></pre>
+
+<h2>Posting tweets</h2>
+
+<pre><code class="lang-typescript">async function postTweet(text: string, replyToId: string | null, env: Env) {
+  const token = await getXToken(env);
+
+  const body: Record&lt;string, any&gt; = { text };
+  if (replyToId) body.reply = { in_reply_to_tweet_id: replyToId };
+
+  const res = await fetch('https://api.twitter.com/2/tweets', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (res.status === 429) {
+    const reset = res.headers.get('x-rate-limit-reset');
+    throw new Error(`Rate limited until ${new Date(Number(reset) * 1000).toISOString()}`);
+  }
+
+  return res.json();
+}
+
+// Post a thread (split long content into connected tweets)
+async function postThread(tweets: string[], env: Env) {
+  let previousId: string | null = null;
+  for (const text of tweets) {
+    const result = await postTweet(text, previousId, env) as { data: { id: string } };
+    previousId = result.data.id;
+    await new Promise(r =&gt; setTimeout(r, 500)); // 0.5s gap between thread tweets
+  }
+}</code></pre>
+
+<h2>Direct Messages</h2>
+
+<pre><code class="lang-typescript">// Send a DM
+async function sendDM(recipientId: string, text: string, env: Env) {
+  const token = await getXToken(env);
+  return fetch(`https://api.twitter.com/2/dm_conversations/with/${recipientId}/messages`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ text }),
+  });
+}
+
+// Read DM conversation (polling — no webhook for DMs on Basic)
+async function getDMConversation(recipientId: string, env: Env) {
+  const token = await getXToken(env);
+  const res = await fetch(
+    `https://api.twitter.com/2/dm_conversations/with/${recipientId}/dm_events?dm_event.fields=text,created_at,sender_id`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return res.json() as Promise&lt;{ data: XDMEvent[] }&gt;;
+}</code></pre>
+
+<h2>AI reply builder</h2>
+
+<pre><code class="lang-typescript">async function draftReply(
+  text: string,
+  intent: string,
+  username: string,
+  context: string[],
+  env: Env
+): Promise&lt;string&gt; {
+  const contextStr = context.slice(-6).join('\n');
+
+  const res = await fetch(env.AI_GATEWAY_URL + '/anthropic/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 200,
+      system: `You are @2nthai on X. Reply to @${username}'s tweet. Be concise, direct, and useful — this is X, not a blog. Max 240 characters. No hashtag spam. No em-dashes. No bullet points.`,
+      messages: [
+        ...(contextStr ? [{ role: 'user', content: `Thread context:\n${contextStr}` }] : []),
+        { role: 'user', content: text },
+      ],
+    }),
+  }).then(r =&gt; r.json());
+
+  const reply = res.content[0].text.trim();
+  // Hard cap at 280 chars (X limit)
+  return reply.length &gt; 280 ? reply.slice(0, 277) + '...' : reply;
+}</code></pre>
+
+<h2>TypeScript interfaces</h2>
+
+<pre><code class="lang-typescript">interface XSearchResponse {
+  data?: XTweet[];
+  includes?: { users?: XUser[] };
+  meta?: { newest_id: string; oldest_id: string; result_count: number };
+}
+
+interface XTweet {
+  id: string;
+  text: string;
+  author_id: string;
+  created_at?: string;
+  conversation_id?: string;
+  in_reply_to_user_id?: string;
+}
+
+interface XUser {
+  id: string;
+  name: string;
+  username: string;
+}
+
+interface XStreamEvent {
+  data: XTweet;
+  includes?: { users?: XUser[] };
+  matching_rules?: Array&lt;{ id: string; tag: string }&gt;;
+}
+
+interface XDMEvent {
+  id: string;
+  text: string;
+  sender_id: string;
+  created_at: string;
+}</code></pre>
+
+<h2>D1 schema</h2>
+
+<pre><code class="lang-sql">CREATE TABLE x_mentions (
+  id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  tweet_id  TEXT UNIQUE NOT NULL,
+  author_id TEXT NOT NULL,
+  username  TEXT,
+  text      TEXT,
+  intent    TEXT,
+  ts        INTEGER NOT NULL
+);
+
+CREATE INDEX idx_x_author ON x_mentions(author_id);
+CREATE INDEX idx_x_intent ON x_mentions(intent);</code></pre>
+
+<h2>Rate limits (2024 reference)</h2>
+
+<table><thead><tr><th>Endpoint</th><th>Free</th><th>Basic</th><th>Pro</th></tr></thead><tbody><tr><td>GET /2/tweets/search/recent</td><td>✗</td><td>60/15min</td><td>300/15min</td></tr><tr><td>POST /2/tweets</td><td>17/24h</td><td>100/24h</td><td>300/24h</td></tr><tr><td>GET /2/users/me/mentions</td><td>✗</td><td>5/15min</td><td>180/15min</td></tr><tr><td>Filtered stream connections</td><td>✗</td><td>✗</td><td>50</td></tr><tr><td>DM send</td><td>✗</td><td>100/24h</td><td>1,000/24h</td></tr></tbody></table>
+
+<p>Always read <code>x-rate-limit-remaining</code> and <code>x-rate-limit-reset</code> headers. Log and skip on 429 — never retry in a tight loop.</p>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong>Cron gaps vs stream</strong> — Basic tier has no stream, so a 5-minute cron means you respond up to 5 minutes late. For near-real-time on Basic, reduce to <code><em>/1 </em> <em> </em> *</code> but watch the search rate limit (60 req/15min = 4/min max).</li><li><strong>Own tweet echoes</strong> — <code>GET /2/users/me/mentions</code> returns your own @-mentions. Always filter <code>author_id !== env.X_OWN_USER_ID</code> or use <code>-from:yourid</code> in the query.</li><li><strong>Retweet noise</strong> — always add <code>-is:retweet</code> to search queries. RTs flood the results without any reply intent.</li><li><strong>280 char hard cap</strong> — X rejects tweets over 280 characters with a 400. Always truncate before posting.</li><li><strong>Conversation context</strong> — <code>conversation_id</code> is the ID of the root tweet in a thread. Key your KV context on <code>conversation_id</code>, not individual tweet IDs, for multi-turn thread support.</li><li><strong>OAuth 2.0 token refresh</strong> — refresh tokens are single-use. When you refresh, store the new refresh token immediately. If you lose it, the user must re-authenticate.</li><li><strong><code>since_id</code> drift</strong> — if your Worker is down for &gt;7 days, tweets older than 7 days fall outside the recent search window. The bot will miss that gap silently. Log and alert if <code>since_id</code> is &gt;6 days old.</li><li><strong>No webhook on Basic</strong> — unlike Meta and Slack, X doesn't push events to you unless you're on Account Activity API (Enterprise). Polling is the only option on Free/Basic.</li><li><strong>Quote tweet text</strong> — quoted tweet text is not in <code>tweet.text</code>. Use <code>expansions=referenced_tweets.id</code> and <code>tweet.fields=text</code> to get the quoted content if needed for context.</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/x/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

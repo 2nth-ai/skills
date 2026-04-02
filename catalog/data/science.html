@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Science — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Data Science</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/data/science/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Data Science</div>
+      <h1>DATA SCIENCE</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../data/analysis.html">data/analysis</a><a class="skill-chip" href="../../data/engineering.html">data/engineering</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Data Science</h1>
+
+<p>Data science is the discipline of building predictive and explanatory models from data. The goal is not to build impressive models — it is to improve decisions.</p>
+
+<h2>Problem Framing First</h2>
+
+<p>Before touching data or code, frame the problem correctly:</p>
+
+<ol><li><strong>What decision does this model support?</strong> If the model is 90% accurate, who acts on it and how?</li><li><strong>What is the cost of a false positive vs false negative?</strong> A fraud model that misses fraud (false negative) costs money. One that flags legitimate transactions (false positive) destroys customer trust. Which is worse for your business?</li><li><strong>What is the baseline?</strong> How good is the current decision-making without a model? A model that beats a simple rule is not automatically worth deploying.</li><li><strong>What data exists at prediction time?</strong> You can only use features available when the model runs. Future data is not available at prediction time.</li></ol>
+
+<hr>
+
+<h2>The ML Development Process</h2>
+
+<pre><code class="lang-text">Problem framing
+    ↓
+Data collection + EDA
+    ↓
+Feature engineering
+    ↓
+Model selection + training
+    ↓
+Evaluation (offline)
+    ↓
+Business validation (does it actually improve the decision?)
+    ↓
+Production deployment (→ data/ml-ops)
+    ↓
+Monitoring + iteration</code></pre>
+
+<hr>
+
+<h2>Feature Engineering</h2>
+
+<p>Features are the inputs to your model. Good features matter more than model choice.</p>
+
+<h3>Feature Types</h3>
+
+<table><thead><tr><th>Type</th><th>Examples</th><th>Considerations</th></tr></thead><tbody><tr><td>Numerical</td><td>Revenue, age, count</td><td>Scale for distance-based models (KNN, SVM, neural nets); tree models are scale-invariant</td></tr><tr><td>Categorical</td><td>Country, product category, industry</td><td>Encode: one-hot (low cardinality), target encoding (high cardinality)</td></tr><tr><td>Temporal</td><td>Day of week, days since event, rolling averages</td><td>Avoid leaking future information</td></tr><tr><td>Text</td><td>Customer notes, support tickets</td><td>TF-IDF, embeddings (BERT, Sentence Transformers)</td></tr><tr><td>Entity embeddings</td><td>Customer ID, product ID</td><td>Learn representations via embedding layers</td></tr></tbody></table>
+
+<h3>Feature Engineering Patterns</h3>
+
+<p><strong>Ratio features</strong>: Often more predictive than raw numbers.</p>
+<pre><code class="lang-python">df['revenue_per_user'] = df['total_revenue'] / df['user_count']
+df['churn_rate'] = df['churned_last_30d'] / df['active_30d_ago']</code></pre>
+
+<p><strong>Lag features</strong>: The value of X at time t-N.</p>
+<pre><code class="lang-python">df['revenue_lag_1m'] = df.groupby('customer_id')['revenue'].shift(1)
+df['revenue_lag_3m'] = df.groupby('customer_id')['revenue'].shift(3)</code></pre>
+
+<p><strong>Rolling aggregates</strong>:</p>
+<pre><code class="lang-python">df['revenue_ma3'] = df.groupby('customer_id')['revenue'].transform(
+    lambda x: x.rolling(3, min_periods=1).mean()
+)</code></pre>
+
+<p><strong>Data leakage warning</strong>: Never include features that contain information about the target variable or that would not be available at prediction time. This is the most common cause of models that look excellent in development and fail in production.</p>
+
+<hr>
+
+<h2>Model Selection</h2>
+
+<p>Start simple. Add complexity only when simpler models are insufficient.</p>
+
+<h3>Hierarchy of complexity</h3>
+
+<ol><li><strong>Logistic regression / Linear regression</strong> — Interpretable; fast; strong baseline; works well with small data.</li><li><strong>Decision tree</strong> — Interpretable; handles non-linearity; prone to overfitting alone.</li><li><strong>Random forest</strong> — Robust; good default for structured data; handles missing values.</li><li><strong>Gradient boosting (XGBoost, LightGBM, CatBoost)</strong> — State-of-the-art for tabular data; requires hyperparameter tuning.</li><li><strong>Neural networks</strong> — Required for unstructured data (images, text, audio); overkill for most tabular problems.</li></ol>
+
+<p><strong>Default choice for structured/tabular data</strong>: Start with gradient boosting (LightGBM or XGBoost). Beat it with a simpler model before accepting the complexity.</p>
+
+<h3>Problem Type → Algorithm</h3>
+
+<table><thead><tr><th>Problem</th><th>Algorithm Family</th></tr></thead><tbody><tr><td>Binary classification</td><td>Logistic regression, gradient boosting, neural net</td></tr><tr><td>Multi-class</td><td>Softmax regression, gradient boosting</td></tr><tr><td>Regression</td><td>Linear regression, gradient boosting, neural net</td></tr><tr><td>Ranking</td><td>LambdaMART, pairwise learning-to-rank</td></tr><tr><td>Clustering</td><td>K-means, DBSCAN, hierarchical</td></tr><tr><td>Anomaly detection</td><td>Isolation Forest, Autoencoder, statistical thresholds</td></tr><tr><td>Time series forecasting</td><td>Prophet, ARIMA, LightGBM with lag features</td></tr><tr><td>NLP classification</td><td>Fine-tuned BERT / Sentence Transformers + classifier head</td></tr></tbody></table>
+
+<hr>
+
+<h2>Model Evaluation</h2>
+
+<h3>Classification Metrics</h3>
+
+<table><thead><tr><th>Metric</th><th>Formula</th><th>When to Use</th></tr></thead><tbody><tr><td>Accuracy</td><td>TP+TN / Total</td><td>Only when classes are balanced</td></tr><tr><td>Precision</td><td>TP / (TP+FP)</td><td>When false positives are costly</td></tr><tr><td>Recall</td><td>TP / (TP+FN)</td><td>When false negatives are costly</td></tr><tr><td>F1</td><td>2×(P×R)/(P+R)</td><td>When you need a single score balancing both</td></tr><tr><td>AUC-ROC</td><td>Area under ROC curve</td><td>Ranking quality; class imbalance robust</td></tr><tr><td>AUC-PR</td><td>Area under Precision-Recall curve</td><td>Best for highly imbalanced datasets</td></tr></tbody></table>
+
+<p><strong>For churn prediction</strong>: Recall matters more (you want to catch churners). For fraud: Precision matters more (you cannot flag every transaction as fraud).</p>
+
+<h3>Regression Metrics</h3>
+
+<table><thead><tr><th>Metric</th><th>Formula</th><th>Interpretation</th></tr></thead><tbody><tr><td>MAE</td><td>Mean(</td><td>y - ŷ</td><td>)</td><td>Average error in same units as target</td></tr><tr><td>RMSE</td><td>√Mean((y-ŷ)²)</td><td>Penalises large errors more; sensitive to outliers</td></tr><tr><td>MAPE</td><td>Mean(</td><td>y-ŷ</td><td>/y) × 100</td><td>% error; meaningless if y can be zero</td></tr></tbody></table>
+
+<h3>Validation Strategy</h3>
+
+<ul><li><strong>Hold-out split</strong>: 70/15/15 (train/validation/test). Use validation for tuning, test for final evaluation.</li><li><strong>Cross-validation (k-fold)</strong>: More reliable estimate on small datasets. 5-fold is standard.</li><li><strong>Time-series split</strong>: Never shuffle time-series data. Train on past, validate on future. Use <code>TimeSeriesSplit</code>.</li></ul>
+
+<hr>
+
+<h2>Communicating Models to Non-Technical Stakeholders</h2>
+
+<p>Executives do not care about AUC. They care about business outcomes.</p>
+
+<h3>Translate Model Performance into Business Impact</h3>
+
+<p>Instead of: "Our churn model has AUC 0.84."</p>
+
+<p>Say: "If we act on the model's top-200 churn predictions each month, we expect to retain 60–70 customers who would otherwise have left. At an average LTV of R45,000, that is R2.7–3.1M in retained revenue per month."</p>
+
+<h3>Explainability</h3>
+
+<p>For regulated industries or high-stakes decisions (credit, employment, healthcare), black-box models create legal and ethical risk. Use:</p>
+<ul><li><strong>SHAP values</strong>: Show each feature's contribution to a specific prediction.</li><li><strong>LIME</strong>: Local approximation of model behaviour around a single prediction.</li><li><strong>Inherently interpretable models</strong>: Logistic regression, decision trees — the model itself is the explanation.</li></ul>
+
+<p><strong>South African context</strong>: Under POPIA, automated decisions that affect individuals must be explainable. Sections 71 of POPIA grants a right to human review of automated decisions. Ensure ML-driven decisions in credit, HR, or customer service have documented explainability.</p>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/data/science/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

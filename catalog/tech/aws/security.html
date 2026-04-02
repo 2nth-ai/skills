@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/aws/security — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><a href="#">aws</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">security</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/aws/security/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/aws/security</div>
+      <h1>SECURITY</h1>
+      <p class="skill-desc">AWS security skill. Use when: (1) designing IAM policies — least-privilege roles, resource-based policies,</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">AWS CLI v2, CDK v2, SDK v3 (TypeScript/Python), Terraform</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../tech/aws.html">tech/aws</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech/aws</a><a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>AWS Security</h1>
+
+<p>Security on AWS is not a feature you bolt on — it is a design constraint applied from the first resource. This skill covers IAM, VPC hardening, secrets management, encryption, and continuous audit for production workloads.</p>
+
+<h2>1. IAM Fundamentals</h2>
+
+<h3>Principal types</h3>
+
+<table><thead><tr><th>Principal</th><th>Description</th></tr></thead><tbody><tr><td><strong>IAM User</strong></td><td>Long-lived human identity. Avoid in production; prefer roles.</td></tr><tr><td><strong>IAM Role</strong></td><td>Assumed temporarily. Use for EC2, Lambda, ECS, cross-account.</td></tr><tr><td><strong>IAM Group</strong></td><td>Collection of users sharing policies. No group-to-group nesting.</td></tr><tr><td><strong>Service principal</strong></td><td>AWS service (e.g. <code>lambda.amazonaws.com</code>) acting on your behalf.</td></tr></tbody></table>
+
+<h3>Policy types</h3>
+
+<table><thead><tr><th>Type</th><th>Attached to</th><th>Notes</th></tr></thead><tbody><tr><td><strong>Identity-based</strong></td><td>User, role, group</td><td>Grant permissions to the principal</td></tr><tr><td><strong>Resource-based</strong></td><td>S3 bucket, KMS key, Lambda</td><td>Grant cross-account access without assume-role</td></tr><tr><td><strong>Permission boundary</strong></td><td>User or role</td><td>Hard ceiling — even if identity policy allows more, boundary wins</td></tr><tr><td><strong>SCP (Service Control Policy)</strong></td><td>AWS Organizations OU/account</td><td>Guardrails across the entire account; does not affect root user</td></tr><tr><td><strong>Session policy</strong></td><td>Passed during <code>sts:AssumeRole</code></td><td>Inline restriction scoped to a single session</td></tr></tbody></table>
+
+<h3>Policy evaluation logic</h3>
+
+<pre><code class="lang-text">1. Explicit DENY anywhere → denied (SCPs, resource-based, identity-based)
+2. SCP allows the action? No → denied
+3. Resource-based policy allows (same account)? → allowed without identity policy needed
+4. Identity-based policy + permission boundary BOTH allow? → allowed
+5. Implicit deny (nothing allows) → denied</code></pre>
+
+<p>The golden rule: <strong>an explicit deny always wins</strong>, no matter how many allows exist elsewhere.</p>
+
+<h3>ARN format</h3>
+
+<pre><code class="lang-text">arn:partition:service:region:account-id:resource-type/resource-id
+
+# Examples
+arn:aws:iam::123456789012:role/my-lambda-role
+arn:aws:s3:::my-bucket                          # S3 has no region or account in ARN
+arn:aws:dynamodb:af-south-1:123456789012:table/Orders
+arn:aws:kms:af-south-1:123456789012:key/mrk-abc123</code></pre>
+
+<h3>JSON policy structure</h3>
+
+<pre><code class="lang-json">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadOrdersTable",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:Query",
+        "dynamodb:BatchGetItem"
+      ],
+      "Resource": "arn:aws:dynamodb:af-south-1:123456789012:table/Orders",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "af-south-1"
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+<p>Always include <code>"Version": "2012-10-17"</code> — this is a literal string, not a date to update.</p>
+
+<hr>
+
+<h2>2. Least-Privilege IAM Patterns</h2>
+
+<h3>Lambda execution role</h3>
+
+<p>A Lambda function only needs what it explicitly uses. Never attach <code>AdministratorAccess</code> or even <code>PowerUserAccess</code>.</p>
+
+<pre><code class="lang-json">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Logs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:af-south-1:123456789012:log-group:/aws/lambda/my-function:*"
+    },
+    {
+      "Sid": "S3ReadInput",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject"],
+      "Resource": "arn:aws:s3:::my-input-bucket/*"
+    },
+    {
+      "Sid": "DynamoWrite",
+      "Effect": "Allow",
+      "Action": ["dynamodb:PutItem", "dynamodb:UpdateItem"],
+      "Resource": "arn:aws:dynamodb:af-south-1:123456789012:table/Orders"
+    }
+  ]
+}</code></pre>
+
+<p>Trust policy (who can assume this role):</p>
+
+<pre><code class="lang-json">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": { "Service": "lambda.amazonaws.com" },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}</code></pre>
+
+<pre><code class="lang-bash"># Create the role with trust policy
+aws iam create-role \
+  --role-name my-lambda-role \
+  --assume-role-policy-document file://trust-policy.json
+
+# Create and attach the permission policy
+aws iam put-role-policy \
+  --role-name my-lambda-role \
+  --policy-name LambdaPermissions \
+  --policy-document file://lambda-policy.json</code></pre>
+
+<h3>ECS task role vs execution role — critical distinction</h3>
+
+<p>This is the most commonly confused pattern in ECS security:</p>
+
+<table><thead><tr><th>Role</th><th>Purpose</th><th>Who uses it</th></tr></thead><tbody><tr><td><strong>Task execution role</strong></td><td>Lets ECS pull images from ECR and write logs to CloudWatch</td><td>The ECS agent (infrastructure layer)</td></tr><tr><td><strong>Task role</strong></td><td>Permissions your application code uses at runtime (S3, DynamoDB, etc.)</td><td>Your container process</td></tr></tbody></table>
+
+<p>Never conflate them. If your app needs to read from S3, that permission goes on the <strong>task role</strong>, not the execution role.</p>
+
+<pre><code class="lang-bash"># Execution role — needs ecr:GetAuthorizationToken, logs:CreateLogStream, etc.
+aws iam attach-role-policy \
+  --role-name ecsTaskExecutionRole \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+# Task role — your app permissions (example: read from S3)
+aws iam put-role-policy \
+  --role-name my-ecs-task-role \
+  --policy-name AppPermissions \
+  --policy-document file://app-policy.json</code></pre>
+
+<h3>Cross-account assume-role pattern</h3>
+
+<p>Account A (source) assumes a role in Account B (target).</p>
+
+<p><strong>Account B — the role being assumed (trust policy):</strong></p>
+
+<pre><code class="lang-json">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::ACCOUNT_A_ID:role/source-role"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "af-south-1"
+        },
+        "StringLike": {
+          "aws:SourceVpc": "vpc-0abc123"
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+<p><strong>Account A — permission to call assume-role:</strong></p>
+
+<pre><code class="lang-json">{
+  "Effect": "Allow",
+  "Action": "sts:AssumeRole",
+  "Resource": "arn:aws:iam::ACCOUNT_B_ID:role/target-role"
+}</code></pre>
+
+<pre><code class="lang-bash"># Assume the role and export temporary credentials
+CREDS=$(aws sts assume-role \
+  --role-arn arn:aws:iam::ACCOUNT_B_ID:role/target-role \
+  --role-session-name deploy-session \
+  --query 'Credentials' --output json)
+
+export AWS_ACCESS_KEY_ID=$(echo $CREDS | jq -r .AccessKeyId)
+export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r .SecretAccessKey)
+export AWS_SESSION_TOKEN=$(echo $CREDS | jq -r .SessionToken)</code></pre>
+
+<h3>Useful condition keys</h3>
+
+<table><thead><tr><th>Key</th><th>Use case</th></tr></thead><tbody><tr><td><code>aws:RequestedRegion</code></td><td>Restrict actions to specific regions</td></tr><tr><td><code>aws:SourceVpc</code></td><td>Restrict S3 or API access to requests from a specific VPC</td></tr><tr><td><code>aws:SourceIp</code></td><td>IP allowlist (be careful with NAT gateways — use CIDR)</td></tr><tr><td><code>aws:CalledVia</code></td><td>Ensure action was invoked by a trusted AWS service, not directly</td></tr><tr><td><code>aws:MultiFactorAuthPresent</code></td><td>Require MFA for sensitive IAM/billing actions</td></tr></tbody></table>
+
+<hr>
+
+<h2>3. VPC Security</h2>
+
+<h3>Security groups vs NACLs</h3>
+
+<table><thead><tr><th>Feature</th><th>Security Groups</th><th>NACLs</th></tr></thead><tbody><tr><td>Level</td><td>Instance / ENI</td><td>Subnet</td></tr><tr><td>State</td><td><strong>Stateful</strong> — return traffic auto-allowed</td><td><strong>Stateless</strong> — must allow inbound AND outbound explicitly</td></tr><tr><td>Rules</td><td>Allow only</td><td>Allow + Deny</td></tr><tr><td>Evaluation</td><td>All rules evaluated</td><td>Rules evaluated in order (lowest number first)</td></tr><tr><td>Default</td><td>Deny all inbound, allow all outbound</td><td>Allow all (default VPC NACL)</td></tr></tbody></table>
+
+<p>Security groups are your primary tool. NACLs are a coarse secondary layer — use them to block known bad CIDR ranges at subnet level.</p>
+
+<h3>Common ports reference</h3>
+
+<table><thead><tr><th>Port</th><th>Protocol</th><th>Service</th></tr></thead><tbody><tr><td>22</td><td>TCP</td><td>SSH — restrict to bastion SG or VPN CIDR only</td></tr><tr><td>80 / 443</td><td>TCP</td><td>HTTP / HTTPS — allow from ALB SG or <code>0.0.0.0/0</code></td></tr><tr><td>5432</td><td>TCP</td><td>PostgreSQL — allow from app tier SG only</td></tr><tr><td>3306</td><td>TCP</td><td>MySQL — allow from app tier SG only</td></tr><tr><td>6379</td><td>TCP</td><td>Redis (ElastiCache) — allow from app tier SG only</td></tr><tr><td>2049</td><td>TCP</td><td>NFS (EFS) — allow from ECS/EC2 SG only</td></tr></tbody></table>
+
+<h3>Reference-by-security-group pattern</h3>
+
+<p>Never use IP ranges to allow traffic between tiers. Reference security groups instead — it survives IP changes and is semantically clear.</p>
+
+<pre><code class="lang-bash"># Create security groups
+aws ec2 create-security-group \
+  --group-name alb-sg \
+  --description "ALB inbound from internet" \
+  --vpc-id vpc-0abc123
+
+aws ec2 create-security-group \
+  --group-name app-sg \
+  --description "App tier — only from ALB" \
+  --vpc-id vpc-0abc123
+
+aws ec2 create-security-group \
+  --group-name db-sg \
+  --description "DB tier — only from app tier" \
+  --vpc-id vpc-0abc123
+
+# Allow HTTPS into ALB from internet
+aws ec2 authorize-security-group-ingress \
+  --group-id sg-alb-id \
+  --protocol tcp --port 443 --cidr 0.0.0.0/0
+
+# Allow app tier only from ALB SG (not by IP)
+aws ec2 authorize-security-group-ingress \
+  --group-id sg-app-id \
+  --protocol tcp --port 8080 \
+  --source-group sg-alb-id
+
+# Allow DB only from app tier SG
+aws ec2 authorize-security-group-ingress \
+  --group-id sg-db-id \
+  --protocol tcp --port 5432 \
+  --source-group sg-app-id</code></pre>
+
+<h3>Private subnet + NAT gateway pattern</h3>
+
+<pre><code class="lang-text">Internet
+    │
+[IGW]
+    │
+[Public Subnet]  ← ALB, NAT Gateway, Bastion
+    │
+[Private Subnet] ← Lambda, ECS Tasks, RDS, ElastiCache
+    │ (outbound only via NAT GW)
+[NAT Gateway]</code></pre>
+
+<p>Private subnet resources have no public IP and are unreachable from the internet. They reach the internet (for package updates, external APIs) via NAT Gateway — which is public-facing but only allows outbound-initiated connections.</p>
+
+<h3>VPC endpoints — avoid internet traffic for AWS services</h3>
+
+<p>Without endpoints, traffic from your Lambda/ECS to S3 or DynamoDB exits to the internet (even through a NAT Gateway). VPC endpoints keep traffic on the AWS backbone.</p>
+
+<pre><code class="lang-bash"># Gateway endpoint for S3 (free)
+aws ec2 create-vpc-endpoint \
+  --vpc-id vpc-0abc123 \
+  --service-name com.amazonaws.af-south-1.s3 \
+  --vpc-endpoint-type Gateway \
+  --route-table-ids rtb-0abc123
+
+# Gateway endpoint for DynamoDB (free)
+aws ec2 create-vpc-endpoint \
+  --vpc-id vpc-0abc123 \
+  --service-name com.amazonaws.af-south-1.dynamodb \
+  --vpc-endpoint-type Gateway \
+  --route-table-ids rtb-0abc123
+
+# Interface endpoint for Secrets Manager (costs ~$7.50/month/AZ)
+aws ec2 create-vpc-endpoint \
+  --vpc-id vpc-0abc123 \
+  --service-name com.amazonaws.af-south-1.secretsmanager \
+  --vpc-endpoint-type Interface \
+  --subnet-ids subnet-private-1 subnet-private-2 \
+  --security-group-ids sg-endpoint-id \
+  --private-dns-enabled</code></pre>
+
+<p>Gateway endpoints (S3, DynamoDB) are free and always worth enabling. Interface endpoints cost per AZ per hour — evaluate based on traffic volume and compliance requirements.</p>
+
+<hr>
+
+<h2>4. Secrets Manager</h2>
+
+<p>Never store secrets in environment variables, code, or configuration files. Use Secrets Manager for anything that rotates or is high-value (DB passwords, API keys, OAuth tokens).</p>
+
+<pre><code class="lang-bash"># Create a secret
+aws secretsmanager create-secret \
+  --name prod/myapp/db-password \
+  --description "RDS master password" \
+  --secret-string '{"username":"admin","password":"s3cr3t!"}' \
+  --kms-key-id arn:aws:kms:af-south-1:123456789012:key/mrk-abc123
+
+# Enable automatic rotation (requires a Lambda rotation function)
+aws secretsmanager rotate-secret \
+  --secret-id prod/myapp/db-password \
+  --rotation-lambda-arn arn:aws:lambda:af-south-1:123456789012:function:SecretsRotator \
+  --rotation-rules AutomaticallyAfterDays=30
+
+# Retrieve (CLI)
+aws secretsmanager get-secret-value \
+  --secret-id prod/myapp/db-password \
+  --query SecretString --output text</code></pre>
+
+<h3>Retrieval in Lambda with caching (TypeScript)</h3>
+
+<p>Calling Secrets Manager on every Lambda invocation adds latency and cost. Cache in module scope — the Lambda execution environment is reused across warm invocations.</p>
+
+<pre><code class="lang-typescript">import {
+  SecretsManagerClient,
+  GetSecretValueCommand,
+} from '@aws-sdk/client-secrets-manager';
+
+const client = new SecretsManagerClient({ region: 'af-south-1' });
+
+// Module-level cache — persists across warm invocations
+let cachedSecret: { username: string; password: string } | null = null;
+let cacheExpiry = 0;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+async function getDbCredentials() {
+  if (cachedSecret &amp;&amp; Date.now() &lt; cacheExpiry) {
+    return cachedSecret;
+  }
+
+  const response = await client.send(
+    new GetSecretValueCommand({ SecretId: 'prod/myapp/db-password' })
+  );
+
+  cachedSecret = JSON.parse(response.SecretString!);
+  cacheExpiry = Date.now() + CACHE_TTL_MS;
+  return cachedSecret!;
+}
+
+export const handler = async (event: unknown) =&gt; {
+  const { username, password } = await getDbCredentials();
+  // use credentials...
+};</code></pre>
+
+<h3>Secrets Manager vs Parameter Store</h3>
+
+<table><thead><tr><th>Feature</th><th>Secrets Manager</th><th>Parameter Store (SecureString)</th></tr></thead><tbody><tr><td>Cost</td><td>$0.40/secret/month + $0.05/10k API calls</td><td>Free (standard), $0.05/10k advanced</td></tr><tr><td>Automatic rotation</td><td>Yes (built-in Lambda-based)</td><td>No (manual)</td></tr><tr><td>Versioning</td><td>Yes</td><td>Yes</td></tr><tr><td>Cross-account</td><td>Yes (resource-based policy)</td><td>No</td></tr><tr><td>Max size</td><td>65 KB</td><td>4 KB (standard), 8 KB (advanced)</td></tr><tr><td><strong>When to use</strong></td><td>DB passwords, OAuth tokens, anything that rotates</td><td>Config values, feature flags, ARNs, non-rotating secrets</td></tr></tbody></table>
+
+<p>Use Secrets Manager for secrets that rotate or need cross-account access. Use Parameter Store SecureString for application configuration that happens to be sensitive but is static.</p>
+
+<hr>
+
+<h2>5. KMS</h2>
+
+<h3>CMK vs AWS-managed keys</h3>
+
+<table><thead><tr><th>Type</th><th>Control</th><th>Key policy</th><th>Cost</th></tr></thead><tbody><tr><td><strong>AWS-managed</strong> (e.g. <code>aws/s3</code>)</td><td>AWS rotates automatically</td><td>Cannot edit</td><td>Free</td></tr><tr><td><strong>Customer-managed (CMK)</strong></td><td>You control rotation, policy, grants</td><td>Full control</td><td>$1/key/month + $0.03/10k API calls</td></tr></tbody></table>
+
+<p>Use CMKs when you need: audit of every encrypt/decrypt, cross-account access, key deletion control, or granular grants.</p>
+
+<h3>Key policy</h3>
+
+<p>Every CMK has a key policy. Without a key policy statement allowing the account root, <strong>no IAM policy can grant KMS access</strong> — the key policy is the gatekeeper.</p>
+
+<pre><code class="lang-json">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EnableIAMPolicies",
+      "Effect": "Allow",
+      "Principal": { "AWS": "arn:aws:iam::123456789012:root" },
+      "Action": "kms:*",
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowLambdaEncryptDecrypt",
+      "Effect": "Allow",
+      "Principal": { "AWS": "arn:aws:iam::123456789012:role/my-lambda-role" },
+      "Action": ["kms:Decrypt", "kms:GenerateDataKey"],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+
+<h3>Envelope encryption concept</h3>
+
+<p>KMS does not encrypt your data directly for large payloads. It uses envelope encryption:</p>
+
+<pre><code class="lang-text">1. Your app calls GenerateDataKey → KMS returns plaintext data key + encrypted data key
+2. Your app encrypts data locally with the plaintext data key (AES-256)
+3. Store encrypted data + encrypted data key together
+4. To decrypt: call KMS Decrypt with the encrypted data key → get plaintext key → decrypt data locally</code></pre>
+
+<p>The AWS SDKs handle this automatically for S3, EBS, and Secrets Manager. You only need to implement it manually for custom encryption.</p>
+
+<pre><code class="lang-bash"># Encrypt a small value directly (&lt; 4KB)
+aws kms encrypt \
+  --key-id arn:aws:kms:af-south-1:123456789012:key/mrk-abc123 \
+  --plaintext fileb://secret.txt \
+  --output text --query CiphertextBlob | base64 --decode &gt; secret.enc
+
+# Decrypt
+aws kms decrypt \
+  --ciphertext-blob fileb://secret.enc \
+  --output text --query Plaintext | base64 --decode
+
+# Enable automatic key rotation (annually)
+aws kms enable-key-rotation --key-id mrk-abc123</code></pre>
+
+<h3>KMS in practice</h3>
+
+<ul><li><strong>S3 SSE-KMS</strong>: Add <code>--server-side-encryption aws:kms --ssekms-key-id KEY_ID</code> to <code>aws s3 cp</code> or set bucket default encryption</li><li><strong>EBS</strong>: Enable at volume creation — <code>aws ec2 create-volume --encrypted --kms-key-id KEY_ID</code></li><li><strong>Secrets Manager</strong>: Pass <code>--kms-key-id</code> on <code>create-secret</code>; all secret versions encrypted with that CMK</li><li><strong>RDS</strong>: Set <code>--storage-encrypted --kms-key-id</code> at instance creation (cannot be enabled after the fact without snapshot restore)</li></ul>
+
+<hr>
+
+<h2>6. CloudTrail</h2>
+
+<p>CloudTrail records every AWS API call — who did what, when, from where. It is the non-negotiable audit foundation.</p>
+
+<pre><code class="lang-bash"># Create a trail covering all regions
+aws cloudtrail create-trail \
+  --name org-audit-trail \
+  --s3-bucket-name my-cloudtrail-bucket \
+  --is-multi-region-trail \
+  --include-global-service-events \
+  --enable-log-file-validation
+
+# Start logging
+aws cloudtrail start-logging --name org-audit-trail
+
+# Send to CloudWatch Logs (for alerting)
+aws cloudtrail update-trail \
+  --name org-audit-trail \
+  --cloud-watch-logs-log-group-arn arn:aws:logs:af-south-1:123456789012:log-group:CloudTrail \
+  --cloud-watch-logs-role-arn arn:aws:iam::123456789012:role/CloudTrailToCloudWatch</code></pre>
+
+<h3>Example CloudTrail event structure</h3>
+
+<pre><code class="lang-json">{
+  "eventVersion": "1.08",
+  "userIdentity": {
+    "type": "IAMUser",
+    "principalId": "AIDAEXAMPLE",
+    "arn": "arn:aws:iam::123456789012:user/alice",
+    "accountId": "123456789012",
+    "userName": "alice"
+  },
+  "eventTime": "2026-04-02T08:23:11Z",
+  "eventSource": "iam.amazonaws.com",
+  "eventName": "CreateRole",
+  "awsRegion": "af-south-1",
+  "sourceIPAddress": "197.x.x.x",
+  "requestParameters": { "roleName": "new-admin-role" },
+  "responseElements": { ... }
+}</code></pre>
+
+<h3>Key events to alert on</h3>
+
+<p>Create CloudWatch Metric Filters on the CloudTrail log group for these events:</p>
+
+<table><thead><tr><th>Event</th><th>Why it matters</th></tr></thead><tbody><tr><td><code>ConsoleLogin</code> where <code>userIdentity.type = Root</code></td><td>Root login is always suspicious</td></tr><tr><td><code>CreateUser</code>, <code>AttachUserPolicy</code>, <code>CreateAccessKey</code></td><td>Unexpected IAM changes</td></tr><tr><td><code>AuthorizeSecurityGroupIngress</code></td><td>Security group opened — may expose services</td></tr><tr><td><code>DeleteTrail</code>, <code>StopLogging</code>, <code>PutEventSelectors</code></td><td>Audit evasion</td></tr><tr><td><code>KMSDisableKey</code>, <code>KMSScheduleKeyDeletion</code></td><td>Ransomware precursor</td></tr><tr><td><code>PutBucketPolicy</code> with <code>"Principal": "*"</code></td><td>Public S3 exposure</td></tr></tbody></table>
+
+<pre><code class="lang-bash"># Example: alert on root login
+aws logs put-metric-filter \
+  --log-group-name CloudTrail \
+  --filter-name RootLogin \
+  --filter-pattern '{ $.userIdentity.type = "Root" &amp;&amp; $.eventName = "ConsoleLogin" }' \
+  --metric-transformations metricName=RootLoginCount,metricNamespace=Security,metricValue=1</code></pre>
+
+<hr>
+
+<h2>7. GuardDuty and Security Hub</h2>
+
+<h3>GuardDuty</h3>
+
+<p>GuardDuty is a continuous threat detection service. It analyses CloudTrail, VPC Flow Logs, and DNS logs using ML models — you don't configure rules, just enable it.</p>
+
+<pre><code class="lang-bash"># Enable GuardDuty
+aws guardduty create-detector --enable --finding-publishing-frequency FIFTEEN_MINUTES
+
+# Get detector ID
+DETECTOR_ID=$(aws guardduty list-detectors --query 'DetectorIds[0]' --output text)
+
+# List active findings
+aws guardduty list-findings --detector-id $DETECTOR_ID \
+  --finding-criteria '{"Criterion":{"service.archived":{"Eq":["false"]}}}'</code></pre>
+
+<p><strong>Finding categories:</strong></p>
+
+<table><thead><tr><th>Category</th><th>Example</th></tr></thead><tbody><tr><td>CryptoCurrency</td><td><code>CryptoCurrency:EC2/BitcoinTool.B</code> — instance mining crypto</td></tr><tr><td>UnauthorizedAccess</td><td><code>UnauthorizedAccess:IAMUser/ConsoleLoginSuccess.B</code> — login from unusual location</td></tr><tr><td>Recon</td><td><code>Recon:EC2/PortProbeUnprotectedPort</code> — port scanning your instance</td></tr><tr><td>Trojan</td><td><code>Trojan:EC2/DNSDataExfiltration</code> — DNS-based data exfiltration</td></tr><tr><td>Persistence</td><td><code>Persistence:IAMUser/AnomalousBehavior</code> — unusual IAM activity</td></tr></tbody></table>
+
+<h3>EventBridge rule to forward findings to SNS</h3>
+
+<pre><code class="lang-bash"># Create SNS topic for security alerts
+aws sns create-topic --name security-alerts
+aws sns subscribe \
+  --topic-arn arn:aws:sns:af-south-1:123456789012:security-alerts \
+  --protocol email --notification-endpoint security@myorg.com
+
+# EventBridge rule: high-severity GuardDuty findings → SNS
+aws events put-rule \
+  --name GuardDutyHighSeverity \
+  --event-pattern '{
+    "source": ["aws.guardduty"],
+    "detail-type": ["GuardDuty Finding"],
+    "detail": { "severity": [{ "numeric": ["&gt;=", 7] }] }
+  }' \
+  --state ENABLED
+
+aws events put-targets \
+  --rule GuardDutyHighSeverity \
+  --targets '[{
+    "Id": "SendToSNS",
+    "Arn": "arn:aws:sns:af-south-1:123456789012:security-alerts"
+  }]'</code></pre>
+
+<p>For Slack: use an SNS → Lambda → Slack webhook chain, or SNS → EventBridge → Lambda.</p>
+
+<h3>Security Hub</h3>
+
+<p>Security Hub aggregates findings from GuardDuty, Macie, Inspector, IAM Access Analyzer, and AWS Config into a single dashboard with compliance scores.</p>
+
+<pre><code class="lang-bash"># Enable Security Hub
+aws securityhub enable-security-hub \
+  --enable-default-standards
+
+# Enable CIS AWS Foundations Benchmark
+aws securityhub batch-enable-standards \
+  --standards-subscription-requests \
+    '[{"StandardsArn":"arn:aws:securityhub:af-south-1::standards/cis-aws-foundations-benchmark/v/1.4.0"}]'
+
+# Enable AWS Foundational Security Best Practices
+aws securityhub batch-enable-standards \
+  --standards-subscription-requests \
+    '[{"StandardsArn":"arn:aws:securityhub:af-south-1::standards/aws-foundational-security-best-practices/v/1.0.0"}]'
+
+# List failed controls
+aws securityhub get-findings \
+  --filters '{"ComplianceStatus":[{"Value":"FAILED","Comparison":"EQUALS"}]}' \
+  --query 'Findings[].{Title:Title,Severity:Severity.Label}' \
+  --output table</code></pre>
+
+<hr>
+
+<h2>8. Securing Lambda</h2>
+
+<h3>Absolute rules</h3>
+
+<ul><li><strong>Never hardcode credentials</strong> — not in code, not in environment variables, not in layers. Use IAM role (execution role) or Secrets Manager.</li><li>Grant the execution role only the actions the function actually calls.</li><li>Treat Lambda environment variables as non-secret config only (they are visible to anyone with <code>lambda:GetFunctionConfiguration</code>).</li></ul>
+
+<h3>VPC placement tradeoffs</h3>
+
+<p>Placing Lambda in a VPC gives access to RDS, ElastiCache, and internal services — but adds a cold start penalty (ENI attachment, ~500ms–1s historically; reduced with Hyperplane ENIs since 2020 but still non-zero in some regions).</p>
+
+<p><strong>Decision:</strong> Use VPC placement when the function needs private network access (RDS, ElastiCache). For functions only calling AWS APIs or the internet, keep Lambda out of the VPC and use IAM + VPC endpoints instead.</p>
+
+<pre><code class="lang-bash"># Deploy Lambda in a VPC
+aws lambda update-function-configuration \
+  --function-name my-function \
+  --vpc-config SubnetIds=subnet-private-1,subnet-private-2,SecurityGroupIds=sg-lambda-id</code></pre>
+
+<h3>Function URL auth</h3>
+
+<pre><code class="lang-bash"># Public URL (no auth) — only use for webhooks with HMAC validation in code
+aws lambda create-function-url-config \
+  --function-name my-function \
+  --auth-type NONE
+
+# IAM-authenticated URL — caller must SigV4-sign the request
+aws lambda create-function-url-config \
+  --function-name my-function \
+  --auth-type AWS_IAM</code></pre>
+
+<h3>Resource policy for cross-account invocation</h3>
+
+<pre><code class="lang-bash"># Allow account B to invoke this function
+aws lambda add-permission \
+  --function-name my-function \
+  --statement-id CrossAccountInvoke \
+  --action lambda:InvokeFunction \
+  --principal arn:aws:iam::ACCOUNT_B_ID:role/invoker-role</code></pre>
+
+<hr>
+
+<h2>9. Securing ECS / Fargate</h2>
+
+<h3>Role separation (see section 2 for detail)</h3>
+
+<pre><code class="lang-json">// Task definition excerpt
+{
+  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+  "taskRoleArn":      "arn:aws:iam::123456789012:role/my-app-task-role",
+  ...
+}</code></pre>
+
+<h3>Inject secrets from Secrets Manager — never pass as plain env vars</h3>
+
+<pre><code class="lang-json">{
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "123456789012.dkr.ecr.af-south-1.amazonaws.com/myapp:latest",
+      "secrets": [
+        {
+          "name": "DB_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:af-south-1:123456789012:secret:prod/myapp/db-password:password::"
+        }
+      ],
+      "environment": [
+        { "name": "APP_ENV", "value": "production" }
+      ]
+    }
+  ]
+}</code></pre>
+
+<p>The ECS agent resolves the secret at launch time and injects it as an environment variable inside the container. The secret value is never visible in the task definition JSON stored in ECS.</p>
+
+<h3>Dockerfile hardening</h3>
+
+<pre><code class="lang-dockerfile">FROM node:20-alpine
+
+# Create non-root user
+RUN addgroup -S appgroup &amp;&amp; adduser -S appuser -G appgroup
+
+WORKDIR /app
+COPY --chown=appuser:appgroup package*.json ./
+RUN npm ci --omit=dev
+
+COPY --chown=appuser:appgroup . .
+
+# Switch to non-root before running
+USER appuser
+
+EXPOSE 8080
+CMD ["node", "server.js"]</code></pre>
+
+<p>Enable read-only root filesystem in the task definition:</p>
+
+<pre><code class="lang-json">{
+  "readonlyRootFilesystem": true,
+  "mountPoints": [
+    { "containerPath": "/tmp", "sourceVolume": "tmp-volume" }
+  ]
+}</code></pre>
+
+<hr>
+
+<h2>10. POPIA and AWS Data Residency (South Africa)</h2>
+
+<p>The Protection of Personal Information Act (POPIA) requires personal information of South African data subjects to be processed lawfully, and cross-border transfers require adequate protection or consent.</p>
+
+<h3>af-south-1 (Cape Town) — primary region for SA data</h3>
+
+<pre><code class="lang-bash"># Default all new resources to af-south-1
+aws configure set region af-south-1
+
+# Verify S3 bucket is in Cape Town
+aws s3api get-bucket-location --bucket my-sa-bucket</code></pre>
+
+<h3>S3 bucket policy blocking replication out of af-south-1</h3>
+
+<pre><code class="lang-json">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyNonCapeTownReplication",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:ReplicateObject",
+      "Resource": "arn:aws:s3:::my-sa-bucket/*",
+      "Condition": {
+        "StringNotEquals": {
+          "s3:LocationConstraint": "af-south-1"
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+<h3>SCP to prevent data leaving the region</h3>
+
+<p>Apply at the Organizations OU level for SA-data accounts:</p>
+
+<pre><code class="lang-json">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyOutsideAfSouth1",
+      "Effect": "Deny",
+      "Action": [
+        "s3:CreateBucket",
+        "rds:CreateDBInstance",
+        "dynamodb:CreateTable",
+        "ec2:RunInstances"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": "af-south-1"
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+<h3>Services not yet in af-south-1</h3>
+
+<p>Some services are not available in af-south-1 as of early 2026 — notably portions of Bedrock, some Macie features, and certain Cognito advanced features. When you must use a service outside af-south-1 for a SA-data workload:</p>
+
+<ol><li>Conduct a POPIA cross-border transfer assessment</li><li>Ensure the destination country has adequate protection (EU is generally acceptable)</li><li>Document the necessity and implement access controls to minimise exposure</li><li>Prefer eu-west-1 (Ireland) or eu-central-1 (Frankfurt) over US regions for SA cross-border transfers</li></ol>
+
+<hr>
+
+<h2>11. Gotchas</h2>
+
+<p><strong>IAM eventual consistency (up to 60 seconds)</strong> IAM changes propagate globally but not instantly. If a CI/CD pipeline creates a role and immediately uses it in the next step, it may fail with <code>AccessDenied</code>. Add a <code>sleep 10</code> after <code>create-role</code> or poll with retries in automation.</p>
+
+<p><strong>Resource-based policy vs identity-based policy precedence</strong> For cross-account access, both the identity-based policy (in the caller's account) AND the resource-based policy (on the target resource) must allow the action. For same-account access, either one is sufficient — the resource-based policy alone can grant access without any identity-based policy.</p>
+
+<p><strong>SCPs do not affect the root user</strong> An SCP with <code>"Effect": "Deny", "Action": "*"</code> applied to an account will restrict all IAM principals — but the root user of that account is immune. Protect root accounts with MFA, no access keys, and limit root use to billing and account recovery only.</p>
+
+<p><strong>Security group changes are immediate; NACL changes are not</strong> Security group rule changes take effect immediately for new and existing connections (stateful). NACL changes affect new packets only — existing sessions may complete under old rules depending on connection state.</p>
+
+<p><strong>Secrets Manager costs add up</strong></p>
+
+<p><strong>KMS key deletion is irreversible after waiting period</strong></p>
+
+<p><strong>Lambda execution role is evaluated at invocation, not at deploy time</strong> You can deploy a Lambda with an overly permissive role and tests will pass. The role is only checked when the API call is actually made at runtime. Write integration tests that verify the function succeeds with its actual role, not with your developer credentials.</p>
+
+<p><strong>S3 public block settings are account-level and bucket-level</strong> Even if a bucket policy allows public access, the S3 Block Public Access setting (account or bucket level) overrides it. Conversely, if Block Public Access is off, a permissive bucket policy or ACL can make objects public. Enable Block Public Access at the account level as a default.</p>
+
+<pre><code class="lang-bash"># Enable account-level S3 Block Public Access
+aws s3control put-public-access-block \
+  --account-id 123456789012 \
+  --public-access-block-configuration \
+    BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true</code></pre>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/aws/security/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

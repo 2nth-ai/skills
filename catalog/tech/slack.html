@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/slack — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">slack</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/slack/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/slack</div>
+      <h1>SLACK</h1>
+      <p class="skill-desc">Slack integration skill.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Slack Web API, Events API, Slash Commands, Block Kit, Cloudflare Workers</span>
+        
+      </div>
+      
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Slack Integration</h1>
+
+<p>Slack is the most direct AI agent surface for business teams. A mention or slash command is a natural agent invocation — the user is already in context, expects a reply, and can act on it immediately.</p>
+
+<p>The <strong>2nth.ai pattern</strong>: Slack event → Cloudflare Worker → signature verify (3ms) → Workers AI classify (50ms) → Claude draft reply → <code>chat.postMessage</code>.</p>
+
+<h2>App setup</h2>
+
+<h3>Create the app (app manifest)</h3>
+<pre><code class="lang-yaml"># slack-app-manifest.yaml — paste into api.slack.com/apps → Create from manifest
+display_information:
+  name: 2nth Assistant
+  description: AI-powered business assistant for your workspace
+  background_color: "#003459"
+
+features:
+  bot_user:
+    display_name: 2nth
+    always_online: true
+  slash_commands:
+    - command: /ask
+      url: https://your-worker.workers.dev/slack/command
+      description: Ask the 2nth AI assistant
+      usage_hint: "[your question]"
+      should_escape: false
+
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read       # receive @mentions
+      - chat:write               # send messages
+      - chat:write.public        # post to channels the bot isn't in
+      - commands                 # receive slash commands
+      - channels:history         # read channel messages (for context)
+      - im:history               # read DMs
+      - im:write                 # open DMs
+      - users:read               # resolve user display names
+      - channels:read            # list channels
+
+settings:
+  event_subscriptions:
+    request_url: https://your-worker.workers.dev/slack/events
+    bot_events:
+      - app_mention              # @2nth in any channel
+      - message.im               # DM to the bot
+  interactivity:
+    is_enabled: true
+    request_url: https://your-worker.workers.dev/slack/interact
+  org_deploy_enabled: false
+  socket_mode_enabled: false   # Workers use HTTP, not Socket Mode</code></pre>
+
+<h3>Required secrets</h3>
+<pre><code class="lang-bash">wrangler secret put SLACK_BOT_TOKEN       # xoxb-... from OAuth &amp; Permissions
+wrangler secret put SLACK_SIGNING_SECRET  # from Basic Information → App Credentials</code></pre>
+
+<h2>Signature verification</h2>
+
+<p>Every request from Slack must be verified. Skip this and your Worker is an open endpoint.</p>
+
+<pre><code class="lang-typescript">async function verifySlackSignature(request: Request, env: Env): Promise&lt;boolean&gt; {
+  const timestamp = request.headers.get('X-Slack-Request-Timestamp') ?? '';
+  const slackSig  = request.headers.get('X-Slack-Signature') ?? '';
+  const body      = await request.text();
+
+  // Reject replays older than 5 minutes
+  if (Math.abs(Date.now() / 1000 - parseInt(timestamp)) &gt; 300) return false;
+
+  const sigBase = `v0:${timestamp}:${body}`;
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(env.SLACK_SIGNING_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(sigBase));
+  const hex = 'v0=' + Array.from(new Uint8Array(sig)).map(b =&gt; b.toString(16).padStart(2, '0')).join('');
+
+  return hex === slackSig;
+}</code></pre>
+
+<h2>The 3-second rule — critical pattern</h2>
+
+<p>Slack times out any event endpoint that doesn't respond within <strong>3 seconds</strong>. AI responses take 2–10 seconds. The solution: ack immediately, process with <code>waitUntil</code>.</p>
+
+<pre><code class="lang-typescript">export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise&lt;Response&gt; {
+    const body = await request.text();
+
+    // Verify before anything else
+    if (!await verifySlackSignature(request.clone(), env)) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+
+    const payload = JSON.parse(body);
+
+    // Slack URL verification challenge (happens once on setup)
+    if (payload.type === 'url_verification') {
+      return Response.json({ challenge: payload.challenge });
+    }
+
+    // ACK IMMEDIATELY — Slack requires &lt; 3s
+    const ackResponse = new Response('', { status: 200 });
+
+    // Process async — Worker keeps running after response is sent
+    ctx.waitUntil(handleEvent(payload.event, env));
+
+    return ackResponse;
+  }
+};</code></pre>
+
+<h2>Event handling</h2>
+
+<h3>app_mention — the core AI pattern</h3>
+<pre><code class="lang-typescript">async function handleEvent(event: any, env: Env) {
+  if (event.type !== 'app_mention' &amp;&amp; event.type !== 'message') return;
+  if (event.bot_id) return; // ignore messages from bots (including ourselves)
+
+  const text = event.text.replace(/&lt;@[A-Z0-9]+&gt;/g, '').trim(); // strip @mention
+  const channel = event.channel;
+  const threadTs = event.thread_ts ?? event.ts; // reply in thread
+
+  // Show typing indicator
+  await postTypingIndicator(channel, env);
+
+  // 1. Classify with Workers AI (fast, edge)
+  const classification = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+    messages: [
+      { role: 'system', content: 'Classify this message as one of: erp_query | document_search | report | general. Reply with one word.' },
+      { role: 'user', content: text.slice(0, 500) },
+    ],
+  });
+  const intent = classification.response.trim().toLowerCase();
+
+  // 2. Route based on intent
+  let reply: string;
+  if (intent === 'erp_query') {
+    reply = await handleERPQuery(text, env);
+  } else if (intent === 'report') {
+    reply = await handleReportRequest(text, env);
+  } else {
+    // General — Claude via AI Gateway
+    reply = await draftWithClaude(text, env);
+  }
+
+  // 3. Post reply in thread
+  await postMessage(channel, threadTs, reply, env);
+}
+
+async function draftWithClaude(text: string, env: Env): Promise&lt;string&gt; {
+  const res = await fetch(env.AI_GATEWAY_URL + '/anthropic/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 600,
+      messages: [{ role: 'user', content: text }],
+      system: 'You are a helpful business assistant. Be concise and direct. Use plain text suitable for Slack.',
+    }),
+  }).then(r =&gt; r.json());
+  return res.content[0].text;
+}</code></pre>
+
+<h2>Slash commands</h2>
+
+<p>Slash commands arrive as <code>application/x-www-form-urlencoded</code>, not JSON. They also require a sub-3-second response but can use <code>response_url</code> for delayed replies.</p>
+
+<pre><code class="lang-typescript">async function handleSlashCommand(request: Request, env: Env, ctx: ExecutionContext): Promise&lt;Response&gt; {
+  const data = await request.formData();
+  const command  = data.get('command');   // /ask
+  const text     = data.get('text');      // everything after /ask
+  const userId   = data.get('user_id');
+  const responseUrl = data.get('response_url'); // for delayed replies
+
+  // Ack with an immediate "thinking" message
+  const ack = Response.json({
+    response_type: 'in_channel',
+    text: `Processing: _${text}_...`,
+  });
+
+  // Process and post the real reply using response_url
+  ctx.waitUntil((async () =&gt; {
+    const reply = await draftWithClaude(text as string, env);
+    await fetch(responseUrl as string, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        response_type: 'in_channel',
+        replace_original: true,
+        blocks: buildReplyBlocks(text as string, reply, userId as string),
+      }),
+    });
+  })());
+
+  return ack;
+}</code></pre>
+
+<h2>Web API — posting messages</h2>
+
+<pre><code class="lang-typescript">async function postMessage(channel: string, threadTs: string, text: string, env: Env) {
+  await fetch('https://slack.com/api/chat.postMessage', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${env.SLACK_BOT_TOKEN}`,
+    },
+    body: JSON.stringify({
+      channel,
+      thread_ts: threadTs,  // reply in thread — always do this
+      text,                  // fallback for notifications
+      blocks: buildReplyBlocks('', text, ''), // rich Block Kit version
+    }),
+  });
+}
+
+// Fetch user display name
+async function getUserName(userId: string, env: Env): Promise&lt;string&gt; {
+  const res = await fetch(`https://slack.com/api/users.info?user=${userId}`, {
+    headers: { Authorization: `Bearer ${env.SLACK_BOT_TOKEN}` },
+  }).then(r =&gt; r.json());
+  return res.user?.display_name ?? res.user?.real_name ?? userId;
+}</code></pre>
+
+<h2>Block Kit — rich messages</h2>
+
+<p>Block Kit turns plain text into interactive, structured messages. Always include a <code>text</code> fallback for notifications.</p>
+
+<pre><code class="lang-typescript">function buildReplyBlocks(question: string, answer: string, userId: string) {
+  const blocks: any[] = [];
+
+  if (question) {
+    blocks.push({
+      type: 'context',
+      elements: [{ type: 'mrkdwn', text: `*Question from &lt;@${userId}&gt;:* ${question}` }],
+    });
+  }
+
+  blocks.push({
+    type: 'section',
+    text: { type: 'mrkdwn', text: answer },
+  });
+
+  blocks.push({ type: 'divider' });
+
+  blocks.push({
+    type: 'actions',
+    elements: [
+      {
+        type: 'button',
+        text: { type: 'plain_text', text: '👍 Helpful' },
+        style: 'primary',
+        action_id: 'feedback_positive',
+      },
+      {
+        type: 'button',
+        text: { type: 'plain_text', text: '✏️ Refine' },
+        action_id: 'feedback_refine',
+      },
+      {
+        type: 'button',
+        text: { type: 'plain_text', text: '📋 Copy to D1' },
+        action_id: 'save_to_db',
+      },
+    ],
+  });
+
+  blocks.push({
+    type: 'context',
+    elements: [{ type: 'mrkdwn', text: `_Powered by 2nth.ai · ${new Date().toLocaleTimeString()}_` }],
+  });
+
+  return blocks;
+}</code></pre>
+
+<h2>Interactivity — handling button clicks</h2>
+
+<p>Button clicks (and modal submissions) are sent to the <code>interactivity</code> URL as <code>payload=<urlencoded JSON></code>.</p>
+
+<pre><code class="lang-typescript">async function handleInteraction(request: Request, env: Env): Promise&lt;Response&gt; {
+  const body = await request.formData();
+  const payload = JSON.parse(body.get('payload') as string);
+
+  if (payload.type === 'block_actions') {
+    const action = payload.actions[0];
+
+    if (action.action_id === 'save_to_db') {
+      // Extract the message text and store in D1
+      const messageText = payload.message.blocks
+        .find((b: any) =&gt; b.type === 'section')?.text?.text ?? '';
+
+      await env.DB.prepare(
+        'INSERT INTO saved_messages (user_id, content, channel, saved_at) VALUES (?,?,?,?)'
+      ).bind(payload.user.id, messageText, payload.channel.id, Date.now()).run();
+
+      // Update the message to show it was saved
+      await fetch('https://slack.com/api/chat.update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.SLACK_BOT_TOKEN}` },
+        body: JSON.stringify({
+          channel: payload.channel.id,
+          ts: payload.message.ts,
+          text: payload.message.text,
+          blocks: [...payload.message.blocks.slice(0, -1),
+            { type: 'context', elements: [{ type: 'mrkdwn', text: '✅ _Saved to database_' }] }],
+        }),
+      });
+    }
+  }
+
+  return new Response('', { status: 200 });
+}</code></pre>
+
+<h2>Incoming webhooks — simplest send pattern</h2>
+
+<p>For one-way notifications (alerts, scheduled reports, ERP events), Incoming Webhooks need no token management.</p>
+
+<pre><code class="lang-typescript">async function notify(webhookUrl: string, message: string) {
+  await fetch(webhookUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      text: message,
+      blocks: [
+        { type: 'section', text: { type: 'mrkdwn', text: message } },
+        { type: 'context', elements: [{ type: 'mrkdwn', text: `&lt;!date^${Math.floor(Date.now()/1000)}^{date_short_pretty} at {time}|now&gt;` }] },
+      ],
+    }),
+  });
+}
+
+// Triggered from Pub/Sub → Worker (GCP event pipeline)
+await notify(env.SLACK_WEBHOOK_OVERDUE, `⚠️ *Overdue invoice alert* — Acme Corp owes R 24,500 (18 days)`);</code></pre>
+
+<h2>wrangler.toml — full config</h2>
+
+<pre><code class="lang-toml">name = "slack-bot"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "..."
+
+[[d1_databases]]
+binding = "DB"
+database_name = "slack-bot"
+database_id = "..."
+
+[ai]
+binding = "AI"
+
+[vars]
+AI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/YOUR_ACCOUNT/YOUR_GATEWAY"</code></pre>
+
+<h2>Router — single Worker, multiple paths</h2>
+
+<pre><code class="lang-typescript">export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise&lt;Response&gt; {
+    if (!await verifySlackSignature(request.clone(), env)) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+
+    const url = new URL(request.url);
+
+    if (url.pathname === '/slack/events')   return handleEvents(request, env, ctx);
+    if (url.pathname === '/slack/command')  return handleSlashCommand(request, env, ctx);
+    if (url.pathname === '/slack/interact') return handleInteraction(request, env);
+
+    return new Response('Not found', { status: 404 });
+  }
+};</code></pre>
+
+<h2>Rate limits</h2>
+
+<table><thead><tr><th>Endpoint</th><th>Tier</th><th>Limit</th></tr></thead><tbody><tr><td><code>chat.postMessage</code></td><td>Tier 3</td><td>1 req/sec per channel</td></tr><tr><td><code>users.info</code></td><td>Tier 4</td><td>20+ req/min</td></tr><tr><td><code>conversations.history</code></td><td>Tier 3</td><td>50 req/min</td></tr><tr><td>Incoming webhooks</td><td>—</td><td>1 req/sec</td></tr><tr><td>Event delivery retries</td><td>—</td><td>3 retries, exponential backoff</td></tr></tbody></table>
+
+<p>Cache user info in KV (<code>user:{userId}</code>, TTL 3600) — calling <code>users.info</code> on every message will hit rate limits fast.</p>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong>3-second timeout</strong> — non-negotiable. Always <code>ctx.waitUntil()</code> for AI work. The ack must be sent before the AI call starts.</li><li><strong>Signature verification</strong> — do it on every request. The timestamp check prevents replay attacks — reject anything older than 5 minutes.</li><li><strong>Bot message loops</strong> — always check <code>event.bot_id</code> before processing. Without this your bot will reply to itself indefinitely.</li><li><strong>Thread replies</strong> — always pass <code>thread_ts</code> to <code>chat.postMessage</code> when replying to a mention. Without it you flood the channel.</li><li><strong><code>text</code> fallback</strong> — Block Kit messages require a <code>text</code> field for notifications and accessibility. Never omit it.</li><li><strong>Slash command formData</strong> — slash commands send <code>application/x-www-form-urlencoded</code>, not JSON. Use <code>request.formData()</code>, not <code>request.json()</code>.</li><li><strong><code>response_url</code> expiry</strong> — slash command <code>response_url</code> tokens expire after 30 minutes and can only be used 5 times.</li><li><strong>Socket Mode</strong> — Socket Mode requires a persistent WebSocket connection, which Workers don't support. Use HTTP event subscriptions.</li><li><strong>App Home tab</strong> — use <code>app_home_opened</code> to build a personal dashboard per user — summary of their invoices, tasks, or alerts.</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/slack/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

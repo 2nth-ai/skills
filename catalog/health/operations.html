@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Healthcare Operations — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Healthcare Operations</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/health/operations/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Healthcare Operations</div>
+      <h1>HEALTHCARE OPERATIONS</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Healthcare Operations</h1>
+
+<p>This skill carries the operational knowledge of a senior Healthcare Operations Manager — the person responsible for keeping the facility running safely, efficiently, and sustainably. It covers bed management, capacity planning, staffing, theatre scheduling, outpatient throughput, supply chain, and the South African regulatory and infrastructure context.</p>
+
+<hr>
+
+<h2>1. Patient Flow &amp; Bed Management</h2>
+
+<p>Patient flow is the single biggest lever in healthcare operations. Poor flow manifests as ED overcrowding, surgical delays, staff burnout, and preventable deterioration. Every other operational problem is downstream of it.</p>
+
+<h3>Occupancy Targets</h3>
+
+<table><thead><tr><th>Ward Type</th><th>Target Occupancy</th><th>Rationale</th></tr></thead><tbody><tr><td>General medical/surgical ward</td><td>82–85%</td><td>Headroom for surges; &lt;80% signals inefficiency, &gt;90% signals unsafe staffing load</td></tr><tr><td>ICU / High care</td><td>70–75%</td><td>Must maintain reserve capacity for unplanned admissions</td></tr><tr><td>Maternity</td><td>75–80%</td><td>Unpredictable demand curve; buffer required</td></tr><tr><td>Paediatrics</td><td>70–80%</td><td>Seasonal peaks (winter respiratory) require buffer</td></tr><tr><td>Rehabilitation</td><td>85–90%</td><td>More predictable, planned admissions; higher tolerable occupancy</td></tr><tr><td>Private hospital facility-wide</td><td>65–75%</td><td>Lower than public; elective mix is more schedulable</td></tr></tbody></table>
+
+<p>Occupancy above 92% consistently predicts adverse events, increased LOS, and staff errors. If any general ward exceeds this for more than 48 consecutive hours, escalate to amber capacity level.</p>
+
+<h3>Bed Turnaround Time</h3>
+
+<p>Bed turnaround time = the interval from a patient leaving a bed to the next patient occupying it. This includes:</p>
+<ol><li>Notification to housekeeping</li><li>Physical cleaning and linen change (standard: 20–30 min)</li><li>Inspection and sign-off</li><li>Bed allocation by admissions or bed manager</li></ol>
+
+<p><strong>Target</strong>: &lt;45 minutes for standard beds; &lt;90 minutes for isolation rooms requiring terminal clean.</p>
+
+<p>Failures in turnaround are almost always process failures, not capacity failures — track the breakdown by step to find the bottleneck.</p>
+
+<h3>Discharge Planning</h3>
+
+<p>Discharge planning should start at admission. The biggest driver of delayed discharges is social and systemic, not clinical.</p>
+
+<table><thead><tr><th>Cause of Delayed Discharge</th><th>Intervention</th></tr></thead><tbody><tr><td>Awaiting specialist review</td><td>Embed consultants on ward rounds at defined times; do not wait for them to appear</td></tr><tr><td>Awaiting transport</td><td>Book transport morning before, not on the day</td></tr><tr><td>Awaiting pharmacy (TTO — to take out medication)</td><td>Initiate TTO request 4 hours before expected discharge</td></tr><tr><td>Family/carer not arranged</td><td>Social work referral within 24 hours of admission for vulnerable patients</td></tr><tr><td>Post-acute placement (step-down, frail care)</td><td>Bed manager to maintain relationships with step-down facilities; pre-register patient within 24 hours of admission</td></tr><tr><td>Awaiting final bloods/imaging result</td><td>Proactive escalation by ward nurse at 09:00 daily for any pending result blocking discharge</td></tr></tbody></table>
+
+<p><strong>Discharge Rounds</strong>: At least one formal discharge round daily (08:00–10:00 is the optimal window). Identify patients likely to be discharged that day; flag blockers; assign an owner to each blocker with a resolution time.</p>
+
+<p><strong>Same-day discharge targets</strong>: elective surgical patients should have a defined discharge time at pre-admission. If the patient is not discharged by 14:00, a nurse must review and escalate.</p>
+
+<h3>ED to Inpatient Flow (Bottleneck Analysis)</h3>
+
+<p>The ED-to-ward pathway is the most common chokepoint in acute facilities.</p>
+
+<pre><code class="lang-text">[ED Triage] → [ED Assessment &amp; Treatment] → [Admission Decision] → [Bed Request]
+    → [Bed Assignment] → [Patient Transfer] → [Ward Acceptance]</code></pre>
+
+<p>Each handoff is a potential delay. Measure each step:</p>
+
+<table><thead><tr><th>Step</th><th>Acceptable Duration</th><th>Common Failure Mode</th></tr></thead><tbody><tr><td>Triage to first doctor contact</td><td>&lt;30 min (ESI 2), &lt;60 min (ESI 3)</td><td>Nurse-to-doctor handoff not standardised</td></tr><tr><td>Admission decision to bed request</td><td>&lt;30 min</td><td>Registrar delays; consultant not available</td></tr><tr><td>Bed request to bed assigned</td><td>&lt;60 min</td><td>No available beds; bed manager not resourced</td></tr><tr><td>Bed assigned to patient in ward bed</td><td>&lt;30 min</td><td>Transport unavailable; ward not ready</td></tr></tbody></table>
+
+<p>Total acceptable time from admission decision to ward bed: <strong>&lt;2 hours</strong> for stable patients, <strong>&lt;4 hours</strong> for the facility-wide benchmark.</p>
+
+<p><strong>Boarding</strong>: when patients occupy ED beds while waiting for inpatient beds. Boarding &gt;2 hours should trigger a bed manager intervention. Boarding &gt;4 hours requires a capacity escalation review.</p>
+
+<h3>Length of Stay (LOS) Management</h3>
+
+<p>ALOS (Average Length of Stay) benchmarks vary significantly by ward type, payer mix, and case complexity. Use Diagnosis Related Group (DRG) benchmarks rather than global ALOS for meaningful comparison.</p>
+
+<table><thead><tr><th>Ward / Case Category</th><th>Public Sector ALOS (SA)</th><th>Private Sector ALOS (SA)</th></tr></thead><tbody><tr><td>General medical (non-surgical)</td><td>5–7 days</td><td>3–5 days</td></tr><tr><td>General surgery</td><td>4–6 days</td><td>2–4 days</td></tr><tr><td>Orthopaedics (elective)</td><td>5–8 days</td><td>3–5 days</td></tr><tr><td>Orthopaedics (trauma)</td><td>8–14 days</td><td>5–10 days</td></tr><tr><td>ICU</td><td>4–7 days</td><td>3–6 days</td></tr><tr><td>Maternity (normal delivery)</td><td>2–3 days</td><td>1–2 days</td></tr><tr><td>Maternity (C-section)</td><td>4–5 days</td><td>3–4 days</td></tr><tr><td>Paediatrics (respiratory)</td><td>3–5 days</td><td>2–4 days</td></tr><tr><td>Stroke</td><td>10–14 days</td><td>7–10 days</td></tr></tbody></table>
+
+<p><strong>LOS outliers</strong> (&gt;1.5× expected) should trigger review: is this a clinical complexity issue, a discharge barrier, or a process failure?</p>
+
+<pre><code class="lang-text">LOS Index = Observed ALOS ÷ Expected ALOS (DRG-adjusted)</code></pre>
+<p>A LOS Index &gt;1.2 for any DRG grouping requires a root-cause review.</p>
+
+<hr>
+
+<h2>2. Capacity Planning</h2>
+
+<h3>Demand Forecasting</h3>
+
+<p>Healthcare demand is not random — it is seasonal, day-of-week dependent, and event-driven. Building a 12-month demand forecast requires at least 3 years of historical data.</p>
+
+<p><strong>Seasonal Patterns (Southern Hemisphere / SA context)</strong>:</p>
+
+<table><thead><tr><th>Period</th><th>Pattern</th></tr></thead><tbody><tr><td>May–August (winter)</td><td>Spike in respiratory admissions (children and elderly); plan for +15–25% paediatric and medical bed demand</td></tr><tr><td>December–January (summer)</td><td>Trauma spike (MVAs, drownings, assault); elective demand drops; staff leave peaks</td></tr><tr><td>February–April</td><td>Return of elective surgical demand; steady state</td></tr><tr><td>September–November</td><td>Allergy/asthma season; moderate increase</td></tr></tbody></table>
+
+<p><strong>Day-of-Week Patterns</strong>:</p>
+<ul><li>Mondays: highest ED presentations and elective surgical starts</li><li>Fridays: highest elective discharges; avoid scheduling complex cases (incomplete recovery before weekend)</li><li>Weekends: 30–40% reduction in elective activity; emergency admissions continue at ~80% of weekday rate</li><li>Public holidays: treat as Sundays; plan for skeleton elective schedule and full emergency cover</li></ul>
+
+<p><strong>Demand Forecasting Model</strong>:</p>
+<pre><code class="lang-text">Projected_Admissions(week) =
+    Base_Volume × Seasonal_Index(month) × DOW_Factor × Event_Adjustment</code></pre>
+<p>Where:</p>
+<ul><li><code>Seasonal_Index</code> = that month's historical volume ÷ annual average monthly volume</li><li><code>DOW_Factor</code> = that day's historical volume ÷ average daily volume</li><li><code>Event_Adjustment</code> = manual override for known demand drivers (school holidays, major public events, disease outbreaks)</li></ul>
+
+<h3>Escalation Levels</h3>
+
+<p>Capacity escalation is a formal process, not an informal conversation. Every facility must have a written escalation plan with triggers, actions, and owners at each level.</p>
+
+<table><thead><tr><th>Level</th><th>Bed Occupancy</th><th>Key Actions</th></tr></thead><tbody><tr><td>Green (normal)</td><td>&lt;85%</td><td>Business as usual; bed manager monitors hourly</td></tr><tr><td>Amber</td><td>85–92%</td><td>Bed manager activates daily capacity calls; discharge round intensified; elective admissions reviewed</td></tr><tr><td>Red</td><td>92–96%</td><td>CEO / Clinical Manager notified; elective admissions suspended except oncology/chemo; step-down beds activated; agency staffing authorised</td></tr><tr><td>Black (full capacity)</td><td>&gt;96%</td><td>Ambulance diversion (where applicable); mutual aid agreements activated; Command and Control convened; all postponable electives cancelled; NDOH/DoH notified (public sector)</td></tr></tbody></table>
+
+<p>Escalation levels must be declared formally (email or EHR system flag), not just communicated verbally. Undeclared escalations hide systemic problems from leadership.</p>
+
+<h3>Surge Capacity Protocols</h3>
+
+<p>Every facility should have a documented surge capacity plan that identifies:</p>
+
+<ol><li><strong>Flex beds</strong>: which wards can expand beyond normal licensed capacity, under what conditions, and with what staffing changes. Typically: day wards converted to overnight wards, procedure rooms converted to observation beds, recovery areas used for step-down.</li><li><strong>Cohorting</strong>: grouping patients with the same diagnosis (e.g., respiratory infections) in a single area to free up other wards and reduce infection risk.</li><li><strong>Discharge acceleration</strong>: list of patients who can be discharged to community care under surge conditions, with GP notification.</li><li><strong>Mutual aid</strong>: written agreements with neighbouring facilities for patient transfers when one site reaches black.</li></ol>
+
+<h3>Elective vs Emergency Bed Allocation</h3>
+
+<p>In mixed facilities (planned and emergency admissions), the balance between elective and emergency beds is a daily management decision, not a fixed policy.</p>
+
+<p><strong>Rule of thumb</strong> for general hospitals:</p>
+<pre><code class="lang-text">Emergency reserve beds = Expected_Emergency_Admissions(next 24h) × 1.2
+Elective beds = Total_Available_Beds − Emergency_Reserve − Occupied_Beds</code></pre>
+
+<p>Elective admissions that cannot be accommodated should be rescheduled, not cancelled day-of where avoidable. Day-of cancellations are a waste indicator and a patient experience failure.</p>
+
+<hr>
+
+<h2>3. Staffing Models</h2>
+
+<h3>Nurse-to-Patient Ratios</h3>
+
+<p>These are minimum safe ratios. In practice, skill mix, patient acuity, and ward layout affect the real number.</p>
+
+<table><thead><tr><th>Ward Type</th><th>Day Shift Ratio</th><th>Night Shift Ratio</th><th>Notes</th></tr></thead><tbody><tr><td>ICU</td><td>1:1–1:2</td><td>1:1–1:2</td><td>1:1 for ventilated/unstable patients</td></tr><tr><td>High care / HDU</td><td>1:2–1:3</td><td>1:2–1:3</td><td>Step down from ICU</td></tr><tr><td>General medical/surgical</td><td>1:6–1:8</td><td>1:8–1:10</td><td>SA public sector often runs 1:10–1:15; unsafe</td></tr><tr><td>Maternity (antenatal)</td><td>1:6–1:8</td><td>1:8–1:10</td><td></td></tr><tr><td>Maternity (labour ward)</td><td>1:1 in active labour</td><td>1:2–1:3</td><td>SANC guideline</td></tr><tr><td>Paediatrics</td><td>1:4–1:6</td><td>1:6–1:8</td><td>Higher dependency than adult general</td></tr><tr><td>Emergency Department</td><td>1:3–1:4 (triage to treatment)</td><td>1:4–1:5</td><td>Highly variable; triage acuity matters</td></tr><tr><td>Theatre (scrub/circulator)</td><td>1:1 scrub + 1 circulator per table</td><td>—</td><td>Plus anaesthetic nurse</td></tr><tr><td>Psychiatry</td><td>1:6–1:8</td><td>1:8–1:10</td><td>High observation patients: 1:1</td></tr></tbody></table>
+
+<p>South African Nursing Council (SANC) does not publish hard numerical ratios for most ward types but holds facilities accountable for safe staffing through inspection. DoH norms documents provide indicative ratios for public facilities.</p>
+
+<h3>Shift Patterns</h3>
+
+<table><thead><tr><th>Pattern</th><th>Description</th><th>Best Fit</th></tr></thead><tbody><tr><td>3×8</td><td>Three 8-hour shifts per day (06:00–14:00, 14:00–22:00, 22:00–06:00)</td><td>ICU, emergency, pharmacy</td></tr><tr><td>2×12</td><td>Two 12-hour shifts (07:00–19:00, 19:00–07:00)</td><td>General wards; reduces handovers; staff prefer it</td></tr><tr><td>5×8 office hours</td><td>Standard administrative shift</td><td>Operational managers, clinic staff</td></tr><tr><td>Split shifts</td><td>Non-standard; used to cover demand peaks</td><td>Outpatient, procedure rooms</td></tr></tbody></table>
+
+<p>12-hour shifts reduce handovers (a major patient safety risk) but increase fatigue risk for night workers. Rotate nurses to no more than 3 consecutive night shifts before a rest day. Night shift fatigue after the 12th hour is a documented patient safety risk.</p>
+
+<h3>Rostering Principles</h3>
+
+<ol><li><strong>Publish rosters at least 4 weeks in advance.</strong> Last-minute changes are a staff satisfaction and retention problem.</li><li><strong>Match staffing to demand by shift.</strong> Day Monday rostering should exceed night Friday rostering. Use historical admission and patient dependency data to calibrate.</li><li><strong>Ensure continuity of care.</strong> A patient admitted on Monday should see the same primary nurse more than once in their stay where possible. Random assignment destroys continuity.</li><li><strong>Build in mandatory rest.</strong> Minimum 11 hours between shifts (Basic Conditions of Employment Act applies). Do not roster back-to-back 12-hour shifts with insufficient rest.</li><li><strong>Pre-approve leave caps.</strong> Maximum % of a ward's nursing establishment that can be on leave simultaneously (typically 15–20%). Enforce at roster approval, not on the day.</li></ol>
+
+<h3>Agency / Locum Governance</h3>
+
+<p>Agency and locum use is legitimate surge management but must be governed:</p>
+
+<table><thead><tr><th>Control</th><th>Standard</th></tr></thead><tbody><tr><td>Pre-approved supplier list</td><td>Only agencies with valid DoL compliance, BEE certification, and indemnity insurance</td></tr><tr><td>Competency verification</td><td>Agency nurse must present valid SANC registration + proof of relevant ward experience before first shift</td></tr><tr><td>Orientation</td><td>Minimum 30-minute site orientation before first shift; no floating agency nurse into ICU without demonstrated ICU competency</td></tr><tr><td>Rate cap</td><td>Defined maximum rate per grade per shift; escalations require CNM or DON sign-off</td></tr><tr><td>Agency spend %</td><td>Target &lt;10% of total nursing hours; &gt;20% indicates a systemic recruitment failure</td></tr><tr><td>Feedback loop</td><td>Grade agency nurses after each shift; do not re-engage nurses rated unsafe</td></tr></tbody></table>
+
+<h3>Skills Mix Planning</h3>
+
+<p>A ward's nursing team is not just a headcount — it is a skills portfolio.</p>
+
+<pre><code class="lang-text">Skills Mix = (Professional Nurses ÷ Total Nursing Hours) × 100</code></pre>
+
+<table><thead><tr><th>Ward Type</th><th>Target Professional Nurse %</th><th>Enrolled/Auxiliary Nurse %</th></tr></thead><tbody><tr><td>ICU</td><td>100%</td><td>0%</td></tr><tr><td>High care</td><td>80–100%</td><td>0–20%</td></tr><tr><td>General ward</td><td>50–60%</td><td>40–50%</td></tr><tr><td>Maternity</td><td>60–70%</td><td>30–40%</td></tr><tr><td>Psychiatric</td><td>60–70%</td><td>30–40%</td></tr></tbody></table>
+
+<p>A ward relying on &gt;50% enrolled or auxiliary nurses in a general setting is outside safe skill mix. Flag for recruitment action.</p>
+
+<hr>
+
+<h2>4. Operational KPIs</h2>
+
+<p>The metrics that determine whether a facility is running well. Report these at minimum monthly; track weekly at the operational level.</p>
+
+<h3>Core KPI Dashboard</h3>
+
+<table><thead><tr><th>KPI</th><th>Formula</th><th>Target</th><th>Red Flag</th></tr></thead><tbody><tr><td>Bed Occupancy Rate</td><td>(Occupied Bed Days ÷ Available Bed Days) × 100</td><td>82–85% (general)</td><td>&gt;92% sustained</td></tr><tr><td>Average Length of Stay (ALOS)</td><td>Total Inpatient Days ÷ Total Discharges</td><td>DRG-adjusted benchmark</td><td>&gt;1.2× expected</td></tr><tr><td>30-Day Readmission Rate</td><td>Readmissions within 30 days ÷ Total Discharges</td><td>&lt;8% (general)</td><td>&gt;12%</td></tr><tr><td>Theatre Utilisation Rate</td><td>(Scheduled Theatre Hours Used ÷ Available Theatre Hours) × 100</td><td>85%</td><td>&lt;75% or &gt;95%</td></tr><tr><td>ED Door-to-Doctor Time</td><td>Median time from ED arrival to first clinical contact</td><td>&lt;30 min (triage 1–2)</td><td>&gt;60 min</td></tr><tr><td>First-Case On-Time Start</td><td>% of first theatre cases starting within 15 min of scheduled time</td><td>&gt;85%</td><td>&lt;70%</td></tr><tr><td>Discharge Before Noon</td><td>% of discharges occurring before 12:00</td><td>&gt;30%</td><td>&lt;15%</td></tr><tr><td>Patient Satisfaction Score</td><td>HCAHPS or equivalent (% would recommend)</td><td>&gt;80%</td><td>&lt;70%</td></tr><tr><td>Staff Vacancy Rate</td><td>(Funded Vacant Posts ÷ Total Funded Posts) × 100</td><td>&lt;8%</td><td>&gt;15%</td></tr><tr><td>Overtime %</td><td>Overtime Hours ÷ Total Worked Hours</td><td>&lt;5%</td><td>&gt;10%</td></tr><tr><td>Agency Nursing %</td><td>Agency Nurse Hours ÷ Total Nursing Hours</td><td>&lt;10%</td><td>&gt;20%</td></tr><tr><td>Stockout Incidents</td><td># of stockouts per month on essential items list</td><td>0 critical</td><td>Any critical stockout</td></tr><tr><td>Incident Report Rate</td><td>Adverse events per 1,000 patient days</td><td>Trend down</td><td>Any never-event</td></tr></tbody></table>
+
+<h3>KPI Calculation Examples</h3>
+
+<pre><code class="lang-text">Bed Occupancy Rate:
+BOR = (Sum of daily midnight census for period ÷ (Available beds × Days in period)) × 100
+
+Readmission Rate:
+RAR = (Unplanned readmissions within 30 days ÷ Total index discharges) × 100
+
+Theatre Utilisation:
+TUR = (Actual case minutes ÷ (Allocated session minutes × Sessions)) × 100
+
+Overtime Percentage:
+OT% = (Overtime hours worked ÷ Total contracted hours) × 100</code></pre>
+
+<h3>Benchmarking Sources (South Africa)</h3>
+
+<ul><li><strong>Council for Health Service Accreditation of Southern Africa (COHSASA)</strong>: accreditation standards with operational benchmarks</li><li><strong>Hospital Association of South Africa (HASA)</strong>: private sector benchmarks, published periodically</li><li><strong>District Health Information System (DHIS)</strong>: public sector reporting on facility-level indicators</li><li><strong>National Core Standards (NCS)</strong>: DoH minimum standards for health establishments — the inspection framework</li></ul>
+
+<hr>
+
+<h2>5. Theatre / OR Management</h2>
+
+<p>Theatre is the revenue engine of a private hospital and the surgical capacity constraint of a public facility. Inefficiency here has outsized financial and clinical consequences.</p>
+
+<h3>Session Utilisation</h3>
+
+<pre><code class="lang-text">Session Utilisation = (Actual Case Minutes ÷ Allocated Session Minutes) × 100</code></pre>
+
+<p>Target: <strong>82–88%</strong> utilisation. Below 75% indicates poor case scheduling or surgeon no-shows. Above 92% indicates over-booking, which leads to rushed cases, overtime, and safety risk.</p>
+
+<p><strong>Measuring utilisation correctly</strong>: use case start to case end (wheels-in to wheels-out), not incision to close. Ancillary time (anaesthetic induction, positioning, setup) is part of the session cost.</p>
+
+<h3>Turnover Time</h3>
+
+<p>Turnover time = interval from previous patient leaving theatre to next patient entering.</p>
+
+<table><thead><tr><th>Case Category</th><th>Target Turnover Time</th></tr></thead><tbody><tr><td>Elective general surgery</td><td>20–25 min</td></tr><tr><td>Orthopaedic (standard implant)</td><td>25–30 min</td></tr><tr><td>Cardiac / neurosurgery</td><td>30–45 min</td></tr><tr><td>Laparoscopic procedures</td><td>20–25 min</td></tr><tr><td>Obstetrics (emergency Caesar)</td><td>No turnover target — emergency priority</td></tr></tbody></table>
+
+<p>Turnover is driven by: cleaning speed, instrument turnaround (CSSD throughput), anaesthetic team readiness, and patient prep in holding bay. Track each component separately.</p>
+
+<h3>First-Case On-Time Starts (FCOS)</h3>
+
+<p>FCOS = % of first cases per day starting within 15 minutes of scheduled time.</p>
+
+<p>Target: <strong>&gt;85%</strong> FCOS. Each delayed first case cascades through the rest of the list.</p>
+
+<p>Common FCOS failure causes:</p>
+<ul><li>Patient not pre-admitted; consent not signed</li><li>Surgeon delayed (private sector: multi-site commitments)</li><li>Anaesthetic team not ready</li><li>Instrument set not sterilised (CSSD failure)</li><li>Patient nil-by-mouth not confirmed</li></ul>
+
+<p><strong>Fix</strong>: structured theatre start checklist completed by 06:30 for a 07:00 list start. Bed manager confirms patient in holding bay by 06:45.</p>
+
+<h3>Theatre Cancellation Rate</h3>
+
+<pre><code class="lang-text">Cancellation Rate = (Day-of-surgery cancellations ÷ Scheduled cases) × 100</code></pre>
+
+<p>Target: <strong>&lt;3%</strong> for elective cases. Above 5% is a systemic problem.</p>
+
+<p>Root-cause categorise every cancellation:</p>
+<table><thead><tr><th>Reason</th><th>Benchmark % of Cancellations</th></tr></thead><tbody><tr><td>Patient unfit on day (medical)</td><td>30–40%</td></tr><tr><td>Patient did not arrive / refused</td><td>10–15%</td></tr><tr><td>Surgeon/anaesthetist unavailable</td><td>10–15%</td></tr><tr><td>Equipment/instrument unavailable</td><td>5–10%</td></tr><tr><td>Bed unavailable post-operatively</td><td>10–20%</td></tr><tr><td>Insufficient operating time</td><td>5–10%</td></tr></tbody></table>
+
+<p>Bed unavailability as a cause of theatre cancellation is a bed management failure, not a theatre failure — it requires operational escalation, not surgical process improvement.</p>
+
+<h3>Add-on Case Management</h3>
+
+<p>Add-on (unscheduled emergency) cases disrupt elective lists. Manage them with:</p>
+<ol><li>A designated emergency theatre slot per day (or per session) — kept free until 14:00 before being offered for electives</li><li>Triage protocol: life/limb-threatening cases bump the list immediately; urgent cases are slotted at the next available gap; semi-urgent cases scheduled for the following day</li><li>Clear communication protocol: surgeon, anaesthetist, and scrub nurse informed minimum 30 minutes before the add-on case</li></ol>
+
+<hr>
+
+<h2>6. Outpatient Operations</h2>
+
+<h3>Appointment Scheduling Models</h3>
+
+<table><thead><tr><th>Model</th><th>How It Works</th><th>Best Fit</th></tr></thead><tbody><tr><td>Fixed (stream) scheduling</td><td>Every patient booked for a specific time with equal slot length</td><td>Predictable, low-variability consultations</td></tr><tr><td>Wave scheduling</td><td>Multiple patients booked at the top of each hour; seen in order of arrival</td><td>High-volume clinics; accommodates late arrivals</td></tr><tr><td>Modified wave</td><td>Cluster bookings early in each hour; taper off toward the hour end</td><td>Good balance of efficiency and patient experience</td></tr><tr><td>Open access (demand-based)</td><td>No fixed appointments; patients arrive and are seen same day</td><td>ED, urgent care, walk-in clinics</td></tr><tr><td>Block scheduling</td><td>Blocks of time reserved for specific procedure types</td><td>Procedure rooms, echo labs, colposcopy</td></tr></tbody></table>
+
+<p>For most outpatient specialist clinics in South Africa: <strong>modified wave</strong> is the default. Book 2–3 patients at 08:00, one at 08:20, one at 08:40, one at 09:00, etc. This absorbs early lateness without creating a downstream cascade.</p>
+
+<h3>DNA (Did Not Attend) Rate Management</h3>
+
+<pre><code class="lang-text">DNA Rate = (DNAs ÷ Scheduled Appointments) × 100</code></pre>
+
+<p>Target: <strong>&lt;10%</strong> for most outpatient settings. Above 15% is a revenue and efficiency problem.</p>
+
+<table><thead><tr><th>DNA Reduction Intervention</th><th>Expected Impact</th></tr></thead><tbody><tr><td>SMS reminder 48 hours before appointment</td><td>-20–30% DNA rate</td></tr><tr><td>SMS reminder + call 24 hours before</td><td>-30–40% DNA rate</td></tr><tr><td>Online cancellation/rescheduling option</td><td>-10–15% DNA rate (converts DNA to cancellation, freeing the slot)</td></tr><tr><td>Overbooking by DNA rate %</td><td>Fills slots but risks overruns; use carefully</td></tr><tr><td>Waitlist management system</td><td>Automatically offers cancelled slots to waitlisted patients</td></tr></tbody></table>
+
+<p>In public sector settings where patient contact details are unreliable, DNA rates of 20–30% are common. Overbooking by 15–20% is standard operational practice.</p>
+
+<h3>Clinic Throughput Benchmarks</h3>
+
+<table><thead><tr><th>Specialty</th><th>Patients per Session (3.5h)</th><th>Average Consultation Time</th></tr></thead><tbody><tr><td>General practitioner (private)</td><td>15–20</td><td>10–12 min</td></tr><tr><td>General outpatient (public OPD)</td><td>25–40</td><td>5–8 min</td></tr><tr><td>Internal medicine specialist</td><td>8–12</td><td>15–20 min</td></tr><tr><td>Surgical outpatient (new)</td><td>8–10</td><td>20–30 min</td></tr><tr><td>Surgical outpatient (follow-up)</td><td>12–15</td><td>10–15 min</td></tr><tr><td>Antenatal clinic (ANC)</td><td>20–30</td><td>10–15 min</td></tr><tr><td>Paediatric outpatient</td><td>12–18</td><td>15–20 min</td></tr><tr><td>Psychiatric outpatient</td><td>6–10</td><td>30–45 min</td></tr></tbody></table>
+
+<p>Public sector outpatient clinics operating above these benchmarks without a triage nurse system are at risk of missed diagnoses and adverse events. Flag for clinical governance review.</p>
+
+<hr>
+
+<h2>7. Supply Chain &amp; Procurement</h2>
+
+<h3>Par Level Management</h3>
+
+<p>Par levels define the minimum stock quantity that triggers reorder. Healthcare supply chain failure kills patients — stockout prevention is non-negotiable for essential items.</p>
+
+<pre><code class="lang-text">Par Level = (Average Daily Usage × Lead Time in Days) + Safety Stock
+Safety Stock = Z-score × σ(daily usage) × √(Lead Time)</code></pre>
+
+<p>Where Z-score = 1.65 for 95% service level; 2.05 for 98%.</p>
+
+<p><strong>Essential items requiring zero-tolerance stockout</strong>:</p>
+<ul><li>Resuscitation drugs (adrenaline, atropine, sodium bicarbonate, dextrose)</li><li>IV fluids (Hartmann's, Normal saline, 5% Dextrose)</li><li>Oxygen (piped and cylinder)</li><li>Insulin (regular and long-acting)</li><li>Antibiotics (at least one broad-spectrum IV cephalosporin and penicillin)</li><li>Blood products (maintained by blood bank, but monitor availability)</li><li>Surgical gloves and sharps containers</li></ul>
+
+<h3>Stockout Prevention</h3>
+
+<p>Perform daily stock checks on critical items. Use a two-bin or Kanban system:</p>
+<ul><li><strong>Bin 1</strong>: current working stock</li><li><strong>Bin 2</strong>: safety stock, sealed — when Bin 1 is empty, open Bin 2 and place an order</li></ul>
+
+<p>Any breach into safety stock must trigger an immediate order and a root-cause review.</p>
+
+<h3>Expired Goods Management</h3>
+
+<table><thead><tr><th>Control</th><th>Frequency</th></tr></thead><tbody><tr><td>Full stock expiry audit</td><td>Monthly</td></tr><tr><td>90-day expiry flagging</td><td>Weekly automated report from inventory system</td></tr><tr><td>30-day expiry action (rotate to high-use area or return to supplier)</td><td>Weekly</td></tr><tr><td>Expired goods quarantine and destruction log</td><td>Every incident</td></tr></tbody></table>
+
+<p>Expired medication usage is a medico-legal liability and a COHSASA non-conformance. Track expired goods as a KPI; any expired item used on a patient requires a formal incident report.</p>
+
+<h3>Vendor Management</h3>
+
+<table><thead><tr><th>Governance Element</th><th>Standard</th></tr></thead><tbody><tr><td>Approved vendor list</td><td>Reviewed annually; only vendors with valid tax clearance and relevant certifications</td></tr><tr><td>Dual sourcing</td><td>All critical items must have a secondary approved supplier</td></tr><tr><td>Lead time SLA</td><td>Written SLA with target delivery time and penalty for non-performance</td></tr><tr><td>Performance review</td><td>Quarterly; track delivery accuracy, lead time adherence, invoice accuracy</td></tr><tr><td>Emergency procurement</td><td>Written policy for urgent out-of-contract purchases; CFO sign-off required above threshold</td></tr></tbody></table>
+
+<h3>Consignment Stock for Implants</h3>
+
+<p>Consignment stock (orthopaedic implants, cardiac devices, ophthalmology lenses) is high-value, low-turnover stock held on-site but owned by the supplier until use.</p>
+
+<p>Key controls:</p>
+<ol><li><strong>Physical count reconciliation</strong>: weekly count by stores and supplier rep; discrepancies investigated within 24 hours</li><li><strong>Implant use tracking</strong>: every implant used must be documented with patient record number, batch number, expiry date, and surgeon name</li><li><strong>Implant registry</strong>: South Africa has a voluntary implant registry (moving toward mandatory); record all joint replacements, cardiac devices, and mesh products</li><li><strong>Expired consignment</strong>: supplier responsible for rotation; facility must notify supplier of items within 90 days of expiry</li><li><strong>Invoice control</strong>: consignment invoice raised only on use, matched to theatre record — do not accept bulk invoices without theatre documentation</li></ol>
+
+<hr>
+
+<h2>8. South African Context</h2>
+
+<h3>Public vs Private Sector Operational Differences</h3>
+
+<table><thead><tr><th>Dimension</th><th>Public Sector</th><th>Private Sector</th></tr></thead><tbody><tr><td>Funding</td><td>National/provincial DoH budget; NHI transition underway</td><td>Medical aid, out-of-pocket, NHI (limited)</td></tr><tr><td>Bed occupancy</td><td>85–100%+ (chronically over-occupied)</td><td>60–80% (market-driven; varies by region)</td></tr><tr><td>Staffing</td><td>PERSAL-linked; rigid; vacancies take 12–18 months to fill</td><td>Flexible; agency used freely; competitive market</td></tr><tr><td>Supply chain</td><td>Central procurement (NHI SDP, NHLS, provincial depots); long lead times</td><td>Direct hospital group procurement; faster but margin-driven</td></tr><tr><td>Patient mix</td><td>Uninsured majority; complex social determinants</td><td>Insured majority; shorter ALOS; higher elective %</td></tr><tr><td>Data systems</td><td>DHIS2 for reporting; MEDITECH in some provinces; paper-based in many facilities</td><td>Meditech, InterSystems TrakCare, Netcare i-Actuary, Life iCare; mostly electronic</td></tr><tr><td>Governance</td><td>Accounting Officer (CEO) accountable to DoH; Facility Supervisory Board</td><td>Board of Directors; group clinical governance frameworks</td></tr><tr><td>Quality framework</td><td>National Core Standards (NCS); OHSC inspections</td><td>COHSASA accreditation; JCI (select facilities)</td></tr></tbody></table>
+
+<h3>DoH Norms and Standards for Facility Operations</h3>
+
+<p>The <strong>National Department of Health Norms and Standards Regulations</strong> (2018, under National Health Act) set minimum requirements for health establishments:</p>
+
+<p>Key operational standards:</p>
+<ul><li>Emergency care: facility must be able to assess and stabilise any emergency presentation regardless of ability to pay</li><li>Staffing: facilities must have a staffing plan approved by the Nursing Manager; nurse-to-patient ratios must be documented and maintained</li><li>Infection prevention: dedicated IPC (Infection Prevention and Control) officer; hand hygiene compliance audited quarterly</li><li>Waste management: healthcare risk waste (HCRW) must be segregated, stored securely, and disposed of by a licensed contractor</li><li>Medication management: pharmacy must be supervised by a registered pharmacist; medication errors must be reported and reviewed</li><li>Patient rights: Batho Pele principles apply in public sector; private sector governed by Consumer Protection Act and Health Professions Act</li></ul>
+
+<h3>District Hospital vs Regional vs Tertiary Staffing Norms</h3>
+
+<table><thead><tr><th>Facility Level</th><th>Bed Range</th><th>Minimum Medical Staffing</th><th>Minimum Nursing</th></tr></thead><tbody><tr><td>District hospital (community)</td><td>50–150 beds</td><td>1–2 medical officers per shift; GP-level</td><td>1:8 general ward day; 1:12 night</td></tr><tr><td>District hospital (full)</td><td>150–400 beds</td><td>2–4 MOs per shift; visiting specialist support</td><td>1:6–8 general; ICU 1:2</td></tr><tr><td>Regional hospital</td><td>400–800 beds</td><td>24/7 specialist cover in core disciplines (medicine, surgery, O&amp;G, paeds, anaesthetics)</td><td>1:5–6 general; ICU 1:1–2</td></tr><tr><td>Tertiary / academic</td><td>800–2,000+ beds</td><td>Full specialist and subspecialist cover; registrar training programmes</td><td>1:4–5 general; ICU 1:1</td></tr><tr><td>Central hospital</td><td>2,000+ beds</td><td>Quaternary subspecialty; academic attached</td><td>Highest skill mix; ICU 1:1</td></tr></tbody></table>
+
+<p>Staffing below district norms at any facility level must be reported to the Provincial DoH and to the OHSC (Office of Health Standards Compliance).</p>
+
+<h3>Load Shedding Contingency (Eskom Stages 1–8)</h3>
+
+<p>Load shedding is a permanent operational planning assumption in South Africa. Every healthcare facility must have a documented power contingency plan.</p>
+
+<p><strong>Generator requirements by area</strong>:</p>
+
+<table><thead><tr><th>Area</th><th>Generator Priority</th><th>Minimum Autonomy</th></tr></thead><tbody><tr><td>ICU / High care</td><td>Priority 1 (automatic transfer &lt;30 sec)</td><td>72 hours at full load</td></tr><tr><td>Operating theatres</td><td>Priority 1</td><td>72 hours</td></tr><tr><td>Emergency Department</td><td>Priority 1</td><td>72 hours</td></tr><tr><td>Labour ward / NICU</td><td>Priority 1</td><td>72 hours</td></tr><tr><td>General wards (life-support patients)</td><td>Priority 2</td><td>48 hours</td></tr><tr><td>Pharmacy (refrigerators)</td><td>Priority 2</td><td>48 hours</td></tr><tr><td>Pathology lab</td><td>Priority 2</td><td>48 hours</td></tr><tr><td>Radiology (CT/MRI)</td><td>Priority 3</td><td>24 hours</td></tr><tr><td>Administration</td><td>Non-essential</td><td>—</td></tr></tbody></table>
+
+<p><strong>UPS requirements</strong>: UPS (Uninterruptible Power Supply) must bridge the gap between grid power failure and generator start. Minimum UPS runtime:</p>
+<ul><li>ICU ventilators, infusion pumps: 30 minutes</li><li>OR anaesthetic machines: 30 minutes</li><li>Server/HIS room: 60 minutes</li></ul>
+
+<p><strong>Operational protocols during load shedding</strong>:</p>
+<ol><li>Theatre scheduler to check Eskom schedule the night before; avoid scheduling long cases that will span a load shedding window unless generator is confirmed on</li><li>Blood bank: confirm blood refrigerators on generator circuit; log temperature every 4 hours during extended outages</li><li>Pharmacy: log vaccine and cold-chain item temperatures; discard if out of range per cold chain protocol</li><li>ICU: all patients on manual ventilation drill quarterly; nurses to confirm ventilator battery level at start of each shift</li><li>Backup lighting: check emergency lighting monthly; torches in every ward (charged)</li></ol>
+
+<p><strong>Diesel management</strong>: maintain minimum 7-day diesel reserve for generators; dual supplier contracts to prevent stockout during extended grid failure (Stage 6–8). Log diesel levels daily during active load shedding.</p>
+
+<h3>Water Outage Protocols</h3>
+
+<p>Johannesburg (Rand Water), Ekurhuleni, Nelson Mandela Bay, and Buffalo City Metro have all experienced extended water outages. Every facility in these regions must plan for this.</p>
+
+<p><strong>Water storage requirement</strong>: minimum 48-hour potable water supply on-site (storage tanks or JoJo tanks). ICU and theatre require continuous water access — size storage accordingly.</p>
+
+<p><strong>Protocols during water outage</strong>:</p>
+<ol><li>Switch to stored water immediately; notify DoH if outage extends beyond 12 hours</li><li>Theatre: reduce elective cases requiring large volumes of irrigation; prioritise life-saving cases</li><li>CSSD: confirm sterile water supply for autoclave; delay non-urgent sterilisation if supply compromised</li><li>IPC: alcohol hand rub to replace hand washing where water is unavailable; maintain supply of rub at every station</li><li>Kitchen: contact pre-cooked meal supplier for backup; reduce menu to shelf-stable options</li><li>Patient bathing: substitute with no-rinse cleansing products during outage</li><li>Dialysis: renal units require significant water volume; have a protocol for patient transfer to a facility with water if outage extends beyond 6 hours</li></ol>
+
+<p>Designated Water Management Officer (can be Facilities Manager) responsible for daily tank level checks and outage protocol activation.</p>
+
+<hr>
+
+<h2>Common Gotchas</h2>
+
+<ul><li><strong>Occupancy is a lagging indicator.</strong> By the time you hit 95% occupancy, you have already lost the ability to manage the surge. Use predictive occupancy (projected census for the next 24–48 hours) to trigger escalation early, not after the fact.</li><li><strong>ALOS is not a quality metric by itself.</strong> A short ALOS driven by premature discharge shows up as a high 30-day readmission rate. Always present ALOS alongside the readmission rate.</li><li><strong>Discharge before noon targets fail without morning blood results.</strong> If phlebotomy rounds happen at 07:00 and results are not in the system until 11:00, you cannot discharge before noon. Solving DBON (discharge before noon) is a pathology workflow problem as much as a nursing one.</li><li><strong>Theatre utilisation gaming.</strong> Surgeons will artificially inflate case estimates to protect session time. Use actual median case time by procedure and surgeon for scheduling — not the surgeon's stated estimate.</li><li><strong>Agency staffing creates a competency blind spot.</strong> A nurse with valid SANC registration and claimed ICU experience may not be competent in your specific equipment and protocols. Mandatory orientation is not optional, and ICU or theatre agency nurses must be directly supervised on their first shift.</li><li><strong>Load shedding + diesel stockout is a never-event waiting to happen.</strong> The generator is not a backup plan if there is no diesel. Assign one person to check diesel levels daily and sign off. Do not leave this to assumption.</li><li><strong>Consignment stock is invisible until it is not.</strong> Most facilities only notice consignment discrepancies at month-end reconciliation. Weekly physical counts by stores staff (not supplier rep alone) are essential.</li><li><strong>DoH / OHSC inspections are unannounced.</strong> Do not run the facility to a pre-inspection standard. The inspection standard should be the daily operating standard. Common findings: expired medications in stock, missing patient consent, staff without current CPR certificates, broken emergency equipment not logged.</li></ul>
+
+<hr>
+
+<h2>See Also</h2>
+
+<ul><li><a href="../SKILL.md" target="_blank" rel="noopener">Health domain overview</a></li><li><a href="../ops/SKILL.md" target="_blank" rel="noopener">Healthcare Operations (ops hub)</a></li><li><a href="../clinical/SKILL.md" target="_blank" rel="noopener">Clinical systems</a></li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/health/operations/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

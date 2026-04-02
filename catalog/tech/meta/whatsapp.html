@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/meta/whatsapp — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><a href="#">meta</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">whatsapp</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/meta/whatsapp/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/meta/whatsapp</div>
+      <h1>WHATSAPP</h1>
+      <p class="skill-desc">WhatsApp Business Cloud API skill.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">WhatsApp Business Cloud API v21.0, Cloudflare Workers, Meta Graph API</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../tech/meta.html">tech/meta</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech/meta</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>WhatsApp Business Cloud API</h1>
+
+<p>WhatsApp is the dominant messaging channel in South Africa and across emerging markets. The Cloud API (hosted by Meta, no on-premise server required) makes it possible to send and receive WhatsApp messages from a Cloudflare Worker with no infrastructure beyond secrets.</p>
+
+<p><strong>Key numbers:</strong> 2B+ users globally. 90%+ smartphone penetration in SA uses WhatsApp as the primary communication channel. For B2C AI automation, this is higher-impact than email.</p>
+
+<h2>Architecture (2nth.ai pattern)</h2>
+
+<pre><code class="lang-text">Customer sends WhatsApp message
+  → Meta Cloud pushes to Worker webhook
+  → Worker: verify X-Hub-Signature-256
+  → Mark message as read (instant)
+  → Workers AI: classify intent (50ms, edge)
+  → Route: simple reply inline | complex → Claude via AI Gateway
+  → Build response: text | interactive buttons | template
+  → POST to /{PHONE_NUMBER_ID}/messages
+  → Store thread in D1 (for context on next message)</code></pre>
+
+<h2>Base URL and auth</h2>
+
+<pre><code class="lang-text">Base: https://graph.facebook.com/v21.0/{PHONE_NUMBER_ID}/
+Auth: Authorization: Bearer {WHATSAPP_TOKEN}</code></pre>
+
+<p>The <code>PHONE_NUMBER_ID</code> is the numeric ID of your WhatsApp business number (not the phone number itself). Find it in Meta Business Manager → WhatsApp → Phone Numbers.</p>
+
+<h2>Receiving messages — webhook payload</h2>
+
+<pre><code class="lang-typescript">// Incoming webhook — object: "whatsapp_business_account"
+interface WAWebhook {
+  object: 'whatsapp_business_account';
+  entry: Array&lt;{
+    id: string; // WABA ID
+    changes: Array&lt;{
+      value: {
+        messages?: WAMessage[];
+        statuses?: WAStatus[];
+        contacts?: WAContact[];
+        metadata: { phone_number_id: string; display_phone_number: string };
+      };
+      field: 'messages';
+    }&gt;;
+  }&gt;;
+}
+
+interface WAMessage {
+  id: string;      // wamid.xxx — unique message ID
+  from: string;    // sender's phone number (no + prefix, e.g. "27821234567")
+  timestamp: string;
+  type: 'text' | 'image' | 'document' | 'audio' | 'interactive' | 'button' | 'location';
+  text?: { body: string };
+  interactive?: {
+    type: 'button_reply' | 'list_reply';
+    button_reply?: { id: string; title: string };
+    list_reply?: { id: string; title: string; description?: string };
+  };
+  image?: { id: string; mime_type: string; caption?: string };
+  document?: { id: string; filename: string; mime_type: string };
+}</code></pre>
+
+<h2>Full Worker handler</h2>
+
+<pre><code class="lang-typescript">export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise&lt;Response&gt; {
+    // GET — webhook verification
+    if (request.method === 'GET') {
+      const url = new URL(request.url);
+      if (url.searchParams.get('hub.verify_token') === env.WEBHOOK_VERIFY_TOKEN) {
+        return new Response(url.searchParams.get('hub.challenge'));
+      }
+      return new Response('Forbidden', { status: 403 });
+    }
+
+    // POST — verify signature first
+    const { valid, body } = await verifyMetaSignature(request, env);
+    if (!valid) return new Response('Unauthorized', { status: 401 });
+
+    const payload = JSON.parse(body) as WAWebhook;
+    if (payload.object !== 'whatsapp_business_account') {
+      return new Response('EVENT_RECEIVED', { status: 200 });
+    }
+
+    // Ack IMMEDIATELY — Meta retries non-200 responses
+    ctx.waitUntil(processWebhook(payload, env));
+    return new Response('EVENT_RECEIVED', { status: 200 });
+  }
+};
+
+async function processWebhook(payload: WAWebhook, env: Env) {
+  for (const entry of payload.entry) {
+    for (const change of entry.changes) {
+      const { messages, contacts, metadata } = change.value;
+      if (!messages?.length) continue;
+
+      for (const msg of messages) {
+        const phoneId = metadata.phone_number_id;
+        const from    = msg.from;
+        const name    = contacts?.find(c =&gt; c.wa_id === from)?.profile.name ?? from;
+
+        // Mark as read immediately
+        await markRead(msg.id, phoneId, env);
+
+        // Extract text (works for text and interactive replies)
+        const text = extractText(msg);
+        if (!text) continue;
+
+        // Load conversation context from KV (last 5 turns)
+        const contextKey = `wa_ctx:${from}`;
+        const context = JSON.parse(await env.KV.get(contextKey) ?? '[]') as string[];
+
+        // Classify intent with Workers AI
+        const { response: intent } = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+          messages: [
+            { role: 'system', content: 'Classify as: invoice | order | support | enquiry | general. One word.' },
+            { role: 'user', content: text.slice(0, 400) },
+          ],
+        });
+
+        // Draft reply
+        const reply = await buildReply(text, intent.trim(), name, context, env);
+
+        // Send reply
+        await sendMessage(from, reply, phoneId, env);
+
+        // Update context in KV (sliding window of 5 turns)
+        context.push(`Customer: ${text}`, `Bot: ${typeof reply === 'string' ? reply : '[interactive]'}`);
+        await env.KV.put(contextKey, JSON.stringify(context.slice(-10)), { expirationTtl: 86400 });
+
+        // Store in D1
+        await env.DB.prepare(
+          'INSERT INTO wa_messages (wa_id, from_number, name, text, intent, ts) VALUES (?,?,?,?,?,?)'
+        ).bind(msg.id, from, name, text, intent.trim(), Date.now()).run();
+      }
+    }
+  }
+}
+
+function extractText(msg: WAMessage): string {
+  if (msg.type === 'text') return msg.text?.body ?? '';
+  if (msg.type === 'interactive') {
+    return msg.interactive?.button_reply?.title
+        ?? msg.interactive?.list_reply?.title
+        ?? '';
+  }
+  if (msg.type === 'button') return (msg as any).button?.text ?? '';
+  return '';
+}</code></pre>
+
+<h2>Sending messages</h2>
+
+<h3>Text message</h3>
+<pre><code class="lang-typescript">async function sendText(to: string, text: string, phoneId: string, env: Env) {
+  return fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${env.WHATSAPP_TOKEN}`,
+    },
+    body: JSON.stringify({
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
+      to,
+      type: 'text',
+      text: { preview_url: false, body: text },
+    }),
+  });
+}</code></pre>
+
+<h3>Interactive — buttons (up to 3)</h3>
+<pre><code class="lang-typescript">async function sendButtons(to: string, body: string, buttons: { id: string; title: string }[], phoneId: string, env: Env) {
+  return fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.WHATSAPP_TOKEN}` },
+    body: JSON.stringify({
+      messaging_product: 'whatsapp',
+      to,
+      type: 'interactive',
+      interactive: {
+        type: 'button',
+        body: { text: body },
+        action: {
+          buttons: buttons.map(b =&gt; ({ type: 'reply', reply: { id: b.id, title: b.title } })),
+        },
+      },
+    }),
+  });
+}
+
+// Usage — overdue invoice with action buttons
+await sendButtons(customerPhone,
+  `Hi ${name}, your invoice #INV-0847 for R 24,500 is 18 days overdue. What would you like to do?`,
+  [
+    { id: 'pay_eft', title: 'Pay via EFT' },
+    { id: 'payment_plan', title: 'Payment plan' },
+    { id: 'dispute', title: 'Query invoice' },
+  ],
+  phoneId, env
+);</code></pre>
+
+<h3>Interactive — list menu (up to 10 items)</h3>
+<pre><code class="lang-typescript">async function sendList(to: string, body: string, sections: any[], phoneId: string, env: Env) {
+  return fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.WHATSAPP_TOKEN}` },
+    body: JSON.stringify({
+      messaging_product: 'whatsapp',
+      to,
+      type: 'interactive',
+      interactive: {
+        type: 'list',
+        header: { type: 'text', text: '2nth.ai Support' },
+        body: { text: body },
+        footer: { text: 'Select an option' },
+        action: {
+          button: 'View options',
+          sections,
+        },
+      },
+    }),
+  });
+}
+
+// Usage
+await sendList(customerPhone,
+  'How can I help you today?',
+  [{
+    title: 'Account &amp; Billing',
+    rows: [
+      { id: 'check_invoice', title: 'Check my invoice', description: 'View outstanding invoices' },
+      { id: 'payment_history', title: 'Payment history', description: 'View past payments' },
+      { id: 'update_details', title: 'Update my details', description: 'Change address or contact info' },
+    ],
+  }, {
+    title: 'Orders &amp; Delivery',
+    rows: [
+      { id: 'track_order', title: 'Track my order', description: 'Get delivery status' },
+      { id: 'new_order', title: 'Place an order', description: 'Browse products' },
+    ],
+  }],
+  phoneId, env
+);</code></pre>
+
+<h3>Template message (business-initiated)</h3>
+<pre><code class="lang-typescript">// Only approved templates can start a new conversation
+// Templates are created in Meta Business Manager → WhatsApp → Message Templates
+async function sendTemplate(to: string, templateName: string, params: string[], phoneId: string, env: Env) {
+  return fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.WHATSAPP_TOKEN}` },
+    body: JSON.stringify({
+      messaging_product: 'whatsapp',
+      to,
+      type: 'template',
+      template: {
+        name: templateName,
+        language: { code: 'en_ZA' },
+        components: params.length ? [{
+          type: 'body',
+          parameters: params.map(p =&gt; ({ type: 'text', text: p })),
+        }] : [],
+      },
+    }),
+  });
+}
+
+// Example: invoice_overdue template = "Hi {{1}}, your invoice for {{2}} is overdue."
+await sendTemplate(customerPhone, 'invoice_overdue', [customerName, 'R 24,500'], phoneId, env);</code></pre>
+
+<h3>Mark as read + typing indicator</h3>
+<pre><code class="lang-typescript">async function markRead(messageId: string, phoneId: string, env: Env) {
+  await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.WHATSAPP_TOKEN}` },
+    body: JSON.stringify({ messaging_product: 'whatsapp', status: 'read', message_id: messageId }),
+  });
+}</code></pre>
+
+<h3>Send image or document</h3>
+<pre><code class="lang-typescript">// Send a PDF invoice
+await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.WHATSAPP_TOKEN}` },
+  body: JSON.stringify({
+    messaging_product: 'whatsapp',
+    to: customerPhone,
+    type: 'document',
+    document: {
+      link: 'https://r2.2nth.ai/invoices/INV-0847.pdf', // public R2 URL
+      caption: 'Invoice #INV-0847 — R 24,500',
+      filename: 'INV-0847.pdf',
+    },
+  }),
+});</code></pre>
+
+<h2>AI reply builder</h2>
+
+<pre><code class="lang-typescript">async function buildReply(
+  text: string,
+  intent: string,
+  name: string,
+  context: string[],
+  env: Env
+): Promise&lt;string | object&gt; {
+  // ERP queries — check D1/ERPNext first, then format response
+  if (intent === 'invoice') {
+    const invoices = await env.DB.prepare(
+      'SELECT * FROM invoices WHERE customer_phone = ? AND status = ? LIMIT 3'
+    ).bind(env.CUSTOMER_PHONE, 'open').all();
+
+    if (invoices.results.length &gt; 0) {
+      // Return interactive buttons instead of plain text
+      return {
+        type: 'interactive_buttons',
+        body: `Hi ${name}, you have ${invoices.results.length} open invoice(s). Would you like to view details or make a payment?`,
+        buttons: [
+          { id: 'view_invoices', title: 'View invoices' },
+          { id: 'pay_now', title: 'Pay now' },
+        ],
+      };
+    }
+  }
+
+  // General — Claude via AI Gateway
+  const contextStr = context.slice(-6).join('\n');
+  const res = await fetch(env.AI_GATEWAY_URL + '/anthropic/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 300,
+      system: `You are a WhatsApp business assistant for 2nth.ai. Respond in plain conversational text suitable for WhatsApp — no markdown, no bullet points, short sentences. Customer name: ${name}.`,
+      messages: [
+        ...(contextStr ? [{ role: 'user', content: `Previous conversation:\n${contextStr}` }] : []),
+        { role: 'user', content: text },
+      ],
+    }),
+  }).then(r =&gt; r.json());
+
+  return res.content[0].text;
+}</code></pre>
+
+<h2>24-hour window rules</h2>
+
+<table><thead><tr><th>Scenario</th><th>What you can send</th><th>Rule</th></tr></thead><tbody><tr><td>Customer messaged in last 24h</td><td>Any message type — text, interactive, media</td><td>Free-form session window</td></tr><tr><td>Customer messaged &gt; 24h ago</td><td><strong>Approved templates only</strong></td><td>Business-initiated restriction</td></tr><tr><td>Never messaged before</td><td><strong>Approved templates only</strong></td><td>Cold outreach restriction</td></tr></tbody></table>
+
+<p>Always check whether you're in a session window before choosing between <code>sendText</code> and <code>sendTemplate</code>.</p>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong><code>EVENT_RECEIVED</code> not <code>OK</code></strong> — Meta expects the literal string <code>EVENT_RECEIVED</code> as the response body (or any 200). Returning JSON or empty body still works, but the spec says <code>EVENT_RECEIVED</code>.</li><li><strong>Phone number format</strong> — incoming <code>from</code> has no <code>+</code> prefix (<code>"27821234567"</code>). The <code>to</code> field for sending also must not have a <code>+</code> prefix. Strip it before storing.</li><li><strong><code>wamid</code> deduplication</strong> — Meta may deliver the same webhook twice. Store the <code>wamid</code> in D1 with a unique constraint and ignore duplicates.</li><li><strong>Template variables are 1-indexed</strong> — <code>{{1}}</code>, <code>{{2}}</code> — not zero-indexed. Body components only; header/button variables have their own component arrays.</li><li><strong>Interactive button title max 20 chars</strong> — WhatsApp truncates titles silently. Keep button titles under 20 characters.</li><li><strong>Media IDs expire</strong> — Media uploaded via the API has a 30-day expiry. Use direct links from R2/Cloud Storage for permanent media.</li><li><strong>Status updates flood webhooks</strong> — you'll get <code>sent</code>, <code>delivered</code>, <code>read</code> statuses for every message. Check <code>change.value.statuses</code> and skip processing if it's a status update, not a message.</li><li><strong>WABA quality rating</strong> — sending too many unanswered messages or getting blocked degrades your phone number's quality tier, reducing daily send limits.</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/meta/whatsapp/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

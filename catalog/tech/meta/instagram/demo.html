@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Messaging — skills.2nth.ai</title>
+<style>
+  :root {
+    --ig-purple: #833AB4;
+    --ig-pink:   #E1306C;
+    --ig-orange: #F77737;
+    --ig-grad:   linear-gradient(45deg, #833AB4, #E1306C, #F77737);
+    --ig-bg:     #000000;
+    --ig-surface:#1A1A1A;
+    --ig-border: #262626;
+    --ig-text:   #FAFAFA;
+    --ig-muted:  #A8A8A8;
+    --ig-blue:   #0095F6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0A0A0A; color: var(--ig-text); }
+
+  /* NAV */
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 52px; background: rgba(0,0,0,.92); border-bottom: 1px solid var(--ig-border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+  .nav-brand { font-size: 15px; font-weight: 600; color: #fff; text-decoration: none; letter-spacing: -.3px; }
+  .nav-brand span { background: var(--ig-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a { color: var(--ig-muted); text-decoration: none; font-size: 13px; transition: color .2s; }
+  .nav-links a:hover { color: #fff; }
+  .nav-badge { background: var(--ig-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; font-size: 11px; }
+
+  /* HERO */
+  .hero { padding: 64px 24px 48px; max-width: 960px; margin: 0 auto; text-align: center; }
+  .skill-path { font-size: 12px; color: var(--ig-muted); letter-spacing: .5px; margin-bottom: 16px; font-family: monospace; }
+  .skill-path span { color: #fff; }
+  .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 700; letter-spacing: -1px; margin-bottom: 12px; line-height: 1.1; }
+  .hero h1 em { font-style: normal; background: var(--ig-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero p { color: var(--ig-muted); font-size: 16px; max-width: 560px; margin: 0 auto 32px; line-height: 1.6; }
+  .hero-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-val { font-size: 22px; font-weight: 700; background: var(--ig-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .stat-label { font-size: 11px; color: var(--ig-muted); margin-top: 2px; }
+
+  /* INSTAGRAM DM DEMO */
+  .demo-section { max-width: 960px; margin: 0 auto 64px; padding: 0 24px; }
+  .section-label { font-size: 11px; color: var(--ig-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
+
+  .ig-app { background: var(--ig-bg); border: 1px solid var(--ig-border); border-radius: 16px; overflow: hidden; display: flex; height: 560px; box-shadow: 0 24px 80px rgba(0,0,0,.6); }
+
+  /* SIDEBAR */
+  .ig-sidebar { width: 340px; border-right: 1px solid var(--ig-border); display: flex; flex-direction: column; flex-shrink: 0; }
+  .ig-sidebar-header { padding: 20px 16px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--ig-border); }
+  .ig-handle { font-weight: 700; font-size: 15px; }
+  .ig-compose { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ig-muted); }
+  .ig-sidebar-tabs { display: flex; border-bottom: 1px solid var(--ig-border); }
+  .ig-tab { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ig-muted); position: relative; transition: color .2s; }
+  .ig-tab.active { color: #fff; }
+  .ig-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: #fff; }
+  .ig-thread-list { overflow-y: auto; flex: 1; }
+  .ig-thread { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; transition: background .15s; border-left: 3px solid transparent; }
+  .ig-thread:hover { background: rgba(255,255,255,.04); }
+  .ig-thread.active { background: rgba(255,255,255,.06); border-left-color: var(--ig-pink); }
+  .ig-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; background: var(--ig-surface); overflow: hidden; position: relative; }
+  .ig-avatar.has-story::before { content: ''; position: absolute; inset: -3px; border-radius: 50%; background: var(--ig-grad); z-index: -1; }
+  .ig-avatar.has-story { outline: 2px solid var(--ig-bg); outline-offset: 2px; }
+  .ig-thread-info { flex: 1; min-width: 0; }
+  .ig-thread-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ig-thread-preview { font-size: 12px; color: var(--ig-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+  .ig-thread-preview.unread { color: #fff; font-weight: 600; }
+  .ig-thread-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .ig-thread-time { font-size: 11px; color: var(--ig-muted); }
+  .ig-unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ig-blue); }
+
+  /* CHAT AREA */
+  .ig-chat { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .ig-chat-header { padding: 14px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--ig-border); }
+  .ig-chat-header .ig-avatar { width: 36px; height: 36px; font-size: 13px; }
+  .ig-chat-header-info { flex: 1; }
+  .ig-chat-name { font-size: 14px; font-weight: 700; }
+  .ig-chat-status { font-size: 12px; color: var(--ig-muted); }
+  .ig-chat-actions { display: flex; gap: 16px; color: var(--ig-muted); }
+  .ig-chat-actions svg { cursor: pointer; }
+  .ig-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .ig-msg-row { display: flex; align-items: flex-end; gap: 8px; }
+  .ig-msg-row.outgoing { flex-direction: row-reverse; }
+  .ig-msg-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--ig-surface); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+  .ig-bubble { max-width: 72%; padding: 10px 14px; border-radius: 22px; font-size: 14px; line-height: 1.5; word-wrap: break-word; }
+  .ig-bubble.incoming { background: var(--ig-surface); color: var(--ig-text); border-bottom-left-radius: 6px; }
+  .ig-bubble.outgoing { background: var(--ig-blue); color: #fff; border-bottom-right-radius: 6px; }
+  .ig-bubble.ai-reply { background: linear-gradient(135deg, rgba(131,58,180,.3), rgba(225,48,108,.3)); border: 1px solid rgba(225,48,108,.3); border-bottom-right-radius: 6px; }
+  .ig-story-mention { background: var(--ig-surface); border: 1px solid var(--ig-border); border-radius: 12px; padding: 10px 12px; max-width: 240px; }
+  .ig-story-mention-label { font-size: 11px; color: var(--ig-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+  .ig-story-preview { width: 100%; height: 80px; border-radius: 8px; background: var(--ig-grad); display: flex; align-items: center; justify-content: center; font-size: 11px; color: rgba(255,255,255,.8); }
+  .ig-typing { display: flex; align-items: center; gap: 4px; padding: 10px 14px; background: var(--ig-surface); border-radius: 22px; border-bottom-left-radius: 6px; max-width: 60px; }
+  .ig-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--ig-muted); animation: igBounce 1.2s infinite; }
+  .ig-typing span:nth-child(2) { animation-delay: .2s; }
+  .ig-typing span:nth-child(3) { animation-delay: .4s; }
+  @keyframes igBounce { 0%,60%,100% { transform: translateY(0); opacity: .5; } 30% { transform: translateY(-4px); opacity: 1; } }
+  .ig-system-msg { text-align: center; font-size: 11px; color: var(--ig-muted); padding: 4px 0; }
+  .ig-reaction { font-size: 16px; text-align: right; margin-top: -6px; margin-right: 16px; }
+
+  /* QUICK REPLIES */
+  .ig-qr-row { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 16px 8px; }
+  .ig-qr-btn { border: 1px solid rgba(131,58,180,.6); border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--ig-purple); background: transparent; cursor: pointer; transition: all .2s; }
+  .ig-qr-btn:hover { background: rgba(131,58,180,.15); }
+  .ig-qr-btn.selected { background: var(--ig-purple); color: #fff; border-color: var(--ig-purple); }
+
+  /* PRODUCT CARD */
+  .ig-card { background: var(--ig-surface); border: 1px solid var(--ig-border); border-radius: 12px; overflow: hidden; max-width: 240px; }
+  .ig-card-image { height: 140px; background: var(--ig-grad); display: flex; align-items: center; justify-content: center; font-size: 32px; }
+  .ig-card-body { padding: 12px; }
+  .ig-card-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .ig-card-sub { font-size: 12px; color: var(--ig-muted); margin-bottom: 10px; line-height: 1.4; }
+  .ig-card-btns { display: flex; flex-direction: column; gap: 6px; }
+  .ig-card-btn { background: var(--ig-blue); color: #fff; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; }
+  .ig-card-btn.secondary { background: var(--ig-surface); border: 1px solid var(--ig-border); color: var(--ig-text); }
+
+  /* CHAT INPUT */
+  .ig-input-bar { padding: 12px 16px; display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--ig-border); }
+  .ig-input { flex: 1; background: var(--ig-surface); border: 1px solid var(--ig-border); border-radius: 22px; padding: 8px 16px; color: #fff; font-size: 14px; outline: none; }
+  .ig-input::placeholder { color: var(--ig-muted); }
+  .ig-send { width: 36px; height: 36px; border-radius: 50%; background: var(--ig-grad); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: opacity .2s; }
+  .ig-send:hover { opacity: .85; }
+  .ig-input-icons { display: flex; gap: 12px; color: var(--ig-muted); align-items: center; }
+
+  /* AI FLOW PANEL */
+  .ai-flow { background: var(--ig-surface); border: 1px solid var(--ig-border); border-radius: 12px; padding: 16px; margin-top: 4px; display: none; }
+  .ai-flow.visible { display: block; animation: fadeSlide .3s ease; }
+  @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .ai-flow-title { font-size: 11px; color: var(--ig-muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+  .ai-step { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 12px; color: var(--ig-muted); transition: color .3s; }
+  .ai-step.done { color: var(--ig-text); }
+  .ai-step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ig-border); flex-shrink: 0; transition: background .3s; }
+  .ai-step.done .ai-step-dot { background: #4CAF50; }
+  .ai-step.active .ai-step-dot { background: var(--ig-pink); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+  .ai-step.active { color: var(--ig-text); }
+
+  /* STORY TRIGGER */
+  .story-trigger { background: var(--ig-surface); border: 1px solid var(--ig-border); border-radius: 12px; padding: 16px; margin-top: 16px; cursor: pointer; transition: border-color .2s; display: flex; align-items: center; justify-content: space-between; }
+  .story-trigger:hover { border-color: var(--ig-pink); }
+  .story-trigger-left { display: flex; align-items: center; gap: 12px; }
+  .story-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--ig-grad); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .story-trigger-text strong { display: block; font-size: 14px; margin-bottom: 2px; }
+  .story-trigger-text span { font-size: 12px; color: var(--ig-muted); }
+  .story-trigger-arrow { color: var(--ig-muted); font-size: 18px; }
+
+  /* STORY MENTION DEMO */
+  .story-demo { display: none; margin-top: 12px; background: var(--ig-bg); border: 1px solid var(--ig-border); border-radius: 12px; padding: 16px; }
+  .story-demo.visible { display: block; animation: fadeSlide .3s ease; }
+  .story-log { font-family: monospace; font-size: 12px; color: #4CAF50; }
+  .story-log-line { padding: 3px 0; opacity: 0; animation: logAppear .3s ease forwards; }
+  @keyframes logAppear { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+
+  /* ARCHITECTURE */
+  .arch-section { max-width: 960px; margin: 0 auto 64px; padding: 0 24px; }
+  .arch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 20px; }
+  .arch-card { background: var(--ig-surface); border: 1px solid var(--ig-border); border-radius: 12px; padding: 20px; }
+  .arch-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .arch-card p { font-size: 13px; color: var(--ig-muted); line-height: 1.6; }
+  .arch-icon { font-size: 18px; }
+
+  /* COMPARE TABLE */
+  .compare-section { max-width: 960px; margin: 0 auto 64px; padding: 0 24px; }
+  .compare-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+  .compare-table th { padding: 10px 16px; text-align: left; font-size: 11px; color: var(--ig-muted); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--ig-border); }
+  .compare-table td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,.05); }
+  .compare-table tr:hover td { background: rgba(255,255,255,.02); }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .tag.ig { background: rgba(225,48,108,.15); color: var(--ig-pink); }
+  .tag.wa { background: rgba(18,140,126,.15); color: #25D366; }
+  .tag.both { background: rgba(0,149,246,.15); color: var(--ig-blue); }
+
+  /* WIZARD */
+  .wizard-section { max-width: 960px; margin: 0 auto 64px; padding: 0 24px; }
+  .wizard { background: var(--ig-surface); border: 1px solid var(--ig-border); border-radius: 16px; overflow: hidden; }
+  .wizard-steps { display: flex; border-bottom: 1px solid var(--ig-border); }
+  .wizard-step { flex: 1; padding: 16px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: background .15s; position: relative; }
+  .wizard-step:hover { background: rgba(255,255,255,.03); }
+  .wizard-step.active { background: rgba(225,48,108,.06); }
+  .wizard-step.done .step-num { background: #4CAF50; }
+  .step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--ig-border); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .3s; }
+  .wizard-step.active .step-num { background: var(--ig-pink); }
+  .step-label { font-size: 13px; font-weight: 600; }
+  .step-sub { font-size: 11px; color: var(--ig-muted); }
+  .wizard-body { padding: 28px; min-height: 220px; }
+  .wizard-pane { display: none; }
+  .wizard-pane.active { display: block; animation: fadeSlide .25s ease; }
+  .wizard-pane h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .wizard-pane > p { font-size: 13px; color: var(--ig-muted); margin-bottom: 20px; line-height: 1.6; }
+  .checklist { display: flex; flex-direction: column; gap: 10px; }
+  .check-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; }
+  .check-item::before { content: '✓'; color: #4CAF50; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .code-block { background: #0D0D0D; border: 1px solid var(--ig-border); border-radius: 8px; padding: 14px 16px; font-family: monospace; font-size: 12px; color: #E8E8E8; line-height: 1.7; margin-bottom: 16px; overflow-x: auto; }
+  .code-block .k { color: #C792EA; }
+  .code-block .s { color: #C3E88D; }
+  .code-block .c { color: #546E7A; }
+  .code-block .v { color: #82AAFF; }
+  .wizard-nav { display: flex; justify-content: flex-end; margin-top: 20px; }
+  .btn-next { background: var(--ig-grad); color: #fff; border: none; border-radius: 8px; padding: 10px 24px; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity .2s; }
+  .btn-next:hover { opacity: .85; }
+
+  /* BEFORE/AFTER */
+  .ba-section { max-width: 960px; margin: 0 auto 80px; padding: 0 24px; }
+  .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+  .ba-card { background: var(--ig-surface); border: 1px solid var(--ig-border); border-radius: 12px; padding: 20px; }
+  .ba-label { font-size: 11px; font-weight: 700; letter-spacing: .5px; margin-bottom: 14px; }
+  .ba-label.before { color: #F44336; }
+  .ba-label.after { background: var(--ig-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .ba-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--ig-muted); margin-bottom: 10px; line-height: 1.5; }
+  .ba-item::before { flex-shrink: 0; margin-top: 1px; }
+  .ba-card.before .ba-item::before { content: '✗'; color: #F44336; }
+  .ba-card.after .ba-item::before { content: '✓'; color: #4CAF50; }
+
+  /* FOOTER */
+  .footer { border-top: 1px solid var(--ig-border); padding: 32px 24px; text-align: center; font-size: 12px; color: var(--ig-muted); }
+  .footer a { color: var(--ig-muted); text-decoration: none; }
+  .footer a:hover { color: #fff; }
+
+  @media(max-width: 700px) {
+    .ig-sidebar { display: none; }
+    .ba-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">skills<span>.2nth.ai</span></a>
+  <div class="nav-links">
+    <span class="nav-badge">tech/meta/instagram</span>
+    <a href="/tech/meta">← Meta</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="skill-path">tech / meta / <span>instagram</span></div>
+  <h1>Instagram <em>Messaging API</em></h1>
+  <p>Automate Instagram DMs, story mention replies, and product discovery — powered by Claude AI, running on Cloudflare Workers.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-val">2B+</div><div class="stat-label">monthly active users</div></div>
+    <div class="stat"><div class="stat-val">7-day</div><div class="stat-label">session window</div></div>
+    <div class="stat"><div class="stat-val">&lt;100ms</div><div class="stat-label">edge AI response</div></div>
+    <div class="stat"><div class="stat-val">~4s</div><div class="stat-label">typical AI reply time</div></div>
+  </div>
+</section>
+
+<!-- INSTAGRAM DM DEMO -->
+<section class="demo-section">
+  <div class="section-label">Live Demo — Instagram DM AI Agent</div>
+
+  <div class="ig-app">
+    <!-- Sidebar -->
+    <div class="ig-sidebar">
+      <div class="ig-sidebar-header">
+        <span class="ig-handle">2nth.ai</span>
+        <div class="ig-compose">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+      </div>
+      <div class="ig-sidebar-tabs">
+        <div class="ig-tab active">Primary</div>
+        <div class="ig-tab">General</div>
+        <div class="ig-tab">Requests</div>
+      </div>
+      <div class="ig-thread-list">
+        <div class="ig-thread active" onclick="switchThread('amahle')">
+          <div class="ig-avatar has-story" style="background:linear-gradient(135deg,#833AB4,#E1306C)">A</div>
+          <div class="ig-thread-info">
+            <div class="ig-thread-name">amahle_creates</div>
+            <div class="ig-thread-preview">hey, love your content! quick...</div>
+          </div>
+          <div class="ig-thread-meta"><span class="ig-thread-time">now</span><div class="ig-unread-dot"></div></div>
+        </div>
+        <div class="ig-thread" onclick="switchThread('sipho')">
+          <div class="ig-avatar" style="background:linear-gradient(135deg,#F77737,#FCAF45)">S</div>
+          <div class="ig-thread-info">
+            <div class="ig-thread-name">sipho.tech</div>
+            <div class="ig-thread-preview unread">Sent you a story</div>
+          </div>
+          <div class="ig-thread-meta"><span class="ig-thread-time">3m</span><div class="ig-unread-dot"></div></div>
+        </div>
+        <div class="ig-thread" onclick="switchThread('kefilwe')">
+          <div class="ig-avatar has-story" style="background:linear-gradient(135deg,#0095F6,#833AB4)">K</div>
+          <div class="ig-thread-info">
+            <div class="ig-thread-name">kefilwe.designs</div>
+            <div class="ig-thread-preview">Thanks so much! 🙌</div>
+          </div>
+          <div class="ig-thread-meta"><span class="ig-thread-time">12m</span></div>
+        </div>
+        <div class="ig-thread" onclick="switchThread('luntu')">
+          <div class="ig-avatar" style="background:linear-gradient(135deg,#E1306C,#F77737)">L</div>
+          <div class="ig-thread-info">
+            <div class="ig-thread-name">luntu_marketing</div>
+            <div class="ig-thread-preview">What are your packages?</div>
+          </div>
+          <div class="ig-thread-meta"><span class="ig-thread-time">1h</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat -->
+    <div class="ig-chat">
+      <div class="ig-chat-header">
+        <div class="ig-avatar has-story" id="chat-avatar" style="background:linear-gradient(135deg,#833AB4,#E1306C)">A</div>
+        <div class="ig-chat-header-info">
+          <div class="ig-chat-name" id="chat-name">amahle_creates</div>
+          <div class="ig-chat-status">Active now</div>
+        </div>
+        <div class="ig-chat-actions">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .84h3a2 2 0 012 1.72c.12.96.36 1.9.72 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.37 1.85.6 2.81.72a2 2 0 011.72 2z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        </div>
+      </div>
+
+      <div class="ig-messages" id="chat-messages">
+        <div class="ig-system-msg">Today</div>
+        <!-- Incoming DM -->
+        <div class="ig-msg-row">
+          <div class="ig-msg-avatar" style="background:linear-gradient(135deg,#833AB4,#E1306C)">A</div>
+          <div class="ig-bubble incoming">hey, love your content! quick question — do you offer AI automation for e-commerce? 🛍️</div>
+        </div>
+        <!-- Quick replies appear -->
+        <div id="qr-section" style="display:none">
+          <div class="ig-qr-row">
+            <button class="ig-qr-btn" onclick="selectQR(this, 'product')">Product info</button>
+            <button class="ig-qr-btn" onclick="selectQR(this, 'pricing')">Pricing</button>
+            <button class="ig-qr-btn" onclick="selectQR(this, 'collab')">Collaboration</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ig-input-bar">
+        <div class="ig-input-icons">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <input class="ig-input" id="chat-input" placeholder="Message..." onkeydown="if(event.key==='Enter') sendDemo()">
+        <button class="ig-send" onclick="sendDemo()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z" stroke="white" fill="white"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Flow Panel -->
+  <div class="ai-flow" id="ai-flow">
+    <div class="ai-flow-title">AI processing pipeline</div>
+    <div class="ai-step" id="step-recv"><div class="ai-step-dot"></div> Instagram DM received — IGSID extracted, echo check passed</div>
+    <div class="ai-step" id="step-ctx"><div class="ai-step-dot"></div> KV context loaded — last 6 turns for this IGSID</div>
+    <div class="ai-step" id="step-classify"><div class="ai-step-dot"></div> Workers AI (Llama 3.1 8B) — classified as <span id="intent-label" style="color:var(--ig-pink);font-weight:700"></span></div>
+    <div class="ai-step" id="step-claude"><div class="ai-step-dot"></div> Claude Sonnet 4.6 via AI Gateway — reply drafted (280 tokens)</div>
+    <div class="ai-step" id="step-send"><div class="ai-step-dot"></div> POST /me/messages — reply delivered via Graph API</div>
+    <div class="ai-step" id="step-d1"><div class="ai-step-dot"></div> D1 insert — message stored, context window updated in KV</div>
+  </div>
+
+  <!-- Story Mention Trigger -->
+  <div class="story-trigger" onclick="triggerStoryMention()">
+    <div class="story-trigger-left">
+      <div class="story-icon">📸</div>
+      <div class="story-trigger-text">
+        <strong>Simulate story mention</strong>
+        <span>See how the bot auto-replies when someone mentions your account in their story</span>
+      </div>
+    </div>
+    <div class="story-trigger-arrow">›</div>
+  </div>
+
+  <div class="story-demo" id="story-demo">
+    <div class="ai-flow-title">Story mention webhook → auto DM reply</div>
+    <div class="story-log" id="story-log"></div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="arch-section">
+  <div class="section-label">Architecture</div>
+  <div class="arch-grid">
+    <div class="arch-card">
+      <h4><span class="arch-icon">🔐</span> Signature verify</h4>
+      <p>Every POST is verified with HMAC-SHA256 against X-Hub-Signature-256 before processing. Same pattern as Meta/WhatsApp — reuse <code>verifyMetaSignature()</code>.</p>
+    </div>
+    <div class="arch-card">
+      <h4><span class="arch-icon">⚡</span> Edge classification</h4>
+      <p>Workers AI (Llama 3.1 8B) classifies intent at the edge — enquiry, order, collab, support, general — in ~50ms before calling Claude for the full reply.</p>
+    </div>
+    <div class="arch-card">
+      <h4><span class="arch-icon">🧵</span> Conversation context</h4>
+      <p>Last 6 turns stored in KV keyed by IGSID with 7-day TTL, matching the session window. Claude gets full context for coherent multi-turn conversations.</p>
+    </div>
+    <div class="arch-card">
+      <h4><span class="arch-icon">📸</span> Story mentions</h4>
+      <p>Story mention events arrive via <code>changes[field="mentions"]</code>, not <code>messaging[]</code>. Fetch story metadata immediately — story URLs expire after 24 hours.</p>
+    </div>
+    <div class="arch-card">
+      <h4><span class="arch-icon">🤝</span> Handover protocol</h4>
+      <p>When Claude detects an escalation phrase, control is passed to the human agent app via <code>/pass_thread_control</code>. AI resumes automatically after resolution.</p>
+    </div>
+    <div class="arch-card">
+      <h4><span class="arch-icon">🗃️</span> D1 persistence</h4>
+      <p>Message ID (<code>mid</code>) stored with UNIQUE constraint for deduplication. Separate table for story mentions. Both indexed on IGSID for CRM lookups.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE TABLE -->
+<section class="compare-section">
+  <div class="section-label">Instagram vs WhatsApp — key differences</div>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Instagram</th>
+        <th>WhatsApp</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Session window</td>
+        <td><span class="tag ig">7 days</span></td>
+        <td><span class="tag wa">24 hours</span></td>
+      </tr>
+      <tr>
+        <td>Sender ID</td>
+        <td><span class="tag ig">IGSID (Instagram-scoped)</span></td>
+        <td><span class="tag wa">Phone number</span></td>
+      </tr>
+      <tr>
+        <td>Template messages</td>
+        <td><span class="tag ig">Not required</span></td>
+        <td><span class="tag wa">Required after 24h</span></td>
+      </tr>
+      <tr>
+        <td>Webhook object</td>
+        <td><span class="tag ig">"instagram"</span></td>
+        <td><span class="tag wa">"whatsapp_business_account"</span></td>
+      </tr>
+      <tr>
+        <td>Story events</td>
+        <td><span class="tag ig">changes[mentions]</span></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>Quick replies</td>
+        <td><span class="tag both">Up to 13</span></td>
+        <td><span class="tag both">Up to 3 buttons</span></td>
+      </tr>
+      <tr>
+        <td>Generic templates</td>
+        <td><span class="tag ig">No approval needed</span></td>
+        <td><span class="tag wa">Meta pre-approval</span></td>
+      </tr>
+      <tr>
+        <td>Echo events</td>
+        <td><span class="tag ig">is_echo: true — must skip</span></td>
+        <td>Not applicable</td>
+      </tr>
+      <tr>
+        <td>Auth token</td>
+        <td><span class="tag both">Page Access Token</span></td>
+        <td><span class="tag wa">WhatsApp System User Token</span></td>
+      </tr>
+      <tr>
+        <td>Send endpoint</td>
+        <td><span class="tag ig">/me/messages</span></td>
+        <td><span class="tag wa">/{PHONE_NUMBER_ID}/messages</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- WIZARD -->
+<section class="wizard-section">
+  <div class="section-label">Connection guide</div>
+  <div class="wizard">
+    <div class="wizard-steps">
+      <div class="wizard-step active" id="ws1" onclick="goWizard(1)">
+        <div class="step-num" id="wn1">1</div>
+        <div><div class="step-label">Connect Instagram</div><div class="step-sub">Link to Facebook Page</div></div>
+      </div>
+      <div class="wizard-step" id="ws2" onclick="goWizard(2)">
+        <div class="step-num" id="wn2">2</div>
+        <div><div class="step-label">Configure webhook</div><div class="step-sub">Subscribe to DM events</div></div>
+      </div>
+      <div class="wizard-step" id="ws3" onclick="goWizard(3)">
+        <div class="step-num" id="wn3">3</div>
+        <div><div class="step-label">Add secrets & deploy</div><div class="step-sub">Worker is live</div></div>
+      </div>
+    </div>
+    <div class="wizard-body">
+      <div class="wizard-pane active" id="wp1">
+        <h3>Link Instagram Professional Account</h3>
+        <p>Instagram Messaging requires a Business or Creator account connected to a Facebook Page in Meta Business Manager.</p>
+        <div class="checklist">
+          <div class="check-item">Go to <strong>business.facebook.com → Accounts → Instagram Accounts</strong></div>
+          <div class="check-item">Connect your Instagram Professional Account to a Facebook Page</div>
+          <div class="check-item">In Meta App Dashboard → Add Product → <strong>Messenger</strong> (Instagram uses the Messenger Platform)</div>
+          <div class="check-item">Under <strong>Instagram → Settings</strong>, enable "Access to Messages"</div>
+          <div class="check-item">Request permissions: <code>instagram_manage_messages</code>, <code>pages_messaging</code></div>
+        </div>
+        <div class="wizard-nav"><button class="btn-next" onclick="goWizard(2)">Next →</button></div>
+      </div>
+      <div class="wizard-pane" id="wp2">
+        <h3>Configure the webhook</h3>
+        <p>Subscribe to Instagram messaging events in the App Dashboard. The verify token can be any string you choose.</p>
+        <div class="code-block"><span class="c"># App Dashboard → Webhooks → Add Subscription</span>
+<span class="c"># Object: instagram</span>
+<span class="c"># Fields to subscribe:</span>
+<span class="v">messages</span>                   <span class="c"># DMs</span>
+<span class="v">messaging_postbacks</span>        <span class="c"># button taps</span>
+<span class="v">messaging_story_mentions</span>   <span class="c"># story mentions</span>
+<span class="v">message_reads</span>              <span class="c"># optional read receipts</span></div>
+        <div class="checklist">
+          <div class="check-item">Callback URL: <code>https://your-worker.workers.dev/webhook</code></div>
+          <div class="check-item">Verify token: any string — stored as <code>WEBHOOK_VERIFY_TOKEN</code> secret</div>
+          <div class="check-item">Worker handles GET verification by returning raw <code>hub.challenge</code> string</div>
+        </div>
+        <div class="wizard-nav"><button class="btn-next" onclick="goWizard(3)">Next →</button></div>
+      </div>
+      <div class="wizard-pane" id="wp3">
+        <h3>Add secrets and deploy</h3>
+        <p>Four secrets needed. Use a long-lived System User token in production — Page tokens expire when the user changes password.</p>
+        <div class="code-block"><span class="k">wrangler</span> secret put <span class="v">META_APP_SECRET</span>
+<span class="c"># App Secret from developers.facebook.com → Basic Settings</span>
+
+<span class="k">wrangler</span> secret put <span class="v">WEBHOOK_VERIFY_TOKEN</span>
+<span class="c"># Must match what you entered in App Dashboard</span>
+
+<span class="k">wrangler</span> secret put <span class="v">PAGE_ACCESS_TOKEN</span>
+<span class="c"># Long-lived token with instagram_manage_messages</span>
+
+<span class="k">wrangler</span> secret put <span class="v">INSTAGRAM_PAGE_ID</span>
+<span class="c"># Numeric Page ID (not @handle)</span></div>
+        <div class="checklist">
+          <div class="check-item">Deploy: <code>wrangler deploy</code> — Worker handles GET verify + POST events</div>
+          <div class="check-item">Send yourself a test DM — you should get an AI reply within ~4 seconds</div>
+          <div class="check-item">Check D1: <code>wrangler d1 execute DB --command "SELECT * FROM ig_messages"</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEFORE / AFTER -->
+<section class="ba-section">
+  <div class="section-label">Impact</div>
+  <div class="ba-grid">
+    <div class="ba-card before">
+      <div class="ba-label before">WITHOUT THIS SKILL</div>
+      <div class="ba-item">DMs go unanswered for hours — potential customers drop off</div>
+      <div class="ba-item">Story mentions go unacknowledged — missed engagement opportunity</div>
+      <div class="ba-item">Manual replies are inconsistent in tone and quality</div>
+      <div class="ba-item">No conversation history — every DM starts from scratch</div>
+      <div class="ba-item">Human agents handle every message regardless of complexity</div>
+    </div>
+    <div class="ba-card after">
+      <div class="ba-label after">WITH THIS SKILL</div>
+      <div class="ba-item">AI replies to DMs in &lt;4 seconds, 24/7, with full context</div>
+      <div class="ba-item">Every story mention gets an instant personalised thank-you DM</div>
+      <div class="ba-item">Claude maintains brand voice consistently across all replies</div>
+      <div class="ba-item">7-day KV context window — coherent multi-turn conversations</div>
+      <div class="ba-item">Human agents only see escalations — bot handles the rest</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p><a href="/">skills.2nth.ai</a> · <a href="/tech/meta">tech/meta</a> · <a href="/tech/meta/whatsapp">tech/meta/whatsapp</a> · MIT License</p>
+</footer>
+
+<script>
+// ─── DEMO STATE ───────────────────────────────────────────────────────────────
+let demoPhase = 0; // 0=waiting, 1=qr shown, 2=selected, 3=typing, 4=replied
+let selectedIntent = 'enquiry';
+
+const threads = {
+  amahle: { name: 'amahle_creates', avatar: 'A', grad: 'linear-gradient(135deg,#833AB4,#E1306C)', story: true },
+  sipho:  { name: 'sipho.tech',     avatar: 'S', grad: 'linear-gradient(135deg,#F77737,#FCAF45)', story: false },
+  kefilwe:{ name: 'kefilwe.designs',avatar: 'K', grad: 'linear-gradient(135deg,#0095F6,#833AB4)', story: true },
+  luntu:  { name: 'luntu_marketing',avatar: 'L', grad: 'linear-gradient(135deg,#E1306C,#F77737)', story: false },
+};
+
+function switchThread(id) {
+  document.querySelectorAll('.ig-thread').forEach(t => t.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const t = threads[id];
+  document.getElementById('chat-name').textContent = t.name;
+  const av = document.getElementById('chat-avatar');
+  av.textContent = t.avatar;
+  av.style.background = t.grad;
+  if (t.story) av.classList.add('has-story'); else av.classList.remove('has-story');
+}
+
+// Start the demo automatically after 1.5s
+setTimeout(() => {
+  if (demoPhase === 0) {
+    demoPhase = 1;
+    document.getElementById('qr-section').style.display = 'block';
+    document.getElementById('qr-section').style.animation = 'fadeSlide .3s ease';
+    showAiFlow();
+  }
+}, 1500);
+
+function showAiFlow() {
+  const flow = document.getElementById('ai-flow');
+  flow.classList.add('visible');
+
+  const steps = ['step-recv','step-ctx','step-classify','step-claude','step-send','step-d1'];
+  const intents = { product: 'enquiry', pricing: 'enquiry', collab: 'collab' };
+  const intentLabel = document.getElementById('intent-label');
+  intentLabel.textContent = selectedIntent;
+
+  steps.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.className = 'ai-step';
+    setTimeout(() => {
+      el.classList.add('active');
+      setTimeout(() => el.classList.add('done'), 700);
+    }, i * 550);
+  });
+}
+
+function selectQR(btn, intent) {
+  if (demoPhase !== 1) return;
+  demoPhase = 2;
+  selectedIntent = intent;
+
+  document.querySelectorAll('.ig-qr-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  // After selection, show typing then reply
+  setTimeout(() => addTyping(), 400);
+  setTimeout(() => {
+    removeTyping();
+    const replies = {
+      product: "Absolutely! We build AI automation for e-comm on Cloudflare Workers — WhatsApp notifications, intelligent chat, order tracking. Want me to share our e-comm package?",
+      pricing: null, // will show card
+      collab: null,  // will show card
+    };
+    if (intent === 'product') {
+      addOutgoing(replies.product);
+    } else if (intent === 'pricing') {
+      addCard();
+    } else {
+      addCollabCard();
+    }
+    demoPhase = 4;
+  }, 2200);
+}
+
+function addTyping() {
+  const msgs = document.getElementById('chat-messages');
+  const row = document.createElement('div');
+  row.className = 'ig-msg-row';
+  row.id = 'typing-row';
+  row.innerHTML = `<div class="ig-msg-avatar" style="background:linear-gradient(135deg,#833AB4,#E1306C)">A</div><div class="ig-typing"><span></span><span></span><span></span></div>`;
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-row');
+  if (t) t.remove();
+}
+
+function addOutgoing(text) {
+  const msgs = document.getElementById('chat-messages');
+  const row = document.createElement('div');
+  row.className = 'ig-msg-row outgoing';
+  row.innerHTML = `<div class="ig-bubble outgoing ai-reply">${text}</div>`;
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  // Add reaction after short delay
+  setTimeout(() => {
+    const reaction = document.createElement('div');
+    reaction.className = 'ig-reaction';
+    reaction.textContent = '❤️';
+    msgs.appendChild(reaction);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 1200);
+}
+
+function addCard() {
+  const msgs = document.getElementById('chat-messages');
+  const row = document.createElement('div');
+  row.className = 'ig-msg-row outgoing';
+  row.innerHTML = `
+    <div class="ig-card">
+      <div class="ig-card-image">🤖</div>
+      <div class="ig-card-body">
+        <div class="ig-card-title">2nth.ai AI Packages</div>
+        <div class="ig-card-sub">From R 4,800/mo — WhatsApp, Instagram & ERP AI automation for your business.</div>
+        <div class="ig-card-btns">
+          <button class="ig-card-btn" onclick="alert('Opening packages page...')">View packages →</button>
+          <button class="ig-card-btn secondary" onclick="alert('Booking call...')">Book a call</button>
+        </div>
+      </div>
+    </div>`;
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addCollabCard() {
+  const msgs = document.getElementById('chat-messages');
+  const row = document.createElement('div');
+  row.className = 'ig-msg-row outgoing';
+  row.innerHTML = `
+    <div class="ig-card">
+      <div class="ig-card-image">🤝</div>
+      <div class="ig-card-body">
+        <div class="ig-card-title">Work with 2nth.ai</div>
+        <div class="ig-card-sub">AI automation partnerships — WhatsApp, Instagram, ERP integration for agencies and brands.</div>
+        <div class="ig-card-btns">
+          <button class="ig-card-btn" onclick="alert('Opening collab page...')">Collab packages →</button>
+          <button class="ig-card-btn secondary" onclick="alert('Booking call...')">Let's talk</button>
+        </div>
+      </div>
+    </div>`;
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function sendDemo() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  const msgs = document.getElementById('chat-messages');
+  const row = document.createElement('div');
+  row.className = 'ig-msg-row outgoing';
+  row.innerHTML = `<div class="ig-bubble outgoing">${text}</div>`;
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  // Re-run AI flow
+  selectedIntent = 'general';
+  const flow = document.getElementById('ai-flow');
+  flow.classList.add('visible');
+  const steps = ['step-recv','step-ctx','step-classify','step-claude','step-send','step-d1'];
+  document.getElementById('intent-label').textContent = 'general';
+  steps.forEach(id => { document.getElementById(id).className = 'ai-step'; });
+  steps.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      el.classList.add('active');
+      setTimeout(() => el.classList.add('done'), 700);
+    }, i * 450);
+  });
+
+  setTimeout(() => {
+    const msgs = document.getElementById('chat-messages');
+    const row = document.createElement('div');
+    row.className = 'ig-msg-row';
+    row.innerHTML = `<div class="ig-msg-avatar" style="background:linear-gradient(135deg,#833AB4,#E1306C)">A</div><div class="ig-typing"><span></span><span></span><span></span></div>`;
+    row.id = 'typing-row';
+    msgs.appendChild(row);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 300);
+
+  setTimeout(() => {
+    removeTyping();
+    addOutgoing("Thanks for the message! 🙌 Our team will follow up shortly. In the meantime, check out skills.2nth.ai for what we can automate for you.");
+  }, 3200);
+}
+
+// ─── WIZARD ───────────────────────────────────────────────────────────────────
+let wizardStep = 1;
+function goWizard(n) {
+  for (let i = 1; i <= 3; i++) {
+    document.getElementById(`wp${i}`).classList.remove('active');
+    document.getElementById(`ws${i}`).classList.remove('active');
+    if (i < n) document.getElementById(`wn${i}`).textContent = '✓', document.getElementById(`ws${i}`).classList.add('done');
+    else document.getElementById(`ws${i}`).classList.remove('done');
+  }
+  document.getElementById(`wp${n}`).classList.add('active');
+  document.getElementById(`ws${n}`).classList.add('active');
+  document.getElementById(`wn${n}`).textContent = n;
+  wizardStep = n;
+}
+
+// ─── STORY MENTION DEMO ───────────────────────────────────────────────────────
+let storyDone = false;
+function triggerStoryMention() {
+  if (storyDone) return;
+  storyDone = true;
+
+  const demo = document.getElementById('story-demo');
+  demo.classList.add('visible');
+  const log = document.getElementById('story-log');
+
+  const lines = [
+    { delay: 0,    text: '› POST /webhook  object=instagram  field=mentions' },
+    { delay: 400,  text: '› X-Hub-Signature-256 verified ✓' },
+    { delay: 800,  text: '› entry.changes[0].field = "mentions"' },
+    { delay: 1200, text: '› media_id = 17841400008460902' },
+    { delay: 1600, text: '› GET /17841400008460902?fields=from,media_type' },
+    { delay: 2200, text: '› from.username = "sipho.tech"  from.id = "10001234567"' },
+    { delay: 2800, text: '› sendIGText(igsid, "Hey @sipho.tech! 🙌 Thanks for the mention...")' },
+    { delay: 3400, text: '› POST /me/messages → 200 OK  mid=ig-msg.ABCD1234' },
+    { delay: 3900, text: '› D1 INSERT ig_story_mentions ✓' },
+    { delay: 4400, text: '─────────────────────────────────────────────' },
+    { delay: 4600, text: '✓ Story mention handled in 680ms' },
+  ];
+
+  lines.forEach(({ delay, text }) => {
+    setTimeout(() => {
+      const line = document.createElement('div');
+      line.className = 'story-log-line';
+      line.style.animationDelay = '0s';
+      line.textContent = text;
+      if (text.startsWith('✓')) line.style.color = '#4CAF50';
+      log.appendChild(line);
+      log.scrollTop = log.scrollHeight;
+
+      // Also add the story mention to the chat after the send line
+      if (text.includes('sendIGText')) {
+        setTimeout(() => {
+          const msgs = document.getElementById('chat-messages');
+          const sys = document.createElement('div');
+          sys.className = 'ig-system-msg';
+          sys.textContent = 'sipho.tech mentioned you in a story';
+          msgs.appendChild(sys);
+
+          const storyRow = document.createElement('div');
+          storyRow.className = 'ig-msg-row';
+          storyRow.innerHTML = `
+            <div class="ig-msg-avatar" style="background:linear-gradient(135deg,#F77737,#FCAF45)">S</div>
+            <div>
+              <div class="ig-story-mention">
+                <div class="ig-story-mention-label">📸 Mentioned you in their story</div>
+                <div class="ig-story-preview">@sipho.tech's story</div>
+              </div>
+            </div>`;
+          msgs.appendChild(storyRow);
+
+          setTimeout(() => {
+            const replyRow = document.createElement('div');
+            replyRow.className = 'ig-msg-row outgoing';
+            replyRow.innerHTML = `<div class="ig-bubble outgoing ai-reply">Hey @sipho.tech! 🙌 Thanks for the mention — we really appreciate you sharing us in your story.</div>`;
+            msgs.appendChild(replyRow);
+            msgs.scrollTop = msgs.scrollHeight;
+          }, 900);
+        }, 200);
+      }
+    }, delay);
+  });
+}
+</script>
+</body>
+</html>

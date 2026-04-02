@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Embedded Firmware Development — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Embedded Firmware Development</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/iot/firmware/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Embedded Firmware Development</div>
+      <h1>EMBEDDED FIRMWARE DEVELOPMENT</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../iot/hardware.html">iot/hardware</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Embedded Firmware Development</h1>
+
+<p>Firmware is the software layer closest to silicon. It owns the hardware, manages peripherals, enforces power budgets, and guarantees the device works unattended for years. This skill covers the full firmware stack from MCU selection through CI/CD — the decisions that determine whether a product ships on time and survives in the field.</p>
+
+<hr>
+
+<h2>1. MCU Architecture Selection</h2>
+
+<p>Choosing the wrong MCU costs months. Match the silicon to the power budget, connectivity requirements, cost target, and certification path before writing a line of code.</p>
+
+<h3>Comparison Table</h3>
+
+<table><thead><tr><th>MCU</th><th>Core</th><th>Flash/RAM</th><th>Connectivity</th><th>Active Current</th><th>Sleep (deep)</th><th>Price (1k)</th><th>Ecosystem</th></tr></thead><tbody><tr><td>ESP32</td><td>Xtensa LX6 240MHz dual</td><td>4 MB / 520 KB</td><td>WiFi b/g/n + BLE 4.2</td><td>~80 mA</td><td>~10 µA</td><td>$2.00</td><td>ESP-IDF, Arduino</td></tr><tr><td>ESP32-S3</td><td>Xtensa LX7 240MHz dual</td><td>8 MB / 512 KB</td><td>WiFi + BLE 5 + USB OTG</td><td>~80 mA</td><td>~7 µA</td><td>$2.50</td><td>ESP-IDF, TFLite Micro</td></tr><tr><td>nRF52840</td><td>Cortex-M4F 64MHz</td><td>1 MB / 256 KB</td><td>BLE 5 + IEEE 802.15.4 + USB</td><td>~4 mA</td><td>~1.5 µA</td><td>$3.50</td><td>Zephyr, nRF SDK</td></tr><tr><td>STM32L4</td><td>Cortex-M4F 80MHz</td><td>up to 2 MB / 640 KB</td><td>None (add modem)</td><td>~8 mA</td><td>~300 nA</td><td>$2.80</td><td>STM32Cube HAL</td></tr><tr><td>STM32H7</td><td>Cortex-M7 480MHz</td><td>2 MB / 1 MB</td><td>Ethernet, USB HS</td><td>~220 mA</td><td>~2 µA</td><td>$6.00</td><td>STM32Cube HAL</td></tr><tr><td>RP2040</td><td>Cortex-M0+ 133MHz dual</td><td>ext QSPI / 264 KB</td><td>None (add modem)</td><td>~25 mA</td><td>~0.8 mA</td><td>$1.00</td><td>Arduino, SDK C/C++</td></tr><tr><td>SAMD21</td><td>Cortex-M0+ 48MHz</td><td>256 KB / 32 KB</td><td>None (add modem)</td><td>~6 mA</td><td>~2 µA</td><td>$1.80</td><td>Arduino, ASF</td></tr><tr><td>SAMD51</td><td>Cortex-M4F 120MHz</td><td>1 MB / 192 KB</td><td>USB HS</td><td>~19 mA</td><td>~2 µA</td><td>$2.80</td><td>Arduino, ASF</td></tr></tbody></table>
+
+<h3>Selection Criteria Matrix</h3>
+
+<table><thead><tr><th>Requirement</th><th>Best Fit</th></tr></thead><tbody><tr><td>WiFi + BLE, cost-sensitive</td><td>ESP32</td></tr><tr><td>On-device ML inference</td><td>ESP32-S3 (vector instructions)</td></tr><tr><td>Ultra-low power BLE mesh</td><td>nRF52840</td></tr><tr><td>Low power + analog peripherals</td><td>STM32L4</td></tr><tr><td>High-compute (vision, DSP)</td><td>STM32H7</td></tr><tr><td>Maker/rapid prototype</td><td>RP2040</td></tr><tr><td>CE/FCC pre-certified module</td><td>ESP32 module, nRF52840 DK</td></tr><tr><td>MatterTM / Thread</td><td>nRF52840 (OpenThread native)</td></tr></tbody></table>
+
+<p><strong>Certification note</strong>: Buying a certified module (e.g., ESP32-WROOM-32, u-blox ANNA-B112) offloads RF certification. DIY PCB with raw die requires full Part 15B/CE RED testing — budget 6–12 weeks.</p>
+
+<hr>
+
+<h2>2. Bare-Metal Programming</h2>
+
+<h3>Startup Sequence</h3>
+
+<p>Before <code>main()</code> runs, the startup file configures the vector table, initialises the stack pointer, copies <code>.data</code> from Flash to SRAM, and zeroes <code>.bss</code>.</p>
+
+<pre><code class="lang-c">/* startup_stm32l4xx.s — simplified ARM Cortex-M4 vector table */
+.section .isr_vector, "a", %progbits
+.type  g_pfnVectors, %object
+
+g_pfnVectors:
+    .word  _estack                  /* initial stack pointer (top of SRAM) */
+    .word  Reset_Handler            /* reset                                */
+    .word  NMI_Handler
+    .word  HardFault_Handler
+    .word  MemManage_Handler
+    .word  BusFault_Handler
+    .word  UsageFault_Handler
+    /* ... peripheral IRQs follow */
+
+Reset_Handler:
+    /* Copy .data section from Flash to SRAM */
+    ldr  r0, =_sdata
+    ldr  r1, =_edata
+    ldr  r2, =_sidata
+copy_data:
+    cmp  r0, r1
+    bge  zero_bss
+    ldr  r3, [r2], #4
+    str  r3, [r0], #4
+    b    copy_data
+zero_bss:
+    ldr  r0, =_sbss
+    ldr  r1, =_ebss
+    mov  r2, #0
+zero_loop:
+    cmp  r0, r1
+    bge  call_main
+    str  r2, [r0], #4
+    b    zero_loop
+call_main:
+    bl   SystemInit              /* clock setup (CMSIS) */
+    bl   main</code></pre>
+
+<h3>Clock Initialisation (STM32 HAL)</h3>
+
+<pre><code class="lang-c">static void SystemClock_Config(void)
+{
+    RCC_OscInitTypeDef osc = {0};
+    RCC_ClkInitTypeDef clk = {0};
+
+    /* Enable MSI oscillator at 4 MHz, then PLL to 80 MHz */
+    osc.OscillatorType = RCC_OSCILLATORTYPE_MSI;
+    osc.MSIState       = RCC_MSI_ON;
+    osc.MSICalibrationValue = 0;
+    osc.MSIClockRange  = RCC_MSIRANGE_6;   /* 4 MHz */
+    osc.PLL.PLLState   = RCC_PLL_ON;
+    osc.PLL.PLLSource  = RCC_PLLSOURCE_MSI;
+    osc.PLL.PLLM       = 1;
+    osc.PLL.PLLN       = 40;
+    osc.PLL.PLLR       = RCC_PLLR_DIV2;   /* 80 MHz SYSCLK */
+    HAL_RCC_OscConfig(&amp;osc);
+
+    clk.ClockType      = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK |
+                         RCC_CLOCKTYPE_PCLK1  | RCC_CLOCKTYPE_PCLK2;
+    clk.SYSCLKSource   = RCC_SYSCLKSOURCE_PLLCLK;
+    clk.AHBCLKDivider  = RCC_SYSCLK_DIV1;
+    clk.APB1CLKDivider = RCC_HCLK_DIV1;
+    clk.APB2CLKDivider = RCC_HCLK_DIV1;
+    HAL_RCC_ClockConfig(&amp;clk, FLASH_LATENCY_4);
+}</code></pre>
+
+<h3>Peripheral Register Access vs HAL</h3>
+
+<p>Direct register access is faster and smaller; HAL is portable and safer for maintenance.</p>
+
+<pre><code class="lang-c">/* Direct register access — toggle PA5 in ~1 cycle */
+GPIOA-&gt;BSRR = (1U &lt;&lt; 5);          /* set   */
+GPIOA-&gt;BSRR = (1U &lt;&lt; (5 + 16));   /* reset */
+
+/* HAL equivalent — readable but 5-10x more instructions */
+HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);</code></pre>
+
+<p>Use direct access in ISRs and timing-critical paths; HAL elsewhere.</p>
+
+<h3>Interrupt Handling (NVIC)</h3>
+
+<pre><code class="lang-c">/* Configure NVIC priority before enabling IRQ */
+NVIC_SetPriority(USART2_IRQn, 5);   /* lower number = higher priority */
+NVIC_EnableIRQ(USART2_IRQn);
+
+/* ISR rules:
+   1. No blocking calls (no HAL_Delay, no vTaskDelay)
+   2. No heap allocation (no malloc/free)
+   3. Keep execution &lt; ~10 µs for high-rate peripherals
+   4. Signal the task, do the work in task context        */
+void USART2_IRQHandler(void)
+{
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+    if (USART2-&gt;ISR &amp; USART_ISR_RXNE) {
+        uint8_t byte = (uint8_t)(USART2-&gt;RDR &amp; 0xFF);
+        xQueueSendFromISR(uart_rx_queue, &amp;byte, &amp;xHigherPriorityTaskWoken);
+    }
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}</code></pre>
+
+<h3>DMA Circular Buffer for ADC</h3>
+
+<pre><code class="lang-c">#define ADC_BUF_LEN 256
+volatile uint16_t adc_buf[ADC_BUF_LEN];   /* volatile: written by DMA, read by CPU */
+
+/* Half-transfer and transfer-complete interrupts give double-buffer behaviour */
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    process_adc_samples(&amp;adc_buf[0], ADC_BUF_LEN / 2);
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    process_adc_samples(&amp;adc_buf[ADC_BUF_LEN / 2], ADC_BUF_LEN / 2);
+}</code></pre>
+
+<h3><code>volatile</code> Correctness</h3>
+
+<pre><code class="lang-c">/* WRONG: compiler may cache PORTA_PIN in a register — reads stale value */
+uint8_t pin_state = PORTA_PIN;
+while (pin_state == 0) { pin_state = PORTA_PIN; }
+
+/* CORRECT: volatile forces a memory read each iteration */
+volatile uint8_t *pin = (volatile uint8_t *)0x40000000;
+while (*pin == 0) {}</code></pre>
+
+<p>Use <code>volatile</code> for: hardware registers, ISR-shared variables, DMA buffers. Do not use as a substitute for proper memory barriers in SMP (use <code>__DMB()</code>).</p>
+
+<hr>
+
+<h2>3. FreeRTOS</h2>
+
+<h3>Task Creation and Stack Sizing</h3>
+
+<pre><code class="lang-c">#include "FreeRTOS.h"
+#include "task.h"
+
+/* Static allocation avoids heap fragmentation on constrained devices */
+static StaticTask_t sensor_tcb;
+static StackType_t  sensor_stack[256];   /* 256 * 4 = 1 KB */
+
+TaskHandle_t sensor_task_handle;
+
+void sensor_task(void *pvParameters)
+{
+    TickType_t last_wake = xTaskGetTickCount();
+    for (;;) {
+        read_sensor_and_publish();
+        vTaskDelayUntil(&amp;last_wake, pdMS_TO_TICKS(100));   /* 10 Hz, drift-free */
+    }
+}
+
+int main(void)
+{
+    sensor_task_handle = xTaskCreateStatic(
+        sensor_task,
+        "Sensor",
+        256,              /* stack depth in words */
+        NULL,             /* parameter */
+        3,                /* priority — higher number = higher priority */
+        sensor_stack,
+        &amp;sensor_tcb
+    );
+
+    vTaskStartScheduler();
+    for (;;);   /* never reached */
+}</code></pre>
+
+<h3>Inter-Task Communication</h3>
+
+<pre><code class="lang-c">/* Queue: typed, ordered, thread-safe — preferred for data passing */
+QueueHandle_t sensor_queue = xQueueCreate(10, sizeof(sensor_reading_t));
+
+/* Producer (sensor task) */
+sensor_reading_t reading = { .temp_c = 23.5f, .timestamp = xTaskGetTickCount() };
+xQueueSend(sensor_queue, &amp;reading, pdMS_TO_TICKS(10));
+
+/* Consumer (publish task) */
+sensor_reading_t rx;
+if (xQueueReceive(sensor_queue, &amp;rx, portMAX_DELAY) == pdPASS) {
+    mqtt_publish(rx);
+}
+
+/* Mutex: protect shared resource — NOT from ISR */
+SemaphoreHandle_t i2c_mutex = xSemaphoreCreateMutex();
+xSemaphoreTake(i2c_mutex, portMAX_DELAY);
+i2c_write(dev_addr, buf, len);
+xSemaphoreGive(i2c_mutex);
+
+/* Event group: broadcast multiple flags simultaneously */
+EventGroupHandle_t sys_events = xEventGroupCreate();
+#define EVT_WIFI_CONNECTED  (1 &lt;&lt; 0)
+#define EVT_MQTT_READY      (1 &lt;&lt; 1)
+
+/* Wait for both flags before proceeding */
+xEventGroupWaitBits(sys_events,
+    EVT_WIFI_CONNECTED | EVT_MQTT_READY,
+    pdFALSE,    /* don't clear on exit */
+    pdTRUE,     /* wait for ALL bits */
+    portMAX_DELAY);</code></pre>
+
+<h3>Common Pitfalls</h3>
+
+<pre><code class="lang-c">/* Stack overflow — enable runtime check */
+/* FreeRTOSConfig.h */
+#define configCHECK_FOR_STACK_OVERFLOW  2   /* method 2: pattern check */
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
+{
+    /* Log pcTaskName, then reset or halt */
+    __BKPT(0);   /* break in debugger; in production, trigger watchdog */
+}
+
+/* configASSERT — catches FreeRTOS API misuse at development time */
+#define configASSERT(x) \
+    do { if (!(x)) { taskDISABLE_INTERRUPTS(); for (;;); } } while (0)
+
+/* Priority inversion prevention — use mutex, not semaphore, for shared resources */
+/* FreeRTOS mutexes implement priority inheritance automatically               */
+
+/* Heap model selection — FreeRTOSConfig.h */
+/* heap_1: no free(), deterministic                   */
+/* heap_2: best-fit, fragmentation risk               */
+/* heap_3: wraps malloc/free, not deterministic       */
+/* heap_4: first-fit, coalesces adjacent free blocks  */
+/* heap_5: spans multiple memory regions (recommended for complex layouts) */</code></pre>
+
+<h3>Runtime Stats</h3>
+
+<pre><code class="lang-c">/* FreeRTOSConfig.h */
+#define configGENERATE_RUN_TIME_STATS           1
+#define configUSE_TRACE_FACILITY                1
+#define configUSE_STATS_FORMATTING_FUNCTIONS    1
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()  setup_stats_timer()
+#define portGET_RUN_TIME_COUNTER_VALUE()           get_stats_timer_count()
+
+/* Print task stats over UART */
+char stats_buf[512];
+vTaskGetRunTimeStats(stats_buf);
+printf("%s\n", stats_buf);
+/* Output: Task Name  Abs Time  % Time
+           Sensor     12345     12%
+           Publish    8901      9%
+           IDLE       78000     78% */</code></pre>
+
+<hr>
+
+<h2>4. Zephyr RTOS</h2>
+
+<h3>Devicetree Overlay (Board Shield)</h3>
+
+<pre><code class="lang-dts">/* boards/shields/my_sensor_shield/my_sensor_shield.overlay */
+/ {
+    aliases {
+        sensor0 = &amp;bme280_i2c;
+    };
+};
+
+&amp;i2c0 {
+    status = "okay";
+    clock-frequency = &lt;I2C_BITRATE_FAST&gt;;   /* 400 kHz */
+
+    bme280_i2c: bme280@76 {
+        compatible = "bosch,bme280";
+        reg = &lt;0x76&gt;;
+        label = "BME280";
+    };
+};</code></pre>
+
+<h3>Kconfig</h3>
+
+<pre><code class="lang-kconfig"># prj.conf — enable what you need, nothing else
+CONFIG_I2C=y
+CONFIG_SENSOR=y
+CONFIG_BME280=y
+CONFIG_MQTT_LIB=y
+CONFIG_WIFI=y
+CONFIG_NET_TCP=y
+CONFIG_NET_SOCKETS=y
+CONFIG_LOG=y
+CONFIG_LOG_DEFAULT_LEVEL=3      # INFO
+CONFIG_SHELL=y
+CONFIG_PM=y                     # power management
+CONFIG_PM_DEVICE=y</code></pre>
+
+<h3>Application Skeleton</h3>
+
+<pre><code class="lang-c">#include &lt;zephyr/kernel.h&gt;
+#include &lt;zephyr/drivers/sensor.h&gt;
+#include &lt;zephyr/logging/log.h&gt;
+
+LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
+
+#define SENSOR_NODE DT_ALIAS(sensor0)
+static const struct device *sensor_dev = DEVICE_DT_GET(SENSOR_NODE);
+
+void main(void)
+{
+    if (!device_is_ready(sensor_dev)) {
+        LOG_ERR("Sensor not ready");
+        return;
+    }
+
+    struct sensor_value temp, humidity;
+    while (1) {
+        sensor_sample_fetch(sensor_dev);
+        sensor_channel_get(sensor_dev, SENSOR_CHAN_AMBIENT_TEMP, &amp;temp);
+        sensor_channel_get(sensor_dev, SENSOR_CHAN_HUMIDITY,     &amp;humidity);
+
+        LOG_INF("Temp: %d.%06d C  Hum: %d.%06d %%",
+                temp.val1, temp.val2, humidity.val1, humidity.val2);
+
+        k_sleep(K_MSEC(1000));
+    }
+}</code></pre>
+
+<h3>Power Management (Zephyr PM)</h3>
+
+<pre><code class="lang-c">/* Suspend a peripheral device when not in use */
+pm_device_action_run(sensor_dev, PM_DEVICE_ACTION_SUSPEND);
+/* ... do other work ... */
+pm_device_action_run(sensor_dev, PM_DEVICE_ACTION_RESUME);
+
+/* System-level sleep — Zephyr selects deepest state compatible with next wake */
+/* Configured in prj.conf:
+   CONFIG_PM=y
+   CONFIG_PM_DEVICE=y
+   CONFIG_PM_DEVICE_RUNTIME=y   */</code></pre>
+
+<h3>West Build Commands</h3>
+
+<pre><code class="lang-bash"># Build for nRF52840 DK with custom shield
+west build -b nrf52840dk_nrf52840 -- -DSHIELD=my_sensor_shield
+
+# Flash
+west flash
+
+# Attach serial console
+west espressif monitor   # for ESP32
+minicom -D /dev/ttyACM0 -b 115200
+
+# Run unit tests on host (Twister)
+west twister -T tests/unit -p native_posix</code></pre>
+
+<hr>
+
+<h2>5. Peripheral Drivers</h2>
+
+<h3>UART — Ring Buffer with DMA Idle-Line Interrupt</h3>
+
+<p>Variable-length packets are difficult with fixed DMA. The UART idle-line interrupt fires when the line goes silent, signalling end-of-packet regardless of length.</p>
+
+<pre><code class="lang-c">#define UART_RX_BUF_SIZE  512
+uint8_t uart_dma_buf[UART_RX_BUF_SIZE];
+
+/* STM32 HAL — enable DMA receive + idle line interrupt */
+HAL_UARTEx_ReceiveToIdle_DMA(&amp;huart2, uart_dma_buf, UART_RX_BUF_SIZE);
+__HAL_DMA_DISABLE_IT(&amp;hdma_usart2_rx, DMA_IT_HT);  /* suppress half-transfer IRQ */
+
+/* Callback fires on idle (end of packet) or buffer full */
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+    if (huart-&gt;Instance == USART2) {
+        /* Size = number of bytes received since last call */
+        process_packet(uart_dma_buf, Size);
+        /* Re-arm for next packet */
+        HAL_UARTEx_ReceiveToIdle_DMA(&amp;huart2, uart_dma_buf, UART_RX_BUF_SIZE);
+    }
+}</code></pre>
+
+<h3>SPI — CS Management and Clock Mode</h3>
+
+<pre><code class="lang-c">/* SPI modes: CPOL/CPHA
+   Mode 0: CPOL=0 CPHA=0 — clock idle low,  sample on rising  edge (most common)
+   Mode 1: CPOL=0 CPHA=1 — clock idle low,  sample on falling edge
+   Mode 2: CPOL=1 CPHA=0 — clock idle high, sample on falling edge
+   Mode 3: CPOL=1 CPHA=1 — clock idle high, sample on rising  edge */
+
+static inline void spi_cs_assert(void)   { HAL_GPIO_WritePin(SPI_CS_GPIO, SPI_CS_PIN, GPIO_PIN_RESET); }
+static inline void spi_cs_deassert(void) { HAL_GPIO_WritePin(SPI_CS_GPIO, SPI_CS_PIN, GPIO_PIN_SET);   }
+
+uint8_t spi_transfer_byte(uint8_t tx)
+{
+    uint8_t rx;
+    spi_cs_assert();
+    HAL_SPI_TransmitReceive(&amp;hspi1, &amp;tx, &amp;rx, 1, HAL_MAX_DELAY);
+    spi_cs_deassert();
+    return rx;
+}
+
+/* Read register from SPI device (common pattern: send reg addr, read response) */
+uint8_t read_reg(uint8_t reg_addr)
+{
+    uint8_t tx[2] = { reg_addr | 0x80, 0x00 };   /* 0x80 = read bit */
+    uint8_t rx[2] = {0};
+    spi_cs_assert();
+    HAL_SPI_TransmitReceive(&amp;hspi1, tx, rx, 2, HAL_MAX_DELAY);
+    spi_cs_deassert();
+    return rx[1];
+}</code></pre>
+
+<h3>I2C — Clock Stretching and Error Recovery</h3>
+
+<pre><code class="lang-c">/* Write then read (register read pattern) */
+HAL_StatusTypeDef i2c_read_reg(uint8_t dev_addr, uint8_t reg, uint8_t *data, uint16_t len)
+{
+    HAL_StatusTypeDef status;
+    /* Write register address */
+    status = HAL_I2C_Master_Transmit(&amp;hi2c1, dev_addr &lt;&lt; 1, &amp;reg, 1, 10);
+    if (status != HAL_OK) goto recovery;
+    /* Read data */
+    status = HAL_I2C_Master_Receive(&amp;hi2c1, dev_addr &lt;&lt; 1, data, len, 10);
+    if (status != HAL_OK) goto recovery;
+    return HAL_OK;
+
+recovery:
+    /* I2C bus recovery: toggle SCL 9 times to release stuck slave */
+    for (int i = 0; i &lt; 9; i++) {
+        HAL_GPIO_WritePin(I2C1_SCL_GPIO, I2C1_SCL_PIN, GPIO_PIN_SET);
+        HAL_Delay(1);
+        HAL_GPIO_WritePin(I2C1_SCL_GPIO, I2C1_SCL_PIN, GPIO_PIN_RESET);
+        HAL_Delay(1);
+    }
+    HAL_I2C_Init(&amp;hi2c1);  /* re-initialise peripheral */
+    return status;
+}</code></pre>
+
+<h3>GPIO Debounce</h3>
+
+<pre><code class="lang-c">/* Software debounce — sample in systick or timer ISR, not in EXTI ISR */
+#define DEBOUNCE_TICKS  5   /* 5 ms @ 1 ms tick */
+
+typedef struct {
+    GPIO_TypeDef *port;
+    uint16_t      pin;
+    uint8_t       count;
+    uint8_t       state;
+} debounced_button_t;
+
+void debounce_tick(debounced_button_t *btn)
+{
+    uint8_t raw = (btn-&gt;port-&gt;IDR &amp; btn-&gt;pin) ? 1 : 0;
+    if (raw != btn-&gt;state) {
+        btn-&gt;count++;
+        if (btn-&gt;count &gt;= DEBOUNCE_TICKS) {
+            btn-&gt;state = raw;
+            btn-&gt;count = 0;
+            on_button_state_change(btn-&gt;state);
+        }
+    } else {
+        btn-&gt;count = 0;
+    }
+}</code></pre>
+
+<h3>PWM — Frequency and Duty Cycle Maths</h3>
+
+<pre><code class="lang-c">/* Timer peripheral: ARR sets period, CCR sets duty cycle
+   F_pwm = F_timer / (PSC + 1) / (ARR + 1)
+   Duty  = CCR / (ARR + 1)                   */
+
+void pwm_set(TIM_HandleTypeDef *htim, uint32_t channel,
+             uint32_t freq_hz, uint8_t duty_pct)
+{
+    uint32_t timer_clk = HAL_RCC_GetPCLK1Freq() * 2;  /* APB1 timer clock */
+    uint32_t period    = (timer_clk / freq_hz) - 1;
+    uint32_t pulse     = (period * duty_pct) / 100;
+
+    __HAL_TIM_SET_AUTORELOAD(htim, period);
+    __HAL_TIM_SET_COMPARE(htim, channel, pulse);
+}</code></pre>
+
+<h3>ADC — Oversampling for Noise Reduction</h3>
+
+<p>Hardware oversampling averages N samples in the ADC peripheral, effective resolution = log2(N)/2 extra bits.</p>
+
+<pre><code class="lang-c">/* STM32L4 — 16x hardware oversampling adds 2 bits resolution (12 → 14 bit) */
+ADC_OversamplingTypeDef os = {
+    .Ratio                 = ADC_OVERSAMPLING_RATIO_16,
+    .RightBitShift         = ADC_RIGHTBITSHIFT_4,    /* divide by 16 */
+    .TriggeredMode         = ADC_TRIGGEREDMODE_SINGLE_TRIGGER,
+    .OversamplingStopReset = ADC_REGOVERSAMPLING_CONTINUED_MODE,
+};
+hadc1.Init.Oversampling = os;
+HAL_ADC_Init(&amp;hadc1);</code></pre>
+
+<hr>
+
+<h2>6. OTA (Over-The-Air) Updates</h2>
+
+<h3>Dual-Bank Flash Layout</h3>
+
+<pre><code class="lang-text">┌──────────────────────────────────────────────────┐
+│  Sector 0   MCUboot bootloader (48 KB)           │
+├──────────────────────────────────────────────────┤
+│  Sector 1   Image Slot 0 — active firmware       │  ← runs from here
+├──────────────────────────────────────────────────┤
+│  Sector 2   Image Slot 1 — pending update        │  ← downloaded here
+├──────────────────────────────────────────────────┤
+│  Sector 3   Scratch area (swap buffer)           │
+└──────────────────────────────────────────────────┘</code></pre>
+
+<h3>MCUboot Integration</h3>
+
+<p>MCUboot validates each slot with a SHA-256 hash and optional ECDSA-P256 signature before booting.</p>
+
+<pre><code class="lang-c">/* Confirm boot is successful — call after successful cloud connection post-OTA */
+#include "bootutil/bootutil.h"
+
+int confirm_ota_success(void)
+{
+    struct boot_rsp rsp;
+    int rc = boot_set_confirmed();   /* marks slot 0 as permanent */
+    if (rc != 0) {
+        /* On next reset MCUboot will revert to previous image */
+        return rc;
+    }
+    return 0;
+}</code></pre>
+
+<pre><code class="lang-cmake"># west sign — sign image with ECDSA key for MCUboot
+west sign -t imgtool -- --key keys/root-ec-p256.pem</code></pre>
+
+<h3>HTTPS Download with Certificate Pinning (ESP-IDF)</h3>
+
+<pre><code class="lang-c">/* esp_http_client with bundled CA cert */
+extern const uint8_t server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
+extern const uint8_t server_cert_pem_end[]   asm("_binary_ca_cert_pem_end");
+
+esp_http_client_config_t cfg = {
+    .url            = "https://ota.example.com/firmware/latest.bin",
+    .cert_pem       = (const char *)server_cert_pem_start,
+    .skip_cert_common_name_check = false,   /* enforce CN */
+    .event_handler  = ota_http_event_handler,
+};
+
+esp_https_ota_config_t ota_cfg = { .http_config = &amp;cfg };
+esp_err_t ret = esp_https_ota(&amp;ota_cfg);
+if (ret == ESP_OK) {
+    confirm_ota_success();
+    esp_restart();
+} else {
+    /* Image rejected — slot 0 unchanged, device still operational */
+}</code></pre>
+
+<h3>Anti-Brick Patterns</h3>
+
+<ul><li>Always validate image header (magic bytes, version, size) before writing to slot 1.</li><li>Never erase slot 0 until slot 1 is fully written and hash-verified.</li><li>Watchdog must be active during download; a hung download = automatic recovery.</li><li>Increment boot counter on each reset; after N failures without confirmation, roll back.</li><li>Test rollback in CI: inject a deliberately corrupt image and assert the device reverts.</li></ul>
+
+<hr>
+
+<h2>7. Power Management in Firmware</h2>
+
+<h3>Sleep Mode Hierarchy (ARM Cortex-M)</h3>
+
+<table><thead><tr><th>Mode</th><th>STM32 Name</th><th>Stop clocks</th><th>RAM retained</th><th>Wake latency</th><th>Typical current</th></tr></thead><tbody><tr><td>CPU idle</td><td>Sleep</td><td>CPU only</td><td>Yes</td><td>&lt;1 µs</td><td>5–15 mA</td></tr><tr><td>Peripheral stop</td><td>Stop 1/2</td><td>CPU + most peripherals</td><td>Yes</td><td>~5 µs</td><td>5–100 µA</td></tr><tr><td>RAM retained</td><td>Standby</td><td>All except RTC</td><td>Yes (selected SRAM)</td><td>~50 µs</td><td>1–5 µA</td></tr><tr><td>Full powerdown</td><td>Shutdown</td><td>All except wakeup pin</td><td>No</td><td>~100 µs + re-init</td><td>&lt;300 nA</td></tr></tbody></table>
+
+<pre><code class="lang-c">/* Enter STM32 Stop 2 mode — lowest power while retaining RAM */
+HAL_SuspendTick();                      /* stop SysTick — saves ~1 mA */
+__HAL_RCC_WAKEUPSTOP_CLK_CONFIG(RCC_STOP_WAKEUPCLOCK_MSI);
+HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);   /* halts here until wake event */
+
+/* Execution resumes here after wake */
+SystemClock_Config();                   /* re-apply PLL — MSI is active but slow */
+HAL_ResumeTick();</code></pre>
+
+<h3>Wake Sources</h3>
+
+<pre><code class="lang-c">/* Wake on GPIO external interrupt (e.g., motion sensor INT pin) */
+HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1_HIGH);
+
+/* Wake on RTC alarm — periodic sensor read */
+RTC_AlarmTypeDef alarm = {0};
+alarm.AlarmTime.Hours   = 0;
+alarm.AlarmTime.Minutes = 0;
+alarm.AlarmTime.Seconds = 30;   /* wake every 30 s */
+alarm.AlarmMask         = RTC_ALARMMASK_DATEWEEKDAY | RTC_ALARMMASK_HOURS | RTC_ALARMMASK_MINUTES;
+HAL_RTC_SetAlarm_IT(&amp;hrtc, &amp;alarm, RTC_FORMAT_BIN);</code></pre>
+
+<h3>Tickless Idle in FreeRTOS</h3>
+
+<pre><code class="lang-c">/* FreeRTOSConfig.h */
+#define configUSE_TICKLESS_IDLE  2   /* 2 = custom implementation */
+
+/* Implement the hook — called when all tasks are blocked and scheduler can sleep */
+void vPortSuppressTicksAndSleep(TickType_t xExpectedIdleTime)
+{
+    uint32_t sleep_ms = xExpectedIdleTime * portTICK_PERIOD_MS;
+    configure_rtc_wakeup(sleep_ms);
+    HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+    /* Execution resumes here after wakeup */
+    correct_tick_count_after_sleep(sleep_ms);
+}</code></pre>
+
+<h3>Peripheral Power Gating</h3>
+
+<pre><code class="lang-c">/* Disable clocks to unused peripherals — each peripheral ~0.1–1 mA when clocked */
+__HAL_RCC_USART1_CLK_DISABLE();   /* UART not needed in sleep */
+__HAL_RCC_SPI1_CLK_DISABLE();
+
+/* Power gate external sensor via GPIO load switch */
+HAL_GPIO_WritePin(SENSOR_PWR_GPIO, SENSOR_PWR_PIN, GPIO_PIN_RESET);   /* off */
+HAL_Delay(10);                                                           /* discharge */
+HAL_GPIO_WritePin(SENSOR_PWR_GPIO, SENSOR_PWR_PIN, GPIO_PIN_SET);     /* on */
+HAL_Delay(5);                                                            /* startup */</code></pre>
+
+<h3>Measuring Sleep Current</h3>
+
+<ul><li><strong>nRF Power Profiling Kit 2 (PPK2)</strong>: USB source measure unit, 0.2 µA–1 A, 100k samples/s. Essential for nRF targets.</li><li><strong>uCurrent Gold</strong>: shunt-based, sub-µA precision, connects in series with battery.</li><li><strong>Otii Arc</strong>: full energy profiling with timeline, correlates UART events with current.</li><li>Always measure from battery (not bench supply through debugger) — debugger holds SWDIO high, adds ~0.5 mA.</li></ul>
+
+<hr>
+
+<h2>8. CI/CD for Embedded Systems</h2>
+
+<h3>GitHub Actions — Firmware Build</h3>
+
+<pre><code class="lang-yaml"># .github/workflows/firmware.yml
+name: Firmware CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    container:
+      image: espressif/idf:v5.2.1   # pin exact toolchain version
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build firmware
+        run: |
+          . $IDF_PATH/export.sh
+          idf.py build
+
+      - name: Check binary size
+        run: |
+          python3 $IDF_PATH/tools/idf_size.py build/firmware.map \
+            --output-format json &gt; size_report.json
+          python3 scripts/check_size_budget.py size_report.json
+
+      - name: Upload artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-${{ github.sha }}
+          path: |
+            build/firmware.bin
+            build/firmware.elf
+            size_report.json</code></pre>
+
+<h3>Unit Testing on Host (Unity + CMock)</h3>
+
+<p>Test pure logic (packet parsers, state machines, sensor calibration maths) on x86 — no hardware needed.</p>
+
+<pre><code class="lang-c">/* tests/test_packet_parser.c */
+#include "unity.h"
+#include "mock_uart_driver.h"   /* CMock auto-generated from uart_driver.h */
+#include "packet_parser.h"
+
+void setUp(void)    { mock_uart_driver_Init(); }
+void tearDown(void) { mock_uart_driver_Verify(); }
+
+void test_valid_packet_is_parsed(void)
+{
+    uint8_t raw[] = { 0xAA, 0x05, 0x01, 0x02, 0x03, 0xAB };   /* header + len + payload + checksum */
+    packet_t pkt;
+    int rc = parse_packet(raw, sizeof(raw), &amp;pkt);
+    TEST_ASSERT_EQUAL(0, rc);
+    TEST_ASSERT_EQUAL(3, pkt.payload_len);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY((uint8_t[]){0x01,0x02,0x03}, pkt.payload, 3);
+}
+
+void test_bad_checksum_rejected(void)
+{
+    uint8_t raw[] = { 0xAA, 0x05, 0x01, 0x02, 0x03, 0xFF };   /* wrong checksum */
+    packet_t pkt;
+    int rc = parse_packet(raw, sizeof(raw), &amp;pkt);
+    TEST_ASSERT_EQUAL(-EBADMSG, rc);
+}</code></pre>
+
+<pre><code class="lang-yaml"># CMakeLists.txt for host tests
+enable_testing()
+add_executable(test_packet_parser
+    tests/test_packet_parser.c
+    src/packet_parser.c
+    unity/src/unity.c
+    cmock/src/cmock.c
+    tests/mocks/mock_uart_driver.c
+)
+target_include_directories(test_packet_parser PRIVATE src unity/src cmock/src tests/mocks)
+add_test(NAME packet_parser COMMAND test_packet_parser)</code></pre>
+
+<h3>Static Analysis</h3>
+
+<pre><code class="lang-yaml"># In CI pipeline
+- name: cppcheck
+  run: |
+    cppcheck --enable=all --error-exitcode=1 \
+             --suppress=missingInclude \
+             --inline-suppr \
+             src/
+
+- name: clang-tidy
+  run: |
+    run-clang-tidy -p build/ src/*.c \
+      -checks='-*,clang-analyzer-*,cert-*,bugprone-*'</code></pre>
+
+<h3>Binary Signing for OTA</h3>
+
+<pre><code class="lang-bash"># Generate ECDSA-P256 key pair (do once, keep private key offline)
+imgtool keygen -k keys/root-ec-p256.pem -t ecdsa-p256
+
+# Sign image as part of CI build
+imgtool sign \
+  --key    keys/root-ec-p256.pem \
+  --header-size 0x200 \
+  --align  4 \
+  --version ${SEMVER} \
+  --slot-size 0x60000 \
+  build/firmware.bin \
+  build/firmware-signed.bin</code></pre>
+
+<h3>Semantic Versioning for Firmware</h3>
+
+<pre><code class="lang-c">/* version.h — generated by CI from git tag */
+#define FW_VERSION_MAJOR  1
+#define FW_VERSION_MINOR  4
+#define FW_VERSION_PATCH  2
+#define FW_VERSION_STR    "1.4.2"
+#define FW_BUILD_HASH     "a3f7c1d"   /* short git SHA */
+#define FW_BUILD_DATE     "2026-04-01"</code></pre>
+
+<pre><code class="lang-bash"># scripts/gen_version.sh — run in CI before build
+TAG=$(git describe --tags --match "v*" --abbrev=7 2&gt;/dev/null || echo "v0.0.0-0-g$(git rev-parse --short HEAD)")
+MAJOR=$(echo $TAG | sed 's/v\([0-9]*\).*/\1/')
+MINOR=$(echo $TAG | sed 's/v[0-9]*\.\([0-9]*\).*/\1/')
+PATCH=$(echo $TAG | sed 's/v[0-9]*\.[0-9]*\.\([0-9]*\).*/\1/')
+HASH=$(git rev-parse --short HEAD)
+cat &gt; src/version.h &lt;&lt;EOF
+#define FW_VERSION_MAJOR  ${MAJOR}
+#define FW_VERSION_MINOR  ${MINOR}
+#define FW_VERSION_PATCH  ${PATCH}
+#define FW_VERSION_STR    "${MAJOR}.${MINOR}.${PATCH}"
+#define FW_BUILD_HASH     "${HASH}"
+#define FW_BUILD_DATE     "$(date -u +%Y-%m-%d)"
+EOF</code></pre>
+
+<hr>
+
+<h2>Common Gotchas</h2>
+
+<ul><li><strong>Forgetting <code>volatile</code> on ISR-shared variables</strong> — the compiler sees no modification in the main loop and optimises the variable into a register. The loop never sees the update. Always declare ISR-shared state as <code>volatile</code>, or use atomic types (<code>_Atomic</code> in C11).</li></ul>
+
+<ul><li><strong>Stack overflow is silent by default</strong> — FreeRTOS will not detect it unless <code>configCHECK_FOR_STACK_OVERFLOW</code> is set to 2. The symptom is random corruption or a hard fault far from the root cause. Run with stack checking always enabled during development; set stack sizes 20% larger than the measured peak.</li></ul>
+
+<ul><li><strong>I2C clock stretching hangs the bus</strong> — some STM32 HAL versions have a silicon errata where the I2C peripheral locks up if the slave holds SCL low longer than expected. Implement the 9-pulse SCL recovery sequence and call <code>HAL_I2C_Init()</code> to recover. Set a timeout on all I2C transactions; never use <code>HAL_MAX_DELAY</code> on a shared bus.</li></ul>
+
+<ul><li><strong>DMA buffer in cacheable memory (Cortex-M7/STM32H7)</strong> — the D-cache sees a stale copy of the buffer while DMA writes directly to SRAM. Call <code>SCB_InvalidateDCache_by_Addr()</code> before reading DMA RX buffers and <code>SCB_CleanDCache_by_Addr()</code> after filling DMA TX buffers. Or place DMA buffers in non-cacheable SRAM (e.g., <code>__attribute__((section(".dma_buffers")))</code>).</li></ul>
+
+<ul><li><strong>OTA never confirmed = boot loop</strong> — if the application downloads and reboots but never calls <code>boot_set_confirmed()</code>, MCUboot will revert to the previous image on the next reset. Always gate confirmation on a successful cloud handshake (not just startup), and test the rollback path in CI.</li></ul>
+
+<ul><li><strong>Peripheral clocks not re-enabled after Stop mode</strong> — returning from STM32 Stop mode restores the CPU but peripherals clocked from PLLs that were stopped need re-initialisation. Call <code>SystemClock_Config()</code> on wakeup before accessing any peripheral that depends on the PLL. Symptom: UART/SPI/I2C silently produces garbage after first sleep cycle.</li></ul>
+
+<ul><li><strong><code>HAL_Delay()</code> called from an ISR</strong> — blocks on the SysTick counter. If the ISR priority is higher than or equal to SysTick priority (or SysTick is suspended for tickless idle), <code>HAL_Delay</code> spins forever. Never block in an ISR; post to a queue and handle timing in task context.</li></ul>
+
+<ul><li><strong>Unsigned arithmetic underflow in ADC calibration</strong> — subtracting an offset from a <code>uint16_t</code> sample that is smaller than the offset wraps to 65535. Use <code>int32_t</code> for intermediate calculations and clamp before converting back to the output type.</li></ul>
+
+<hr>
+
+<h2>See Also</h2>
+
+<ul><li><a href="../hardware/SKILL.md" target="_blank" rel="noopener">iot/hardware</a> — PCB layout, schematic review, component selection</li><li><a href="https://docs.espressif.com/projects/esp-idf/en/latest/" target="_blank" rel="noopener">ESP-IDF Programming Guide</a></li><li><a href="https://docs.zephyrproject.org/latest/" target="_blank" rel="noopener">Zephyr Project Documentation</a></li><li><a href="https://docs.mcuboot.com/" target="_blank" rel="noopener">MCUboot Documentation</a></li><li><a href="https://www.freertos.org/Documentation/RTOS_book.html" target="_blank" rel="noopener">FreeRTOS Reference Manual</a></li><li><a href="https://www.throwtheswitch.org/" target="_blank" rel="noopener">CMock + Unity Testing Framework</a></li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/iot/firmware/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

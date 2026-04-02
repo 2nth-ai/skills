@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clinical Governance — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Clinical Governance</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/health/clinical-governance/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Clinical Governance</div>
+      <h1>CLINICAL GOVERNANCE</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Clinical Governance</h1>
+
+<p>Clinical governance is the system by which healthcare organisations are accountable for continuously improving the quality of their services and safeguarding high standards of care. In the South African context it sits at the intersection of the National Health Act (61 of 2003), the Office of Health Standards Compliance (OHSC) norms and standards, COHSASA accreditation, and HPCSA practitioner obligations.</p>
+
+<p>This skill carries what a Clinical Governance / Quality Manager specialist brings: frameworks, tools, SA-specific programmes, regulatory touch-points, and the practical mechanics of running a governance function in a public or private facility.</p>
+
+<hr>
+
+<h2>1. Clinical Governance Framework</h2>
+
+<h3>The 7 Pillars</h3>
+
+<table><thead><tr><th>Pillar</th><th>What it covers</th><th>Key activities</th></tr></thead><tbody><tr><td><strong>Clinical Effectiveness</strong></td><td>Evidence-based practice, guidelines adherence</td><td>Clinical audit, protocol review, outcome measurement</td></tr><tr><td><strong>Patient Safety</strong></td><td>Incident prevention, harm reduction</td><td>Incident reporting, RCA, Never Events monitoring</td></tr><tr><td><strong>Patient Experience</strong></td><td>Patient-centred care, dignity</td><td>Complaints management, Patient Satisfaction Surveys (PSS), PREMS/PROMS</td></tr><tr><td><strong>Staffing &amp; Staff Management</strong></td><td>Safe staffing levels, competency</td><td>Workforce planning, performance review, scope of practice compliance</td></tr><tr><td><strong>Education &amp; Training</strong></td><td>CPD, clinical competence</td><td>Mandatory training registers, CPD points tracking, induction</td></tr><tr><td><strong>Information</strong></td><td>Data quality, clinical records</td><td>Medical records audits, data completeness, ICD-10 coding accuracy</td></tr><tr><td><strong>Communication</strong></td><td>Internal and external communication</td><td>SBAR use, handover protocols, family communication standards</td></tr></tbody></table>
+
+<h3>Governance Committee Structure</h3>
+
+<pre><code class="lang-text">Board / Hospital Management Committee
+        |
+Clinical Governance Committee (CGC)
+        |
+  ┌─────┴──────────────────────────────────────┐
+  │              │              │               │
+Patient       Clinical       Infection      Pharmacy &amp;
+Safety       Audit &amp;        Prevention     Therapeutics
+Committee    Effectiveness   Control (IPC)  Committee
+             Committee       Committee
+  │
+  └── Mortality &amp; Morbidity Review Group</code></pre>
+
+<p><strong>Clinical Governance Committee (CGC) — Core Terms of Reference</strong></p>
+
+<table><thead><tr><th>Element</th><th>Standard</th></tr></thead><tbody><tr><td>Frequency</td><td>Minimum quarterly; monthly preferred</td></tr><tr><td>Quorum</td><td>Medical Director + Nursing Manager + at minimum 2 clinical leads</td></tr><tr><td>Agenda standing items</td><td>Incident reports, audit results, M&amp;M outcomes, accreditation status, complaints summary, indicator dashboard</td></tr><tr><td>Minutes</td><td>Circulated within 10 working days; action log tracked to closure</td></tr><tr><td>Reporting line</td><td>Board or equivalent governing body; annual clinical governance report</td></tr><tr><td>Independence</td><td>CGC chair should not be operational line manager of most members</td></tr></tbody></table>
+
+<p><strong>Subcommittee Reporting Cadence</strong></p>
+
+<table><thead><tr><th>Subcommittee</th><th>Frequency</th><th>Reports to CGC</th></tr></thead><tbody><tr><td>Patient Safety</td><td>Monthly</td><td>Quarterly summary</td></tr><tr><td>Clinical Audit &amp; Effectiveness</td><td>Quarterly</td><td>Per audit cycle</td></tr><tr><td>IPC</td><td>Monthly</td><td>Monthly HAI dashboard</td></tr><tr><td>Pharmacy &amp; Therapeutics</td><td>Monthly</td><td>Medication safety incidents</td></tr><tr><td>M&amp;M Review Group</td><td>Monthly (clinical departments)</td><td>Quarterly aggregate</td></tr></tbody></table>
+
+<hr>
+
+<h2>2. Patient Safety</h2>
+
+<h3>Incident Classification</h3>
+
+<table><thead><tr><th>Class</th><th>Definition</th><th>Reporting Timeline</th><th>Example</th></tr></thead><tbody><tr><td><strong>Sentinel Event</strong></td><td>Unexpected occurrence involving death or serious physical/psychological harm, or risk thereof</td><td>Immediate (within 24h) to management; OHSC notification as required</td><td>Wrong-site surgery, retained instrument, infant abduction</td></tr><tr><td><strong>Serious Adverse Event (SAE)</strong></td><td>Harm to patient that was not the result of underlying illness; requires investigation</td><td>Within 48h</td><td>Medication error causing organ damage, unplanned return to theatre</td></tr><tr><td><strong>Near Miss</strong></td><td>Event that could have caused harm but did not reach the patient, or reached patient without harm</td><td>Within 72h</td><td>Wrong drug prepared but caught before administration</td></tr><tr><td><strong>No Harm Incident</strong></td><td>Reached patient but no discernible harm</td><td>Within 7 days</td><td>Incorrect diet tray delivered; patient did not eat it</td></tr></tbody></table>
+
+<p><strong>Incident Reporting System requirements:</strong></p>
+<ul><li>Anonymous reporting option available (promotes safety culture)</li><li>Non-punitive response to reporters (except reckless conduct)</li><li>Mandatory acknowledgement to reporter within 5 working days</li><li>All Sentinel Events require formal Root Cause Analysis</li></ul>
+
+<h3>Root Cause Analysis (RCA)</h3>
+
+<p><strong>Trigger:</strong> All Sentinel Events; selected SAEs at Clinical Governance Committee discretion.</p>
+
+<p><strong>5 Whys Method</strong> A sequential interrogation technique. For each identified cause, ask "Why did this occur?" up to 5 iterations until the systemic root cause is reached. Stop when reaching a factor outside the organisation's control.</p>
+
+<pre><code class="lang-text">Incident: Patient received wrong medication
+Why 1: Wrong drug drawn from the Pyxis?  → Nurse selected wrong vial
+Why 2: Why wrong vial selected?           → Look-alike packaging on adjacent shelf
+Why 3: Why adjacent?                      → No segregation protocol in place
+Why 4: Why no protocol?                   → Not identified in last accreditation round
+Why 5: Why not identified?                → Pharmacy audit did not include storage review
+Root cause: Pharmacy audit scope gap + absence of LASA segregation policy</code></pre>
+
+<p><strong>Fishbone / Ishikawa Diagram — Standard Categories for Healthcare</strong></p>
+
+<pre><code class="lang-text">                    ┌──────────────────────┐
+                    │       INCIDENT       │
+                    └──────────────────────┘
+                              ▲
+         ┌────────────────────┴────────────────────┐
+         │                                         │
+    ┌────┴────┐                              ┌─────┴────┐
+    │  Staff  │                              │Equipment │
+    └─────────┘                              └──────────┘
+    ┌─────────┐                              ┌──────────┐
+    │ Process │                              │  Place / │
+    │(Method) │                              │Environment│
+    └─────────┘                              └──────────┘
+    ┌─────────┐                              ┌──────────┐
+    │Materials│                              │Management│
+    │(Drugs/  │                              │&amp; Culture │
+    │Supplies)│                              │          │
+    └─────────┘                              └──────────┘</code></pre>
+
+<p>Populate each bone with contributing factors before identifying root cause. All bones must be explored before concluding.</p>
+
+<p><strong>RCA Report minimum structure:</strong></p>
+<ol><li>Incident description (factual, no names)</li><li>Timeline of events</li><li>Immediate actions taken</li><li>Fishbone analysis</li><li>Root cause(s) identified</li><li>Recommendations (SMART — Specific, Measurable, Achievable, Relevant, Time-bound)</li><li>Implementation plan with named accountable persons</li><li>Review date for effectiveness check</li></ol>
+
+<h3>SBAR Communication Tool</h3>
+
+<p>Used for handovers, escalations, and critical communications.</p>
+
+<table><thead><tr><th>Component</th><th>Prompt</th></tr></thead><tbody><tr><td><strong>S — Situation</strong></td><td>"I am calling about [patient name/bed] because [reason]"</td></tr><tr><td><strong>B — Background</strong></td><td>Diagnosis, admission date, relevant history, current treatment</td></tr><tr><td><strong>A — Assessment</strong></td><td>"I think the problem is…" — your clinical concern</td></tr><tr><td><strong>R — Recommendation</strong></td><td>"I need you to [come assess / order X / advise on Y] within [timeframe]"</td></tr></tbody></table>
+
+<p>SBAR applies equally to: nurse-to-doctor handover, doctor-to-specialist referral, ward round summary, critical result notification.</p>
+
+<h3>Safety Culture Assessment</h3>
+
+<p><strong>Manchester Patient Safety Framework (MaPSaF)</strong></p>
+
+<p>A validated self-assessment tool covering 9 dimensions of safety culture. Each dimension is rated across 5 maturity levels:</p>
+
+<table><thead><tr><th>Level</th><th>Label</th><th>Characteristic</th></tr></thead><tbody><tr><td>A</td><td>Pathological</td><td>"Why waste time on safety?"</td></tr><tr><td>B</td><td>Reactive</td><td>Safety only after incidents occur</td></tr><tr><td>C</td><td>Bureaucratic</td><td>Systems exist for compliance only</td></tr><tr><td>D</td><td>Proactive</td><td>Safety risks anticipated and managed</td></tr><tr><td>E</td><td>Generative</td><td>Safety is how we work; learning is continuous</td></tr></tbody></table>
+
+<p>MaPSaF dimensions: overall commitment to safety, priority given to safety, systems errors and individual responsibility, recording and monitoring, evaluating incidents, learning and change, communication, staff management, staff education/training.</p>
+
+<p>Target: organisations should aim to sustain Level D across all dimensions; Level E is the benchmark for high-reliability organisations (HRO).</p>
+
+<h3>Never Events</h3>
+
+<p>Never Events are serious, largely preventable patient safety incidents that should not occur if the available preventive measures are implemented. South African facilities should adopt as a minimum:</p>
+
+<table><thead><tr><th>Never Event</th><th>Prevention measure</th></tr></thead><tbody><tr><td>Wrong-site surgery</td><td>WHO Surgical Safety Checklist (mandatory sign-in, time-out, sign-out)</td></tr><tr><td>Retained surgical instrument</td><td>Instrument and swab count protocols</td></tr><tr><td>Wrong patient procedure</td><td>Two-identifier patient verification at every handover point</td></tr><tr><td>Medication 10-fold dosing error</td><td>Independent double-check for high-alert medications</td></tr><tr><td>Misidentification of blood product</td><td>Two-nurse blood verification at bedside</td></tr><tr><td>Undetected oesophageal intubation</td><td>Waveform capnography confirmation</td></tr><tr><td>Intravenous potassium chloride given undiluted</td><td>Remove concentrated KCl from ward stock</td></tr><tr><td>Infant discharge to wrong family</td><td>Identity band + photograph protocol</td></tr></tbody></table>
+
+<hr>
+
+<h2>3. Clinical Audit</h2>
+
+<h3>The Audit Cycle</h3>
+
+<pre><code class="lang-text">1. IDENTIFY STANDARD
+   (guideline, protocol, best practice, NCS criterion)
+          ↓
+2. SET CRITERIA &amp; STANDARDS
+   (measurable, evidence-based, agreed by clinical team)
+          ↓
+3. COLLECT DATA
+   (sample size, data collection tool, prospective or retrospective)
+          ↓
+4. COMPARE AGAINST STANDARD
+   (compliance rate, gap analysis, benchmarking)
+          ↓
+5. IMPLEMENT CHANGE
+   (education, protocol update, system change, re-training)
+          ↓
+6. RE-AUDIT
+   (close the loop — confirm improvement sustained)
+          ↑
+          └─ Repeat cycle</code></pre>
+
+<p><strong>Minimum acceptable sample size for ward-level audits:</strong> 30 cases or 10% of caseload per month — whichever is greater. For low-frequency procedures, 100% case review is appropriate.</p>
+
+<h3>Audit Types</h3>
+
+<table><thead><tr><th>Type</th><th>Description</th><th>When to use</th></tr></thead><tbody><tr><td><strong>Prospective</strong></td><td>Data collected in real time as care is delivered</td><td>New protocol implementation; process compliance</td></tr><tr><td><strong>Retrospective</strong></td><td>Data extracted from existing records</td><td>Outcome measurement; baseline assessment</td></tr><tr><td><strong>Criterion-based</strong></td><td>Measures compliance with specific agreed criteria</td><td>Guideline adherence; standard of care</td></tr><tr><td><strong>Significant Event Audit (SEA)</strong></td><td>Detailed review of a single significant case — positive or negative</td><td>Sentinel events; exemplary care; complex cases</td></tr><tr><td><strong>Tracer Methodology</strong></td><td>Follows one patient's journey across departments</td><td>System-wide process evaluation (used in COHSASA)</td></tr></tbody></table>
+
+<h3>Audit Report Structure</h3>
+
+<table><thead><tr><th>Section</th><th>Content</th></tr></thead><tbody><tr><td>Title</td><td>Audit name, department, period, lead auditor</td></tr><tr><td>Objective</td><td>What standard was being measured and why</td></tr><tr><td>Methodology</td><td>Sample, data source, collection method</td></tr><tr><td>Results</td><td>Compliance rates, variances, tables/charts</td></tr><tr><td>Analysis</td><td>Why gaps exist — contributing factors</td></tr><tr><td>Recommendations</td><td>Numbered, SMART actions</td></tr><tr><td>Action Plan</td><td>Responsible person, deadline, resource required</td></tr><tr><td>Re-audit date</td><td>When loop will be closed (typically 3–6 months)</td></tr></tbody></table>
+
+<hr>
+
+<h2>4. Mortality &amp; Morbidity Review</h2>
+
+<h3>M&amp;M Meeting Structure</h3>
+
+<p><strong>Frequency:</strong> Monthly per clinical department; aggregate quarterly to CGC.</p>
+
+<p><strong>Case Selection Criteria</strong> (all-cause, no pre-selection bias):</p>
+<ul><li>All in-hospital deaths</li><li>Unplanned return to theatre within 30 days</li><li>Unplanned ICU admission</li><li>Significant complications (e.g., anastomotic leak, post-operative haemorrhage)</li><li>Cases where team requests review (anonymous nomination acceptable)</li></ul>
+
+<p><strong>Meeting Format:</strong></p>
+
+<table><thead><tr><th>Phase</th><th>Duration</th><th>Content</th></tr></thead><tbody><tr><td>Case presentation</td><td>5–10 min per case</td><td>Factual timeline, no names, presented by most junior appropriate clinician</td></tr><tr><td>Discussion</td><td>10–15 min</td><td>Multidisciplinary; what happened, contributing factors</td></tr><tr><td>Classification</td><td>2 min</td><td>Preventability grading (see below)</td></tr><tr><td>Learning points</td><td>5 min</td><td>What would we do differently?</td></tr><tr><td>Action assignment</td><td>2 min</td><td>Named person, deadline</td></tr></tbody></table>
+
+<p><strong>Preventability Grading:</strong></p>
+
+<table><thead><tr><th>Grade</th><th>Definition</th></tr></thead><tbody><tr><td>0 — Not preventable</td><td>Death/complication was inevitable given presentation and available resources</td></tr><tr><td>1 — Possibly preventable</td><td>Some factors identifiable but likely not decisive</td></tr><tr><td>2 — Probably preventable</td><td>Management contributed significantly; different approach likely to have altered outcome</td></tr><tr><td>3 — Preventable</td><td>Clear management error or system failure; different approach would have prevented outcome</td></tr></tbody></table>
+
+<p><strong>Learning vs Blame Culture</strong> M&amp;M is a protected learning environment. Presentations are anonymised. No disciplinary action flows directly from M&amp;M. However, a pattern of Grade 2–3 cases linked to a specific individual should trigger a separate clinical performance review process under HPCSA professional conduct rules — these are distinct processes.</p>
+
+<h3>Maternal Mortality Review — NCCEMD</h3>
+
+<p><strong>National Committee for Confidential Enquiries into Maternal Deaths (NCCEMD)</strong> is the South African body that conducts confidential enquiries into all maternal deaths in public and private facilities.</p>
+
+<p><strong>Mandatory reporting:</strong> Every maternal death must be reported to the NCCEMD within 7 days using the standardised maternal death notification form.</p>
+
+<p><strong>Confidential Enquiry Process:</strong></p>
+<ol><li>Facility completes maternal death data form (within 7 days)</li><li>District/provincial review</li><li>Regional NCCEMD review panel</li><li>National analysis published in triennial Saving Mothers Report</li></ol>
+
+<p><strong>Saving Mothers Report</strong> — the triennial publication classifying SA maternal deaths by avoidable factors:</p>
+<ul><li>Patient-related delays (delay in seeking care)</li><li>Administrative factors (facility resource failures)</li><li>Healthcare provider factors (clinical management failures)</li></ul>
+
+<p><strong>Leading causes tracked:</strong> Non-pregnancy-related infections (NPRI, primarily HIV/TB), obstetric haemorrhage, hypertensive disorders, pre-existing medical conditions.</p>
+
+<p><strong>Avoidable Factor classification</strong> is used to direct quality improvement — facilities with high provider factor rates trigger targeted intervention.</p>
+
+<h3>Perinatal Mortality Review — PPIP</h3>
+
+<p><strong>Perinatal Problem Identification Programme (PPIP)</strong> is the SA audit tool for perinatal deaths (stillbirths + neonatal deaths in the first week of life).</p>
+
+<p><strong>All perinatal deaths</strong> must be entered into the PPIP database.</p>
+
+<p><strong>PPIP Classification System:</strong></p>
+
+<table><thead><tr><th>Primary Obstetric Problem</th><th>Neonatal Problem</th></tr></thead><tbody><tr><td>Hypertension</td><td>Immaturity</td></tr><tr><td>Antepartum haemorrhage</td><td>Infection</td></tr><tr><td>Fetal abnormality</td><td>Hypoxia</td></tr><tr><td>Maternal disease</td><td>Other</td></tr><tr><td>Unexplained IUD</td><td></td></tr></tbody></table>
+
+<p><strong>Avoidable factors in PPIP</strong> mirror NCCEMD: patient/family factors, administrative factors, health worker factors.</p>
+
+<p><strong>PPIP output:</strong> Perinatal mortality rate (PNMR) per 1,000 births; stillbirth rate; early neonatal death rate. These feed directly into the Ideal Hospital Realisation and Maintenance Programme (IHRP) scorecard.</p>
+
+<hr>
+
+<h2>5. Infection Prevention &amp; Control (IPC)</h2>
+
+<h3>HAI Surveillance</h3>
+
+<p><strong>Hospital-Acquired Infection (HAI)</strong> — infection not present at admission, occurring ≥48h after admission (or within 30 days of discharge for surgical site infections).</p>
+
+<p><strong>Core HAI types monitored:</strong></p>
+
+<table><thead><tr><th>HAI Type</th><th>Denominator</th><th>Target rate</th></tr></thead><tbody><tr><td>Catheter-Associated Urinary Tract Infection (CAUTI)</td><td>Per 1,000 catheter-days</td><td>&lt;3/1,000</td></tr><tr><td>Central Line-Associated Bloodstream Infection (CLABSI)</td><td>Per 1,000 central-line days</td><td>&lt;1/1,000</td></tr><tr><td>Surgical Site Infection (SSI)</td><td>Per 100 procedures by wound class</td><td>Varies by class</td></tr><tr><td>Ventilator-Associated Pneumonia (VAP)</td><td>Per 1,000 ventilator-days</td><td>&lt;2/1,000</td></tr><tr><td>Clostridioides difficile</td><td>Per 10,000 patient-days</td><td>&lt;1/10,000</td></tr><tr><td>MRSA bacteraemia</td><td>Per 1,000 patient-days</td><td>&lt;0.5/1,000</td></tr></tbody></table>
+
+<p><strong>HAI Rate formula:</strong></p>
+
+<pre><code class="lang-text">HAI Rate = (Number of HAIs / Number of patient-days) × 1,000</code></pre>
+
+<h3>WHO 5 Moments for Hand Hygiene</h3>
+
+<p>Compliance auditing against the 5 Moments is a COHSASA and IHRP requirement.</p>
+
+<table><thead><tr><th>Moment</th><th>Timing</th></tr></thead><tbody><tr><td>1</td><td>Before touching a patient</td></tr><tr><td>2</td><td>Before a clean/aseptic procedure</td></tr><tr><td>3</td><td>After body fluid exposure risk</td></tr><tr><td>4</td><td>After touching a patient</td></tr><tr><td>5</td><td>After touching patient surroundings</td></tr></tbody></table>
+
+<p><strong>Compliance target:</strong> ≥80% overall; ICU ≥90%. Audit monthly using WHO observation tool. Report to IPC Committee.</p>
+
+<p><strong>Calculation:</strong></p>
+<pre><code class="lang-text">Compliance % = (Compliant actions / Opportunities observed) × 100</code></pre>
+
+<h3>MRSA and CRKP Screening Protocols</h3>
+
+<p><strong>MRSA (Methicillin-Resistant Staphylococcus aureus):</strong></p>
+<ul><li>Screen on admission: ICU, haematology, oncology, renal, patients transferred from other facilities</li><li>Screen sites: nasal swab (primary) + wound/skin lesion if present</li><li>Positive result action: contact precautions (gown + gloves), single room or cohort, decolonisation per protocol (mupirocin nasal + chlorhexidine bath for 5 days)</li><li>Screen to clear: 3 negative screens ≥48h apart</li></ul>
+
+<p><strong>CRKP (Carbapenem-Resistant Klebsiella pneumoniae):</strong></p>
+<ul><li>Screen on admission from high-risk facilities or endemic areas</li><li>Screen sites: rectal swab</li><li>Positive result action: enhanced contact precautions, dedicated equipment, alert on patient record</li><li>Outbreak threshold: 2 linked cases in same ward/unit within 30 days → trigger outbreak protocol</li></ul>
+
+<h3>Outbreak Management</h3>
+
+<p><strong>Outbreak declared when:</strong> HAI rate exceeds control chart upper control limit (UCL) or ≥2 linked cases of significant pathogen.</p>
+
+<p><strong>Outbreak Response Steps:</strong></p>
+<ol><li>Declare outbreak — notify IPC Lead and Hospital Management within 4h</li><li>Case definition established (who counts as a case)</li><li>Case finding — review all admissions in affected area</li><li>Enhanced surveillance (active rather than passive)</li><li>Implement enhanced IPC precautions (cohorting, dedicated staff if possible)</li><li>Environmental sampling (swabs, cultures)</li><li>Microbiology and Public Health notification (NICD if notifiable condition)</li><li>Daily situation report to management until outbreak declared over</li><li>Outbreak declared over: 2 × maximum incubation period with no new cases</li><li>Post-outbreak debrief and report to CGC</li></ol>
+
+<p><strong>NICD (National Institute for Communicable Diseases)</strong> must be notified for: CRKP clusters, XDR-TB, outbreak of unknown aetiology affecting ≥5 patients.</p>
+
+<h3>IPC Committee</h3>
+
+<table><thead><tr><th>Role</th><th>Responsibility</th></tr></thead><tbody><tr><td>IPC Lead (Infection Control Nurse / IPC Practitioner)</td><td>Day-to-day surveillance, education, audit</td></tr><tr><td>Medical Microbiologist / Infectious Disease Physician</td><td>Clinical guidance, outbreak management</td></tr><tr><td>Pharmacy representative</td><td>Antibiotic stewardship, antimicrobial resistance data</td></tr><tr><td>Nursing Management</td><td>Policy enforcement, staffing implications</td></tr><tr><td>Housekeeping/Environmental Services</td><td>Cleaning and disinfection protocols</td></tr><tr><td>Engineering/Maintenance</td><td>HVAC, water systems, building works</td></tr></tbody></table>
+
+<p>IPC Committee frequency: monthly; reports to CGC quarterly.</p>
+
+<hr>
+
+<h2>6. Accreditation</h2>
+
+<h3>COHSASA</h3>
+
+<p><strong>Council for Health Service Accreditation of Southern Africa (COHSASA)</strong> is the primary healthcare accreditation body in South Africa. It is an ISQua (International Society for Quality in Health Care) accredited body — meaning its own accreditation process meets international standards.</p>
+
+<p><strong>COHSASA Accreditation Process:</strong></p>
+
+<table><thead><tr><th>Phase</th><th>Activity</th><th>Duration</th></tr></thead><tbody><tr><td>1. Application</td><td>Facility applies; baseline self-assessment against COHSASA standards</td><td>1–2 months</td></tr><tr><td>2. Quality Improvement Programme (QIP)</td><td>Facility implements improvements; COHSASA support and mentoring available</td><td>6–24 months (varies by readiness)</td></tr><tr><td>3. Pre-accreditation survey (optional)</td><td>Mock survey to identify gaps before formal survey</td><td></td></tr><tr><td>4. Accreditation survey</td><td>External survey team (3–5 days); tracer methodology; interviews; document review</td><td>3–5 days on-site</td></tr><tr><td>5. Accreditation decision</td><td>Report issued; accreditation granted or conditional</td><td>4–6 weeks post-survey</td></tr><tr><td>6. Surveillance</td><td>Ongoing monitoring; midterm review; 3-year accreditation cycle</td><td>Continuous</td></tr></tbody></table>
+
+<p><strong>Accreditation Outcomes:</strong></p>
+
+<table><thead><tr><th>Outcome</th><th>Meaning</th></tr></thead><tbody><tr><td>Accredited</td><td>Full compliance with required standards</td></tr><tr><td>Accredited with conditions</td><td>Minor non-compliances; corrective action plan required</td></tr><tr><td>Not accredited</td><td>Significant gaps; re-survey required</td></tr></tbody></table>
+
+<p><strong>COHSASA Standard Domains</strong> (current framework):</p>
+<ul><li>Leadership and Governance</li><li>Patient Rights and Organisational Ethics</li><li>Patient Safety</li><li>Clinical Care</li><li>Medication Management</li><li>Infection Prevention and Control</li><li>Human Resources</li><li>Quality Improvement</li><li>Support Services (Radiology, Laboratory, Pharmacy, Catering, Housekeeping)</li><li>Physical Environment and Safety</li></ul>
+
+<h3>ISQua Alignment</h3>
+
+<p>COHSASA's standards are aligned to ISQua's International Principles for Healthcare Standards (IPHS). This means COHSASA accreditation is internationally recognised. Facilities accredited by COHSASA can credibly reference this for international partnerships, medical tourism, and insurer contracting.</p>
+
+<h3>JCI Differences</h3>
+
+<table><thead><tr><th>Dimension</th><th>COHSASA</th><th>JCI</th></tr></thead><tbody><tr><td>Cost</td><td>More accessible for SA private facilities</td><td>Significantly higher (US-based)</td></tr><tr><td>Language</td><td>Aligned to SA regulatory environment</td><td>US-centric; requires local adaptation</td></tr><tr><td>NCS alignment</td><td>Mapped to OHSC National Core Standards</td><td>Not specifically aligned</td></tr><tr><td>Prevalence in SA</td><td>Most private hospitals; many public</td><td>Select premium private hospitals only</td></tr><tr><td>International recognition</td><td>ISQua-accredited; recognised in Africa/Commonwealth</td><td>Global premium recognition</td></tr><tr><td>Tracer methodology</td><td>Yes</td><td>Yes</td></tr></tbody></table>
+
+<p>Recommendation: COHSASA is the default standard for SA facilities. JCI only if international marketing or insurer contract explicitly requires it.</p>
+
+<hr>
+
+<h2>7. Complaints &amp; Compliments</h2>
+
+<h3>Complaint Management Process</h3>
+
+<p><strong>National Health Act (61 of 2003), Section 46</strong> — Patient rights include the right to lodge complaints about health services and to have those complaints investigated.</p>
+
+<p><strong>Process:</strong></p>
+
+<table><thead><tr><th>Step</th><th>Timeline</th><th>Action</th></tr></thead><tbody><tr><td>Receipt</td><td>Day 0</td><td>Acknowledge receipt in writing (email, letter, or handed form). Complaints register updated.</td></tr><tr><td>Acknowledgement</td><td>Within 24 hours</td><td>Written acknowledgement to complainant; assigned case manager identified</td></tr><tr><td>Investigation</td><td>Within 5 working days</td><td>Gather records, interview staff, review clinical notes</td></tr><tr><td>Response</td><td>Within 30 days</td><td>Written response addressing each point raised; findings and actions taken</td></tr><tr><td>Escalation</td><td>If not resolved</td><td>Inform complainant of escalation options (OHSC, Health Ombud)</td></tr><tr><td>Closure</td><td>When complainant satisfied or process exhausted</td><td>Record outcome; identify systemic issues for CGC</td></tr></tbody></table>
+
+<p><strong>Complaints Register</strong> must capture: date received, complainant details, nature of complaint, assigned case manager, response date, outcome, whether systemic issue identified.</p>
+
+<p><strong>Compliments</strong> — document and share with staff. Compliment-to-complaint ratio is an indicator of patient experience culture. Target: 3:1 or better (3 compliments per complaint).</p>
+
+<h3>OHSC — Office of Health Standards Compliance</h3>
+
+<p>The OHSC is established under the National Health Amendment Act (12 of 2013). It monitors and enforces compliance with health establishment norms and standards.</p>
+
+<p><strong>OHSC Inspection types:</strong></p>
+<ul><li>Announced inspection (scheduled)</li><li>Unannounced inspection (random compliance check)</li><li>Complaint-triggered inspection (following a formal complaint to the OHSC)</li></ul>
+
+<p><strong>OHSC Inspection focus areas</strong> mirror the National Core Standards (NCS):</p>
+<ol><li>Patient rights</li><li>Patient safety, clinical governance, and clinical care</li><li>Clinical support services</li><li>Public health</li><li>Leadership and governance</li><li>Operational management</li><li>Facilities and infrastructure</li></ol>
+
+<p><strong>Non-compliance with OHSC norms</strong> — the OHSC can issue:</p>
+<ul><li>Improvement notice (corrective action required within specified period)</li><li>Prohibition notice (stop specific practice or close unit)</li><li>Referral to Health Ombud for investigation</li></ul>
+
+<h3>Health Ombud</h3>
+
+<p>Established under the Office of Health Standards Compliance Act. The Health Ombud investigates complaints about serious non-compliance with norms and standards. The Health Ombud has powers to compel testimony and production of records. Findings are published and can be referred to the Minister of Health.</p>
+
+<p>Key distinction: OHSC = standards inspection / systemic compliance. Health Ombud = serious individual or systemic complaints where OHSC process has been exhausted or where severity warrants direct investigation.</p>
+
+<hr>
+
+<h2>8. Clinical Indicators</h2>
+
+<h3>Core Dashboard Indicators</h3>
+
+<table><thead><tr><th>Indicator</th><th>Formula</th><th>Frequency</th><th>Target</th></tr></thead><tbody><tr><td><strong>HAI Rate</strong></td><td>(HAIs / Patient-days) × 1,000</td><td>Monthly</td><td>Benchmark by HAI type (see Section 5)</td></tr><tr><td><strong>Pressure Ulcer Prevalence</strong></td><td>(Patients with pressure ulcer / Patients surveyed) × 100</td><td>Monthly point prevalence</td><td>&lt;5% (hospital-acquired only)</td></tr><tr><td><strong>Fall Rate</strong></td><td>(Patient falls / Patient-days) × 1,000</td><td>Monthly</td><td>&lt;3/1,000 patient-days</td></tr><tr><td><strong>Medication Error Rate</strong></td><td>(Medication errors / Patient-days) × 1,000</td><td>Monthly</td><td>Trend down; zero serious medication errors</td></tr><tr><td><strong>In-Hospital Cardiac Arrest Survival</strong></td><td>(ROSC achieved / Cardiac arrests) × 100</td><td>Monthly</td><td>&gt;30% ROSC; benchmark against Utstein registry</td></tr><tr><td><strong>Unplanned ICU Admission Rate</strong></td><td>(Unplanned ICU admissions / Total admissions) × 100</td><td>Monthly</td><td>Facility-specific; track trend</td></tr><tr><td><strong>30-Day Readmission Rate</strong></td><td>(Readmissions within 30 days / Discharges) × 100</td><td>Monthly</td><td>&lt;10% (general); &lt;15% cardiac/surgical</td></tr><tr><td><strong>HSMR</strong></td><td>(Observed deaths / Expected deaths) × 100</td><td>Quarterly</td><td>&lt;100 (100 = national average; &lt;75 = top quartile)</td></tr></tbody></table>
+
+<h3>HSMR — Hospital Standardised Mortality Ratio</h3>
+
+<p><strong>Formula:</strong></p>
+<pre><code class="lang-text">HSMR = (Observed in-hospital deaths / Expected deaths based on case-mix) × 100</code></pre>
+
+<ul><li>Expected deaths are calculated using a risk-adjustment model accounting for: age, sex, diagnosis (ICD-10), comorbidities, admission urgency, length of stay.</li><li>HSMR = 100 means the facility's mortality rate equals the national average for its case-mix.</li><li>HSMR &gt; 100 indicates higher-than-expected mortality — triggers investigation.</li><li>HSMR &lt; 100 indicates lower-than-expected mortality.</li></ul>
+
+<p><strong>SA context:</strong> HSMR is not yet universally mandated in SA but is used by accredited private hospital groups (Netcare, Mediclinic, Life Healthcare) and is part of COHSASA quality indicator requirements for accredited facilities. Public facilities are expected to report to provincial DoH via DHIS (District Health Information System).</p>
+
+<h3>Indicator Interpretation Principles</h3>
+
+<ul><li>Never act on a single data point. Use run charts or Statistical Process Control (SPC) charts to distinguish special cause variation (requiring investigation) from common cause variation (requiring system redesign).</li><li><strong>Special cause signal:</strong> 1 point beyond 3 sigma, 8 consecutive points above or below the mean, 6 consecutive points trending in one direction.</li><li>Indicators should be presented with trend lines and benchmarks. A compliance number without trend is meaningless.</li></ul>
+
+<hr>
+
+<h2>9. South African Context</h2>
+
+<h3>OHSC National Core Standards (NCS)</h3>
+
+<p>The National Core Standards define the minimum acceptable quality of health services in SA. Organised into 7 domains (see Section 7). OHSC inspection compliance thresholds:</p>
+
+<table><thead><tr><th>Score</th><th>Status</th></tr></thead><tbody><tr><td>≥80%</td><td>Compliant</td></tr><tr><td>60–79%</td><td>Conditional compliance</td></tr><tr><td>&lt;60%</td><td>Non-compliant</td></tr></tbody></table>
+
+<p>Certain criteria are classified as "vital" (immediate risk to life) or "essential" (significant risk). A single vital criterion failure can result in a prohibition notice regardless of overall score.</p>
+
+<h3>IHRP — Ideal Hospital Realisation and Maintenance Programme</h3>
+
+<p>The Department of Health's quality improvement programme for public sector hospitals (the equivalent of the Ideal Clinic programme for PHC facilities).</p>
+
+<p><strong>IHRP Assessment Domains:</strong></p>
+
+<table><thead><tr><th>Domain</th><th>Key measures</th></tr></thead><tbody><tr><td>Administration and Management</td><td>Governance, HR, finance compliance</td></tr><tr><td>Clinical Governance</td><td>M&amp;M, adverse events, clinical audit</td></tr><tr><td>Clinical Support Services</td><td>Laboratory, pharmacy, radiology turnaround</td></tr><tr><td>Infection Prevention and Control</td><td>Hand hygiene compliance, HAI rates</td></tr><tr><td>Patient Safety</td><td>Incident reporting rate, Never Events</td></tr><tr><td>Infrastructure</td><td>Maintenance, equipment functionality</td></tr><tr><td>Patient Experience</td><td>Patient satisfaction scores</td></tr></tbody></table>
+
+<p><strong>IHRP Score levels:</strong></p>
+<ul><li>Level 1: Basic (foundational requirements met)</li><li>Level 2: Intermediate</li><li>Level 3: Ideal (optimal functioning; publicly recognised)</li></ul>
+
+<p>Facilities achieving Level 3 receive DoH recognition and are used as training/mentoring sites.</p>
+
+<h3>Provincial Reporting Requirements</h3>
+
+<p><strong>DHIS (District Health Information System)</strong> — the national data platform. All public facilities must report monthly to DHIS. Key clinical governance indicators reported via DHIS:</p>
+<ul><li>PNMR (from PPIP)</li><li>Maternal deaths (NCCEMD notifications)</li><li>IHRP scores</li><li>HAI rates (IPC surveillance)</li><li>Complaint volumes</li></ul>
+
+<p><strong>Provincial Quality Improvement Plans (QIPs):</strong> Each facility is required to have a documented, annually reviewed QIP aligned to IHRP gaps and NCS non-compliances. The QIP is the facility's commitment to the Provincial DoH on how it will close identified gaps.</p>
+
+<p><strong>Reporting chain:</strong> Facility QIP → District Health Management → Sub-district QI team → Provincial DoH Quality Assurance Directorate → National DoH.</p>
+
+<h3>HPCSA vs Clinical Governance Complaints — Critical Distinction</h3>
+
+<p>These are <strong>separate processes</strong> with different triggers, investigators, and consequences.</p>
+
+<table><thead><tr><th>Dimension</th><th>Clinical Governance Complaint</th><th>HPCSA Conduct Complaint</th></tr></thead><tbody><tr><td>Trigger</td><td>Complaint about facility service quality or system failure</td><td>Complaint about individual practitioner's professional conduct or competence</td></tr><tr><td>Investigated by</td><td>Facility complaints officer → OHSC (if escalated) → Health Ombud</td><td>HPCSA Professional Conduct Committee</td></tr><tr><td>Who is respondent</td><td>The health establishment</td><td>The individual registered practitioner</td></tr><tr><td>Outcome</td><td>Facility improvement notice, prohibition, public report</td><td>Practitioner warning, suspension, erasure from register</td></tr><tr><td>Legal basis</td><td>National Health Act s46; OHSC Act</td><td>Health Professions Act (56 of 1974)</td></tr><tr><td>Confidentiality</td><td>Complaint subject to NHA privacy provisions</td><td>HPCSA hearings are generally public</td></tr><tr><td>Timeline</td><td>30-day facility response; OHSC investigation varies</td><td>HPCSA preliminary inquiry + formal hearing; can take 1–3 years</td></tr></tbody></table>
+
+<p><strong>Practical guidance:</strong></p>
+<ul><li>A medication error complaint can run both processes simultaneously: facility handles the systems failure (clinical governance); if the pharmacist or doctor deviated from scope of practice, HPCSA is notified separately.</li><li>Clinical governance findings (e.g., an RCA report) may be requested as evidence in HPCSA proceedings. Ensure RCA reports are factual, anonymised, and focused on system causes rather than individual blame — this protects both the learning process and individuals.</li><li>Pattern of complaints against one practitioner across multiple patients = likely HPCSA referral. Single system failure = likely clinical governance only.</li><li>HPCSA has a mandatory reporting obligation: any practitioner who is aware that a colleague is practising in a manner that poses a risk to patients has a duty to report to the HPCSA.</li></ul>
+
+<hr>
+
+<h2>Common Gotchas</h2>
+
+<ul><li><strong>M&amp;M anonymisation is protective, not obstruction.</strong> Do not include patient names or staff names in M&amp;M minutes. Minutes are a learning record. If litigation arises, named M&amp;M minutes are discoverable. Anonymised system-focused minutes are substantially less useful as evidence against the facility.</li><li><strong>NCS vital criteria can override your overall score.</strong> A facility scoring 85% overall can still receive a prohibition notice if a vital criterion (e.g., oxygen supply failure, no resuscitation equipment) is failed. Audit vital criteria separately and prioritise them.</li><li><strong>PPIP and NCCEMD are mandatory, not optional.</strong> Non-reporting of perinatal or maternal deaths is a compliance failure and will be flagged in OHSC inspections. Build reporting into the routine — don't wait for M&amp;M meetings to trigger it.</li><li><strong>COHSASA tracer methodology will expose disconnects between policy and practice.</strong> A binder of policies is not evidence of compliance. Surveyors follow patients through the system — staff must know and apply the policies. Education and simulation are more effective than document audits.</li><li><strong>Hand hygiene compliance tends to be over-reported.</strong> Hawthorne effect (observed behaviour improves under observation) inflates audit scores. Triangulate with HAI rates and product usage data (litres of alcohol hand rub consumed per patient-day) for a more accurate picture. Target: ≥2 mL alcohol hand rub per patient-day.</li><li><strong>HSMR requires accurate ICD-10 coding.</strong> The risk-adjustment model depends on correct primary and secondary diagnosis coding. Facilities with poor coding accuracy will have unreliable HSMR. Run an ICD-10 coding audit before interpreting HSMR.</li><li><strong>CGC minutes without action tracking are performative governance.</strong> Each action item must have a named owner, a deadline, and a follow-up status at the next meeting. A CGC that generates recommendations without tracking their closure is not functioning as a governance structure.</li><li><strong>Complaints not logged are a regulatory risk.</strong> Verbal complaints resolved at ward level without logging create blind spots. Train all staff to log every complaint, even those resolved immediately. The complaints register is reviewed in OHSC inspections.</li></ul>
+
+<hr>
+
+<h2>See Also</h2>
+
+<ul><li><a href="https://www.ohsc.org.za" target="_blank" rel="noopener">National Core Standards — OHSC</a></li><li><a href="https://www.cohsasa.co.za" target="_blank" rel="noopener">COHSASA accreditation standards</a></li><li><a href="https://www.health.gov.za" target="_blank" rel="noopener">NCCEMD Saving Mothers Reports — National DoH</a></li><li><a href="https://www.mrc.ac.za" target="_blank" rel="noopener">PPIP programme — MRC South Africa</a></li><li><a href="https://www.hpcsa.co.za" target="_blank" rel="noopener">HPCSA Professional Conduct</a></li><li><a href="https://www.who.int/teams/integrated-health-services/patient-safety/research/safe-surgery" target="_blank" rel="noopener">WHO Surgical Safety Checklist</a></li><li><a href="https://www.manchestersafety.org" target="_blank" rel="noopener">Manchester Patient Safety Framework</a></li><li><a href="https://www.nicd.ac.za" target="_blank" rel="noopener">NICD Healthcare-Associated Infections</a></li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/health/clinical-governance/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

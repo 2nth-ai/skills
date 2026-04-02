@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Health & Clinical Informatics — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Digital Health & Clinical Informatics</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/health/digital/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Digital Health & Clinical Informatics</div>
+      <h1>DIGITAL HEALTH & CLINICAL INFORMATICS</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Digital Health &amp; Clinical Informatics</h1>
+
+<p>Clinical informatics sits at the intersection of healthcare delivery, data management, and technology. In the South African context it spans both a sophisticated private sector (operating at par with global best practice) and a heavily digitising public sector navigating NHID rollout, DHIS2 maturation, and constrained infrastructure. This skill equips an agent to advise on system selection, implementation, interoperability architecture, regulatory obligations, and digital health KPIs in that dual-context environment.</p>
+
+<hr>
+
+<h2>1. EMR vs EHR vs PHR — Getting the Terminology Right</h2>
+
+<p>These terms are used loosely in SA practice. Precision matters when specifying systems or drafting RFPs.</p>
+
+<table><thead><tr><th>Term</th><th>Definition</th><th>Scope</th><th>Owned by</th></tr></thead><tbody><tr><td><strong>EMR</strong> (Electronic Medical Record)</td><td>Digital version of a paper chart within a single practice or facility</td><td>One provider organisation</td><td>Provider</td></tr><tr><td><strong>EHR</strong> (Electronic Health Record)</td><td>Longitudinal record designed to be shared across providers</td><td>Cross-facility, cross-sector</td><td>Multi-stakeholder</td></tr><tr><td><strong>PHR</strong> (Personal Health Record)</td><td>Patient-controlled record aggregating their own data</td><td>Patient's full history</td><td>Patient</td></tr></tbody></table>
+
+<p>In SA private practice, "EMR" is used colloquially for both EMR and EHR. The regulatory distinction matters for NHID compliance: the NDoH's vision is a national EHR via the Shared Health Record (SHR), not facility-siloed EMRs.</p>
+
+<h3>Key Systems in South Africa</h3>
+
+
+<table><thead><tr><th>System</th><th>Vendor</th><th>Market Presence</th><th>Notes</th></tr></thead><tbody><tr><td><strong>Elixir</strong></td><td>Elixir Health</td><td>Dominant in SA private hospitals (Netcare, Life Healthcare, Mediclinic)</td><td>Deeply integrated with SA billing (BHF tariff codes, medical aid EDI); proprietary but FHIR adapters being added</td></tr><tr><td><strong>Meditech</strong></td><td>Meditech</td><td>Selected private hospitals, some public-private</td><td>US-origin; strong pharmacy module; FHIR R4 support via Traverse API</td></tr><tr><td><strong>TrakCare</strong></td><td>InterSystems</td><td>Private hospitals and some provincial systems</td><td>Supports HL7 v2 and FHIR; InterSystems HealthShare underpins some SA HIE work</td></tr><tr><td><strong>iSoft</strong></td><td>Now part of CSC/DXC Health</td><td>Legacy installs still active</td><td>Largely being migrated off</td></tr><tr><td><strong>Helios</strong></td><td>Helios Health</td><td>Mid-market private practices and day clinics</td><td>SA-developed; good local billing support</td></tr><tr><td><strong>DrNote</strong></td><td>DrNote (SA startup)</td><td>GP practices and outpatient</td><td>Cloud-native; mobile-first; growing footprint</td></tr><tr><td><strong>HealthIQ</strong></td><td>HealthIQ (SA)</td><td>Specialist practices</td><td>Procedure and outcome tracking focus</td></tr></tbody></table>
+
+
+<table><thead><tr><th>System</th><th>Vendor/Origin</th><th>Use Case</th></tr></thead><tbody><tr><td><strong>OpenMRS</strong></td><td>Open-source (Regenstrief)</td><td>Widely deployed in SA public clinics, NGO-run ART programmes; modular; FHIR R4 support via OpenMRS FHIR module</td></tr><tr><td><strong>PHCIS</strong></td><td>NDoH / provincial</td><td>Primary Health Care Information System — legacy; being replaced</td></tr><tr><td><strong>SINJANI</strong></td><td>NDoH</td><td>Clinic-level patient registration and visit tracking (KZN/WC)</td></tr><tr><td><strong>ETR.net</strong></td><td>PEPFAR-funded</td><td>HIV/TB electronic register; widely used at facility level</td></tr></tbody></table>
+
+<h3>Selection Criteria Checklist</h3>
+
+<p>When advising on EMR/EHR selection, evaluate against:</p>
+
+<ol><li><strong>HL7 FHIR R4 compliance</strong> — can it expose a FHIR API? Required for NHID integration long-term.</li><li><strong>Local billing integration</strong> — BHF tariff codes, NHRPL procedure codes, EDI 837/835 equivalents for SA medical aid claims (PCM/EDI via Healthbridge or Meddbase).</li><li><strong>HPCSA record-keeping compliance</strong> — records must be retained for a minimum of 6 years (adults) or until the patient turns 26 (minors); system must support audit trails and access logs.</li><li><strong>POPIA compliance</strong> — health records are special personal information under s26 of POPIA; system must enforce access controls, consent tracking, and breach notification capability.</li><li><strong>Uptime and offline capability</strong> — rural and peri-urban SA has unreliable connectivity; systems must support offline-first operation with sync.</li><li><strong>Local support and SLA</strong> — vendor presence in SA, response times, data sovereignty (no patient data leaving SA borders without compliant mechanisms).</li><li><strong>Integration with laboratory systems</strong> — LIS (Lab Information System) connectivity, particularly to NHLS (National Health Laboratory Service) for public sector.</li></ol>
+
+<hr>
+
+<h2>2. HL7 FHIR</h2>
+
+<h3>What FHIR Is</h3>
+
+<p><strong>FHIR</strong> (Fast Healthcare Interoperability Resources, pronounced "fire") is the modern standard for healthcare data exchange, published by HL7 International. It is RESTful, resource-oriented, and uses JSON or XML. The current production version is <strong>FHIR R4</strong> (4.0.1, 2019); FHIR R5 is published but not yet widely adopted in SA.</p>
+
+<p>FHIR replaces the older HL7 v2 (message-based, pipe-delimited) and HL7 v3/CDA (XML, complex) standards. HL7 v2 remains ubiquitous in SA hospital middleware (particularly ADT feeds and lab results), so any SA integration strategy must handle both.</p>
+
+<h3>FHIR Resource Architecture</h3>
+
+<p>Every FHIR resource is a JSON object accessible via a standard RESTful URL pattern:</p>
+
+<pre><code class="lang-text">GET  https://fhir.example.org/Patient/12345
+GET  https://fhir.example.org/Patient?identifier=ZA-ID|8001015009087
+POST https://fhir.example.org/Observation
+PUT  https://fhir.example.org/MedicationRequest/67890</code></pre>
+
+<h3>Core Resources for Clinical Informatics</h3>
+
+<table><thead><tr><th>Resource</th><th>Purpose</th><th>SA Example</th></tr></thead><tbody><tr><td><strong>Patient</strong></td><td>Demographics, identifiers</td><td>SA ID number as identifier system <code>http://za.gov.nid/identifier</code>; HN (Health Number) as <code>http://hprs.health.gov.za/identifier</code></td></tr><tr><td><strong>Encounter</strong></td><td>A visit or admission</td><td>OPD visit at a clinic, inpatient episode, telemedicine consultation</td></tr><tr><td><strong>Observation</strong></td><td>Measurements, lab results, vitals</td><td>Viral load result, blood pressure, NEWS2 score component</td></tr><tr><td><strong>MedicationRequest</strong></td><td>Prescription / medication order</td><td>ARV regimen order in OpenMRS</td></tr><tr><td><strong>DiagnosticReport</strong></td><td>Lab panel, radiology report</td><td>NHLS full blood count, chest X-ray report with CAD4TB flag</td></tr><tr><td><strong>Condition</strong></td><td>Diagnosis / problem</td><td>ICD-10 coded diagnosis — Z21 (HIV positive status)</td></tr><tr><td><strong>Procedure</strong></td><td>Procedure performed</td><td>NHRPL-coded surgical procedure</td></tr><tr><td><strong>Immunization</strong></td><td>Vaccine administration</td><td>EPI vaccine given at clinic</td></tr><tr><td><strong>AllergyIntolerance</strong></td><td>Drug/food allergies</td><td>Penicillin allergy for drug interaction checking</td></tr><tr><td><strong>CarePlan</strong></td><td>Longitudinal care plan</td><td>ART adherence plan, TB DOTS plan</td></tr></tbody></table>
+
+<h3>SMART on FHIR</h3>
+
+<p><strong>SMART on FHIR</strong> (Substitutable Medical Applications and Reusable Technologies) is the OAuth 2.0-based authorisation framework for health applications launching from within EHR platforms. It enables third-party clinical apps to access patient data with the clinician's permission, without sharing raw credentials.</p>
+
+<p>Flow:</p>
+<ol><li>EHR launches SMART app with a launch context (patient ID, encounter ID, user role).</li><li>SMART app redirects to the EHR's authorisation server.</li><li>Clinician approves the scopes (e.g., <code>patient/Observation.read</code>, <code>user/MedicationRequest.write</code>).</li><li>App receives an access token tied to the patient context.</li><li>App calls the FHIR API using the token.</li></ol>
+
+<p>Relevant SA scopes for common use cases:</p>
+<ul><li><code>patient/Patient.read</code> — read the patient record</li><li><code>patient/Observation.read</code> — read lab results and vitals</li><li><code>user/MedicationRequest.write</code> — write a prescription</li><li><code>launch/patient</code> — receive patient context on launch</li></ul>
+
+<h3>SA FHIR Implementation: DHMIS and NHIS</h3>
+
+<p><strong>DHMIS (District Health Management Information System)</strong> is the NDoH's framework for district-level health data aggregation. It is not a single system but a set of standards and data flows connecting facility-level systems (OpenMRS, ETR.net, PHCIS) to DHIS2 at the district and national level.</p>
+
+<p><strong>NHIS (National Health Information System)</strong> — the NDoH's overarching architecture for the National Health Information System under NHID — envisions:</p>
+<ul><li>A <strong>Health Number</strong> (HN) for every person in SA (similar to NHS Number in the UK)</li><li>A <strong>Shared Health Record (SHR)</strong> — longitudinal FHIR-based record accessible across providers</li><li><strong>HN-PIX</strong> (Health Number Patient Identity Cross-Reference) — the master patient index matching records across facilities using probabilistic matching on demographics + SA ID number</li><li><strong>Point-of-Care (PoC) Integration</strong> via FHIR APIs connecting facility EMRs to the SHR</li></ul>
+
+<p>Current status (2025): HN piloting in selected provinces. SHR in development. Full NHID rollout contingent on National Health Insurance Act operationalisation.</p>
+
+<h3>HL7 v2 — Still Relevant</h3>
+
+<p>HL7 v2 message types still dominate SA hospital integration engines (Mirth Connect, Rhapsody, InterSystems Ensemble):</p>
+
+<table><thead><tr><th>Message Type</th><th>Trigger</th><th>Content</th></tr></thead><tbody><tr><td><strong>ADT^A01</strong></td><td>Patient admission</td><td>Demographics, MRN, ward, attending doctor</td></tr><tr><td><strong>ADT^A08</strong></td><td>Patient info update</td><td>Changed demographics or insurance</td></tr><tr><td><strong>ADT^A03</strong></td><td>Patient discharge</td><td>Discharge date, disposition</td></tr><tr><td><strong>ORM^O01</strong></td><td>Order (lab/radiology)</td><td>Test order from clinician</td></tr><tr><td><strong>ORU^R01</strong></td><td>Observation result</td><td>Lab result back from LIS</td></tr><tr><td><strong>MDM^T02</strong></td><td>Document notification</td><td>Clinical note or report</td></tr></tbody></table>
+
+<p>Integration tip: Most SA integration projects require an HL7 v2 → FHIR translation layer. Use an integration engine (Mirth Connect is free/open-source; Rhapsody is common in larger hospitals) to transform v2 messages to FHIR resources before feeding the SHR or analytics platform.</p>
+
+<hr>
+
+<h2>3. Clinical Decision Support (CDS)</h2>
+
+<h3>CDS Types</h3>
+
+<table><thead><tr><th>Type</th><th>Description</th><th>SA Example</th></tr></thead><tbody><tr><td><strong>Drug-drug interaction (DDI) alert</strong></td><td>Fires when two medications with a known interaction are co-prescribed</td><td>Fluconazole + warfarin (INR risk)</td></tr><tr><td><strong>Drug-allergy alert</strong></td><td>Fires when a prescribed drug matches a documented allergy</td><td>Penicillin order for a patient with documented penicillin allergy</td></tr><tr><td><strong>Order sets</strong></td><td>Pre-configured bundles of orders for a clinical scenario</td><td>Sepsis bundle: blood cultures × 2, lactate, broad-spectrum antibiotics, IV fluids</td></tr><tr><td><strong>Documentation templates</strong></td><td>Structured note templates ensuring completeness</td><td>Pre-operative assessment, discharge summary</td></tr><tr><td><strong>Diagnostic reminder</strong></td><td>Suggests a test or action based on patient data</td><td>CD4 count overdue for HIV patient on ART &gt; 6 months</td></tr><tr><td><strong>Best practice advisory (BPA)</strong></td><td>Non-interruptive suggestion</td><td>"Patient due for cervical cancer screening"</td></tr><tr><td><strong>Risk score dashboard</strong></td><td>Aggregated risk display</td><td>NEWS2 score, CURB-65 score</td></tr></tbody></table>
+
+<h3>CDS Hooks</h3>
+
+<p><strong>CDS Hooks</strong> is the standard (HL7-published) for triggering CDS logic from an EHR workflow. The EHR calls an external CDS service at defined hook points, and the service returns cards (suggestions, alerts, app links).</p>
+
+<pre><code class="lang-text">Hook points used in SA implementations:
+- patient-view     → fires when a clinician opens a patient chart
+- order-sign       → fires when a clinician is about to sign an order
+- medication-prescribe → fires during medication ordering workflow</code></pre>
+
+<p>CDS Hook card structure (JSON):</p>
+<pre><code class="lang-json">{
+  "summary": "Drug-drug interaction: Fluconazole + Warfarin",
+  "indicator": "warning",
+  "detail": "Co-prescribing may increase INR by 50–100%. Monitor INR within 48 hours or switch antifungal.",
+  "source": { "label": "SA National Formulary" },
+  "suggestions": [
+    {
+      "label": "Switch to topical antifungal",
+      "actions": [...]
+    }
+  ]
+}</code></pre>
+
+<h3>Alert Fatigue — The Critical Problem</h3>
+
+<p>Poorly configured CDS is counterproductive. Studies show override rates for low-specificity alerts can exceed 90%, meaning clinicians stop reading them. Mitigation strategies:</p>
+
+<ol><li><strong>Tiering alerts</strong>: Reserve interruptive (hard stop or modal) alerts for genuinely dangerous situations only. Use passive (non-interruptive) banners for advisory alerts.</li><li><strong>Specificity tuning</strong>: Only fire DDI alerts for interactions with clinical significance in the patient's context — don't alert for theoretical interactions.</li><li><strong>Mandatory override reason with analytics</strong>: Require a reason when overriding; review the most-overridden alerts quarterly and retune or retire them.</li><li><strong>Contextual suppression</strong>: Suppress an alert if the prescriber has already acknowledged it in the same session or in the last N days for a chronic medication.</li><li><strong>Pharmacist-facing vs clinician-facing routing</strong>: Route advisory DDI alerts to the dispensing pharmacist rather than interrupting the prescriber.</li></ol>
+
+<h3>NEWS2 — Early Warning Score</h3>
+
+<p><strong>NEWS2</strong> (National Early Warning Score 2) is the standard deterioration detection score used in SA private hospitals and increasingly in public sector ICUs. Automatically calculated from routine vitals in the EMR.</p>
+
+<table><thead><tr><th>Parameter</th><th>Score 3</th><th>Score 2</th><th>Score 1</th><th>Score 0</th><th>Score 1</th><th>Score 2</th><th>Score 3</th></tr></thead><tbody><tr><td>Respiration rate</td><td>≤8</td><td>—</td><td>9–11</td><td>12–20</td><td>—</td><td>21–24</td><td>≥25</td></tr><tr><td>SpO2 (air)</td><td>≤91</td><td>92–93</td><td>94–95</td><td>≥96</td><td>—</td><td>—</td><td>—</td></tr><tr><td>Systolic BP</td><td>≤90</td><td>91–100</td><td>101–110</td><td>111–219</td><td>—</td><td>—</td><td>≥220</td></tr><tr><td>Pulse</td><td>≤40</td><td>—</td><td>41–50</td><td>51–90</td><td>91–110</td><td>111–130</td><td>≥131</td></tr><tr><td>Consciousness</td><td>—</td><td>—</td><td>—</td><td>Alert</td><td>—</td><td>—</td><td>CVPU</td></tr><tr><td>Temperature</td><td>≤35.0</td><td>—</td><td>35.1–36.0</td><td>36.1–38.0</td><td>38.1–39.0</td><td>≥39.1</td><td>—</td></tr></tbody></table>
+
+<p>Aggregate score triggers: 0–4 low risk (4-hourly monitoring), 5–6 medium risk (escalate to registrar), ≥7 high risk (urgent medical review, consider ICU referral).</p>
+
+<p>CDS implementation: EMR calculates NEWS2 automatically when vitals are documented; triggers a nursing alert for escalation when threshold crossed; sends an HL7 ADT or FHIR notification to the ward manager dashboard.</p>
+
+<h3>Medication Reconciliation</h3>
+
+<p>Medication reconciliation — reconciling a patient's medication list across care transitions (admission, transfer, discharge) — is a patient safety priority and a COHSASA (South African hospital accreditation) standard.</p>
+
+<p>CDS support:</p>
+<ul><li>On admission: compare patient-reported medications with dispensing history from medical aid EDI claims or Chronic Illness Benefit (CIB) data.</li><li>On discharge: generate a discharge medication list, flag omissions versus pre-admission medications, generate patient-readable discharge instructions.</li><li>FHIR resource: <code>MedicationStatement</code> (patient-reported) vs <code>MedicationRequest</code> (prescribed) vs <code>MedicationDispense</code> (dispensed).</li></ul>
+
+<hr>
+
+<h2>4. Telemedicine &amp; Digital Consultations</h2>
+
+<h3>Synchronous vs Asynchronous</h3>
+
+<table><thead><tr><th>Mode</th><th>Description</th><th>SA Platform Examples</th><th>Reimbursement</th></tr></thead><tbody><tr><td><strong>Synchronous — video</strong></td><td>Live video consultation</td><td>Dochub, Emed (previously Emed.co.za), Hello Doctor, Healthforce</td><td>Most medical aids reimburse at a percentage of the relevant tariff; requires HPCSA-compliant consent</td></tr><tr><td><strong>Synchronous — telephonic</strong></td><td>Live audio-only</td><td>Same platforms; lower bandwidth requirement</td><td>Reimbursed; must document in EMR that it was telephonic</td></tr><tr><td><strong>Asynchronous — store-and-forward</strong></td><td>Patient submits photos/history; clinician reviews later</td><td>Dermatology AI triage apps; teledermatology platforms</td><td>Limited reimbursement — not universally covered</td></tr><tr><td><strong>Remote Patient Monitoring (RPM)</strong></td><td>IoT devices transmit continuous data</td><td>Glucose monitors, blood pressure cuffs, wearables integrated to EMR</td><td>Emerging; medical aid pilots only</td></tr></tbody></table>
+
+<h3>HPCSA Guidelines on Telemedicine</h3>
+
+<p>The HPCSA published telemedicine guidelines in <strong>2014</strong> (Health Professions Act Rule on Telemedicine) and updated guidance in subsequent booklets. Key requirements:</p>
+
+<ol><li><strong>Identity verification</strong>: The practitioner must be reasonably satisfied of the patient's identity before providing advice or prescribing.</li><li><strong>Informed consent</strong>: Patient must consent to the telemedicine consultation, understanding the limitations of remote assessment. Consent must be documented in the patient record.</li><li><strong>Continuity of care</strong>: Telemedicine does not replace the therapeutic relationship. Practitioners must ensure follow-up can be arranged.</li><li><strong>Emergency referral</strong>: If the clinical situation requires in-person assessment or emergency care, the practitioner must refer appropriately and not continue with a remote consultation.</li><li><strong>Record-keeping</strong>: The consultation must be documented in an EMR to the same standard as an in-person consultation. Video recordings of consultations are not required but if made, are subject to POPIA.</li><li><strong>Cross-border consultations</strong>: HPCSA-registered practitioners may consult patients outside SA via telemedicine, but must comply with the laws of the patient's jurisdiction and their own registration conditions.</li></ol>
+
+<h3>Prescribing via Telemedicine</h3>
+
+<p>Under HPCSA guidance and the Medicines and Related Substances Act, a practitioner may prescribe via telemedicine subject to:</p>
+<ul><li>The practitioner has sufficient information to make a diagnosis and the prescription is clinically justified.</li><li>Schedule 5 and 6 (controlled substances) prescriptions via telemedicine are not permitted — in-person assessment required.</li><li>The prescription must meet the same format requirements as any prescription (practitioner details, patient details, BHF practice number, date, generic name, dose, quantity, signature/electronic signature).</li><li>Repeat prescriptions for stable chronic conditions (hypertension, diabetes, asthma) are generally acceptable via telemedicine after an initial in-person baseline.</li></ul>
+
+<h3>Medical Aid Reimbursement for Telemedicine</h3>
+
+<p>Reimbursement remains inconsistent across schemes:</p>
+
+<table><thead><tr><th>Scheme Tier</th><th>Position (2024/25)</th></tr></thead><tbody><tr><td>Discovery Health</td><td>Covers video and telephonic consultations at tariff rates for GP and specialist; requires provider registration on their telehealth portal</td></tr><tr><td>Medihelp</td><td>Covers telephonic consultations for GPs; video consultations scheme-by-scheme</td></tr><tr><td>GEMS (Government Employees)</td><td>Telephonic covered; video consultation pilot</td></tr><tr><td>Low-income / hospital plans</td><td>Typically excluded from benefit for telemedicine</td></tr></tbody></table>
+
+<p>Key billing codes used in SA for telemedicine:</p>
+<ul><li><strong>0190</strong> — Telephonic consultation (NHRPL)</li><li><strong>0191</strong> — Video consultation (NHRPL) — introduced with 2021 NHRPL updates</li><li>Motivations may be required for first-time telemedicine claims on some schemes.</li></ul>
+
+<hr>
+
+<h2>5. Health Data Standards</h2>
+
+<h3>Diagnostic and Clinical Coding</h3>
+
+<table><thead><tr><th>Standard</th><th>Full Name</th><th>Purpose</th><th>SA Status</th></tr></thead><tbody><tr><td><strong>ICD-10</strong></td><td>International Classification of Diseases, 10th Revision</td><td>Diagnoses — required on all medical aid claims and death certificates</td><td>Mandated — SA uses ICD-10-CM aligned version</td></tr><tr><td><strong>NHRPL</strong></td><td>National Health Reference Price List</td><td>SA procedure codes for medical aid billing</td><td>BHF (Board of Healthcare Funders) publishes annually</td></tr><tr><td><strong>CPT</strong></td><td>Current Procedural Terminology (AMA)</td><td>US procedure codes — some SA specialists use as reference</td><td>Not mandated; NHRPL is SA standard</td></tr><tr><td><strong>SNOMED CT</strong></td><td>Systematised Nomenclature of Medicine — Clinical Terms</td><td>Rich clinical terminology for EMR coding and CDS</td><td>SA is a member country of SNOMED International; adoption in EMRs in progress</td></tr><tr><td><strong>LOINC</strong></td><td>Logical Observation Identifiers Names and Codes</td><td>Lab test and observation coding</td><td>Used in FHIR Observation resources; NHLS adopting for result reporting</td></tr><tr><td><strong>NAPPI</strong></td><td>National Pharmaceutical Product Interface</td><td>SA drug coding system</td><td>Required for dispensing and claims; published by MIMS/Ascent</td></tr><tr><td><strong>NDA drug codes</strong></td><td>South African Health Products Regulatory Authority (SAHPRA)</td><td>Registered product codes</td><td>SAHPRA publishes the Medicine Control Council (MCC) register</td></tr></tbody></table>
+
+<h3>NAPPI Codes in Detail</h3>
+
+<p>NAPPI (National Pharmaceutical Product Interface) codes are the SA standard for identifying medicines in claims and dispensing systems:</p>
+<ul><li>6-digit numeric code assigned to each registered product-pack combination</li><li>MIMS South Africa is the primary publisher and API provider</li><li>Integration: dispensing systems query NAPPI database for pack size, price benchmark (SEP — Single Exit Price), and generic substitution options</li><li>SEP (Single Exit Price) — the maximum price at which a medicine may be sold at the first point of sale; published by DoH under the Medicines Act; used by medical aids to calculate reimbursement</li></ul>
+
+<h3>ICD-10 SA Implementation Notes</h3>
+
+<ul><li>SA uses ICD-10 aligned with ICD-10-CM (clinical modification).</li><li>All medical aid claims must include a primary ICD-10 code and may include secondary codes.</li><li>Death certificates require ICD-10 coding by the certifying doctor (immediate cause, underlying cause, contributing conditions).</li><li>Common coding errors: using "R" (symptom) codes when a definitive diagnosis is available; using unspecified codes (e.g., J18.9 — pneumonia, unspecified) when a more specific code is justifiable.</li><li>The BHF ICD-10 Coding Guidelines for South Africa are the reference document for SA-specific coding decisions.</li></ul>
+
+<hr>
+
+<h2>6. Interoperability Architecture in SA</h2>
+
+<h3>The NHID Data Architecture</h3>
+
+<p>The National Health Insurance Act (18 of 2019) mandates a National Health Information Repository as the data backbone. The architecture being implemented:</p>
+
+<pre><code class="lang-text">Patient → Facility EMR/OpenMRS/Elixir
+                   ↓
+           FHIR API (HL7 FHIR R4)
+                   ↓
+         HN-PIX (Health Number MPI)
+                   ↓
+         SHR (Shared Health Record)
+                   ↓
+         NHID Fund Administration System
+                   ↓
+         Analytics → DHIS2 → NDoH Dashboards</code></pre>
+
+<h3>HN-PIX — Patient Identity Cross-Reference</h3>
+
+<p>The <strong>Health Number</strong> system assigns each SA resident a unique health identifier. HN-PIX:</p>
+<ul><li>Uses the SA ID number (13-digit) as the primary matching key where available.</li><li>For undocumented patients: probabilistic matching on surname, first name, date of birth, sex, and facility-assigned MRN.</li><li>IHE PIX (Patient Identity Cross-Reference) profile underlies the technical architecture — a standard used in national health systems globally.</li><li>Challenge: High duplicate rate in public sector due to manual data entry errors; data quality initiatives are a prerequisite for SHR success.</li></ul>
+
+<h3>SHR (Shared Health Record)</h3>
+
+<p>The NDoH's SHR is a longitudinal FHIR-based record:</p>
+<ul><li>Stores key clinical events: diagnoses (Condition), medications (MedicationStatement), encounters (Encounter), immunisations (Immunization), lab results (Observation/DiagnosticReport)</li><li>Not designed to replicate the full EMR — it is a summary-level longitudinal record, analogous to the NHS Summary Care Record</li><li>Access control: patient consent-based; practitioners access via their healthcare professional identity (linked to HPCSA registration number)</li></ul>
+
+<h3>OpenHIE Architecture</h3>
+
+<p><strong>OpenHIE</strong> (Open Health Information Exchange) is the open-source reference architecture underpinning many African country HIE implementations, including SA's.</p>
+
+<p>Core components deployed in SA:</p>
+
+<table><thead><tr><th>Component</th><th>Purpose</th><th>SA Implementation</th></tr></thead><tbody><tr><td><strong>OpenHIM</strong></td><td>Health Information Mediator — routes, transforms, and audits messages</td><td>OpenHIM deployed as national mediator layer</td></tr><tr><td><strong>OpenCR</strong></td><td>Client Registry / Master Patient Index</td><td>HN-PIX uses OpenCR-based architecture</td></tr><tr><td><strong>OpenSHR</strong></td><td>Shared Health Record</td><td>SHR prototype built on OpenSHR/HAPI FHIR</td></tr><tr><td><strong>Terminology Service</strong></td><td>Centralised code mappings (SNOMED, ICD-10, LOINC)</td><td>NDoH terminology server in development</td></tr></tbody></table>
+
+<h3>DHIS2</h3>
+
+<p><strong>DHIS2</strong> (District Health Information Software 2) is the aggregate health data platform used across the SA public sector and by PEPFAR implementing partners. It is the primary tool for:</p>
+<ul><li>Facility-level monthly reporting (headcount, disease burden, stock levels)</li><li>District and provincial health management dashboards</li><li>TB and HIV programme monitoring (with DATIM — PEPFAR's global data system, which feeds from DHIS2)</li></ul>
+
+<p>DHIS2 is aggregate (not patient-level) — individual patient data lives in OpenMRS/ETR.net/PHCIS and flows to DHIS2 as aggregated statistics via automated reporting jobs or manual capture.</p>
+
+<p>DHIS2 API is REST-based with its own data model (Data Elements, Organisation Units, Data Sets, Periods) — not FHIR-native, though FHIR adapters exist.</p>
+
+<h3>DATIM</h3>
+
+<p><strong>DATIM</strong> (Data for Accountability, Transparency, and Impact Monitoring) is the PEPFAR data system receiving SA HIV programme data. SA's PEPFAR implementing partners (e.g., PEPFAR through USAID, CDC) submit quarterly site-level data to DATIM via DHIS2 APIs. Key indicators: TX_CURR (currently on ART), TX_NEW (newly initiated), HTS_TST (HIV tests done), VL_SUPPRESSED (viral load suppression rate).</p>
+
+<hr>
+
+<h2>7. Cybersecurity in Healthcare</h2>
+
+<h3>POPIA and Health Records</h3>
+
+<p>Health information is <strong>special personal information</strong> under <strong>Section 26 of POPIA</strong> (Protection of Personal Information Act 4 of 2013). This is the highest protection category.</p>
+
+<p>Key obligations for responsible parties (hospitals, practices, medical aids):</p>
+
+<table><thead><tr><th>Obligation</th><th>Requirement</th></tr></thead><tbody><tr><td><strong>Lawful processing</strong></td><td>Processing health information requires explicit patient consent OR falls within a listed exception (treatment, legal obligation, vital interests)</td></tr><tr><td><strong>Purpose limitation</strong></td><td>Health data collected for treatment may not be repurposed for marketing without fresh consent</td></tr><tr><td><strong>Access controls</strong></td><td>Role-based access; only treating clinicians and their direct support staff may access a patient's full record</td></tr><tr><td><strong>Security safeguards</strong></td><td>Technical and organisational measures appropriate to the sensitivity of health data</td></tr><tr><td><strong>Breach notification</strong></td><td>Must notify the Information Regulator within 72 hours of becoming aware of a reportable breach; must notify affected data subjects without undue delay</td></tr><tr><td><strong>Retention</strong></td><td>Align with HPCSA guideline: 6 years from last entry (adults); until the patient's 26th birthday (minors)</td></tr></tbody></table>
+
+<p>The Information Regulator of South Africa enforces POPIA. Fines of up to R10 million or imprisonment are possible for intentional violations.</p>
+
+<h3>Healthcare as Critical Infrastructure</h3>
+
+<p>The SA National Cybersecurity Policy Framework classifies health as critical information infrastructure. Practical implications:</p>
+<ul><li>Government health systems are subject to the Cybercrimes Act 19 of 2020 — unauthorised access to patient records is a criminal offence.</li><li>Private hospitals (particularly Netcare, Life Healthcare, Mediclinic) operate SOC (Security Operations Centre) monitoring.</li><li>The CSIRT (Computer Security Incident Response Team) at CSIR handles national-level incidents.</li></ul>
+
+<h3>Ransomware — The Primary Threat to SA Hospitals</h3>
+
+<p>SA hospitals are high-value targets because:</p>
+<ul><li>Patient data commands high prices on darknet markets.</li><li>Operational disruption in a hospital creates immediate patient safety risk, increasing willingness to pay ransom.</li><li>Many SA hospitals run legacy systems with unpatched vulnerabilities (end-of-life Windows, unencrypted databases).</li></ul>
+
+<p>Notable SA incidents: Ransomware attacks on Life Healthcare (June 2020) disrupted admissions systems across multiple hospitals for weeks.</p>
+
+<p>Minimum controls for SA hospitals:</p>
+<ol><li><strong>Network segmentation</strong>: Clinical systems (EMR, PACS, LIS) on separate VLAN from administrative and guest WiFi.</li><li><strong>Immutable backups</strong>: Offline or air-gapped backups tested monthly; recovery time tested quarterly.</li><li><strong>Endpoint Detection and Response (EDR)</strong> on all clinical workstations and servers.</li><li><strong>Privileged Access Management</strong>: No shared admin accounts; just-in-time access for sysadmins.</li><li><strong>Medical device inventory</strong>: All networked medical devices (infusion pumps, ventilators, PACS workstations) included in asset register and patching schedule.</li></ol>
+
+<h3>Medical Device Security</h3>
+
+<p>Connected medical devices (CT scanners, PACS workstations, infusion pumps) are a significant attack surface:</p>
+<ul><li>Many run end-of-life operating systems (Windows XP/7) that cannot be patched.</li><li>SAHPRA (formerly MCC) does not currently mandate cybersecurity standards in device registration — this is a gap.</li><li>Mitigation: Isolate medical devices on a dedicated VLAN with no internet access; whitelist inbound/outbound connections only to required clinical systems.</li></ul>
+
+<h3>Cloud Storage of Health Records — Legal Requirements</h3>
+
+<p>Cloud storage of health records is permissible in SA subject to:</p>
+<ol><li><strong>POPIA compliance</strong>: The cloud provider must be a POPIA-compliant operator with a data processing agreement in place.</li><li><strong>Data sovereignty</strong>: There is no explicit SA law prohibiting offshore health data storage, but the Information Regulator has indicated preference for SA-hosted or at minimum SA-jurisdiction data. Practically: use AWS af-south-1 (Cape Town), Azure South Africa North (Johannesburg), or GCP (africa-south1) where available.</li><li><strong>HPCSA record-keeping</strong>: Cloud storage is acceptable provided the practitioner retains control and the record is accessible and retrievable within reasonable time.</li><li><strong>Medical aid EDI</strong>: Claims data transmitted via Healthbridge or Meddbase is already processed by third-party operators — an established precedent for health data processing agreements.</li></ol>
+
+<hr>
+
+<h2>8. Digital Health KPIs</h2>
+
+<h3>Implementation Metrics</h3>
+
+<table><thead><tr><th>KPI</th><th>Definition</th><th>Target (Mature Implementation)</th><th>Measurement Frequency</th></tr></thead><tbody><tr><td><strong>EMR Adoption Rate</strong></td><td>% of clinical encounters documented in the EMR vs total encounters</td><td>&gt;95%</td><td>Monthly</td></tr><tr><td><strong>Electronic Prescribing Rate</strong></td><td>% of prescriptions generated electronically vs total prescriptions</td><td>&gt;90%</td><td>Monthly</td></tr><tr><td><strong>CDS Alert Acceptance Rate</strong></td><td>% of CDS alerts acted upon (not overridden) without justification</td><td>60–80% (lower may indicate alert fatigue)</td><td>Monthly</td></tr><tr><td><strong>CDS Override Rate with Reason</strong></td><td>% of overridden alerts where a reason was documented</td><td>&gt;95%</td><td>Monthly</td></tr><tr><td><strong>Patient Portal Activation Rate</strong></td><td>% of registered patients who have activated and logged into the patient portal</td><td>&gt;30% (Year 1 target)</td><td>Monthly</td></tr><tr><td><strong>Telemedicine Consultation Volume</strong></td><td>Number of telemedicine consultations per month / as % of total consultations</td><td>Trending upward; benchmark: 15–25% of GP consultations</td><td>Monthly</td></tr><tr><td><strong>Data Completeness Rate</strong></td><td>% of mandatory fields completed on clinical records (critical for claims)</td><td>&gt;98% for claims-critical fields</td><td>Weekly</td></tr><tr><td><strong>Planned Downtime per Month</strong></td><td>Hours of scheduled maintenance downtime</td><td>&lt;4 hours/month</td><td>Monthly</td></tr><tr><td><strong>Unplanned Downtime per Month</strong></td><td>Hours of unplanned system unavailability</td><td>&lt;1 hour/month (class A SLA)</td><td>Monthly</td></tr><tr><td><strong>Time to First Documentation</strong></td><td>Median time from patient arrival to first EMR entry</td><td>&lt;15 minutes</td><td>Monthly</td></tr><tr><td><strong>Lab Result Turnaround in EMR</strong></td><td>Median time from lab result to visibility in EMR</td><td>&lt;2 hours for routine; &lt;30 minutes for critical values</td><td>Monthly</td></tr></tbody></table>
+
+<h3>Claims-Related Digital KPIs</h3>
+
+<table><thead><tr><th>KPI</th><th>Definition</th><th>Implication of Failure</th></tr></thead><tbody><tr><td><strong>First-pass claim acceptance rate</strong></td><td>% of claims accepted by medical aid on first submission without rejection</td><td>Revenue cycle delay, cash flow risk</td></tr><tr><td><strong>ICD-10 coding accuracy rate</strong></td><td>% of claims with correct and specific ICD-10 codes</td><td>Rejections, fraud risk flagging</td></tr><tr><td><strong>NAPPI code match rate</strong></td><td>% of dispensed items with valid NAPPI codes on claim</td><td>Drug claim rejections</td></tr><tr><td><strong>EDI submission timeliness</strong></td><td>% of claims submitted within 3 months of service (medical aid time limit)</td><td>Write-offs</td></tr></tbody></table>
+
+<hr>
+
+<h2>9. AI in Healthcare — SA Context</h2>
+
+<h3>Diagnostic AI</h3>
+
+<table><thead><tr><th>Application</th><th>Technology</th><th>SA Deployment</th></tr></thead><tbody><tr><td><strong>CAD4TB</strong></td><td>Convolutional neural network for TB detection on chest X-ray</td><td>Deployed at scale in SA public sector TB screening programmes; USAID/PEPFAR-funded; automated triage of digital CXR at high-volume sites (e.g., Eastern Cape, KZN)</td></tr><tr><td><strong>qXR / Qure.ai</strong></td><td>Chest X-ray AI (TB, pneumonia, cardiomegaly, pleural effusion)</td><td>Deployed in some SA private radiology groups</td></tr><tr><td><strong>IDx-DR equivalent</strong></td><td>Diabetic retinopathy screening from fundus photos</td><td>Pilots in SA; not yet at scale</td></tr><tr><td><strong>Histopathology AI</strong></td><td>Cervical cancer screening from Pap smear images</td><td>Research stage in SA</td></tr></tbody></table>
+
+<h3>CAD4TB — SA Detail</h3>
+
+<p>CAD4TB (Computer-Aided Detection for Tuberculosis) is developed by Delft Imaging (Netherlands) and has been deployed across SA as part of PEPFAR and NDoH TB elimination programmes:</p>
+<ul><li>Uses a deep learning model to score CXR images for TB likelihood on a 0–100 scale.</li><li>Score ≥60 triggers further clinical evaluation (sputum GeneXpert).</li><li>Reduces radiologist workload at high-volume screening sites where TB incidence is high.</li><li>Integrated with portable digital X-ray units deployed in mobile TB screening trucks.</li><li>SA data: studies show sensitivity ~90% and specificity ~75% at threshold 60 — comparable to a general practitioner reading CXR for TB.</li></ul>
+
+<h3>Predictive Models in SA Clinical Settings</h3>
+
+<table><thead><tr><th>Model Type</th><th>Purpose</th><th>Implementation Maturity in SA</th></tr></thead><tbody><tr><td><strong>Sepsis prediction</strong></td><td>Early identification of deteriorating patients using vitals + labs</td><td>Pilots in major private hospital groups</td></tr><tr><td><strong>30-day readmission prediction</strong></td><td>Identify high-risk patients for post-discharge follow-up</td><td>Medscheme/Discovery Value-Based Care programmes</td></tr><tr><td><strong>ART adherence prediction</strong></td><td>Predict viral non-suppression in HIV patients</td><td>Academic studies; limited routine deployment</td></tr><tr><td><strong>ICU deterioration</strong></td><td>Continuous monitoring of ICU patients for early warning</td><td>Some SA ICUs with integrated EMR analytics</td></tr></tbody></table>
+
+<h3>NLP for Clinical Notes</h3>
+
+<p>South African clinical notes present specific NLP challenges:</p>
+<ul><li><strong>Multilingual</strong>: Notes may contain Afrikaans, isiZulu, or Sesotho terms mixed with English and Latin medical abbreviations.</li><li><strong>Abbreviation-heavy</strong>: SA clinical culture uses heavy abbreviation in notes (e.g., "SOB, LRTI, Rx amox 500 TDS 5/7" — shortness of breath, lower respiratory tract infection, prescribed amoxicillin 500mg three times daily for 5 days).</li><li><strong>Low-resource languages</strong>: NLP models for clinical Zulu or Xhosa are nascent; English-only NLP will miss clinically significant information in public sector notes.</li></ul>
+
+<p>Use cases in deployment or near-deployment in SA:</p>
+<ul><li><strong>Automated ICD-10 coding</strong> from discharge summaries (reduces manual coding effort; reduces coding errors).</li><li><strong>Clinical note summarisation</strong> for handover and referral letter generation.</li><li><strong>Adverse event extraction</strong> from unstructured notes for pharmacovigilance reporting to SAHPRA.</li></ul>
+
+<h3>HPCSA Position on AI-Assisted Diagnosis</h3>
+
+<p>The HPCSA has not (as of 2025) published definitive guidelines specific to AI-assisted diagnosis. The relevant principles from existing ethical guidelines:</p>
+
+<ol><li><strong>Clinical responsibility remains with the registered practitioner</strong>: AI tools are advisory. The clinician who signs off on the diagnosis or treatment plan is liable regardless of what the AI suggested.</li><li><strong>Informed consent</strong>: Patients should be informed if AI tools are being used in their diagnosis or treatment planning — consistent with HPCSA informed consent guidelines (Booklet 9).</li><li><strong>Transparency</strong>: Practitioners must be able to explain the basis for their clinical decisions; "the AI told me" is not an acceptable defence in a professional conduct hearing.</li><li><strong>Validation requirement</strong>: AI tools used in clinical practice should be validated on SA populations — imported AI models trained on US or European data may have reduced accuracy on SA patient populations (different disease prevalence, different demographics).</li></ol>
+
+<h3>Liability in AI-Assisted Healthcare</h3>
+
+<table><thead><tr><th>Scenario</th><th>Liability Position (SA Law)</th></tr></thead><tbody><tr><td>Clinician follows AI recommendation that is incorrect</td><td>Clinician is liable if the AI recommendation was incorrect and a reasonable clinician would not have followed it</td></tr><tr><td>Clinician overrides correct AI recommendation</td><td>Clinician is liable if their override was unreasonable given available information</td></tr><tr><td>AI system failure causes patient harm</td><td>Potential product liability of vendor (Consumer Protection Act 68 of 2008); hospital/operator liability for failure to maintain system</td></tr><tr><td>Biased AI model produces worse outcomes for Black patients</td><td>Health equity obligation under the National Health Act; potential HPCSA disciplinary matter</td></tr></tbody></table>
+
+<hr>
+
+<h2>Common Gotchas</h2>
+
+<ol><li><strong>FHIR R4 vs R5 confusion</strong>: SA implementations are standardising on R4. Do not design for R5 unless specifically required — interoperability with SA systems (OpenMRS, the SHR) depends on R4 compatibility.</li></ol>
+
+<ol><li><strong>HL7 v2 is not dead</strong>: Do not assume a "FHIR-capable" SA hospital has retired its v2 infrastructure. Most SA hospital integration layers still run HL7 v2 for ADT and lab results. A FHIR facade is likely translating from v2 underneath.</li></ol>
+
+<ol><li><strong>NAPPI vs INN confusion in prescribing</strong>: SA prescribing should use the International Non-proprietary Name (INN/generic name) on prescriptions; NAPPI codes are for dispensing and claims. Do not confuse the two layers.</li></ol>
+
+<ol><li><strong>Medical aid reimbursement is not uniform</strong>: Telemedicine and AI-assisted consult reimbursement rules differ by scheme and benefit option. Always check the specific scheme's provider agreement before assuming coverage.</li></ol>
+
+<ol><li><strong>ICD-10 coding on SA claims must be clinically defensible</strong>: Medical aids audit ICD-10 codes against the clinical record. Upcoding or using symptom codes when a diagnosis is available are the two most common audit triggers.</li></ol>
+
+<ol><li><strong>POPIA breach notification has a 72-hour clock</strong>: Many SA healthcare organisations are unaware the clock starts from when the organisation "becomes aware" — not from when the breach is confirmed. Incident response plans must account for this.</li></ol>
+
+<ol><li><strong>CAD4TB and similar AI tools require local calibration</strong>: AI diagnostic tools trained on global data should be re-validated on SA cohort data before deployment. TB prevalence in SA is dramatically higher than global averages — this affects positive predictive value calculations.</li></ol>
+
+<ol><li><strong>Downtime procedures are regulatory and operational</strong>: HPCSA record-keeping obligations do not pause during EMR downtime. Downtime procedures (paper-based fallback, post-downtime scanning) must be documented in clinical governance frameworks.</li></ol>
+
+<ol><li><strong>The HN / NHID integration timeline is uncertain</strong>: Design EMR integrations to function standalone. Build FHIR APIs as a foundation but do not make the SHR integration a critical dependency in the short term given the uncertain rollout timeline.</li></ol>
+
+<hr>
+
+<h2>See Also</h2>
+
+<ul><li><a href="../SKILL.md" target="_blank" rel="noopener">Health domain manifest</a></li><li><a href="../clinical/SKILL.md" target="_blank" rel="noopener">Clinical skills</a></li><li><a href="../clinical-governance/SKILL.md" target="_blank" rel="noopener">Clinical governance</a></li><li><a href="../public-health/SKILL.md" target="_blank" rel="noopener">Public health</a></li><li>HPCSA Guidelines for Good Practice: Booklet 14 (Telemedicine)</li><li>HL7 FHIR R4 specification: https://hl7.org/fhir/R4/</li><li>OpenHIE Architecture: https://ohie.org/framework/</li><li>NDoH NHID Digital Health Framework: https://www.health.gov.za/nhid/</li><li>DHIS2 documentation: https://docs.dhis2.org/</li><li>CAD4TB product information: https://www.delft.care/cad4tb/</li><li>NAPPI/MIMS API: https://www.mims.co.za/</li><li>BHF ICD-10 Coding Guidelines for South Africa (Board of Healthcare Funders)</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/health/digital/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

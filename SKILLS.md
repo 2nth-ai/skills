@@ -149,6 +149,12 @@ tech/
     networking/      SKILL.md  ✓ stub — VPC, Route 53, CloudFront, ALB/NLB
     messaging/       SKILL.md  ✓ stub — SQS, SNS, EventBridge, Kinesis
     ai/              SKILL.md  ✓ stub — Bedrock (Claude), SageMaker, Rekognition
+  cisco/             SKILL.md  ✓ stub — IOS/NX-OS, ASA/Firepower, Meraki, Webex, Netmiko
+    networking/      SKILL.md  ✓ stub — VLANs, STP, OSPF, EIGRP, BGP
+    security/        SKILL.md  ✓ stub — ASA, Firepower, Umbrella, ISE, AnyConnect
+    wireless/        SKILL.md  ✓ stub — Catalyst WLC, Meraki, RF design
+    collaboration/   SKILL.md  ✓ stub — Webex, CUCM, Unity Connection, UCCX
+    automation/      SKILL.md  ✓ stub — Netmiko, NAPALM, Ansible, DNA Center, NETCONF
   claude-code/       SKILL.md  ✓ stub — Claude Code setup and patterns
   agent-protocols/   SKILL.md  ✓ production — MCP, A2A, ACP, multi-agent orchestration patterns
   mcp/               stub

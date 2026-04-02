@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/meta — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">meta</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/meta/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/meta</div>
+      <h1>META</h1>
+      <p class="skill-desc">Meta Business platform skill.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Meta Graph API v21.0, WhatsApp Business Cloud API, Messenger Platform, Cloudflare Workers</span>
+        
+      </div>
+      
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Meta Business Platform</h1>
+
+<p>Meta's developer surface is unified under the <strong>Graph API</strong> — one base URL, one auth model, covering WhatsApp, Messenger, Instagram, Pages, Ads, and Pixel. The entry point is <a href="https://business.facebook.com" target="_blank" rel="noopener">business.facebook.com</a> for accounts and <a href="https://developers.facebook.com" target="_blank" rel="noopener">developers.facebook.com</a> for app setup.</p>
+
+<p><strong>For 2nth.ai clients, the priority order:</strong></p>
+
+<table><thead><tr><th>Integration</th><th>Value</th><th>Complexity</th></tr></thead><tbody><tr><td><strong>WhatsApp Cloud API</strong></td><td>Highest — direct customer channel</td><td>Medium</td></tr><tr><td><strong>Messenger</strong></td><td>High — Facebook page chatbot</td><td>Low</td></tr><tr><td><strong>Instagram Messaging</strong></td><td>High — same webhook as Messenger</td><td>Low (flows with Messenger)</td></tr><tr><td><strong>Pages API</strong></td><td>Medium — post scheduling, insights</td><td>Low</td></tr><tr><td><strong>Conversions API</strong></td><td>Medium — server-side ad tracking</td><td>Low</td></tr><tr><td><strong>Ads API</strong></td><td>Lower — ad management, reporting</td><td>High</td></tr></tbody></table>
+
+<p>Sub-skill: <code>tech/meta/whatsapp</code> covers the WhatsApp Cloud API in full detail.</p>
+
+<h2>Authentication model</h2>
+
+<p>Meta uses three token types. Choose based on what the integration acts on.</p>
+
+<table><thead><tr><th>Token</th><th>What it accesses</th><th>Lifespan</th><th>How to get</th></tr></thead><tbody><tr><td><strong>App Access Token</strong></td><td>App-level (webhooks, app management)</td><td>Non-expiring</td><td>`{APP_ID}</td><td>{APP_SECRET}`</td></tr><tr><td><strong>Page Access Token</strong></td><td>Facebook Page — Messenger, page posts</td><td>Long-lived (60 days)</td><td>User grants page permissions</td></tr><tr><td><strong>System User Token</strong></td><td>All assets in a Business — WhatsApp, Pages</td><td>Non-expiring</td><td>Meta Business Manager → System Users</td></tr><tr><td><strong>WhatsApp Token</strong></td><td>Phone number — send/receive messages</td><td>Non-expiring (system user)</td><td>WABA settings in Business Manager</td></tr></tbody></table>
+
+<p><strong>For production automation: always use System User tokens</strong> — they don't expire and aren't tied to a human's account.</p>
+
+<h3>Exchange short-lived token for long-lived</h3>
+<pre><code class="lang-typescript">const res = await fetch(
+  `https://graph.facebook.com/v21.0/oauth/access_token?` +
+  `grant_type=fb_exchange_token&amp;client_id=${env.META_APP_ID}` +
+  `&amp;client_secret=${env.META_APP_SECRET}&amp;fb_exchange_token=${shortLivedToken}`
+);
+const { access_token, expires_in } = await res.json();
+// Store in KV with TTL = expires_in - 86400 (refresh 1 day early)
+await env.KV.put('meta_page_token', access_token, { expirationTtl: expires_in - 86400 });</code></pre>
+
+<h2>Webhook setup — shared pattern for all Meta products</h2>
+
+<p>All Meta webhooks use the same two-step verification — a GET for URL verification and POST for events.</p>
+
+<h3>Step 1 — URL verification (GET)</h3>
+<pre><code class="lang-typescript">if (request.method === 'GET') {
+  const url = new URL(request.url);
+  const mode      = url.searchParams.get('hub.mode');
+  const token     = url.searchParams.get('hub.verify_token');
+  const challenge = url.searchParams.get('hub.challenge');
+
+  if (mode === 'subscribe' &amp;&amp; token === env.WEBHOOK_VERIFY_TOKEN) {
+    return new Response(challenge, { status: 200 }); // must return the raw challenge string
+  }
+  return new Response('Forbidden', { status: 403 });
+}</code></pre>
+
+<h3>Step 2 — Signature verification (POST)</h3>
+<pre><code class="lang-typescript">async function verifyMetaSignature(request: Request, env: Env): Promise&lt;{ valid: boolean; body: string }&gt; {
+  const signature = request.headers.get('X-Hub-Signature-256') ?? '';
+  const body = await request.text();
+
+  if (!signature.startsWith('sha256=')) return { valid: false, body };
+
+  const expected = signature.slice('sha256='.length);
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(env.META_APP_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(body));
+  const actual = Array.from(new Uint8Array(mac)).map(b =&gt; b.toString(16).padStart(2, '0')).join('');
+
+  return { valid: actual === expected, body };
+}</code></pre>
+
+<h2>Required secrets</h2>
+<pre><code class="lang-bash">wrangler secret put META_APP_ID           # App ID from developers.facebook.com
+wrangler secret put META_APP_SECRET       # App Secret from Basic Settings
+wrangler secret put WEBHOOK_VERIFY_TOKEN  # Your own string, set in webhook config
+wrangler secret put WHATSAPP_TOKEN        # System User token with WhatsApp permissions
+wrangler secret put WHATSAPP_PHONE_ID     # Phone Number ID from WhatsApp settings
+wrangler secret put PAGE_ACCESS_TOKEN     # For Messenger / page posts (if needed)</code></pre>
+
+<h2>Graph API base URL</h2>
+
+<pre><code class="lang-text">https://graph.facebook.com/v21.0/</code></pre>
+
+<p>Always pin the version (<code>v21.0</code>). Meta deprecates old versions with ~2 years' notice.</p>
+
+<h2>Messenger Platform</h2>
+
+<p>Facebook Page chatbot. The same webhook can receive Messenger, Instagram, and WhatsApp events — differentiated by the <code>object</code> field.</p>
+
+<h3>Receive + reply</h3>
+<pre><code class="lang-typescript">async function handleMessengerEvent(entry: any[], env: Env) {
+  for (const e of entry) {
+    for (const msg of e.messaging ?? []) {
+      if (!msg.message?.text) continue;
+
+      const senderId = msg.sender.id;
+      const text     = msg.message.text;
+
+      // Classify with Workers AI
+      const { response: intent } = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+        messages: [
+          { role: 'system', content: 'Classify as: enquiry | order | complaint | general. One word.' },
+          { role: 'user', content: text.slice(0, 400) },
+        ],
+      });
+
+      // Draft reply with Claude
+      const draft = await draftReply(text, intent.trim(), env);
+
+      // Send via Messenger Send API
+      await fetch('https://graph.facebook.com/v21.0/me/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${env.PAGE_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({
+          recipient: { id: senderId },
+          message: {
+            text: draft,
+            quick_replies: [
+              { content_type: 'text', title: '✅ Helpful', payload: 'HELPFUL' },
+              { content_type: 'text', title: '🔄 More detail', payload: 'MORE' },
+            ],
+          },
+        }),
+      });
+    }
+  }
+}</code></pre>
+
+<h2>Meta Conversions API — server-side events</h2>
+
+<p>Send purchase, lead, and custom events directly from Workers — bypasses ad blockers, improves attribution.</p>
+
+<pre><code class="lang-typescript">await fetch(`https://graph.facebook.com/v21.0/${env.META_PIXEL_ID}/events`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    data: [{
+      event_name: 'Purchase',
+      event_time: Math.floor(Date.now() / 1000),
+      action_source: 'website',
+      event_source_url: 'https://2nth.ai/checkout',
+      user_data: {
+        em: await hashSHA256(userEmail),     // SHA-256 hashed
+        ph: await hashSHA256(userPhone),
+        client_ip_address: request.headers.get('CF-Connecting-IP'),
+        client_user_agent: request.headers.get('User-Agent'),
+        fbc: cookieFbc,   // _fbc cookie
+        fbp: cookieFbp,   // _fbp cookie
+      },
+      custom_data: {
+        currency: 'ZAR',
+        value: 4800.00,
+        content_ids: ['PLAN-PRO'],
+        content_type: 'product',
+      },
+    }],
+    access_token: env.META_SYSTEM_USER_TOKEN,
+  }),
+});</code></pre>
+
+<h2>Unified webhook router</h2>
+
+<p>One Worker handles all Meta product events:</p>
+
+<pre><code class="lang-typescript">export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise&lt;Response&gt; {
+    const url = new URL(request.url);
+
+    // GET — webhook URL verification
+    if (request.method === 'GET') return verifyWebhook(url, env);
+
+    // POST — event delivery
+    const { valid, body } = await verifyMetaSignature(request, env);
+    if (!valid) return new Response('Unauthorized', { status: 401 });
+
+    const payload = JSON.parse(body);
+
+    // Route by product
+    if (payload.object === 'whatsapp_business_account') {
+      ctx.waitUntil(handleWhatsAppEvents(payload.entry, env));
+    } else if (payload.object === 'page') {
+      ctx.waitUntil(handleMessengerEvents(payload.entry, env));
+    } else if (payload.object === 'instagram') {
+      ctx.waitUntil(handleInstagramEvents(payload.entry, env));
+    }
+
+    // Always ack within 20s or Meta retries
+    return new Response('EVENT_RECEIVED', { status: 200 });
+  }
+};</code></pre>
+
+<h2>Rate limits</h2>
+
+<table><thead><tr><th>Product</th><th>Limit</th><th>Notes</th></tr></thead><tbody><tr><td>WhatsApp messages (template)</td><td>Tier-based (start at 1k/day)</td><td>Scales with quality rating</td></tr><tr><td>WhatsApp messages (session)</td><td>Unlimited during 24h window</td><td>Customer must message first</td></tr><tr><td>Graph API reads</td><td>200 calls/hour per user token</td><td>App-level: higher</td></tr><tr><td>Messenger send</td><td>1 req/sec per recipient</td><td>Batch where possible</td></tr><tr><td>Conversions API</td><td>No hard limit</td><td>Deduplication by <code>event_id</code></td></tr></tbody></table>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong>Always return <code>EVENT_RECEIVED</code></strong> — Meta retries any non-200 response up to 5 times with exponential backoff. Ack the POST before any async processing.</li><li><strong>Hub.challenge must be raw string</strong> — return <code>new Response(challenge)</code> not <code>Response.json(...)</code>. Meta compares the raw string.</li><li><strong>24-hour messaging window (WhatsApp)</strong> — you can only reply freely within 24 hours of the customer's last message. After that, only approved templates can initiate contact.</li><li><strong>Template approval</strong> — WhatsApp message templates must be approved by Meta before sending. Factor in 24–48 hours for approval in production.</li><li><strong>System User tokens for production</strong> — Page Access Tokens issued to users expire when the user changes their password or revokes the app. System User tokens don't expire.</li><li><strong>X-Hub-Signature vs X-Hub-Signature-256</strong> — always use <code>X-Hub-Signature-256</code> (SHA-256). The SHA-1 variant (<code>X-Hub-Signature</code>) is deprecated.</li><li><strong>WABA vs phone number ID</strong> — the WhatsApp Business Account ID (WABA) is different from the Phone Number ID. Messages are sent using the Phone Number ID, not the WABA.</li></ul>
+
+<h2>Sub-skills</h2>
+
+<table><thead><tr><th>Skill</th><th>Path</th><th>Status</th></tr></thead><tbody><tr><td>WhatsApp Business Cloud API</td><td><code>tech/meta/whatsapp</code></td><td>Active</td></tr><tr><td>Instagram Messaging API</td><td><code>tech/meta/instagram</code></td><td>Active</td></tr></tbody></table>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/meta/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

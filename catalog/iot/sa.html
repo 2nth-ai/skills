@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>South Africa IoT Context — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">South Africa IoT Context</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/iot/sa/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">South Africa IoT Context</div>
+      <h1>SOUTH AFRICA IOT CONTEXT</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../iot/connectivity.html">iot/connectivity</a><a class="skill-chip" href="../../iot/power.html">iot/power</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>South Africa IoT Context</h1>
+
+<p>Deploying IoT in South Africa requires understanding local regulations, spectrum licensing, network operator landscape, power reliability constraints, and supply chain realities. Designs that work in Europe or the US may be non-compliant or impractical in the SA context.</p>
+
+<hr>
+
+<h2>ICASA Type Approval</h2>
+
+<p>The Independent Communications Authority of South Africa (ICASA) requires type approval for any radio frequency (RF) device sold or used in South Africa under the Electronic Communications Act 36 of 2005.</p>
+
+<h3>What Requires Type Approval</h3>
+
+<table><thead><tr><th>Device Category</th><th>Requirement</th></tr></thead><tbody><tr><td>WiFi (2.4GHz / 5GHz)</td><td>Type approval required; most module manufacturers hold SA approval</td></tr><tr><td>BLE / Bluetooth</td><td>Type approval required</td></tr><tr><td>LoRaWAN (868MHz equivalent — SA uses 915MHz ISM)</td><td>Type approval required</td></tr><tr><td>NB-IoT / LTE-M</td><td>Type approval required (network operator assists)</td></tr><tr><td>Cellular (2G/3G/4G)</td><td>Module must have ICASA approval; operator confirms compliance</td></tr><tr><td>Zigbee / Thread</td><td>Type approval required</td></tr><tr><td>Short-range (&lt; 10mW, unlicensed ISM)</td><td>Still requires approval; process is lighter</td></tr></tbody></table>
+
+<h3>SA Frequency Bands</h3>
+
+<p>South Africa uses ITU Region 1 allocations with some deviations:</p>
+
+<table><thead><tr><th>Technology</th><th>Frequency Band</th><th>Notes</th></tr></thead><tbody><tr><td>LoRaWAN</td><td>915–920 MHz (ISM)</td><td>SA868 plan exists but 915 MHz AS923 plan is more common</td></tr><tr><td>NB-IoT</td><td>700 MHz / 800 MHz</td><td>Vodacom, MTN licensed spectrum</td></tr><tr><td>LTE-M</td><td>700 MHz / 1800 MHz</td><td>Vodacom Cat-M1 deployment</td></tr><tr><td>BLE / WiFi / Zigbee</td><td>2.4 GHz ISM</td><td>Globally consistent; ICASA approval still required</td></tr><tr><td>WiFi 5GHz</td><td>5.15–5.35 GHz / 5.47–5.725 GHz</td><td>Indoor/outdoor restrictions apply</td></tr><tr><td>Sub-GHz ISM</td><td>433 MHz / 868 MHz</td><td>433 MHz widely used for remotes, sensors</td></tr></tbody></table>
+
+<h3>Type Approval Process</h3>
+
+<ol><li><strong>ICASA accredited test laboratory</strong> — Submit device for testing (RF emissions, spurious emissions, conducted emissions). Labs: CSIR, TÜV SÜD, SGS South Africa, Element Materials Technology.</li><li><strong>Application</strong> — Submit test report + technical documentation to ICASA via WISA (Wireless Industry Standards Association) or directly.</li><li><strong>Certificate</strong> — ICASA issues Type Approval Certificate. Valid 3 years; renewable.</li><li><strong>Labelling</strong> — Device must carry ICASA mark (ICASA logo + approval number).</li></ol>
+
+<p><strong>Practical tip</strong>: For module-based designs (ESP32, SIM7080G, SARA-R4), check if the module already holds SA type approval. Many do — you need only a Declaration of Conformity for your product, not a full re-test, if you use an approved module without modifying the RF circuit.</p>
+
+<p><strong>Cost</strong>: R15,000–R80,000 depending on complexity and lab fees. Timeline: 4–12 weeks.</p>
+
+<hr>
+
+<h2>LoRaWAN in South Africa</h2>
+
+<h3>Network Operators</h3>
+
+<table><thead><tr><th>Operator</th><th>Coverage</th><th>Frequency</th><th>Notes</th></tr></thead><tbody><tr><td><strong>Everynet SA</strong></td><td>Major metros + agriculture zones</td><td>915 MHz</td><td>Commercial; national rollout; REST API; roaming</td></tr><tr><td><strong>Squidnet</strong></td><td>Western Cape strong; expanding nationally</td><td>915 MHz</td><td>SA-focused; good agricultural coverage</td></tr><tr><td><strong>Liquid Intelligent Technologies</strong></td><td>Business parks; expanding</td><td>915 MHz</td><td>Enterprise focus</td></tr><tr><td><strong>Actility / ThingPark</strong></td><td>Through Everynet partnership</td><td>915 MHz</td><td>Global roaming via ThingPark Exchange</td></tr><tr><td><strong>Private networks</strong></td><td>Any deployment</td><td>915 MHz</td><td>DIY gateway + ChirpStack server common</td></tr></tbody></table>
+
+<p><strong>SA LoRaWAN frequency plan</strong>: Use <strong>AU915</strong> (Australian 915 MHz plan) — this is the closest standardised plan and is what SA operators and device manufacturers support. The AS923 plan is also deployed in some networks.</p>
+
+<h3>LoRaWAN Gateway Deployment</h3>
+
+<p>For private networks (farms, campuses, mines):</p>
+
+<table><thead><tr><th>Gateway</th><th>Coverage</th><th>Notes</th></tr></thead><tbody><tr><td>RAK7268 / RAK7289</td><td>10–15 km rural; 2–5 km urban</td><td>Indoor/outdoor; Ethernet + LTE backhaul</td></tr><tr><td>Dragino DLOS8</td><td>10 km rural</td><td>Outdoor IP67; popular in SA agriculture</td></tr><tr><td>Kerlink iFemtoCell</td><td>1–5 km</td><td>Indoor; enterprise; used in mines and buildings</td></tr><tr><td>Milesight UG65</td><td>10 km rural</td><td>Dual SIM backhaul; good SA support</td></tr></tbody></table>
+
+<p><strong>Backhaul recommendation for SA</strong>: LTE primary, Ethernet secondary. Load shedding → LTE survives when Ethernet switches are down. Use LiFePO₄ backup battery on the gateway (see power design below).</p>
+
+<h3>SA LoRaWAN Deployment Sectors</h3>
+
+<table><thead><tr><th>Sector</th><th>Use Case</th><th>Notes</th></tr></thead><tbody><tr><td><strong>Agriculture</strong></td><td>Soil moisture, dam levels, frost alerts, livestock tracking</td><td>Western Cape, Limpopo, KZN deployments</td></tr><tr><td><strong>Metering</strong></td><td>Water, electricity, gas sub-metering</td><td>Municipalities piloting; Eskom AMI separate</td></tr><tr><td><strong>Cold chain</strong></td><td>Temperature monitoring (pharma, food)</td><td>SAHPRA compliance driver</td></tr><tr><td><strong>Waste management</strong></td><td>Bin fill-level sensors</td><td>City of Cape Town pilot; Tshwane piloting</td></tr><tr><td><strong>Mining</strong></td><td>Worker tracking, gas detection, equipment monitoring</td><td>Silica dust, methane monitoring</td></tr><tr><td><strong>Smart cities</strong></td><td>Parking, air quality, flood monitoring</td><td>Johannesburg, Cape Town, Durban pilots</td></tr></tbody></table>
+
+<hr>
+
+<h2>NB-IoT and LTE-M in South Africa</h2>
+
+<h3>Network Operator Coverage</h3>
+
+<table><thead><tr><th>Operator</th><th>Technology</th><th>Coverage</th><th>Notes</th></tr></thead><tbody><tr><td><strong>Vodacom</strong></td><td>NB-IoT + LTE-M (Cat-M1)</td><td>80%+ population coverage</td><td>Best national coverage; NB-IoT since 2018</td></tr><tr><td><strong>MTN</strong></td><td>NB-IoT</td><td>70%+ population coverage</td><td>Expanding; good in metros and corridors</td></tr><tr><td><strong>Rain</strong></td><td>LTE / NB-IoT (limited)</td><td>Urban focus</td><td>Mainly data; IoT secondary</td></tr><tr><td><strong>Liquid</strong></td><td>NB-IoT through partnership</td><td>Enterprise zones</td><td></td></tr></tbody></table>
+
+<p><strong>Recommended module</strong>: SIM7080G (SIMCom) — NB-IoT + LTE-M + GNSS; supports SA bands; readily available through Communica and RS Components SA. Alternative: SARA-R410M (u-blox).</p>
+
+<h3>NB-IoT SIM Selection</h3>
+
+<table><thead><tr><th>SIM Provider</th><th>Type</th><th>Notes</th></tr></thead><tbody><tr><td>Vodacom IoT SIM</td><td>Machine SIM</td><td>Fixed monthly; low ARPU plans from R2.50/month</td></tr><tr><td>MTN IoT Connect</td><td>Machine SIM</td><td>Available; requires business account</td></tr><tr><td>Emnify / 1NCE</td><td>Global eSIM</td><td>Works on Vodacom/MTN; global roaming; R12–R35/month; useful for international deployments</td></tr><tr><td>Eseye</td><td>Global eSIM</td><td>Enterprise; multi-IMSI; automatic operator steering</td></tr></tbody></table>
+
+<p><strong>1NCE</strong> (€10 for 10 years / 500MB / 250 SMS) is popular for low-data SA IoT deployments that need a simple billing model.</p>
+
+<hr>
+
+<h2>Load Shedding-Aware IoT Design</h2>
+
+<p>South Africa's load shedding — systematic rolling power cuts — is a primary design constraint for any grid-connected IoT device. As of 2024, Stage 2–6 cuts (2–12 hours/day) are routine. Design must assume the grid is unreliable.</p>
+
+<h3>Load Shedding Stage Reference</h3>
+
+<table><thead><tr><th>Stage</th><th>Hours off per day</th><th>Pattern</th></tr></thead><tbody><tr><td>Stage 1</td><td>2 h</td><td>2 slots × 1h</td></tr><tr><td>Stage 2</td><td>4 h</td><td>2 slots × 2h</td></tr><tr><td>Stage 3</td><td>6 h</td><td>2–3 slots</td></tr><tr><td>Stage 4</td><td>8 h</td><td>4 slots × 2h</td></tr><tr><td>Stage 5</td><td>10 h</td><td>5 slots × 2h</td></tr><tr><td>Stage 6</td><td>12 h</td><td>6 slots × 2h</td></tr><tr><td>Stage 8</td><td>16 h</td><td>8 slots × 2h (possible)</td></tr></tbody></table>
+
+<h3>Design Rules for Load Shedding</h3>
+
+<ol><li><strong>Never assume grid availability</strong> — design for ≥ Stage 6 autonomy (12h+ without mains).</li><li><strong>LiFePO₄ preferred over LiPo</strong> for gateway backup — wider temperature range, safer, 2,000+ cycles vs 300.</li><li><strong>Solar + battery mandatory for outdoor unattended nodes</strong> — any remote asset must be energy-independent.</li><li><strong>Graceful degradation</strong> — on low battery, reduce transmit frequency; increase sleep duration; alert platform.</li><li><strong>Schedule awareness</strong> — integrate EskomSePush API to pre-charge to 100% before outage window.</li></ol>
+
+<pre><code class="lang-javascript">// EskomSePush API — fetch schedule for area
+// API: https://eskomsepush.gumroad.com/l/api
+const response = await fetch(
+  `https://developer.sepush.co.za/business/2.0/area?id=${areaCode}&amp;test=current`,
+  { headers: { 'Token': ESP_API_KEY } }
+);
+const schedule = await response.json();
+// schedule.events[n].start (ISO 8601), schedule.events[n].end
+// schedule.events[n].note ("Stage 2")</code></pre>
+
+<p><strong>Area codes</strong>: Municipalities publish area codes; EskomSePush maintains a searchable database of 4,000+ areas.</p>
+
+<h3>Battery Sizing for Gateway (12h Load Shedding)</h3>
+
+<pre><code class="lang-text">Example: IoT gateway with cellular modem + PoE switch + 4 sensors
+Active load: 500mA at 12V = 6W
+Battery: 12V 15Ah LiFePO₄ = 180Wh (usable 80% = 144Wh)
+Runtime: 144Wh / 6W = 24h — comfortable Stage 8 coverage
+Charging time from solar: 50W panel × 5.5 PSH × 0.85η = 233Wh/day → full recharge daily</code></pre>
+
+<h3>Load Shedding Alert Flow</h3>
+
+<pre><code class="lang-text">Gateway firmware:
+1. Monitor ADC on mains-detect circuit (opto-isolated)
+2. On mains lost: log event to MQTT topic `gw/{id}/power`, publish "grid_off"
+3. On battery &lt; 20%: publish "battery_low" + reduce sensor poll interval 10×
+4. On mains restored: publish "grid_on" + sync time via NTP + resume normal
+5. Platform side: alert operations team; log outage duration</code></pre>
+
+<hr>
+
+<h2>SA Local Suppliers</h2>
+
+<h3>Electronics &amp; Components</h3>
+
+<table><thead><tr><th>Supplier</th><th>Location</th><th>Strengths</th></tr></thead><tbody><tr><td><strong>RS Components SA</strong></td><td>JHB, CPT, DBN</td><td>Full Farnell/RS catalog; next-day; good MCU/sensor range</td></tr><tr><td><strong>Communica</strong></td><td>Nationwide + online</td><td>Modules, dev boards, LoRa hardware; ESP32, Arduino, Pi</td></tr><tr><td><strong>Mantech Electronics</strong></td><td>Nationwide</td><td>Industrial components, connectors, power supplies</td></tr><tr><td><strong>Electrocomp</strong></td><td>JHB</td><td>Passive components, ICs, enclosures</td></tr><tr><td><strong>Assembly Garage</strong></td><td>CPT</td><td>PCB prototyping + assembly; fast turnaround</td></tr><tr><td><strong>PCBWay SA</strong></td><td>Via China</td><td>PCB fabrication; 2-week delivery</td></tr><tr><td><strong>3DIY</strong></td><td>Online</td><td>3D printing services; rapid prototype enclosures</td></tr></tbody></table>
+
+<h3>PCB Manufacturing</h3>
+
+<p>For prototypes: <strong>JLCPCB</strong> (China — 7–14 days, R150 for 5× PCBs + airfreight). For production in SA: <strong>Kaifa Technology</strong>, <strong>Asorbes</strong>, <strong>Trident</strong>, <strong>Assembly Garage</strong> (CPT, small runs).</p>
+
+<p><strong>JLCPCB Basic Parts List</strong>: Design boards using JLCPCB basic components library to minimise assembly cost. Common parts in the basic list: 0402/0603 resistors/caps, STM32G0xx, ESP32-S3, common FETs.</p>
+
+<h3>System Integrators &amp; IoT Specialists</h3>
+
+<table><thead><tr><th>Company</th><th>Specialty</th></tr></thead><tbody><tr><td><strong>Synaptiq</strong></td><td>Enterprise IoT; Vodacom partner; smart cities</td></tr><tr><td><strong>Aerobotics</strong></td><td>AgriTech; drone + IoT; Western Cape</td></tr><tr><td><strong>WineMS</strong></td><td>Wine farm automation; Western Cape</td></tr><tr><td><strong>IntelliAMS</strong></td><td>Asset management; mine IoT; Gauteng</td></tr><tr><td><strong>Senko</strong></td><td>LoRaWAN integration; agriculture; Cape Town</td></tr><tr><td><strong>Numida Technologies</strong></td><td>Water + energy metering; municipalities</td></tr><tr><td><strong>ThingSpace</strong></td><td>IoT managed services; LoRaWAN; JHB</td></tr></tbody></table>
+
+<hr>
+
+<h2>Smart Metering — Eskom AMI</h2>
+
+<p>Eskom's Advanced Metering Infrastructure (AMI) program is one of the largest IoT deployments in Africa.</p>
+
+<h3>Eskom AMI Architecture</h3>
+
+<pre><code class="lang-text">Smart Meter (DLMS/COSEM, PLC or RF mesh)
+    → Data Concentrator Unit (DCU, per substation)
+        → Eskom Head-End System (HES, Itron OpenWay Riva or Landis+Gyr)
+            → MDM (Meter Data Management) system
+                → Billing / outage management</code></pre>
+
+<p><strong>Communication</strong>: Power Line Communication (PLC, G3-PLC or PRIME) in most deployments. RF mesh (Itron OpenWay) in some areas.</p>
+
+<p><strong>Protocol</strong>: DLMS/COSEM (Device Language Message Specification / Companion Specification for Energy Metering) — IEC 62056 standard.</p>
+
+<p><strong>Private sub-metering</strong> (buildings, industrial): LoRaWAN or RS-485 Modbus sub-meters are common; connect to building BMS or IoT platform.</p>
+
+<h3>Municipality Smart Water Metering</h3>
+
+<p>Several SA municipalities have deployed or are piloting smart water meters:</p>
+
+<table><thead><tr><th>Municipality</th><th>Supplier</th><th>Technology</th><th>Notes</th></tr></thead><tbody><tr><td>City of Cape Town</td><td>Sensus / Itron</td><td>Fixed-network RF</td><td>Partial rollout; targeting full coverage</td></tr><tr><td>City of Johannesburg</td><td>Kamstrup</td><td>AMR/AMI</td><td>Ongoing rollout via Johannesburg Water</td></tr><tr><td>eThekwini (Durban)</td><td>Sensus</td><td>AMR</td><td>Larger properties targeted</td></tr><tr><td>Nelson Mandela Bay</td><td>In-house + IoT</td><td>LoRaWAN pilot</td><td>Water scarcity driver</td></tr></tbody></table>
+
+<p><strong>Water scarcity context</strong>: Day Zero planning in Cape Town (2018) accelerated investment in water metering IoT. NMB and other Eastern Cape municipalities face ongoing drought — smart metering demand remains high.</p>
+
+<hr>
+
+<h2>POPIA &amp; Data Sovereignty for SA IoT</h2>
+
+<p>IoT data collected in South Africa is subject to POPIA (Protection of Personal Information Act, No. 4 of 2013, effective 1 July 2021).</p>
+
+<h3>Data Residency Considerations</h3>
+
+<table><thead><tr><th>Scenario</th><th>POPIA Implication</th></tr></thead><tbody><tr><td>IoT data stored on AWS Johannesburg (af-south-1)</td><td>Preferred; in-country; no cross-border transfer</td></tr><tr><td>IoT data stored on AWS Ireland or US</td><td>Cross-border transfer — requires adequate protection or contractual safeguards</td></tr><tr><td>Azure South Africa North (Johannesburg)</td><td>In-country; POPIA-compliant hosting</td></tr><tr><td>Google Cloud (no SA region yet)</td><td>Cross-border — additional obligations</td></tr></tbody></table>
+
+<p><strong>Recommendation</strong>: Use <strong>AWS af-south-1</strong> (Cape Town opened 2020) or <strong>Azure South Africa North</strong> for any SA IoT platform storing personal data.</p>
+
+<h3>SA IoT Data Classification</h3>
+
+<table><thead><tr><th>Data</th><th>POPIA Category</th><th>Notes</th></tr></thead><tbody><tr><td>Smart meter readings (per address)</td><td>Personal</td><td>Reveals occupancy, behaviour</td></tr><tr><td>Agricultural sensor (farm coordinates)</td><td>Not personal (farm is property, not person)</td><td>May become personal if linked to individual</td></tr><tr><td>Employee location tracking (mine, warehouse)</td><td>Personal — workplace monitoring</td><td>POPIA s69 + LRA obligations</td></tr><tr><td>Vehicle telematics</td><td>Personal</td><td>PPIA; also Road Traffic Act compliance</td></tr><tr><td>Health IoT (wearables, hospitals)</td><td>Special personal information</td><td>POPIA s26 — heightened standard</td></tr><tr><td>Air quality (community level, not per house)</td><td>Not personal</td><td>Aggregate — no individual identification</td></tr></tbody></table>
+
+<h3>PAIA Obligations for IoT Platforms</h3>
+
+<p>The Promotion of Access to Information Act (PAIA) requires SA organisations to maintain a PAIA manual. IoT platforms that process personal data must include data categories, retention periods, and access procedures in their PAIA manual.</p>
+
+<hr>
+
+<h2>SA-Specific Design Considerations</h2>
+
+<h3>Environmental</h3>
+
+<table><thead><tr><th>Condition</th><th>SA Specifics</th><th>Design Response</th></tr></thead><tbody><tr><td><strong>Solar irradiance</strong></td><td>Northern Cape 6+ kWh/m²/day; even Highveld winter 4.5+</td><td>Solar is viable everywhere in SA</td></tr><tr><td><strong>Temperature</strong></td><td>Enclosure temp up to +85°C in direct sun (Limpopo, NC)</td><td>White enclosures; thermal management</td></tr><tr><td><strong>Dust</strong></td><td>Highveld dust storms; mine dust; agricultural dust</td><td>IP65 minimum; IP67 preferred</td></tr><tr><td><strong>Humidity</strong></td><td>KZN coastal: 80–95% RH year-round</td><td>Conformal coating on PCBs; ePTFE vents</td></tr><tr><td><strong>Lightning</strong></td><td>SA has one of world's highest lightning flash densities (Highveld summer)</td><td>TVS diodes on all I/O; lightning arrestors on antennas; earthing</td></tr><tr><td><strong>Vandalism</strong></td><td>Urban deployments; farm theft</td><td>Tamper-evident enclosures; GPS + alert on enclosure open</td></tr></tbody></table>
+
+<h3>Lightning Protection (Critical for SA)</h3>
+
+<p>The Highveld (Gauteng, Mpumalanga) has &gt; 10 lightning flashes/km²/year. Outdoor IoT installations must be designed accordingly:</p>
+
+<pre><code class="lang-text">Antenna port → Lightning arrester (PolyPhaser IS-B50LN-C2 or similar)
+             → Coax to radio module
+Power input  → TVS diode (SMBJ12A for 12V; clamps at 19.9V)
+I/O lines    → ESD protection array (PRTR5V0U2X or similar)
+Ground       → Dedicated earth stake; &lt; 1Ω resistance; bond to enclosure</code></pre>
+
+<p><strong>SANS 10313</strong> (Protection of structures against lightning) and <strong>SANS 62305</strong> — applicable to fixed IoT infrastructure installations.</p>
+
+<h3>Connectivity Fallback Strategy</h3>
+
+<p>SA network reliability varies significantly by region. Design for degraded-mode operation:</p>
+
+<pre><code class="lang-text">Primary:   LoRaWAN (Everynet/Squidnet) or NB-IoT (Vodacom)
+Fallback:  SMS (AT+CMGS via cellular module) — extremely reliable even in rural areas
+Local:     SD card / FRAM data logging — never lose readings during connectivity outage
+Sync:      On reconnect, upload buffered data with timestamp preservation</code></pre>
+
+<p><strong>Rural SA connectivity reality</strong>: LoRaWAN coverage on farms is private-gateway dependent. NB-IoT coverage is excellent on N1, N2 corridors but sparse 20km+ off national routes. Design for ≥24h local data buffering.</p>
+
+<h3>Theft &amp; Security</h3>
+
+<p>IoT hardware theft is a material risk in SA deployments:</p>
+
+<table><thead><tr><th>Measure</th><th>Implementation</th></tr></thead><tbody><tr><td>GPS tracking</td><td>SIM7080G has built-in GNSS — log position on boot and periodically</td></tr><tr><td>Tamper detection</td><td>Reed switch on enclosure lid → interrupt → MQTT alert</td></tr><tr><td>Solar panel theft alert</td><td>Sudden drop in panel voltage → alert</td></tr><tr><td>Cellular module SIM lock</td><td>Lock SIM to ICCID in firmware; reject foreign SIM insertions</td></tr><tr><td>Epoxy potting</td><td>Valuable outdoor nodes; prevents component harvest</td></tr><tr><td>Decoy cabling</td><td>Visible cable routed away from actual electronics</td></tr></tbody></table>
+
+<hr>
+
+<h2>Local Standards &amp; Compliance</h2>
+
+<table><thead><tr><th>Standard</th><th>Scope</th><th>Applicability</th></tr></thead><tbody><tr><td><strong>ICASA Type Approval</strong></td><td>RF devices</td><td>Mandatory for any radio device</td></tr><tr><td><strong>SANS 10112</strong></td><td>Electrical installation</td><td>Gateway power installations</td></tr><tr><td><strong>SANS 10313 / SANS 62305</strong></td><td>Lightning protection</td><td>Outdoor fixed installations</td></tr><tr><td><strong>SANS 241</strong></td><td>Drinking water quality</td><td>Water quality IoT sensors</td></tr><tr><td><strong>NRCS (National Regulator for Compulsory Specifications)</strong></td><td>Electrical appliances</td><td>If device plugs into mains</td></tr><tr><td><strong>POPIA</strong></td><td>Personal data</td><td>Any IoT collecting personal information</td></tr><tr><td><strong>SAHPRA</strong></td><td>Medical devices</td><td>Health IoT (wearables, diagnostics)</td></tr><tr><td><strong>SABS SANS 50631</strong></td><td>Solar panels</td><td>Solar PV components</td></tr><tr><td><strong>NERSA</strong></td><td>Energy</td><td>Smart meters; grid-connected energy monitoring</td></tr></tbody></table>
+
+<hr>
+
+<h2>Cost Benchmarks (ZAR, 2024–2025)</h2>
+
+<table><thead><tr><th>Item</th><th>ZAR Range</th><th>Notes</th></tr></thead><tbody><tr><td>ESP32-S3 module</td><td>R45–R80</td><td>Via Communica / JLCPCB assembly</td></tr><tr><td>LoRa transceiver (SX1276 module)</td><td>R120–R200</td><td>RAK811, LLCC68 modules</td></tr><tr><td>SIM7080G (NB-IoT/Cat-M/GNSS)</td><td>R280–R450</td><td>RS Components SA</td></tr><tr><td>ATECC608B secure element</td><td>R35–R60</td><td>RS Components</td></tr><tr><td>SHT40 T+RH sensor</td><td>R80–R150</td><td>RS Components</td></tr><tr><td>LiFePO₄ 10Ah 12V battery</td><td>R800–R1,400</td><td>Local battery suppliers</td></tr><tr><td>20W solar panel</td><td>R350–R550</td><td>Local solar suppliers</td></tr><tr><td>IP67 polycarbonate enclosure</td><td>R180–R400</td><td>RS Components; Mantech</td></tr><tr><td>PCB fabrication (100× 2-layer, JLCPCB)</td><td>R800–R1,500</td><td>Including airfreight</td></tr><tr><td>ICASA type approval</td><td>R15,000–R80,000</td><td>Lab + ICASA fee; module reuse reduces this</td></tr><tr><td>NB-IoT SIM (1NCE 10yr)</td><td>~R185 once-off</td><td>Best for low-data budget deployments</td></tr><tr><td>Everynet LoRaWAN (per device/year)</td><td>R60–R150</td><td>Volume dependent</td></tr></tbody></table>
+
+<p><strong>Rule of thumb</strong>: A production-quality outdoor LoRaWAN sensor node (PCB + enclosure + battery + solar + connectivity) costs R1,500–R3,500 BOM at 100-unit volume. Gateway cost: R3,000–R8,000 depending on backhaul.</p>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/iot/sa/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

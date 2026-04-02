@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Non-Monolithic Trading Platforms — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Non-Monolithic Trading Platforms</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/fin/capital-markets/trading-platforms/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Non-Monolithic Trading Platforms</div>
+      <h1>NON MONOLITHIC TRADING PLATFORMS</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../fin/capital-markets.html">fin/capital-markets</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Non-Monolithic Trading Platforms</h1>
+
+<p>For three decades, capital markets technology was dominated by large monolithic platforms: single-vendor front-to-back systems that handled pricing, trading, risk, operations, and accounting in a tightly coupled stack. These systems (Murex MX.3, Calypso, Finastra Fusion, OpenLink) delivered deep functionality but extracted a high price — years-long implementations, nine-figure total costs, upgrade cycles measured in years, and near-total vendor lock-in.</p>
+
+<p>The industry is now in a structural shift toward <strong>composable, service-oriented trading architectures</strong> — platforms built as independently deployable, replaceable modules that banks can assemble, mix, and evolve without replacing the entire stack.</p>
+
+<hr>
+
+<h2>Why Monolithic Platforms Are a Strategic Liability</h2>
+
+<table><thead><tr><th>Problem</th><th>Monolith Impact</th><th>Business Consequence</th></tr></thead><tbody><tr><td><strong>Upgrade coupling</strong></td><td>Change one module → regression risk across entire system</td><td>Banks skip upgrades for years; accumulate tech debt</td></tr><tr><td><strong>Regulatory lag</strong></td><td>FRTB/SA-CCR requires bespoke vendor patch</td><td>Time-to-compliance measured in quarters, not weeks</td></tr><tr><td><strong>New product onboarding</strong></td><td>New instrument type → change request to vendor → wait 6–18 months</td><td>Competitive disadvantage; revenue foregone</td></tr><tr><td><strong>Cloud migration</strong></td><td>Monolith designed for on-prem; cloud lift-and-shift is expensive and fragile</td><td>Infrastructure costs remain high; elasticity impossible</td></tr><tr><td><strong>Vendor lock-in</strong></td><td>All data, models, and workflows inside proprietary schema</td><td>No leverage in contract negotiations; exit costs prohibitive</td></tr><tr><td><strong>Talent</strong></td><td>Vendor-specific skills required</td><td>Thin talent pool; high consultant day rates</td></tr><tr><td><strong>AI integration</strong></td><td>Proprietary data model blocks external AI tooling</td><td>Banks can't apply their own ML to their own trading data</td></tr></tbody></table>
+
+<p><strong>The compounding problem</strong>: Monolithic vendors offer upgrades and extensions — but at the cost of further lock-in. Each customisation makes the next upgrade harder. The technical debt is structural, not incidental.</p>
+
+<hr>
+
+<h2>The Composable Trading Platform Architecture</h2>
+
+<p>A composable trading platform decomposes the traditional monolith into independently deployable, loosely coupled services aligned to business capabilities.</p>
+
+<h3>Logical Service Decomposition</h3>
+
+<pre><code class="lang-text">┌─────────────────────────────────────────────────────────────┐
+│                      Front Office                           │
+│  Pricing Engine │ Structuring │ Order Management │ e-Dealing│
+├─────────────────────────────────────────────────────────────┤
+│                      Middle Office                          │
+│  Position Keeping │ P&amp;L │ Risk Engine │ Limit Monitoring   │
+├─────────────────────────────────────────────────────────────┤
+│                      Regulatory                             │
+│  FRTB-SA │ FRTB-IMA │ SA-CCR │ XVA │ ISDA SIMM │ LCR/NSFR │
+├─────────────────────────────────────────────────────────────┤
+│                      Back Office                            │
+│  Trade Confirmation │ Settlement │ Accounting │ Reconciliation│
+├─────────────────────────────────────────────────────────────┤
+│                      Data Layer                             │
+│  Cross-Asset Data Model │ Market Data │ Reference Data      │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+
+<p>Each row is independently deployable. A bank can replace only the Pricing Engine without touching Settlement. The Data Layer is the critical shared substrate — every service speaks the same cross-asset data model.</p>
+
+<h3>Cross-Asset Data Model (the foundation)</h3>
+
+<p>The monolith's core insight was correct: all financial instruments share common concepts — counterparty, notional, cashflow schedule, risk sensitivities. The composable equivalent is a <strong>canonical cross-asset data model</strong> that all services share via API contract, rather than a shared database.</p>
+
+<pre><code class="lang-text">Instrument
+  → asset class (FX, RatesIR, Credit, Equity, Commodity, Crypto)
+  → product type (Spot, Forward, Swap, Option, Structured)
+  → cashflows[]
+  → risk sensitivities (delta, gamma, vega, theta by risk factor)
+  → lifecycle state (live, matured, cancelled, settled)
+
+Book
+  → instruments[]
+  → positions (net per risk factor)
+  → P&amp;L (realised + unrealised)
+  → limits[]</code></pre>
+
+<p>Services communicate through this model via event streams (Kafka) or REST/gRPC APIs. No service owns the canonical record — a golden-copy approach using event sourcing.</p>
+
+<hr>
+
+<h2>FM Converge — Reference Implementation</h2>
+
+<p><strong>Finmechanics FM Converge</strong> is the most advanced production example of a non-monolithic capital markets platform. It is the platform to reference when explaining composable trading architecture to a bank.</p>
+
+<h3>What FM Converge Is</h3>
+
+<p>FM Converge is a cross-asset front-to-back-to-risk platform built natively on a microservices architecture. Unlike vendors who refactored monoliths into "micro" services, FM Converge was designed service-first from the ground up.</p>
+
+<p><strong>Vendor profile</strong>: Finmechanics Pte. Ltd., Singapore. Founded to address the failure modes of traditional capital markets vendors. Ranked in the <strong>Chartis Quantitative Analytics 50</strong> (top 15, 2025). Clients include Swiss cantonal banks, African CIBs, regional banks across APAC, Middle East, and Africa.</p>
+
+<h3>FM Converge Capability Map</h3>
+
+<table><thead><tr><th>Module</th><th>Description</th></tr></thead><tbody><tr><td><strong>Pricing Engine</strong></td><td>Cross-asset derivatives pricing; supports vanilla and structured products; FX, rates, credit, equity, commodity, crypto</td></tr><tr><td><strong>Pre-trade Analytics</strong></td><td>Real-time what-if pricing, structuring, scenario analysis before trade capture</td></tr><tr><td><strong>Trade Capture</strong></td><td>Cross-asset trade booking with full lifecycle management</td></tr><tr><td><strong>Position Keeping</strong></td><td>Real-time position aggregation per book, trader, entity, across all asset classes</td></tr><tr><td><strong>P&amp;L Engine</strong></td><td>Real-time and end-of-day P&amp;L with full attribution (market, carry, theta, new trades)</td></tr><tr><td><strong>Risk Engine</strong></td><td>VaR, Expected Shortfall, sensitivity Greeks (delta, gamma, vega, vanna, volga), stress testing</td></tr><tr><td><strong>FRTB-SA</strong></td><td>Standardised approach for market risk capital under BCBS 457 / CRR3</td></tr><tr><td><strong>FRTB-IMA</strong></td><td>Internal models approach; NMRF, P&amp;L Attribution test, back-testing</td></tr><tr><td><strong>SA-CCR</strong></td><td>Standardised approach for counterparty credit risk; replacement cost + PFE</td></tr><tr><td><strong>XVA</strong></td><td>CVA, DVA, FVA, MVA, KVA — valuation adjustments with full sensitivities</td></tr><tr><td><strong>ISDA SIMM</strong></td><td>Standard Initial Margin Model for uncleared OTC derivatives</td></tr><tr><td><strong>Collateral Management</strong></td><td>Margin calls, CSA management, collateral optimisation</td></tr><tr><td><strong>Back Office</strong></td><td>Trade confirmation, settlement instructions, nostro reconciliation</td></tr><tr><td><strong>Accounting</strong></td><td>P&amp;L booking, hedge accounting, IFRS 9 / IAS 39</td></tr><tr><td><strong>FM Connect</strong></td><td>e-Dealing portal — web-based front-end for FX, rates, and derivatives distribution to clients</td></tr></tbody></table>
+
+<h3>The Key Differentiator: Independent Module Deployment</h3>
+
+<p>Each module above can be deployed independently or as a complete suite. A bank that already has a back office system it doesn't want to replace can deploy only the Pricing + Risk + FRTB modules. This <strong>minimum-disruption</strong> implementation model is the commercial breakthrough.</p>
+
+<pre><code class="lang-text">Traditional vendor:   Replace everything → 3-year project → $30M+
+FM Converge model:    Replace only the risk and FRTB layer → 6-month project → fraction of cost</code></pre>
+
+<p>Real-world example: Luzerner Kantonalbank (Switzerland's 3rd-largest cantonal bank) implemented FM Converge in 2024 replacing only their position management and risk system. Structured products and FRTB modules followed in subsequent phases. The bank was live on risk and VaR within months.</p>
+
+<h3>Cloud Architecture</h3>
+
+<p>FM Converge is available on <strong>Azure Marketplace</strong> (hosted managed service). Deployment options:</p>
+
+<table><thead><tr><th>Mode</th><th>Description</th><th>Best For</th></tr></thead><tbody><tr><td><strong>SaaS (managed)</strong></td><td>Finmechanics operates the platform; bank connects via API</td><td>Smaller banks; rapid deployment; minimal IT overhead</td></tr><tr><td><strong>Private cloud</strong></td><td>Deployed in bank's Azure/AWS tenant; Finmechanics manages application layer</td><td>Mid-tier banks needing data sovereignty</td></tr><tr><td><strong>On-premises</strong></td><td>Full bank infrastructure; Finmechanics provides software + support</td><td>Tier 1 banks; regulatory data residency requirements</td></tr></tbody></table>
+
+<p><strong>South Africa</strong>: FM Converge deployed on Azure South Africa North (Johannesburg) satisfies SARB data residency requirements and achieves sub-10ms latency to JSE and SA bank trading desks.</p>
+
+<hr>
+
+<h2>FM Connect — e-Dealing for Banks</h2>
+
+<p>FM Connect is the client-facing web-dealing portal, separate from but integrated with FM Converge.</p>
+
+<table><thead><tr><th>Feature</th><th>Detail</th></tr></thead><tbody><tr><td><strong>Asset classes</strong></td><td>FX Spot/Forward/Swap/Options, Fixed Income, Derivatives</td></tr><tr><td><strong>Client types</strong></td><td>Corporate treasuries, fund managers, institutional clients</td></tr><tr><td><strong>Distribution</strong></td><td>Bank prices and distributes structured products to clients via portal</td></tr><tr><td><strong>Integration</strong></td><td>Connects to FM Converge for live pricing; STP to back office</td></tr><tr><td><strong>Whitelabel</strong></td><td>Banks brand the portal as their own</td></tr></tbody></table>
+
+<p>FM Connect addresses the competitive gap where banks lose FX and derivatives business to larger global banks that offer better digital dealing experiences. A tier-2 bank in Johannesburg can offer real-time FX and rates pricing equivalent to a global tier-1 bank's portal within months.</p>
+
+<hr>
+
+<h2>Regulatory Capital Modules — What Banks Actually Need</h2>
+
+<p>The regulatory capital requirements under Basel III/IV (FRTB, SA-CCR, ISDA SIMM) are the burning platform forcing banks off legacy systems. The old systems were not designed for these calculations.</p>
+
+<h3>FRTB (Fundamental Review of the Trading Book — BCBS 457)</h3>
+
+<p>FRTB replaced the Basel 2.5 market risk framework. Live in the EU (CRR3) from January 2025; SA implementation expected via SARB 2025–2026.</p>
+
+<p><strong>Standardised Approach (SA)</strong>: Rule-based capital calculation using sensitivity-based method (SBM), default risk charge (DRC), residual risk add-on (RRAO). Every bank must compute this floor.</p>
+
+<p><strong>Internal Models Approach (IMA)</strong>: Advanced banks can use internal VaR/ES models subject to P&amp;L Attribution Test and back-testing requirements. Significantly lower capital charges if models pass — the commercial incentive is enormous.</p>
+
+<p><strong>The problem with monolithic vendors</strong>: FRTB SA requires instrument-level sensitivities across hundreds of risk factors, aggregated under specific correlation scenarios. Monoliths built pre-FRTB require full re-engineering of their risk engines — which then destabilises the rest of the platform.</p>
+
+<p><strong>FM Converge approach</strong>: FRTB-SA and FRTB-IMA are standalone services. They consume positions and sensitivities from the risk engine via API. No dependency on the trade capture or pricing layers — deployable standalone.</p>
+
+<h3>SA-CCR (Standardised Approach for Counterparty Credit Risk)</h3>
+
+<p>Replaced CEM (Current Exposure Method) and SM (Standardised Method) under Basel III. Calculates EAD (Exposure at Default) for OTC derivatives, exchange-traded derivatives, and SFTs.</p>
+
+<pre><code class="lang-text">EAD = alpha × (RC + PFE_multiplier × AddOn_aggregate)
+
+alpha = 1.4
+RC = Replacement Cost (mark-to-market + variation margin)
+PFE = Potential Future Exposure (asset class AddOns by netting set)</code></pre>
+
+<p>SA-CCR requires <strong>netting set</strong> awareness — offsetting positions within a legally enforceable netting agreement reduce capital. Monolithic systems often lack the netting set data model, making SA-CCR retrofitting expensive.</p>
+
+<h3>XVA (Valuation Adjustments)</h3>
+
+<p>XVA is the umbrella term for valuation adjustments that reflect the real-world costs and risks of trading:</p>
+
+<table><thead><tr><th>Adjustment</th><th>Driver</th><th>Direction</th></tr></thead><tbody><tr><td><strong>CVA</strong> — Credit Valuation Adjustment</td><td>Counterparty default risk</td><td>Reduces asset value</td></tr><tr><td><strong>DVA</strong> — Debit Valuation Adjustment</td><td>Own default risk</td><td>Increases liability value</td></tr><tr><td><strong>FVA</strong> — Funding Valuation Adjustment</td><td>Cost of funding uncollateralised trades</td><td>Reduces trade value</td></tr><tr><td><strong>MVA</strong> — Margin Valuation Adjustment</td><td>Cost of posting initial margin</td><td>Reduces trade value</td></tr><tr><td><strong>KVA</strong> — Capital Valuation Adjustment</td><td>Cost of regulatory capital held</td><td>Reduces trade value</td></tr></tbody></table>
+
+<p><strong>XVA desks</strong> at large banks manage these adjustments as a P&amp;L centre. Computing XVA requires Monte Carlo simulation of counterparty exposure across thousands of scenarios — computationally intensive, requiring GPU or distributed compute. FM Converge's XVA module is designed for cloud-scaled computation.</p>
+
+<h3>ISDA SIMM (Standard Initial Margin Model)</h3>
+
+<p>For bilateral OTC derivatives not cleared through a CCP. SIMM is the industry-standard model (ISDA, 2016; updated annually). Banks exchange initial margin based on SIMM calculations — getting it wrong means posting too much or too little margin, with regulatory and liquidity consequences.</p>
+
+<hr>
+
+<h2>Evaluation Framework — How a Bank Should Assess a Trading Platform</h2>
+
+<h3>Build vs Buy vs Compose Decision</h3>
+
+<table><thead><tr><th>Approach</th><th>When Viable</th><th>Risk</th><th>Cost</th></tr></thead><tbody><tr><td><strong>Monolith (full vendor)</strong></td><td>Greenfield with no existing systems</td><td>High lock-in</td><td>$10M–$100M+</td></tr><tr><td><strong>In-house build</strong></td><td>Tier 1 bank with 500+ quant devs</td><td>High execution risk</td><td>$50M–$500M over 10 years</td></tr><tr><td><strong>Composable (best-of-breed)</strong></td><td>Existing systems; incremental replacement</td><td>Medium integration effort</td><td>$1M–$20M per module</td></tr><tr><td><strong>SaaS microservices (FM Converge model)</strong></td><td>Regional/mid-tier banks; rapid deployment</td><td>Operational dependency on vendor</td><td>$500K–$5M/year</td></tr></tbody></table>
+
+<p>For African and emerging-market banks, the <strong>composable SaaS model</strong> is the right answer: world-class pricing and risk infrastructure without the capital outlay or headcount to build and maintain it.</p>
+
+<h3>RFP Criteria for a Non-Monolithic Platform</h3>
+
+<p>When a bank evaluates a trading platform, these criteria distinguish composable from monolithic:</p>
+
+<table><thead><tr><th>Criterion</th><th>Monolith Red Flag</th><th>Composable Green Flag</th></tr></thead><tbody><tr><td>Can we deploy only the risk module?</td><td>"The platform is fully integrated"</td><td>Independent module deployment confirmed</td></tr><tr><td>What is our exit path?</td><td>Data export only via vendor tools</td><td>Open APIs; standard data formats; event stream access</td></tr><tr><td>How do we add a new instrument type?</td><td>Change request + release cycle</td><td>Configuration or model plugin; no core change</td></tr><tr><td>FRTB compliance path?</td><td>Upgrade scheduled for 2026</td><td>Standalone regulatory service; live today</td></tr><tr><td>Cloud deployment?</td><td>"Cloud-ready roadmap"</td><td>Live on Azure/AWS Marketplace now</td></tr><tr><td>Data model?</td><td>Proprietary schema; vendor documentation only</td><td>Published API spec; cross-asset canonical model</td></tr><tr><td>Integration with our existing systems?</td><td>Requires full data migration</td><td>API-first; connects to existing DWH and settlement</td></tr></tbody></table>
+
+<h3>Total Cost of Ownership — Composable vs Monolith</h3>
+
+<pre><code class="lang-text">Monolith (10-year TCO estimate, mid-tier bank):
+  Licence/subscription:     $2M–$5M/year
+  Implementation:           $10M–$30M (years 1–3)
+  Upgrades/customisation:   $1M–$3M/year ongoing
+  Internal headcount:       5–15 FTE platform engineers
+  Total 10-year:            $50M–$120M
+
+Composable SaaS (FM Converge, same bank):
+  Subscription:             $500K–$2M/year (modules selected)
+  Implementation:           $500K–$3M (6–12 months)
+  Upgrades:                 Included; continuous delivery
+  Internal headcount:       2–5 FTE (focus on business config, not platform)
+  Total 10-year:            $8M–$25M</code></pre>
+
+<p>The TCO gap is the most powerful argument for composable architecture in bank boardrooms.</p>
+
+<hr>
+
+<h2>The African Bank Opportunity</h2>
+
+<p>African banks face a specific structural opportunity: they can <strong>leapfrog</strong> the legacy technology trap that European and North American banks are stuck in.</p>
+
+<p>A South African or East African CIB that has never deployed a full Murex or Calypso stack can launch with FM Converge + FM Connect and operate with better technology infrastructure than a European bank that spent 15 years implementing its monolith and is now locked in.</p>
+
+<h3>Specific African Market Considerations</h3>
+
+<p><strong>South Africa (SARB / FSCA regulation)</strong>:</p>
+<ul><li>FRTB implementation timeline: SARB aligning to Basel IV; expected 2025–2027 phased</li><li>IFRS 9 hedge accounting: all SA banks live; FM Converge accounting module supports</li><li>Data residency: Azure South Africa North satisfies SARB requirements</li><li>JSE connectivity: FM Converge integrates with JSE equity and derivatives markets</li><li>SWIFT connectivity: FM Connect integrates with SWIFT for cross-border payments and confirmations</li></ul>
+
+<p><strong>East Africa (Kenya, Uganda, Tanzania)</strong>:</p>
+<ul><li>CBK (Central Bank of Kenya) Basel III implementation ongoing</li><li>Regional banks expanding cross-border — need cross-currency FX and rates capability</li><li>FM Connect's e-dealing portal addresses the gap in corporate FX distribution</li></ul>
+
+<p><strong>West Africa (Nigeria, Ghana)</strong>:</p>
+<ul><li>CBN (Central Bank of Nigeria) increasing capital requirements; FRTB on horizon</li><li>Lagos as regional financial centre — increasing derivatives sophistication</li></ul>
+
+<p><strong>The Andile Solutions partnership</strong> positions FM Converge specifically for this market: Andile provides SA regulatory knowledge, JSE connectivity expertise, and implementation capacity. The first major SA CIB implementation (derivatives pricing replacement at a major South African corporate and investment bank) is already complete.</p>
+
+<hr>
+
+<h2>Integration Architecture</h2>
+
+<h3>How FM Converge Connects to Existing Bank Systems</h3>
+
+<pre><code class="lang-text">Market Data Vendors (Bloomberg, Refinitiv)
+    ↓ market data feed
+FM Converge Pricing &amp; Risk ←→ Bank's Trade Capture (if existing)
+    ↓ positions, P&amp;L, risk    ↓ STP
+    ↓                     Settlement System
+    ↓ regulatory capital
+FRTB / SA-CCR / XVA modules
+    ↓ capital charges
+SARB / FSCA Regulatory Reporting
+    ↓ risk data
+Bank's Data Warehouse / BI Layer (Snowflake, Azure Synapse)</code></pre>
+
+<p><strong>Key integration points</strong>:</p>
+<ul><li><strong>FIX protocol</strong> for order management and trade capture</li><li><strong>REST/gRPC APIs</strong> for real-time risk queries and position queries</li><li><strong>Kafka event streams</strong> for real-time P&amp;L and position updates</li><li><strong>SWIFT MX/ISO 20022</strong> for confirmation and settlement instructions</li><li><strong>S3/Azure Blob</strong> for batch regulatory reporting outputs (FRTB SA capital reports)</li></ul>
+
+<h3>AI Integration Pattern</h3>
+
+<p>FM Converge's API-first architecture enables AI augmentation that is impossible on monolithic platforms:</p>
+
+<pre><code class="lang-python"># Example: AI-assisted pre-trade risk check
+async def pre_trade_check(trade: Trade) -&gt; RiskDecision:
+    # Fetch real-time position from FM Converge API
+    current_position = await fm_converge.get_position(
+        book=trade.book, risk_factor=trade.risk_factor
+    )
+
+    # Fetch regulatory capital impact
+    incremental_capital = await fm_converge.frtb_sa_incremental(trade)
+
+    # AI risk decision (Claude via AI Gateway)
+    decision = await claude.complete(
+        prompt=f"""
+        Trade: {trade.details}
+        Current position: {current_position}
+        Incremental FRTB capital: {incremental_capital}
+        Available capital headroom: {capital_headroom}
+
+        Recommend: approve / refer / reject with reasoning.
+        """
+    )
+    return RiskDecision(decision)</code></pre>
+
+<p>This pattern — AI accessing live risk and position data via open APIs — is only possible when the trading platform exposes structured data. Monolithic platforms do not.</p>
+
+<hr>
+
+<h2>Glossary</h2>
+
+<table><thead><tr><th>Term</th><th>Definition</th></tr></thead><tbody><tr><td><strong>FX Spot</strong></td><td>Exchange of currencies at current market rate, settling T+2</td></tr><tr><td><strong>FX Forward</strong></td><td>Agreement to exchange currencies at a fixed rate on a future date</td></tr><tr><td><strong>FX Swap</strong></td><td>Near-leg spot + far-leg forward in opposite direction</td></tr><tr><td><strong>Cross-Currency Swap</strong></td><td>Exchange of principal and interest in different currencies</td></tr><tr><td><strong>IRS</strong></td><td>Interest Rate Swap — fixed rate vs floating rate in same currency</td></tr><tr><td><strong>VaR</strong></td><td>Value at Risk — loss threshold not exceeded with X% confidence over Y days</td></tr><tr><td><strong>ES</strong></td><td>Expected Shortfall (CVaR) — average loss in worst-case scenarios beyond VaR</td></tr><tr><td><strong>Greeks</strong></td><td>Sensitivities: Delta (price), Gamma (delta change), Vega (vol), Theta (time), Rho (rate)</td></tr><tr><td><strong>FRTB</strong></td><td>Fundamental Review of the Trading Book — Basel IV market risk capital framework</td></tr><tr><td><strong>SA-CCR</strong></td><td>Standardised Approach for Counterparty Credit Risk — EAD calculation method</td></tr><tr><td><strong>XVA</strong></td><td>Valuation Adjustments (CVA, DVA, FVA, MVA, KVA)</td></tr><tr><td><strong>ISDA SIMM</strong></td><td>Standard Initial Margin Model — bilateral OTC initial margin calculation</td></tr><tr><td><strong>STP</strong></td><td>Straight-Through Processing — automated trade flow from capture to settlement</td></tr><tr><td><strong>NMF</strong></td><td>Non-Modellable Risk Factor — FRTB IMA category for illiquid risk factors</td></tr><tr><td><strong>Netting set</strong></td><td>Group of trades subject to a legally enforceable netting agreement</td></tr><tr><td><strong>CSA</strong></td><td>Credit Support Annex — ISDA schedule governing collateral posting</td></tr><tr><td><strong>DRC</strong></td><td>Default Risk Charge — FRTB component for default/migration risk in trading book</td></tr><tr><td><strong>P&amp;L Attribution</strong></td><td>FRTB IMA test comparing desk P&amp;L to risk-theoretical P&amp;L</td></tr></tbody></table>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/fin/capital-markets/trading-platforms/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

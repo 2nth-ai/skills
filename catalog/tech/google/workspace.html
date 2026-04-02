@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/google/workspace — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><a href="#">google</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">workspace</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/google/workspace/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/google/workspace</div>
+      <h1>WORKSPACE</h1>
+      <p class="skill-desc">Google Workspace API integration skill.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Google Workspace APIs, OAuth 2.0, Service Accounts, Cloudflare Workers, Node.js</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../tech/google.html">tech/google</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech/google</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Google Workspace APIs</h1>
+
+<p>Google Workspace is the productivity layer — Gmail, Drive, Docs, Sheets, Calendar, Meet, Admin. Every API shares the same OAuth 2.0 identity model described in <code>tech/google</code>.</p>
+
+<h2>Workspace APIs in scope</h2>
+
+<table><thead><tr><th>API</th><th>Purpose</th><th>Common 2nth use</th></tr></thead><tbody><tr><td><strong>Gmail</strong></td><td>Read, send, label, search email</td><td>Enquiry capture, auto-reply, notification routing</td></tr><tr><td><strong>Drive</strong></td><td>Files, folders, sharing</td><td>Document ingestion, asset management, report delivery</td></tr><tr><td><strong>Sheets</strong></td><td>Spreadsheet read/write</td><td>Live data feeds, reporting outputs, config tables</td></tr><tr><td><strong>Calendar</strong></td><td>Events, availability</td><td>Booking automation, appointment scheduling</td></tr><tr><td><strong>Admin SDK</strong></td><td>Users, groups, org units</td><td>Provisioning, access control, audit</td></tr><tr><td><strong>Contacts</strong></td><td>People API</td><td>CRM sync, contact enrichment</td></tr></tbody></table>
+
+<h2>Authentication for Workspace</h2>
+
+<p>Two patterns. Choose based on whether a human user is involved.</p>
+
+<h3>Pattern 1: OAuth 2.0 (user acts on their own data)</h3>
+<pre><code class="lang-text">User clicks "Connect Google" →
+  Redirect to accounts.google.com/o/oauth2/v2/auth
+  with scope, client_id, redirect_uri, state, access_type=offline →
+  User consents →
+  Exchange code for { access_token, refresh_token, expiry } →
+  Store refresh_token in KV/D1 keyed to user_id →
+  Refresh access_token as needed (expires every 3600s)</code></pre>
+
+<h3>Pattern 2: Service Account + Domain-Wide Delegation (act as any user in the org)</h3>
+<pre><code class="lang-text">Admin grants service account domain-wide delegation in Workspace Admin console →
+  Service account mints a JWT with sub=user@domain.com →
+  Exchanges JWT for access_token scoped to that user →
+  Calls APIs as that user — no interactive consent</code></pre>
+
+<p>Use Pattern 2 for:</p>
+<ul><li>Background automations (no user present)</li><li>Multi-user org-wide operations</li><li>Gmail triggers watching an inbox automatically</li></ul>
+
+<h3>Domain-wide delegation setup</h3>
+<ol><li>GCP Console → IAM → Service Accounts → Create → Download JSON key</li><li>Workspace Admin Console → Security → API Controls → Domain-wide Delegation → Add</li></ol>
+<p>   - Client ID: the service account's <code>client_id</code> from the JSON key    - Scopes: comma-separated list of required scopes</p>
+<ol><li>In code, impersonate the target user by setting <code>sub</code> in the JWT</li></ol>
+
+<pre><code class="lang-typescript">// Mint a JWT for service account impersonation
+async function getWorkspaceToken(env: Env, userEmail: string, scope: string): Promise&lt;string&gt; {
+  const now = Math.floor(Date.now() / 1000);
+  const header = { alg: 'RS256', typ: 'JWT' };
+  const payload = {
+    iss: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    sub: userEmail,   // impersonate this user
+    scope,
+    aud: 'https://oauth2.googleapis.com/token',
+    iat: now,
+    exp: now + 3600,
+  };
+  // Sign with service account private key, exchange for access_token
+  // Full implementation: see tech/google for token helper
+}</code></pre>
+
+<h2>Webhook / push notifications (Workspace Watch API)</h2>
+
+<p>All major Workspace APIs support push notifications — instead of polling, Google POSTs to your endpoint when something changes.</p>
+
+<pre><code class="lang-typescript">// Register a Gmail watch (expires every 7 days — must renew)
+await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/watch`, {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    topicName: 'projects/PROJECT_ID/topics/PUBSUB_TOPIC',
+    labelIds: ['INBOX'],
+    labelFilterAction: 'include',
+  }),
+});</code></pre>
+
+<p>Gmail watch requires a <strong>Pub/Sub topic</strong> — notifications are published there, then pushed to your Worker. See <code>tech/google/cloud</code> for Pub/Sub setup.</p>
+
+<p><strong>Renewal pattern:</strong> Cloud Scheduler calls a renewal endpoint every 6 days.</p>
+
+<h2>Admin SDK — common operations</h2>
+
+<pre><code class="lang-typescript">const base = 'https://admin.googleapis.com/admin/directory/v1';
+
+// List all users in domain
+const users = await gFetch(`${base}/users?domain=yourdomain.co.za&amp;maxResults=500`, token);
+
+// Get a single user
+const user = await gFetch(`${base}/users/user@yourdomain.co.za`, token);
+
+// List groups
+const groups = await gFetch(`${base}/groups?domain=yourdomain.co.za`, token);
+
+// Suspend a user
+await gFetch(`${base}/users/user@yourdomain.co.za`, token, 'PATCH', { suspended: true });</code></pre>
+
+<h2>2nth.ai ↔ Trusted Workspace Tenant — Integration Pattern</h2>
+
+<p>This is the canonical pattern for connecting 2nth.ai Cloudflare infrastructure to a <strong>specific, trusted Google Workspace organisation</strong> — for exploration, internal tooling, and client platform builds.</p>
+
+<h3>Architecture</h3>
+
+<pre><code class="lang-text">Cloudflare Worker (any 2nth.ai service)
+  → calls workspace-bridge Worker (service binding)
+      → mints JWT using service account key (stored as CF secret)
+      → exchanges JWT for Google access_token
+      → calls Workspace API (Gmail, Drive, Sheets, Calendar, Admin)
+      → returns structured result</code></pre>
+
+<p>One service account. One set of secrets. Any Worker in the account can reach any Workspace API in the trusted tenant by calling the bridge.</p>
+
+<hr>
+
+<h3>Step 1: GCP project setup</h3>
+
+<p>Create a dedicated GCP project for the 2nth.ai ↔ Workspace bridge. Keep it separate from any client GCP projects.</p>
+
+<pre><code class="lang-bash"># Create project
+gcloud projects create 2nth-workspace-bridge --name="2nth Workspace Bridge"
+gcloud config set project 2nth-workspace-bridge
+
+# Enable required APIs
+gcloud services enable \
+  gmail.googleapis.com \
+  drive.googleapis.com \
+  sheets.googleapis.com \
+  calendar-json.googleapis.com \
+  admin.googleapis.com \
+  people.googleapis.com \
+  iamcredentials.googleapis.com
+
+# Create service account
+gcloud iam service-accounts create workspace-bridge \
+  --display-name="2nth Workspace Bridge" \
+  --project=2nth-workspace-bridge
+
+# Download key (store immediately — cannot re-download)
+gcloud iam service-accounts keys create ./workspace-bridge-key.json \
+  --iam-account=workspace-bridge@2nth-workspace-bridge.iam.gserviceaccount.com</code></pre>
+
+<p>Note the <code>client_id</code> from <code>workspace-bridge-key.json</code> — you need it for Step 2.</p>
+
+<hr>
+
+<h3>Step 2: Grant domain-wide delegation in the Workspace tenant</h3>
+
+<p>The Workspace <strong>super admin</strong> must complete this step. This is what creates the trust.</p>
+
+<ol><li>Go to <strong>admin.google.com</strong> → Security → Access and data control → API controls</li><li>Click <strong>Manage domain-wide delegation</strong> → <strong>Add new</strong></li><li>Enter:</li></ol>
+<p>   - <strong>Client ID</strong>: the <code>client_id</code> from <code>workspace-bridge-key.json</code>    - <strong>OAuth scopes</strong> (comma-separated — start with this set for exploration):      ``<code>      https://www.googleapis.com/auth/gmail.readonly,      https://www.googleapis.com/auth/gmail.send,      https://www.googleapis.com/auth/drive.readonly,      https://www.googleapis.com/auth/spreadsheets.readonly,      https://www.googleapis.com/auth/calendar.readonly,      https://www.googleapis.com/auth/admin.directory.user.readonly      </code>``</p>
+<ol><li>Click <strong>Authorise</strong></li></ol>
+
+<p>The service account can now impersonate <strong>any user</strong> in that Workspace org for the listed scopes. No per-user consent required.</p>
+
+<hr>
+
+<h3>Step 3: Store secrets in Cloudflare</h3>
+
+<pre><code class="lang-bash"># Extract values from the key JSON and store as Worker secrets
+# Run each interactively — paste value when prompted
+
+npx wrangler secret put GOOGLE_SERVICE_ACCOUNT_EMAIL
+# → workspace-bridge@2nth-workspace-bridge.iam.gserviceaccount.com
+
+npx wrangler secret put GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+# → paste the full "private_key" value from the JSON (include -----BEGIN/END----- lines)
+
+npx wrangler secret put GOOGLE_SERVICE_ACCOUNT_CLIENT_ID
+# → the client_id value from the JSON
+
+npx wrangler secret put GOOGLE_WORKSPACE_DOMAIN
+# → the trusted tenant domain, e.g. 2nth.ai or b2bs.co.za</code></pre>
+
+<p><strong>Never commit <code>workspace-bridge-key.json</code> to git.</strong> Delete it locally after storing the secrets.</p>
+
+<hr>
+
+<h3>Step 4: JWT minting in Cloudflare Workers (Web Crypto API)</h3>
+
+<p>Cloudflare Workers run in V8 isolates — no Node.js <code>crypto</code> or <code>jsonwebtoken</code>. Use the Web Crypto API instead. This helper is the core of the bridge.</p>
+
+<pre><code class="lang-typescript">// helpers/google-auth.ts
+
+interface Env {
+  GOOGLE_SERVICE_ACCOUNT_EMAIL: string;
+  GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: string;
+  GOOGLE_SERVICE_ACCOUNT_CLIENT_ID: string;
+}
+
+/**
+ * Get a Google access_token for a specific user and scope set.
+ * Uses service account domain-wide delegation.
+ *
+ * @param userEmail  - The Workspace user to impersonate, e.g. craig@2nth.ai
+ * @param scopes     - Array of OAuth scope URLs
+ */
+export async function getWorkspaceToken(
+  env: Env,
+  userEmail: string,
+  scopes: string[]
+): Promise&lt;string&gt; {
+  const now = Math.floor(Date.now() / 1000);
+
+  // Build JWT payload
+  const header  = { alg: 'RS256', typ: 'JWT' };
+  const payload = {
+    iss:   env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    sub:   userEmail,
+    scope: scopes.join(' '),
+    aud:   'https://oauth2.googleapis.com/token',
+    iat:   now,
+    exp:   now + 3600,
+  };
+
+  const encode = (obj: object) =&gt;
+    btoa(JSON.stringify(obj)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+  const signingInput = `${encode(header)}.${encode(payload)}`;
+
+  // Import the PEM private key into Web Crypto
+  const pemBody = env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+    .replace(/-----BEGIN PRIVATE KEY-----/, '')
+    .replace(/-----END PRIVATE KEY-----/, '')
+    .replace(/\s/g, '');
+
+  const keyData = Uint8Array.from(atob(pemBody), c =&gt; c.charCodeAt(0));
+
+  const privateKey = await crypto.subtle.importKey(
+    'pkcs8',
+    keyData,
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  // Sign
+  const signature = await crypto.subtle.sign(
+    'RSASSA-PKCS1-v1_5',
+    privateKey,
+    new TextEncoder().encode(signingInput)
+  );
+
+  const jwt = `${signingInput}.${btoa(String.fromCharCode(...new Uint8Array(signature)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}`;
+
+  // Exchange JWT for access_token
+  const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: jwt,
+    }),
+  });
+
+  if (!tokenRes.ok) {
+    const err = await tokenRes.text();
+    throw new Error(`Google token exchange failed: ${err}`);
+  }
+
+  const { access_token } = await tokenRes.json() as { access_token: string };
+  return access_token;
+}</code></pre>
+
+<hr>
+
+<h3>Step 5: workspace-bridge Worker</h3>
+
+<p>A thin internal Worker that other services call via <a href="https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/" target="_blank" rel="noopener">service bindings</a> — no public HTTP, no auth overhead.</p>
+
+<pre><code class="lang-typescript">// workspace-bridge/src/index.ts
+
+import { getWorkspaceToken } from './helpers/google-auth';
+
+const SCOPES = {
+  gmail_read:  ['https://www.googleapis.com/auth/gmail.readonly'],
+  gmail_send:  ['https://www.googleapis.com/auth/gmail.send'],
+  drive_read:  ['https://www.googleapis.com/auth/drive.readonly'],
+  sheets_read: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+  calendar:    ['https://www.googleapis.com/auth/calendar.readonly'],
+  admin:       ['https://www.googleapis.com/auth/admin.directory.user.readonly'],
+};
+
+export default {
+  async fetch(request: Request, env: Env): Promise&lt;Response&gt; {
+    const { pathname } = new URL(request.url);
+    const body = await request.json() as { user?: string; [key: string]: unknown };
+    const user = body.user ?? `admin@${env.GOOGLE_WORKSPACE_DOMAIN}`;
+
+    // POST /token — get a raw access token for a user + scope set
+    if (pathname === '/token') {
+      const { scope } = body as { scope: keyof typeof SCOPES; user: string };
+      const token = await getWorkspaceToken(env, user, SCOPES[scope] ?? SCOPES.gmail_read);
+      return Response.json({ token });
+    }
+
+    // POST /gmail/list — list recent inbox messages
+    if (pathname === '/gmail/list') {
+      const token = await getWorkspaceToken(env, user, SCOPES.gmail_read);
+      const { q = 'is:unread in:inbox', maxResults = 10 } = body as { q?: string; maxResults?: number };
+      const res = await fetch(
+        `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${encodeURIComponent(q)}&amp;maxResults=${maxResults}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return Response.json(await res.json());
+    }
+
+    // POST /gmail/send — send an email as the user
+    if (pathname === '/gmail/send') {
+      const { to, subject, html } = body as { to: string; subject: string; html: string };
+      const token = await getWorkspaceToken(env, user, SCOPES.gmail_send);
+      const raw = btoa(
+        `To: ${to}\r\nFrom: ${user}\r\nSubject: ${subject}\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n${html}`
+      ).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ raw }),
+      });
+      return Response.json(await res.json());
+    }
+
+    // POST /drive/list — list Drive files
+    if (pathname === '/drive/list') {
+      const token = await getWorkspaceToken(env, user, SCOPES.drive_read);
+      const { q = "'root' in parents", pageSize = 20 } = body as { q?: string; pageSize?: number };
+      const res = await fetch(
+        `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&amp;pageSize=${pageSize}&amp;fields=files(id,name,mimeType,modifiedTime,size)`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return Response.json(await res.json());
+    }
+
+    // POST /sheets/read — read a range from a spreadsheet
+    if (pathname === '/sheets/read') {
+      const { spreadsheetId, range } = body as { spreadsheetId: string; range: string };
+      const token = await getWorkspaceToken(env, user, SCOPES.sheets_read);
+      const res = await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return Response.json(await res.json());
+    }
+
+    // POST /calendar/events — list upcoming events
+    if (pathname === '/calendar/events') {
+      const token = await getWorkspaceToken(env, user, SCOPES.calendar);
+      const now = new Date().toISOString();
+      const res = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now}&amp;maxResults=10&amp;orderBy=startTime&amp;singleEvents=true`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return Response.json(await res.json());
+    }
+
+    return new Response('Not found', { status: 404 });
+  }
+};</code></pre>
+
+<p><strong>wrangler.toml for the bridge:</strong></p>
+<pre><code class="lang-toml">name = "workspace-bridge"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+
+[vars]
+GOOGLE_WORKSPACE_DOMAIN = "2nth.ai"   # or whichever tenant</code></pre>
+
+<p><strong>Calling the bridge from another Worker via service binding:</strong></p>
+<pre><code class="lang-toml"># In the consuming Worker's wrangler.toml
+[[services]]
+binding = "WORKSPACE"
+service  = "workspace-bridge"</code></pre>
+
+<pre><code class="lang-typescript">// In the consuming Worker
+const result = await env.WORKSPACE.fetch(new Request('http://internal/gmail/list', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ user: 'craig@2nth.ai', q: 'is:unread', maxResults: 5 }),
+})).then(r =&gt; r.json());</code></pre>
+
+<hr>
+
+<h3>First experiments to run</h3>
+
+<p>Once the bridge is deployed and domain-wide delegation is active, validate the trust with these in order:</p>
+
+<table><thead><tr><th>#</th><th>Endpoint</th><th>What it proves</th></tr></thead><tbody><tr><td>1</td><td><code>POST /token</code> <code>{ user, scope: 'gmail_read' }</code></td><td>Service account JWT minting works, DWD is configured</td></tr><tr><td>2</td><td><code>POST /gmail/list</code> <code>{ user, q: 'is:unread' }</code></td><td>Can read inbox — foundational for all email automation</td></tr><tr><td>3</td><td><code>POST /gmail/send</code> <code>{ user, to, subject, html }</code></td><td>Can send as a Workspace user — replaces Resend for internal mail</td></tr><tr><td>4</td><td><code>POST /drive/list</code> <code>{ user }</code></td><td>Can see Drive — opens document ingestion, RAG, asset sync</td></tr><tr><td>5</td><td><code>POST /sheets/read</code> <code>{ user, spreadsheetId, range }</code></td><td>Can read Sheets — config tables, live data feeds, reporting</td></tr><tr><td>6</td><td><code>POST /calendar/events</code> <code>{ user }</code></td><td>Can see calendar — scheduling, availability, meeting context</td></tr></tbody></table>
+
+<hr>
+
+<h3>What this unlocks for 2nth.ai</h3>
+
+<table><thead><tr><th>Capability</th><th>How</th></tr></thead><tbody><tr><td><strong>Gmail as a CRM trigger</strong></td><td>Watch inbox → classify with Workers AI → route to D1 or notify</td></tr><tr><td><strong>Send from Workspace domain</strong></td><td>Replace Resend for any mail that should come from @2nth.ai or @client.co.za</td></tr><tr><td><strong>Google Sheets as a live config table</strong></td><td>Read a client's Sheet for pricing, products, or settings — no code deploy needed</td></tr><tr><td><strong>Drive as a document source for RAG</strong></td><td>Ingest Drive docs into Vectorize for semantic search</td></tr><tr><td><strong>Calendar availability</strong></td><td>Build booking flows that check real availability before confirming</td></tr><tr><td><strong>Cross-tenant client onboarding</strong></td><td>Grant DWD in a client's Workspace tenant, bridge connects instantly</td></tr></tbody></table>
+
+<h2>Sub-skills</h2>
+
+<ul><li><strong>Scope creep</strong>: Request only what you need — broad scopes cause OAuth consent failures in Workspace admin-managed accounts</li><li><strong>Watch expiry</strong>: Gmail/Drive watches expire after 7 days — always set up a renewal job at creation time</li><li><strong>Workspace vs personal Google</strong>: Service account domain-wide delegation only works for Workspace org domains, not personal gmail.com accounts</li><li><strong>Rate limits</strong>: Gmail: 250 quota units/user/second. Drive: 12,000 req/minute per user. Back off on 429s.</li><li><strong>Unverified app warning</strong>: OAuth consent screen shows warning until app is verified by Google — acceptable for internal use, required for public</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/google/workspace/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

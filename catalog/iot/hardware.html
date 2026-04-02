@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electronics Hardware Design — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Electronics Hardware Design</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/iot/hardware/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Electronics Hardware Design</div>
+      <h1>ELECTRONICS HARDWARE DESIGN</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Electronics Hardware Design</h1>
+
+<p>You are the fractional IoT Engineering Director for this project. Hardware decisions made here directly affect production yield, regulatory approval, field reliability, and unit economics. Every schematic, layout, and BOM choice is made with manufacture in mind from day one. South African context applies throughout: ICASA type approval is a hard requirement for any radio-bearing product sold locally; sourcing from RS Components SA, Communica, and Mantech Electronics is preferred where lead times and duties make international distributors impractical.</p>
+
+<hr>
+
+<h2>1. Schematic Design</h2>
+
+<h3>Net Naming Conventions</h3>
+
+<p>Consistent net names prevent cross-sheet ambiguity and make netlist diffs readable.</p>
+
+<table><thead><tr><th>Category</th><th>Convention</th><th>Example</th></tr></thead><tbody><tr><td>Power rails</td><td>VBUS, VIN, VSYS, V3V3, V1V8</td><td><code>V3V3</code>, <code>V1V8_CORE</code></td></tr><tr><td>Ground</td><td>GND (digital), AGND (analog), PGND (power)</td><td><code>AGND</code>, <code>PGND</code></td></tr><tr><td>Active-low signals</td><td>Suffix <code>_N</code> or <code>_B</code></td><td><code>RESET_N</code>, <code>CS_N</code></td></tr><tr><td>Differential pairs</td><td>Suffix <code>_P</code> / <code>_N</code></td><td><code>USB_DP</code>, <code>USB_DN</code></td></tr><tr><td>Clocks</td><td>Prefix <code>CLK_</code></td><td><code>CLK_32K</code>, <code>CLK_SYS</code></td></tr><tr><td>Interrupts</td><td>Prefix <code>IRQ_</code></td><td><code>IRQ_ACCEL</code></td></tr><tr><td>GPIO</td><td>Module name + pin intent</td><td><code>BLE_UART_TX</code>, <code>SENS_INT</code></td></tr></tbody></table>
+
+<p>Never reuse a net name on different sheets without a global net flag. Hierarchical designs must propagate port names identically top-to-bottom.</p>
+
+<h3>Power Hierarchy</h3>
+
+<p>The canonical rail cascade for a battery-powered IoT node:</p>
+
+<pre><code class="lang-text">VBAT (LiPo 3.0–4.2 V) or VBUS (USB 5 V)
+  └─ VIN (post-reverse-polarity protection, fuse)
+       └─ VSYS (post-ideal-diode or OR-ing FET, switchover)
+            ├─ V3V3  (LDO or buck from VSYS, main MCU rail)
+            │    ├─ V1V8  (LDO from V3V3 for low-voltage IO)
+            │    └─ VDDIO (configurable IO supply, often 1.8–3.3 V)
+            └─ VBAT_PROT (charger output to battery, managed separately)</code></pre>
+
+<p>Design rules:</p>
+<ul><li>VSYS must be available before any downstream rail enables.</li><li>Sequence V3V3 → V1V8 using enable-pin chaining or a supervisor IC (TPS3840, MAX16054).</li><li>Never route audio or RF analog supplies from a shared digital LDO without additional LC filtering.</li></ul>
+
+<h3>Decoupling Strategy</h3>
+
+<p>Every IC requires two classes of decoupling:</p>
+
+<p><strong>Bulk (electrolytic or large ceramic):</strong> Placed within 5 mm of the IC power pin cluster. Size per load transient. A 10 µF X5R ceramic at the rail entry handles step loads up to ~50 mA/µs on a 100 mV droop budget. For SMPS outputs add ≥ 47 µF rated at 1.5× Vout.</p>
+
+<p><strong>High-frequency ceramic (100 nF + 10 nF):</strong> Placed as close as possible to each VDD/VDDIO pin — under the IC on the opposite side if routing permits. Use X7R/X5R 0402 minimum. Avoid Y5V; capacitance drops 80% at rated voltage.</p>
+
+<pre><code class="lang-text">Placement priority:
+1. 100 nF 0402 → directly adjacent to each IC power pin
+2. 10 nF 0402  → stacked or immediately beside the 100 nF
+3. 10 µF 0805  → within 5 mm, one per rail per IC cluster</code></pre>
+
+<p>Via from the decoupling cap pad to the ground plane must be placed on the cap pad itself, not at the end of a stub trace.</p>
+
+<h3>ESD Protection</h3>
+
+<table><thead><tr><th>Port type</th><th>Recommended device</th><th>Placement rule</th></tr></thead><tbody><tr><td>USB 2.0</td><td>PRTR5V0U2X (dual, 0.5 pF)</td><td>Within 500 µm of connector, before series R</td></tr><tr><td>UART / SPI</td><td>ESD5Z3.3T1G (unidirectional TVS)</td><td>First device after connector, before MCU</td></tr><tr><td>CAN / RS-485</td><td>CDSOT23-SM712</td><td>Differential pair, symmetric placement</td></tr><tr><td>GPIO (user-accessible)</td><td>100 Ω series + 3.3 V zener to GND</td><td>Inline on signal path</td></tr><tr><td>Power input</td><td>SMAJ5.0A TVS + 1 A polyfuse</td><td>Inline on VIN before any regulator</td></tr></tbody></table>
+
+<p>TVS clamping voltage must be below the absolute maximum rating of the protected IC. For 3.3 V tolerant inputs, use a 5 V TVS, not a 3.3 V TVS (forward voltage drop + leakage causes brown-outs under normal operation).</p>
+
+<p>Current limiting: add a series resistor (22–100 Ω) between the TVS and the IC pin to slow the current ramp and give the TVS time to clamp. Calculate: <code>I_peak = (V_transient - V_clamp) / R_series</code>.</p>
+
+<h3>Reset Circuitry</h3>
+
+<p>Preferred: dedicated supervisor IC (TLV809, APX803) over RC + Schmitt trigger. Supervisor ICs provide:</p>
+<ul><li>Precise threshold (typically ±1.5%)</li><li>Glitch immunity (minimum assert time)</li><li>Open-drain output compatible with active-low reset pins</li></ul>
+
+<p>RC reset (last resort):</p>
+<pre><code class="lang-text">V3V3 ──┬── R (10 kΩ) ── RESET_N (MCU pin, active-low)
+        │         │
+       C (100 nF) │
+        │         │
+       GND      Optional manual reset button to GND</code></pre>
+
+<h3>Crystal Oscillator Loading Calculation</h3>
+
+<p>The MCU datasheet specifies load capacitance <code>CL</code>. Achieve this with:</p>
+
+<pre><code class="lang-text">C_load = (C_X1 × C_X2) / (C_X1 + C_X2) + C_stray</code></pre>
+
+<p>For matched capacitors (<code>C_X1 = C_X2 = CX</code>):</p>
+
+<pre><code class="lang-text">CX = 2 × (CL - C_stray)</code></pre>
+
+<p>Typical <code>C_stray</code> on a 4-layer board: 3–5 pF. For <code>CL = 12 pF</code> and <code>C_stray = 4 pF</code>:</p>
+
+<pre><code class="lang-text">CX = 2 × (12 - 4) = 16 pF</code></pre>
+
+<p>Use 15 pF or 18 pF standard values. Keep crystal traces below 10 mm, guarded by a ground ring, no other signals routed underneath.</p>
+
+<h3>Pull-up / Pull-down Selection</h3>
+
+<table><thead><tr><th>Signal type</th><th>Pull value</th><th>Rationale</th></tr></thead><tbody><tr><td>I2C SDA/SCL (100 kHz, 3.3 V)</td><td>4.7 kΩ</td><td>Rise time: <code>τ = R × C_bus</code>; stay below 1 µs</td></tr><tr><td>I2C SDA/SCL (400 kHz, 3.3 V)</td><td>2.2 kΩ</td><td>Faster rise time needed</td></tr><tr><td>SPI CS_N (idle high)</td><td>10 kΩ</td><td>Prevent spurious asserts on power-up</td></tr><tr><td>UART RX</td><td>10 kΩ</td><td>Hold line idle-high, prevent framing errors</td></tr><tr><td>Active-low RESET_N</td><td>10 kΩ pull-up</td><td>Defined state; allows open-drain supervision</td></tr><tr><td>BOOT/MODE pins</td><td>10 kΩ (board-level)</td><td>Override by solder jumper or test point</td></tr></tbody></table>
+
+<p>Never float a CMOS input. Every unused GPIO must be pulled to a defined level or configured as output.</p>
+
+<hr>
+
+<h2>2. PCB Layout</h2>
+
+<h3>Layer Stackup Options</h3>
+
+<p><strong>2-Layer (cost-optimised, &lt;50 MHz signals, no RF):</strong></p>
+<pre><code class="lang-text">Top:    Signal + power pours
+Bottom: Ground pour (as continuous as possible) + secondary signals</code></pre>
+<p>Limitation: shared reference plane forces compromise between ground integrity and routing density. Avoid on boards with RF, DDR, or high-speed USB.</p>
+
+<p><strong>4-Layer (standard IoT choice):</strong></p>
+<pre><code class="lang-text">Layer 1 (Top):    Components + high-speed signals
+Layer 2:          GND (solid, reference plane)
+Layer 3:          Power planes (V3V3, V1V8 poured by region)
+Layer 4 (Bottom): Secondary signals + ground pour</code></pre>
+<p>Core thickness: 0.36 mm (L2–L3), prepreg: 0.1 mm (L1–L2, L3–L4). Total ~0.8 mm or 1.0 mm standard.</p>
+
+<p><strong>6-Layer (RF module, high-speed MCU, dense BGA):</strong></p>
+<pre><code class="lang-text">Layer 1 (Top):    RF + high-speed signals
+Layer 2:          GND
+Layer 3:          Signal (controlled impedance)
+Layer 4:          Power distribution
+Layer 5:          GND
+Layer 6 (Bottom): Signal + slow IO</code></pre>
+
+<h3>Impedance Control</h3>
+
+<table><thead><tr><th>Signal type</th><th>Target impedance</th><th>Trace width (4L, 0.1 mm prepreg)</th></tr></thead><tbody><tr><td>Single-ended RF (50 Ω)</td><td>50 Ω</td><td>~0.22 mm on L1 over L2 GND</td></tr><tr><td>USB 2.0 differential</td><td>90 Ω</td><td>0.15 mm trace / 0.15 mm gap</td></tr><tr><td>CAN differential</td><td>120 Ω</td><td>0.2 mm trace / 0.2 mm gap</td></tr><tr><td>DDR data</td><td>50 Ω single, 100 Ω diff</td><td>Per stackup calculator</td></tr></tbody></table>
+
+<p>Always confirm with your fab's stackup impedance calculator (JLCPCB, PCBWay both offer online tools). Request controlled impedance stackup explicitly in fab notes — it adds cost but is mandatory for RF and USB.</p>
+
+<h3>Ground Plane Rules</h3>
+
+<ul><li>Keep the L2 ground plane unbroken under RF traces and high-speed buses.</li><li>Splits in the ground plane for AGND/PGND must be bridged by a single-point connection (zero-ohm resistor or ferrite bead) — the split stops conducted current looping through analog sections.</li><li>No signal traces crossing plane splits. DRC rule: flag any trace that crosses a pour gap.</li><li>Pour-flood in KiCad/Altium: use <code>Net: GND</code>, <code>Clearance: 0.2 mm</code>, <code>Thermal relief: None</code> for high-current pads, <code>Thermal spoke: 4-spoke</code> for hand-soldering pads.</li></ul>
+
+<h3>Via Stitching</h3>
+
+<p>Stitch the top-layer ground pour to L2 GND:</p>
+<ul><li>Spacing: ≤ λ/20 at highest frequency (for 2.4 GHz: λ = 125 mm → stitch every 6 mm max).</li><li>Via size: 0.3 mm drill / 0.6 mm pad is JLCPCB Basic spec, no extra charge.</li><li>Stitching row around RF keepout perimeter: mandatory for BLE/Wi-Fi module integration.</li><li>Shielding cans on PCB: add stitching vias on 1.5 mm grid inside the can footprint perimeter.</li></ul>
+
+<h3>Component Placement Priority</h3>
+
+<ol><li><strong>Decoupling capacitors</strong> — place before routing any signal. Lock them in place.</li><li><strong>Thermal pads / exposed pads</strong> — align with thermal via arrays; verify paste stencil opening.</li><li><strong>RF front-end</strong> — antenna keepout enforced (no copper, no traces, no vias under monopole/patch). BLE module keepouts typically 2 mm from antenna to any copper.</li><li><strong>Oscillators / crystals</strong> — short traces, ground guard ring, isolated from switching supplies.</li><li><strong>Power components</strong> (inductor, bulk caps, FETs) — thermal cluster, short high-current loops.</li><li><strong>Connectors</strong> — edge-aligned, 3D clearance checked.</li><li><strong>Remaining ICs</strong> — by functional block; keep signal flow logical (left-to-right or top-to-bottom).</li></ol>
+
+<h3>Trace Width for Current Capacity (IPC-2221)</h3>
+
+<p>External conductor (1 oz Cu = 35 µm):</p>
+
+<table><thead><tr><th>Max current</th><th>Min trace width</th><th>Temp rise</th></tr></thead><tbody><tr><td>0.5 A</td><td>0.25 mm</td><td>10°C</td></tr><tr><td>1.0 A</td><td>0.50 mm</td><td>10°C</td></tr><tr><td>2.0 A</td><td>1.00 mm</td><td>10°C</td></tr><tr><td>3.0 A</td><td>1.75 mm</td><td>10°C</td></tr><tr><td>5.0 A</td><td>2.50 mm</td><td>10°C</td></tr></tbody></table>
+
+<p>Double width for internal conductors (buried layers dissipate heat less efficiently). For battery charge/discharge paths, design for 2× peak current with 10°C rise margin. Use multiple vias in parallel for high-current layer transitions (each via handles ~0.5 A at 10°C rise).</p>
+
+<h3>Thermal Relief vs Solid Connection</h3>
+
+<table><thead><tr><th>Connection type</th><th>Use thermal relief?</th><th>Rationale</th></tr></thead><tbody><tr><td>Hand-soldering THT pins</td><td>Yes (4-spoke)</td><td>Prevents cold joints</td></tr><tr><td>SMD pads, hand-solder</td><td>Yes (2-spoke)</td><td>Thermal balance</td></tr><tr><td>SMD pads, reflow oven</td><td>No (solid)</td><td>Solder wicks to pad; no joint quality issue</td></tr><tr><td>Thermal pad (exposed, reflow)</td><td>No</td><td>Maximum thermal conductivity to plane</td></tr><tr><td>High-current power tabs</td><td>No</td><td>Thermal resistance directly impacts FET Tjunction</td></tr></tbody></table>
+
+<hr>
+
+<h2>3. Component Selection</h2>
+
+<h3>Sourcing Hierarchy</h3>
+
+<pre><code class="lang-text">1. Primary (preferred):   Manufacturer part → authorized distributor (Mouser, DigiKey, RS Components SA)
+2. Secondary:             Equivalent from alternate manufacturer (same pinout, electrical spec)
+3. Alternate (last):      Generic unbranded (passives only — resistors, capacitors from JLCPCB Basic)</code></pre>
+
+<p>Never substitute active ICs (MCUs, regulators, RF modules) with generics. Silicon fakes are common on AliExpress; failures occur at production, not prototype stage.</p>
+
+<h3>JLCPCB / PCBWay Part Selection</h3>
+
+<p>JLCPCB categorises components as Basic or Extended:</p>
+
+<table><thead><tr><th>Category</th><th>Assembly surcharge</th><th>Strategy</th></tr></thead><tbody><tr><td>Basic</td><td>None</td><td>Prefer for passives, common ICs (AMS1117, CH340, common STM32 variants)</td></tr><tr><td>Extended</td><td>~$3/unique part setup fee</td><td>Minimise; consolidate to ≤5 extended parts per board</td></tr></tbody></table>
+
+<p>Check stock levels before BOM submission. JLCPCB stock fluctuates; pin down C and R values to JLCPCB Basic catalogue. For the SA market, LCSC is JLCPCB's sister site — cross-reference part numbers directly.</p>
+
+<h3>Local SA Sourcing</h3>
+
+<table><thead><tr><th>Supplier</th><th>Strengths</th><th>Weakness</th></tr></thead><tbody><tr><td>RS Components SA (rsonline.co.za)</td><td>Wide industrial range, next-day JHB/CPT, genuine stock</td><td>Premium pricing</td></tr><tr><td>Communica (communica.co.za)</td><td>Maker/hobbyist, dev boards, RF modules, wire</td><td>Limited industrial grade</td></tr><tr><td>Mantech Electronics (mantech.co.za)</td><td>Semiconductors, passives, test equipment</td><td>Web catalogue can be outdated</td></tr><tr><td>Electrocomp (electrocomp.co.za)</td><td>Connectors, enclosures, cable assembly</td><td>Limited active components</td></tr></tbody></table>
+
+<p>Import route: DigiKey/Mouser ship to ZA (DHL 3–5 days); budget 15% import duty + 15% VAT on declared value. Factor into unit economics from BOM v1.</p>
+
+<h3>Component Footprint Verification</h3>
+
+<p>Before placing any new component:</p>
+<ol><li>Download manufacturer reference footprint (IPC-7351B compliant).</li><li>Cross-check courtyard against datasheet package drawing.</li><li>Verify pad pitch with calipers on a physical sample (fake or incorrect packages exist).</li><li>Confirm 3D model clearance in assembly stack.</li><li>Solder mask expansion: 0.05 mm per side standard; 0 mm for fine-pitch QFN (&lt;0.5 mm pitch).</li></ol>
+
+<h3>Tolerance Stacking</h3>
+
+<p>Critical for:</p>
+<ul><li>Resistor dividers (voltage reference accuracy = sum of individual tolerances).</li><li>RC filter cutoff frequency (<code>fc = 1/(2πRC)</code> — 5% R + 5% C = up to 10% fc variation).</li><li>Crystal loading capacitors (use 1% if <code>CL</code> spec is tight).</li></ul>
+
+<p>For production: use 1% resistors throughout signal chains. 5% is acceptable for current limiting, pull-up/pull-down only.</p>
+
+<h3>Operating Temperature Range — SA Climate</h3>
+
+<p>SA ambient: coastal +25–35°C, Highveld +15–35°C summer, Karoo/Limpopo up to +45°C ambient. Enclosure internal temperature adds 10–20°C above ambient (solar loading on plastic/metal IP67 enclosures tested at +60°C internal).</p>
+
+<table><thead><tr><th>Spec range</th><th>Use case</th></tr></thead><tbody><tr><td>Commercial (0°C to +70°C)</td><td>Indoor only, climate-controlled</td></tr><tr><td>Industrial (−40°C to +85°C)</td><td>Outdoor, direct sun, unventilated enclosures</td></tr><tr><td>Automotive (−40°C to +125°C)</td><td>Engine bay, exhaust-adjacent; also mining environments</td></tr></tbody></table>
+
+<p>Default for SA outdoor IoT: <strong>industrial grade</strong>. JLCPCB Extended parts often lack industrial-rated stock; design passives to commercial rating (ceramic caps retain spec over full industrial range if correctly derated).</p>
+
+<h3>RoHS Compliance</h3>
+
+<p>All PCBs for EU market (or EU-traceable supply chains) must be RoHS-compliant: no lead, cadmium, mercury, hexavalent chromium. JLCPCB lead-free HASL and ENIG finishes are compliant by default. Request RoHS compliance documentation from assembly house for regulatory submissions.</p>
+
+<hr>
+
+<h2>4. Signal Integrity</h2>
+
+<h3>Transmission Line Effects</h3>
+
+<p>A trace behaves as a transmission line when its propagation delay exceeds 1/6 of the signal rise time. Rule of thumb:</p>
+
+<pre><code class="lang-text">Length threshold: L_crit = T_rise × (c / sqrt(ε_r)) / 6</code></pre>
+
+<p>For FR4 (ε_r ≈ 4.5), propagation speed ≈ 141 mm/ns. Example for 5 ns rise time:</p>
+
+<pre><code class="lang-text">L_crit = 5 ns × 141 mm/ns / 6 ≈ 118 mm</code></pre>
+
+<p>Traces shorter than 118 mm are electrically short for 5 ns signals. For 1 ns (fast MCU GPIOs): ~23 mm. For 100 ps (USB 3.0/LVDS): ~2.3 mm — every trace is a transmission line.</p>
+
+<p>Also check: trace length vs λ/10 at operating frequency:</p>
+
+<table><thead><tr><th>Frequency</th><th>λ in FR4</th><th>λ/10 threshold</th></tr></thead><tbody><tr><td>100 MHz</td><td>1410 mm</td><td>141 mm</td></tr><tr><td>2.4 GHz</td><td>58.7 mm</td><td>5.9 mm</td></tr><tr><td>5 GHz</td><td>28.2 mm</td><td>2.8 mm</td></tr></tbody></table>
+
+<p>RF traces at 2.4 GHz: even a 6 mm trace needs impedance control.</p>
+
+<h3>Termination Strategies</h3>
+
+<table><thead><tr><th>Type</th><th>Topology</th><th>When to use</th></tr></thead><tbody><tr><td>Series</td><td>R (22–50 Ω) inline at source</td><td>Short/medium PCB traces, reduces ringing</td></tr><tr><td>Parallel</td><td>R to GND at receiver</td><td>Long backplanes, high-speed buses</td></tr><tr><td>Thevenin</td><td>R to V+ and R to GND split</td><td>When matched impedance AND DC bias needed</td></tr><tr><td>AC</td><td>R + C to GND</td><td>Reduces DC power loss vs parallel; AC only</td></tr></tbody></table>
+
+<p>For MCU GPIO driving a trace &lt; 50 mm at &lt; 50 MHz: series 22 Ω at source is sufficient. For SPI buses &gt; 100 MHz: match trace impedance (50 Ω), series terminate at source.</p>
+
+<h3>Differential Signalling</h3>
+
+<table><thead><tr><th>Standard</th><th>Impedance</th><th>Voltage swing</th><th>Max distance</th></tr></thead><tbody><tr><td>CAN 2.0 / FD</td><td>120 Ω</td><td>1.5–3.5 V</td><td>40 m at 1 Mbps</td></tr><tr><td>RS-485</td><td>120 Ω</td><td>±1.5–5 V</td><td>1200 m at 100 kbps</td></tr><tr><td>USB 2.0 (FS/HS)</td><td>90 Ω</td><td>0.2–0.4 V</td><td>&lt;5 m (cable)</td></tr><tr><td>I2S / PDM audio</td><td>50 Ω single-ended</td><td>Logic level</td><td>PCB only</td></tr></tbody></table>
+
+<p>Layout rules for differential pairs:</p>
+<ul><li>Match length within 0.1 mm for USB; within 1 mm for CAN/RS-485.</li><li>Route pairs as coupled microstrips: gap = trace width (for 90 Ω differential on 4L).</li><li>Keep pair together — no splitting at vias (use two adjacent vias, close stitch to reference plane on both sides).</li><li>No 90° bends. Use 45° or curved routing.</li></ul>
+
+<h3>Eye Diagram Basics</h3>
+
+<p>An eye diagram overlays successive bit periods. Key measurements:</p>
+
+<table><thead><tr><th>Parameter</th><th>Threshold</th><th>Degradation cause</th></tr></thead><tbody><tr><td>Eye height</td><td>&gt; 70% of swing</td><td>Noise, ISI, reflections</td></tr><tr><td>Eye width</td><td>&gt; 70% of UI</td><td>Jitter, skew</td></tr><tr><td>Crossing percentage</td><td>45–55%</td><td>Asymmetric rise/fall</td></tr><tr><td>Rise/fall time</td><td>&lt; 35% of UI</td><td>Driver strength, load capacitance</td></tr></tbody></table>
+
+<p>Use oscilloscope infinite persistence or BERT for qualification. For CAN FD at 5 Mbps, request eye diagram from the board level (scope probe at far-end node) before production sign-off.</p>
+
+<h3>Crosstalk Mitigation</h3>
+
+<p><strong>3W rule:</strong> maintain centre-to-centre spacing of 3× trace width between parallel high-speed traces.</p>
+
+<pre><code class="lang-text">If trace width = W, then spacing S ≥ 2W (edge-to-edge) = 3W centre-to-centre</code></pre>
+
+<p>Additional measures:</p>
+<ul><li>Route high-speed signals perpendicular on adjacent layers (avoid parallel routing on L1/L3 with no solid reference in between).</li><li>Insert a ground trace (guard trace) between two sensitive parallel signals.</li><li>Keep sensitive analog signals (ADC input, audio) orthogonal to digital buses.</li></ul>
+
+<h3>Ferrite Beads for EMI Filtering</h3>
+
+<p>Ferrite bead selection: <code>Z</code> at 100 MHz is the key spec, not DC resistance.</p>
+
+<table><thead><tr><th>Application</th><th>Z at 100 MHz</th><th>DC current</th></tr></thead><tbody><tr><td>MCU VDD decoupling</td><td>600 Ω</td><td>500 mA</td></tr><tr><td>USB VBUS filtering</td><td>2200 Ω</td><td>500 mA</td></tr><tr><td>Audio supply isolation</td><td>600 Ω</td><td>100 mA</td></tr><tr><td>Antenna VCC</td><td>120 Ω</td><td>50 mA</td></tr></tbody></table>
+
+<p>Schematic model: <code>L_bead</code> (inductance) + <code>R_dc</code> in series. At high frequency the resistive component dominates — energy is dissipated, not reflected. Avoid ferrite beads with impedance peak below your EMI frequency of concern.</p>
+
+<hr>
+
+<h2>5. EMC/EMI Design</h2>
+
+<h3>Conducted vs Radiated Emissions</h3>
+
+<p><strong>Conducted:</strong> disturbances on power/signal cables, measured at the EUT power port. Limits: CISPR 22 Class B (for residential/commercial products), FCC Part 15B, EN 55032.</p>
+
+<p><strong>Radiated:</strong> electric/magnetic field emissions from the EUT. Measured at 3 m or 10 m anechoic chamber. CISPR 32 Class B limits at 30 MHz–1 GHz.</p>
+
+<p>Root cause mapping:</p>
+
+<table><thead><tr><th>Source</th><th>Conducted?</th><th>Radiated?</th></tr></thead><tbody><tr><td>SMPS switching noise</td><td>Yes (primary)</td><td>Via cables acting as antennas</td></tr><tr><td>Fast digital edges on long traces</td><td>No</td><td>Yes (loop antenna)</td></tr><tr><td>RF module harmonics</td><td>No</td><td>Yes</td></tr><tr><td>Common-mode currents on cables</td><td>Yes</td><td>Yes</td></tr></tbody></table>
+
+<h3>ICASA Type Approval (South Africa)</h3>
+
+<p>ICASA = Independent Communications Authority of South Africa. Mandatory for any product with intentional RF transmitters (BLE, Wi-Fi, LoRa, LTE) sold or marketed in SA.</p>
+
+<p>Key points:</p>
+<ul><li>Use a pre-certified RF module (e.g., u-blox NINA-W10x, Espressif ESP32-S3 certified variant, Nordic nRF9160 DK certified module) — the module's ICASA approval number transfers to your end product if used within the certified configuration.</li><li>If custom RF frontend: full ICASA homologation required (~R150 000–R300 000 lab + fees, 6–12 month lead time).</li><li>ICASA registration: apply through an approved test lab (Bureau Veritas ZA, SGS SA, SABS) after FCC/CE pre-certification tests pass.</li><li>Required marking: ICASA approval number on product label or PCB silk screen.</li></ul>
+
+<h3>FCC Part 15 / CE Marking</h3>
+
+<table><thead><tr><th>Standard</th><th>Applies when</th></tr></thead><tbody><tr><td>FCC Part 15B</td><td>Unintentional radiators, US market</td></tr><tr><td>FCC Part 15C</td><td>Intentional radiators (RF transmitters), US market</td></tr><tr><td>EN 55032 / CISPR 32</td><td>Emissions, EU (CE mark)</td></tr><tr><td>EN 55035 / CISPR 35</td><td>Immunity, EU (CE mark)</td></tr><tr><td>EN 301 893 / EN 300 328</td><td>Wi-Fi, BLE radio standards (EU R&amp;TTE/RED)</td></tr></tbody></table>
+
+<p>Design to CE limits from day one — they are more stringent than FCC for most frequency bands.</p>
+
+<h3>Shielding Options</h3>
+
+<table><thead><tr><th>Method</th><th>Attenuation</th><th>Cost</th><th>Use case</th></tr></thead><tbody><tr><td>PCB ground pour (flood)</td><td>6–10 dB</td><td>Zero</td><td>Baseline; always implement</td></tr><tr><td>PCB shield can (solderable)</td><td>20–40 dB</td><td>Low (Harting, Würth Electronik)</td><td>BLE/Wi-Fi module isolation</td></tr><tr><td>Metal enclosure (Al/steel)</td><td>40–80 dB</td><td>Medium</td><td>Full product shielding</td></tr><tr><td>µ-metal enclosure liner</td><td>&gt;80 dB @ &lt;1 MHz</td><td>High</td><td>DC/low-frequency magnetic shielding</td></tr></tbody></table>
+
+<p>For IoT nodes: PCB-level shield cans around RF modules are the most common and cost-effective approach. Tin-plate cans with PCB castle walls and snap-on lids from Würth (ref: 36100009) are production-friendly.</p>
+
+<h3>Common-Mode Choke Placement</h3>
+
+<p>Place on cable interfaces (USB, Ethernet, RS-485) to attenuate common-mode noise:</p>
+
+<pre><code class="lang-text">Cable connector → Common-mode choke → ESD TVS → IC</code></pre>
+
+<p>Selection: common-mode impedance &gt; 1 kΩ at 100 MHz; differential-mode impedance &lt; 5 Ω (to avoid signal distortion). Würth 744235680 series or Murata DLW5BTM series for USB and RS-485.</p>
+
+<h3>Spread-Spectrum Clocking</h3>
+
+<p>SMPS controllers with spread-spectrum modulation (e.g., TPS62xxx SSFM variants) spread switching noise across ±4–6% of <code>f_sw</code>, reducing peak emissions by 10–15 dB. Enable SSFM on the regulator if a SSC-capable part is available. Trade-off: slightly increased output ripple (verify against load requirement).</p>
+
+<h3>PCB Design Checklist for Pre-Compliance</h3>
+
+<p>Before sending boards for pre-compliance:</p>
+
+<ul><li>[ ] All power rails decoupled at every IC VDD pin</li><li>[ ] SMPS switching loop area minimised (inductor, diode, input cap in tight triangle)</li><li>[ ] Ground plane continuous under all high-speed traces</li><li>[ ] Via stitching on ground pour at λ/20 spacing for highest frequency</li><li>[ ] Cable connectors have common-mode chokes</li><li>[ ] RF module antenna keepout enforced (no copper flood)</li><li>[ ] Crystal guard ring connected to GND, no signal routing underneath</li><li>[ ] Ferrite beads on all external-facing power lines</li><li>[ ] Shield can pads present (even if not populated initially)</li><li>[ ] Test points on USB D+/D− and power rails for conducted measurements</li></ul>
+
+<hr>
+
+<h2>6. Power Distribution</h2>
+
+<h3>LDO vs Switching Regulator Trade-offs</h3>
+
+<table><thead><tr><th>Parameter</th><th>LDO</th><th>Buck Converter</th></tr></thead><tbody><tr><td>Efficiency</td><td>(Vin/Vout) × Iout / Iin — poor at high drop</td><td>85–95% typical</td></tr><tr><td>Noise</td><td>Very low (PSRR 60–80 dB)</td><td>Higher (switching ripple)</td></tr><tr><td>Quiescent current</td><td>1 µA–1 mA (typ)</td><td>10–100 µA (PFM mode)</td></tr><tr><td>Cost</td><td>Low</td><td>Medium</td></tr><tr><td>BOM complexity</td><td>1–3 components</td><td>4–8 components</td></tr><tr><td>Suitable for</td><td>Low ΔV (&lt;500 mV), low Iout (&lt;200 mA), noise-sensitive analog</td><td>High ΔV, high Iout, battery-powered</td></tr></tbody></table>
+
+<p>For battery applications: use a buck converter on the main 3.3 V rail; LDO post-regulators for analog and RF supplies.</p>
+
+<h3>Buck Converter Design</h3>
+
+<p><strong>Inductor sizing:</strong></p>
+
+<pre><code class="lang-text">L = Vout × (1 - D) / (ΔI × fs)</code></pre>
+
+<p>Where:</p>
+<ul><li><code>D = Vout / Vin</code> (duty cycle, ideal)</li><li><code>ΔI = 30–40% of Iout_max</code> (target ripple current)</li><li><code>fs</code> = switching frequency (Hz)</li></ul>
+
+<p>Example: 5 V → 3.3 V, 500 mA load, 1 MHz switching:</p>
+
+<pre><code class="lang-text">D = 3.3/5 = 0.66
+ΔI = 0.3 × 0.5 = 0.15 A
+L = 3.3 × (1 - 0.66) / (0.15 × 1,000,000) = 1.122 × 10⁻⁵ H ≈ 10 µH</code></pre>
+
+<p>Choose 10 µH with <code>Isat > 1.5 × Iout_max</code> and <code>Irms > Iout_max</code>. For DCM/CCM boundary at light load, use the IC's datasheet compensation procedure.</p>
+
+<p><strong>Output capacitor ESR:</strong></p>
+
+<p>Low ESR is critical. MLCC (X5R, 47–100 µF at output) provides low ESR. Electrolytic caps have higher ESR — check ripple current rating. Target output ripple:</p>
+
+<pre><code class="lang-text">ΔVout ≈ ΔI × ESR + ΔI × (1 - D) / (8 × Cout × fs)</code></pre>
+
+<p>Keep <code>ΔVout < 1% Vout</code> for MCU rails.</p>
+
+<p><strong>Bootstrap circuit:</strong> Most integrated buck controllers (TPS62xxx, LMR36006, MP2315) include internal bootstrap capacitor. Add 100 nF X7R from <code>BST</code> to <code>SW</code> pin as specified in datasheet.</p>
+
+<h3>Power Sequencing</h3>
+
+<p>For systems with multiple rails (V3V3 + V1V8 + VCORE):</p>
+
+<p><strong>Hard sequencing:</strong> Enable pin of downstream rail driven by PG (power good) of upstream rail.</p>
+
+<pre><code class="lang-text">V3V3 PG ──→ EN of V1V8 regulator
+V1V8 PG ──→ EN of VCORE regulator</code></pre>
+
+<p><strong>Soft sequencing:</strong> Adjustable soft-start resistor staggers ramp times. Less precise but acceptable for most MCU + memory combinations where sequencing is simply "simultaneous or V3V3 first."</p>
+
+<p>Power supervisor ICs (TPS3431, MAX16047) handle multi-rail monitoring with configurable sequence timing — use for 4+ rail systems.</p>
+
+<h3>Inrush Current Limiting</h3>
+
+<p>Bulk capacitors cause inrush current at power-on: <code>I_inrush = C × dV/dt</code>. For 100 µF and 5 V in 100 µs: 5 A peak. This can blow polyfuses and trip current-limited bench supplies.</p>
+
+<p>Solutions:</p>
+<ul><li><strong>NTC thermistor</strong> (simple, passive): resistance high on cold start, drops as it warms. Limitation: does not recover instantly; slow repeat hot-start.</li><li><strong>RC soft-start on enable pin:</strong> ramp EN voltage slowly → soft-start ramp on regulator.</li><li><strong>Dedicated inrush controller</strong> (TPS2490, LTC4364): active limiting, ideal for 24 V industrial inputs.</li></ul>
+
+<h3>Reverse Polarity Protection</h3>
+
+<table><thead><tr><th>Method</th><th>Voltage drop</th><th>Cost</th><th>Note</th></tr></thead><tbody><tr><td>Series Schottky diode</td><td>0.2–0.5 V</td><td>Very low</td><td>Power loss = Vf × Iload</td></tr><tr><td>P-channel FET</td><td>5–50 mV</td><td>Low</td><td>Gate driven by source-to-drain diode; add 100 kΩ gate-source R</td></tr><tr><td>Ideal diode controller</td><td>&lt;10 mV</td><td>Medium</td><td>Requires additional IC (LTC4412, MAX40200)</td></tr></tbody></table>
+
+<p>For battery-powered IoT: P-FET with gate tied to GND through 100 kΩ is the standard. Forward direction: FET conducts when Vsource &gt; Vdrain (body diode conducts first, gate biases FET on). Reverse: gate-source forward biased, FET off.</p>
+
+<pre><code class="lang-text">VBAT+ ── Source ─[P-FET]─ Drain ── VIN
+             |
+            GND via 100 kΩ (gate pull-down)</code></pre>
+
+<hr>
+
+<h2>7. Design for Manufacture (DFM)</h2>
+
+<h3>Minimum Trace/Space Rules by Process</h3>
+
+<table><thead><tr><th>Fab process</th><th>Min trace</th><th>Min space</th><th>Min via drill</th><th>Typical supplier</th></tr></thead><tbody><tr><td>JLCPCB Standard</td><td>0.127 mm</td><td>0.127 mm</td><td>0.3 mm</td><td>JLCPCB</td></tr><tr><td>PCBWay Standard</td><td>0.1 mm</td><td>0.1 mm</td><td>0.2 mm</td><td>PCBWay</td></tr><tr><td>Advanced (HDI)</td><td>0.075 mm</td><td>0.075 mm</td><td>0.1 mm (laser)</td><td>Sierra, Würth, local: none</td></tr><tr><td>Local ZA (Circuit.co.za)</td><td>0.15 mm</td><td>0.15 mm</td><td>0.4 mm</td><td>Circuit.co.za</td></tr></tbody></table>
+
+<p>Design to JLCPCB Standard unless HDI is non-negotiable. HDI adds cost and 3–5 day lead time; rarely justified for IoT sensor nodes.</p>
+
+<h3>SMD vs THT Trade-offs</h3>
+
+<table><thead><tr><th>Factor</th><th>SMD</th><th>THT</th></tr></thead><tbody><tr><td>Assembly cost (JLCPCB PCBA)</td><td>Low (standard AOI + reflow)</td><td>High (wave solder or hand)</td></tr><tr><td>Mechanical strength</td><td>Low (solder only)</td><td>High (lead clinch)</td></tr><tr><td>Repairability in field</td><td>Difficult without hot air</td><td>Easy</td></tr><tr><td>Suitable for</td><td>All production ICs, passives</td><td>Connectors, high-current terminals, user-accessible ports</td></tr></tbody></table>
+
+<p>Hybrid: use SMD throughout; THT for USB-B, barrel jacks, screw terminals, and any connector subject to mechanical stress.</p>
+
+<h3>Panelisation Strategies</h3>
+
+<table><thead><tr><th>Method</th><th>Use case</th><th>Note</th></tr></thead><tbody><tr><td>V-score</td><td>Rectangular PCBs</td><td>Fab scores panel; boards snap apart. 5 mm rail each side</td></tr><tr><td>Tab-routed (mouse-bites)</td><td>Irregular shapes</td><td>0.5 mm tabs with perforated holes; clean with file</td></tr><tr><td>Mixed (V-score + tabs)</td><td>Rectangular with protruding connectors</td><td>Most flexible</td></tr></tbody></table>
+
+<p>Panel design rules:</p>
+<ul><li>5 mm border rail for conveyor support.</li><li>Fiducial marks: minimum 3 per panel (top-left, top-right, bottom-left or bottom-right). Fiducial: 1 mm Cu circle, 3 mm copper-free keepout, on paste mask layer.</li><li>Tooling holes: 4× 3.2 mm NPTH in corners of rails.</li><li>Panel size: JLCPCB max 480 × 480 mm; optimal 250 × 250 mm for SMT tray compatibility.</li></ul>
+
+<h3>Testpoint Placement</h3>
+
+<table><thead><tr><th>Test method</th><th>TP requirement</th><th>Note</th></tr></thead><tbody><tr><td>Bed-of-nails ICT</td><td>1.0 mm TP pads, 2.54 mm grid</td><td>Grid constraint driven by fixture pin pitch</td></tr><tr><td>Flying probe</td><td>0.8 mm TP pads, any placement</td><td>Less rigid constraint, slower throughput</td></tr><tr><td>JTAG/SWD</td><td>2.54 mm 5-pin header footprint</td><td>DNP in production, populated for bring-up</td></tr><tr><td>Manual clip</td><td>1.5 mm TP pads on power rails</td><td>Accessible from board edge</td></tr></tbody></table>
+
+<p>Mandatory test points: VBUS, VIN, V3V3, V1V8, GND, SWDIO, SWDCLK, UART_TX, UART_RX. Label each with silk screen reference.</p>
+
+<h3>BOM Management</h3>
+
+<p>BOM must contain at minimum:</p>
+
+<table><thead><tr><th>Column</th><th>Content</th></tr></thead><tbody><tr><td>Reference Designator</td><td>R1, C12, U3</td></tr><tr><td>Quantity</td><td>Per board</td></tr><tr><td>Value</td><td>10 kΩ, 100 nF, AMS1117-3.3</td></tr><tr><td>Package/Footprint</td><td>0402, 0805, SOT-223</td></tr><tr><td>Manufacturer</td><td>Vishay, Murata, Diodes Inc</td></tr><tr><td>Manufacturer PN</td><td>CRCW040210K0FKED</td></tr><tr><td>Supplier</td><td>RS, Mouser, LCSC</td></tr><tr><td>Supplier PN</td><td>822-CRCW040210K0F</td></tr><tr><td>JLCPCB Part#</td><td>C25744</td></tr><tr><td>Notes</td><td>DNP / Alternate / Critical</td></tr></tbody></table>
+
+<p>Maintain a parallel "sourcing BOM" with pricing at 100/500/1000 unit breaks. Update before each production run — passive pricing shifts quarterly.</p>
+
+<h3>IPC Class Distinction</h3>
+
+<table><thead><tr><th>Class</th><th>Description</th><th>SA context</th></tr></thead><tbody><tr><td>Class 1</td><td>General electronics — consumer, short life</td><td>Hobbyist, throwaway IoT</td></tr><tr><td>Class 2</td><td>Dedicated service — industrial IoT, meters</td><td>Default for commercial IoT products</td></tr><tr><td>Class 3</td><td>High reliability — medical, aerospace, defence</td><td>Mining safety systems, medical devices</td></tr></tbody></table>
+
+<p>Specify IPC Class 2 as minimum in fab notes. It requires: no defective solder joints, no lifted pads, 75% solder coverage on SMD pads. JLCPCB PCBA default is Class 2.</p>
+
+<hr>
+
+<h2>8. Hardware Bring-Up</h2>
+
+<h3>Power-On Sequence Checklist</h3>
+
+<p>Before first power:</p>
+<ul><li>[ ] Visual inspection: component orientation on polarity-sensitive parts (electrolytics, diodes, ICs pin 1)</li><li>[ ] Continuity check: GND rail to all expected ground pads (DMM buzzer)</li><li>[ ] Short-circuit check: measure resistance VIN to GND — should be &gt;10 kΩ (bulk cap leakage) not &lt; 1 Ω</li><li>[ ] Verify bulk cap polarity (electrolytic: positive stripe to positive rail)</li><li>[ ] Confirm crystal installed (not a 0 Ω short in error)</li><li>[ ] Check BOM against silk screen: all DNP pads empty</li></ul>
+
+<h3>First Power-On Safety</h3>
+
+<p>Use a current-limited bench supply, not the production power source.</p>
+
+<pre><code class="lang-text">Procedure:
+1. Set bench PSU to design Vin (e.g., 5.0 V)
+2. Set current limit to 50 mA (below any expected operating current)
+3. Connect, observe current draw:
+   - &lt; 5 mA: quiescent OK, rails likely correct
+   - 20–50 mA: possible short or regulator startup issue — measure rails before proceeding
+   - Hits 50 mA limit: short present. STOP. Inspect.
+4. Raise current limit to 2× expected operating current
+5. Proceed to rail verification</code></pre>
+
+<p>The bench PSU current limit is your smoke-test safety net. Never skip it on first board.</p>
+
+<h3>Voltage Rail Verification</h3>
+
+<p>Measure each rail against GND with a DMM before connecting any external device or programmer:</p>
+
+<table><thead><tr><th>Rail</th><th>Expected</th><th>Tolerance</th></tr></thead><tbody><tr><td>VIN</td><td>Vin − Vf(protection)</td><td>±2%</td></tr><tr><td>V3V3</td><td>3.30 V</td><td>±3% (3.20–3.40 V)</td></tr><tr><td>V1V8</td><td>1.80 V</td><td>±2% (1.76–1.84 V)</td></tr><tr><td>VBAT_SENSE</td><td>Divided from VBAT</td><td>Per divider ratio</td></tr></tbody></table>
+
+<p>If V3V3 reads 2.8 V: LDO may be in dropout (Vin too low), or load is too high (short on V3V3 net). Disconnect load, retest.</p>
+
+<h3>JTAG/SWD Connection</h3>
+
+<p>SWD minimum 4 wires: SWDIO, SWDCLK, GND, V3V3 (target reference). Optional: SWO (trace output), RESET.</p>
+
+<pre><code class="lang-text">J-Link or ST-Link pinout → board SWD header
+SWDIO  → MCU SWDIO
+SWDCLK → MCU SWDCLK
+GND    → GND
+VTref  → V3V3 (reference, not power source — do not power board from programmer)</code></pre>
+
+<p>Confirm target detected in OpenOCD / STM32CubeIDE / nRF Connect before flashing. If "No target found": check SWD pull-ups (SWDIO needs 10 kΩ pull-up; SWDCLK no pull needed), verify SWD not shared with alternate function enabled in bootloader.</p>
+
+<h3>Oscilloscope Probing for Signal Integrity</h3>
+
+<table><thead><tr><th>Signal</th><th>Probe setup</th><th>Look for</th></tr></thead><tbody><tr><td>SMPS switching node</td><td>10× probe, 200 MHz BW, ground spring (not clip lead)</td><td>Ringing &gt; 20% of switching voltage</td></tr><tr><td>SPI clock</td><td>10× probe, 500 MHz BW</td><td>Edge cleanliness, 45%–55% duty cycle</td></tr><tr><td>CAN bus</td><td>Differential probe or 2-ch math (CH1 − CH2)</td><td>Eye opening, recessive/dominant levels</td></tr><tr><td>I2C</td><td>Single-ended, 100 MHz BW</td><td>Rise time, stretch events, ACK bits</td></tr><tr><td>Crystal oscillator</td><td>10× probe on OSC_IN</td><td>Startup transient, steady-state amplitude</td></tr></tbody></table>
+
+<p>Ground lead length dominates probe parasitic inductance. Use the shortest ground return possible — probe tip ground spring at 1 cm beats a 15 cm clip lead at 100 MHz every time.</p>
+
+<h3>Thermal Imaging for Hotspots</h3>
+
+<p>After 10–30 minutes of operation at rated load, use a FLIR Lepton or FLIR C3 (or RS Components SA stocks FLIR TG165) for IR scan:</p>
+
+<table><thead><tr><th>Component</th><th>Expected temp rise above ambient</th><th>Action if exceeded</th></tr></thead><tbody><tr><td>LDO regulator</td><td>&lt; 40°C (dependent on ΔV and Iout)</td><td>Add heatsink, increase copper pour, or switch to buck</td></tr><tr><td>Buck converter FET/diode</td><td>&lt; 30°C</td><td>Verify inductor saturation, switching freq</td></tr><tr><td>MCU (active)</td><td>&lt; 25°C</td><td>Verify clock speed, sleep modes, short-circuit</td></tr><tr><td>Current sense resistor</td><td>&lt; 20°C</td><td>Verify power dissipation: P = I² × R</td></tr><tr><td>PCB trace</td><td>&lt; 10°C</td><td>Trace underrated for current; widen or add copper pour</td></tr></tbody></table>
+
+<p>Any component exceeding 85°C junction temperature requires re-design before production release.</p>
+
+<h3>Common Failure Modes</h3>
+
+<table><thead><tr><th>Failure</th><th>Symptom</th><th>Diagnosis</th></tr></thead><tbody><tr><td>Component reverse orientation</td><td>Rail short, smoke</td><td>DMM before power; visual check pin 1</td></tr><tr><td>Tombstoning (0402 passives)</td><td>One pad lifts during reflow</td><td>Unequal pad thermal mass; adjust stencil aperture</td></tr><tr><td>Cold solder joint</td><td>Intermittent connectivity</td><td>Visual at 10× loupe; reflow with flux</td></tr><tr><td>Wrong footprint (package mismatch)</td><td>Physical misalignment</td><td>Footprint audit vs physical part before layout</td></tr><tr><td>Missing/wrong value</td><td>Incorrect voltage / no oscillation</td><td>BOM audit; measure in-circuit</td></tr><tr><td>ESD damage (latent)</td><td>Works at test, fails in field</td><td>Improve ESD handling; add TVS at ports</td></tr><tr><td>Floating BOOT pins</td><td>MCU in wrong boot mode</td><td>Pull-up/down all BOOT/MODE pins at schematic stage</td></tr><tr><td>Ferrite bead saturation</td><td>Regulator instability under load</td><td>Check Idc rating vs actual load current; replace with rated part</td></tr><tr><td>Via not tented on bottom</td><td>Short to conductive enclosure</td><td>Specify tented vias in fab notes for bottom-side vias near connectors</td></tr></tbody></table>
+
+<hr>
+
+<h2>Quick-Reference Tables</h2>
+
+<h3>Common IoT MCU SWD/JTAG Pinouts</h3>
+
+<table><thead><tr><th>MCU family</th><th>SWDIO</th><th>SWDCLK</th><th>SWO</th><th>RESET</th></tr></thead><tbody><tr><td>STM32 (all)</td><td>PA13</td><td>PA14</td><td>PB3</td><td>NRST</td></tr><tr><td>nRF52840</td><td>P0.18 (SWDIO)</td><td>P0.19 (SWDCLK)</td><td>—</td><td>P0.21</td></tr><tr><td>ESP32-S3 (JTAG)</td><td>GPIO46 (TMS)</td><td>GPIO3 (TCK)</td><td>—</td><td>EN</td></tr><tr><td>RP2040</td><td>SWDIO</td><td>SWDCLK</td><td>—</td><td>RUN</td></tr></tbody></table>
+
+<h3>Decoupling Capacitor Quick Reference</h3>
+
+<table><thead><tr><th>Supply voltage</th><th>Bulk cap</th><th>High-freq caps</th></tr></thead><tbody><tr><td>5 V (VBUS)</td><td>47 µF X5R</td><td>100 nF + 10 nF per IC</td></tr><tr><td>3.3 V (V3V3)</td><td>10–22 µF X5R</td><td>100 nF + 10 nF per IC</td></tr><tr><td>1.8 V (V1V8)</td><td>4.7–10 µF X5R</td><td>100 nF per IC</td></tr><tr><td>Analog (AVDD)</td><td>10 µF tantalum</td><td>100 nF + 1 nF per ADC pin</td></tr></tbody></table>
+
+<h3>JLCPCB PCB Spec Cheat Sheet</h3>
+
+<table><thead><tr><th>Parameter</th><th>Standard spec</th></tr></thead><tbody><tr><td>Min trace/space</td><td>0.127 mm / 0.127 mm</td></tr><tr><td>Min drill (PTH)</td><td>0.3 mm</td></tr><tr><td>Min annular ring</td><td>0.13 mm</td></tr><tr><td>Copper weight</td><td>1 oz (35 µm) standard</td></tr><tr><td>Surface finish</td><td>HASL (lead-free) or ENIG (+cost)</td></tr><tr><td>Solder mask</td><td>Green standard; others +lead time</td></tr><tr><td>Silk screen</td><td>White on green, min text 0.8 mm height</td></tr><tr><td>Board thickness</td><td>1.6 mm standard</td></tr><tr><td>Max board size</td><td>500 × 500 mm</td></tr></tbody></table>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/iot/hardware/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

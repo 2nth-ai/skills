@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Healthcare Finance & Revenue Cycle — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Healthcare Finance & Revenue Cycle</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/health/finance/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Healthcare Finance & Revenue Cycle</div>
+      <h1>HEALTHCARE FINANCE & REVENUE CYCLE</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Healthcare Finance &amp; Revenue Cycle</h1>
+
+<p>This skill covers the full financial and revenue cycle domain for South African healthcare — what a Healthcare Finance Director or Revenue Cycle specialist carries. It is SA-specific throughout. Where international parallels exist they are noted, but the primary reference is the South African medical schemes regulatory environment.</p>
+
+<hr>
+
+<h2>1. South African Healthcare Funding Landscape</h2>
+
+<p>South Africa operates a dual healthcare system: a large public sector funded through general taxation and a private sector funded mainly through medical aid schemes and out-of-pocket payments. Understanding which payer applies to each patient is the first decision in the revenue cycle.</p>
+
+<h3>Funding Sources</h3>
+
+<table><thead><tr><th>Funding Source</th><th>Description</th><th>% of Population (approx.)</th></tr></thead><tbody><tr><td>Medical Aid Schemes</td><td>Private voluntary insurance regulated by Council for Medical Schemes (CMS) under the Medical Schemes Act 131 of 1998</td><td>~16%</td></tr><tr><td>Out-of-Pocket (OOP)</td><td>Direct patient payment — specialists, GPs, private hospitals for uninsured</td><td>~20–25%</td></tr><tr><td>Employer Self-Insurance</td><td>Large employers bear medical costs directly; often administered by a TPA (Third Party Administrator)</td><td>Minority of employers</td></tr><tr><td>Road Accident Fund (RAF)</td><td>No-fault insurer for road accident victims; covers medical costs, loss of income, general damages</td><td>Incident-based</td></tr><tr><td>COID / COIDA</td><td>Compensation for Occupational Injuries and Diseases Act 130 of 1993; covers work-related injury/illness. Administered by the Compensation Fund (DoL).</td><td>Incident-based</td></tr><tr><td>Department of Health (DoH)</td><td>Public sector: district hospitals, regional hospitals, tertiary/academic hospitals, community health centres funded by national + provincial budgets</td><td>~84% of population</td></tr><tr><td>NHI (National Health Insurance)</td><td>Pending universal coverage reform</td><td>See below</td></tr></tbody></table>
+
+<h3>Road Accident Fund (RAF) — Revenue Cycle Implications</h3>
+
+<p>RAF claims are handled under the Road Accident Fund Act 56 of 1996. Key points:</p>
+
+<ul><li>Provider submits a Form RAF4 (medical report) and itemised account.</li><li>RAF pays the lower of actual cost or the applicable tariff (NHRPL / agreed rates).</li><li>Claims have a three-year prescription period from date of accident.</li><li>RAF is notoriously slow to settle — accounts receivable (AR) for RAF claims commonly exceed 180 days. Budget bad debt accordingly.</li><li>Emergency treatment cannot be refused on the basis of RAF funding uncertainty.</li></ul>
+
+<h3>COID / COIDA — Revenue Cycle Implications</h3>
+
+<ul><li>Employer must report injury/disease to the Compensation Fund.</li><li>Provider submits WCL2 (first medical report) and WCL4 (progress/final).</li><li>The Compensation Commissioner sets tariffs — currently below NHRPL in most categories.</li><li>Providers can apply for higher tariff approval for complex cases.</li><li>Turnaround from the Compensation Fund is often 90–180+ days. Many providers collect from patient and submit for reimbursement.</li></ul>
+
+<h3>National Health Insurance (NHI) — Current Status</h3>
+
+<p>The NHI Act 20 of 2023 was signed into law on 15 May 2024. As at Q1 2026:</p>
+
+<ul><li>The NHI Fund is not yet operational.</li><li>No benefit schedule or accreditation framework has been gazetted.</li><li>Constitutional court challenges are in progress (Medical Association of SA, SAPPF, others).</li><li>Practical implementation is estimated at 5–10 years away.</li><li>Providers should monitor NHI developments but need not restructure revenue cycle processes yet.</li><li>Key future implication: NHI will be the single purchaser. Medical aid schemes' role will be limited to top-up cover for services not in the NHI benefit package.</li></ul>
+
+<hr>
+
+<h2>2. Medical Aid Tariff Structures</h2>
+
+<h3>Background: From Schedule 2 to NHRPL to NHCF</h3>
+
+<table><thead><tr><th>Era</th><th>Reference</th><th>Status</th></tr></thead><tbody><tr><td>Pre-2004</td><td>Schedule 2 — Rand Mutual/MASA fee schedule; legally binding</td><td>Repealed</td></tr><tr><td>2004–2010</td><td>NHRPL (National Health Reference Price List) — published by DoH as a "reference"</td><td>No legal force; used as benchmark</td></tr><tr><td>2010 onwards</td><td>NHCF (National Health Care Fee) — industry self-regulation; published by BHF</td><td>Benchmark only</td></tr><tr><td>Post-2010</td><td>Scheme-specific tariff negotiations between providers and schemes</td><td>Contractual</td></tr></tbody></table>
+
+<p>There is currently no legally binding national tariff. Schemes and providers negotiate bilaterally. The NHCF (formerly NHRPL) serves as a common reference denominator — often expressed as "X% of NHRPL/NHCF".</p>
+
+<h3>NHCF Tariff Mechanics</h3>
+
+<p>NHCF codes map to three charge categories:</p>
+
+<ol><li><strong>Consultation codes</strong> (e.g., 0190 — GP consultation)</li><li><strong>Procedure codes</strong> (e.g., 4420 — appendectomy)</li><li><strong>Anaesthesiology codes</strong> (time + base units × conversion factor)</li></ol>
+
+<p>Anaesthesiology billing formula:</p>
+
+<pre><code class="lang-text">Total Units = Base Units (procedure complexity) + Time Units (15 min intervals) + Qualifying Circumstance Units
+Rand Value = Total Units × Conversion Factor (CF)</code></pre>
+
+<p>The CF is scheme-specific and negotiated annually. In 2025, the BHF published CF of approximately R26.00 per unit; schemes typically pay 80–100% of this.</p>
+
+<h3>Scheme Types</h3>
+
+<table><thead><tr><th>Type</th><th>Description</th><th>Tariff Flexibility</th></tr></thead><tbody><tr><td>Open Scheme</td><td>Any eligible person may join (e.g., Discovery Health, Bonitas, Momentum Health)</td><td>Negotiate with all providers</td></tr><tr><td>Closed Scheme</td><td>Restricted to employees of a specific employer/industry (e.g., GEMS — government employees)</td><td>May impose designated networks</td></tr><tr><td>Restricted Scheme</td><td>Hybrid — restricted but can open to dependants</td><td>Similar to closed</td></tr></tbody></table>
+
+<h3>Network Providers and Co-payments</h3>
+
+<p>Schemes construct Designated Service Provider (DSP) networks. Choosing a DSP:</p>
+
+<ul><li>PMB conditions: zero co-payment at DSP, up to 20% co-payment at non-DSP (some schemes impose 100% co-payment for non-DSP elective).</li><li>Non-PMB conditions: scheme rules apply; co-payments common at non-network providers.</li></ul>
+
+<h3>Benefit Options</h3>
+
+<table><thead><tr><th>Option</th><th>Hospital Cover</th><th>Day-to-day</th><th>Typical Annual Premium</th></tr></thead><tbody><tr><td>Hospital Plan</td><td>Private ward, ICU; no day-to-day</td><td>None</td><td>Lowest</td></tr><tr><td>Essential/Core</td><td>Hospital + some chronic</td><td>Minimal</td><td>Mid</td></tr><tr><td>Comprehensive</td><td>Hospital + day-to-day + savings</td><td>Full</td><td>Highest</td></tr></tbody></table>
+
+<p>Sub-limits are common: e.g., R5,000/year for physiotherapy, R2,500/year for dentistry. Providers must check benefit limits before treatment to avoid non-payment.</p>
+
+<h3>Key Billing Modifiers</h3>
+
+<ul><li><strong>Modifier 0009</strong> — after-hours consultation (adds premium).</li><li><strong>Modifier 0014</strong> — assisted surgery.</li><li><strong>Modifier 0021</strong> — bilateral procedure (schemes often pay 150%, not 200%).</li><li><strong>Same-day surgery rules</strong> — some codes cannot be claimed together on the same date; bundling edits apply.</li></ul>
+
+<hr>
+
+<h2>3. Prescribed Minimum Benefits (PMBs)</h2>
+
+<p>PMBs are defined in the Medical Schemes Act s29(1) and detailed in Regulations 8–9. Every open and restricted medical scheme must cover PMBs in full — at cost, at a DSP.</p>
+
+<h3>The 270 PMB Conditions</h3>
+
+<p>PMBs consist of:</p>
+
+<ul><li><strong>26 chronic conditions</strong> (the Chronic Disease List / CDL) — e.g., diabetes mellitus, hypertension, epilepsy, HIV/AIDS, asthma.</li><li><strong>270 Diagnosis Treatment Pairs (DTPs)</strong> — emergency and non-emergency conditions paired with their treatment pathway.</li></ul>
+
+<p>Common DTPs include: acute appendicitis + appendectomy, acute MI + angioplasty/thrombolysis, major depressive episode + specified pharmacotherapy and psychotherapy.</p>
+
+<h3>"At Cost" — What It Means in Practice</h3>
+
+<p>"At cost" does not mean whatever the provider charges. It means:</p>
+
+<blockquote>The scheme must fund the cost of the treatment as determined by the designated service provider's cost — but if no DSP arrangement exists, the scheme funds at its own tariff.</blockquote>
+
+<p>In practice:</p>
+<ul><li>At DSP: scheme pays provider's contracted rate; member pays nothing.</li><li>At non-DSP: scheme pays its own benefit rate; provider may charge more; member pays the difference (co-payment) — <strong>but only if the member chose non-DSP electively</strong>. If no DSP exists in the area for that condition, the scheme must fund at cost regardless.</li></ul>
+
+<h3>DSP Rules and Disputes</h3>
+
+<p>The scheme must publish its DSP network. If a member requires emergency care and no DSP is available:</p>
+
+<ul><li>The scheme cannot impose a co-payment for PMB treatment.</li><li>The provider should document the lack of DSP availability.</li></ul>
+
+<p>PMB dispute resolution path:</p>
+
+<ol><li>Query to scheme (must respond within 30 days).</li><li>Complaint to the Council for Medical Schemes (CMS) — adjudicated by the Registrar.</li><li>CMS Disputes Committee hearing.</li><li>Appeal to the Appeal Board (quasi-judicial).</li><li>High Court (judicial review).</li></ol>
+
+<h3>Common PMB Denial Traps</h3>
+
+<table><thead><tr><th>Error</th><th>Consequence</th></tr></thead><tbody><tr><td>ICD-10 code not mapping to a DTP</td><td>Claim treated as non-PMB; co-payment imposed</td></tr><tr><td>Wrong CDL chronic condition code</td><td>Claim falls outside CDL benefit; rejected or co-payment</td></tr><tr><td>Provider not recognised by scheme even when PMB</td><td>Scheme stalls claim; provider must escalate to CMS</td></tr><tr><td>Treatment exceeds DTP protocol</td><td>Scheme funds only protocol-compliant portion</td></tr></tbody></table>
+
+<h3>PMB for Mental Health</h3>
+
+<p>Regulation 15H specifies mental health PMBs: acute psychiatric emergencies, severe depression, schizophrenia. Historically under-funded relative to physical health PMBs; CMS has issued guidance requiring parity.</p>
+
+<hr>
+
+<h2>4. ICD-10 Coding</h2>
+
+<p>South Africa adopted ICD-10 (10th revision of the International Classification of Diseases, WHO) in 2005. Schemes require ICD-10 codes on all claims. ICD-11 is not yet adopted.</p>
+
+<h3>ICD-10 Structure</h3>
+
+<pre><code class="lang-text">Chapter (e.g., Chapter IX: Diseases of the Circulatory System)
+  Block (e.g., I20–I25: Ischaemic Heart Diseases)
+    Category (e.g., I21: Acute Myocardial Infarction)
+      Code (e.g., I21.0: Anterior wall STEMI)
+        Extension code (e.g., dagger/asterisk codes for dual coding)</code></pre>
+
+<h3>Principal vs Secondary Diagnosis</h3>
+
+<table><thead><tr><th>Code Position</th><th>Definition</th></tr></thead><tbody><tr><td>Principal diagnosis</td><td>The condition established after study to be chiefly responsible for the admission. NOT necessarily the presenting complaint.</td></tr><tr><td>Secondary diagnosis</td><td>Comorbidities or complications that affect care, length of stay, or resource consumption.</td></tr><tr><td>External cause code</td><td>Supplementary code (V, W, X, Y chapters) — required for injuries, poisonings (e.g., V89.2 — motor vehicle accident).</td></tr></tbody></table>
+
+<p>Coding rules in SA follow WHO ICD-10 Volume 2 plus National Department of Health coding guidelines (the "Blue Book" — Guidelines for ICD-10 Coding in South Africa).</p>
+
+<h3>Procedure Coding in South Africa</h3>
+
+<p>Unlike the US (which uses CPT codes), South Africa uses NHRPL/NHCF procedure codes. These are alphanumeric codes published in the BHF tariff list. Key characteristics:</p>
+
+<ul><li>Codes are 4–5 digits (e.g., procedure code 4420 = appendectomy; 0190 = GP consultation).</li><li>ICD-10 diagnosis codes are paired with procedure codes on the claim.</li><li>Some schemes additionally accept SNOMED CT procedure codes for clinical systems integration.</li><li>Theatre procedure codes must match the anaesthetic code complexity; mismatches trigger claim queries.</li></ul>
+
+<h3>Coding Accuracy and Reimbursement Impact</h3>
+
+<table><thead><tr><th>Coding Error</th><th>Revenue Impact</th></tr></thead><tbody><tr><td>Unspecified code (e.g., I21.9 instead of I21.0)</td><td>Potential DRG downcode; lower reimbursement</td></tr><tr><td>Missing secondary diagnosis (comorbidity)</td><td>Lower DRG weight; underpayment</td></tr><tr><td>Wrong external cause code</td><td>PMB determination fails for accident cases</td></tr><tr><td>Procedure code not matching diagnosis</td><td>Claim rejected; rework cost</td></tr></tbody></table>
+
+<h3>Upcoding — Legal Consequences</h3>
+
+<p>Upcoding is billing a higher-complexity code than the documented clinical condition warrants. In South Africa:</p>
+
+<ul><li>It is fraud under the Medical Schemes Act s66.</li><li>The Health Professions Council of South Africa (HPCSA) can impose professional sanctions.</li><li>The CMS can refer matters to the NPA (National Prosecuting Authority).</li><li>Penalties include repayment of all claims, fines, and deregistration.</li></ul>
+
+<p>Coding audits by schemes (and internal clinical coding audits) are essential controls. Target: zero intentional upcoding; coding queries resolved through clinical documentation, not code changes.</p>
+
+<hr>
+
+<h2>5. Diagnosis-Related Groups (DRGs)</h2>
+
+<h3>What DRGs Do</h3>
+
+<p>A DRG classifies an inpatient episode into a payment group based on:</p>
+
+<ul><li>Principal diagnosis (ICD-10)</li><li>Procedures performed (procedure codes)</li><li>Comorbidities / complications (secondary diagnoses)</li><li>Age, sex, discharge status</li></ul>
+
+<p>Each DRG has a relative weight. The hospital's payment = DRG weight × base rate (negotiated per scheme).</p>
+
+<h3>SA DRG Implementation</h3>
+
+<p>South Africa has not legislatively mandated DRGs, but private hospital groups and major open schemes have adopted them bilaterally. The dominant classification system used in SA private sector is:</p>
+
+<ul><li><strong>AR-DRG</strong> (Australian Refined DRG) — Version 9.0+ adapted for SA case mix. Used by Network Healthcare Holdings, Mediclinic, Life Healthcare in scheme negotiations.</li><li><strong>DHPSA</strong> (formerly Dental and Hospital Plans of South Africa) has been involved in SA DRG standards work.</li></ul>
+
+<p>Public sector: The DoH's UPFS (Uniform Patient Fee Schedule) operates as a cost-recovery mechanism, not a true DRG system, though DRG pilots have been run in academic hospitals.</p>
+
+<h3>DRG Payment Flow</h3>
+
+<pre><code class="lang-text">Admission → Coding (ICD-10 + procedures) → DRG Grouper Software
+         → DRG assigned → DRG weight retrieved → Payment calculated
+         → Outlier adjustment (if applicable)</code></pre>
+
+<p>Outlier adjustments: If length of stay (LOS) exceeds the DRG trim point by a threshold, the scheme pays a per-diem supplement for outlier days. Short-stay cases may be paid a day-fraction.</p>
+
+<h3>Case Mix Index (CMI)</h3>
+
+<pre><code class="lang-text">CMI = Sum of DRG weights for all cases / Number of cases</code></pre>
+
+<p>CMI measures the average clinical complexity of a hospital's patient population. A higher CMI indicates more resource-intensive patients.</p>
+
+<ul><li>CMI is used in scheme negotiations to justify higher base rates.</li><li>Monitor CMI month-on-month; a sudden drop often indicates a coding quality problem, not a real change in patient mix.</li><li>Target: CMI should track with the hospital's clinical profile (e.g., an academic hospital should have CMI &gt; 1.5; a day clinic &lt; 1.0).</li></ul>
+
+<h3>DRG Optimisation — Legitimate Documentation Improvement</h3>
+
+<table><thead><tr><th>Action</th><th>Impact</th></tr></thead><tbody><tr><td>Capture all comorbidities (secondary diagnoses)</td><td>Assigns to higher-weight DRG (CC/MCC splits)</td></tr><tr><td>Specify principal diagnosis correctly</td><td>Correct MDC (Major Diagnostic Category) assignment</td></tr><tr><td>Document procedures with full detail</td><td>Procedure-based DRG vs medical DRG split</td></tr><tr><td>Specify discharge status (died, transferred, home)</td><td>Affects outlier and special payment rules</td></tr></tbody></table>
+
+<p>DRG optimisation is legitimate when it improves documentation accuracy. It becomes fraud when documentation is fabricated. Clinical documentation improvement (CDI) programmes should be physician-led.</p>
+
+<hr>
+
+<h2>6. Revenue Cycle Management</h2>
+
+<p>The revenue cycle is the sequence from patient registration to cash collected. Every step is a potential revenue leak.</p>
+
+<h3>Revenue Cycle Stages</h3>
+
+<pre><code class="lang-text">1. Patient Registration &amp; Eligibility Verification
+        ↓
+2. Pre-authorisation (Pre-auth)
+        ↓
+3. Admission &amp; Clinical Documentation
+        ↓
+4. Concurrent Review (for extended admissions)
+        ↓
+5. Coding (ICD-10 + procedure codes)
+        ↓
+6. Claim Preparation &amp; Scrubbing
+        ↓
+7. Claim Submission (EDI or paper)
+        ↓
+8. Adjudication by Scheme
+        ↓
+9. Payment / Remittance Advice
+        ↓
+10. Denial Management &amp; Appeals
+        ↓
+11. Patient Statement &amp; Collections (gap amounts)
+        ↓
+12. Write-off Governance</code></pre>
+
+<h3>Stage 1: Registration and Eligibility</h3>
+
+<ul><li>Verify membership number, option, and benefit year.</li><li>Check benefit utilisation (sub-limits, annual limits): has the patient's physiotherapy benefit already been exhausted?</li><li>Confirm principal member vs dependant status.</li><li>Verify scheme against hospital's contracted list — is there a network agreement?</li></ul>
+
+<p>Tools: Real-time eligibility verification via SwitchConnect (Healthbridge, Mededi, Rx Systems) — most large SA hospitals have EDI integration with major schemes.</p>
+
+<h3>Stage 2: Pre-authorisation (Pre-auth)</h3>
+
+<p>Pre-auth is the single largest revenue leak point in SA private healthcare. Without it:</p>
+
+<ul><li>The scheme can legally reject the entire claim on non-PMB conditions.</li><li>Even for PMBs, documentation of the pre-auth attempt is required.</li></ul>
+
+<p>Pre-auth best practice:</p>
+
+<table><thead><tr><th>Rule</th><th>Detail</th></tr></thead><tbody><tr><td>Elective admissions</td><td>Pre-auth minimum 48 hours before admission</td></tr><tr><td>Emergency admissions</td><td>Telephonic pre-auth within 24 hours of admission</td></tr><tr><td>Document pre-auth reference number</td><td>On the patient file and the claim</td></tr><tr><td>Obtain authorised bed days</td><td>Authorised days ≠ actual days; request extension before expiry</td></tr><tr><td>Procedure-specific auth</td><td>Some schemes require separate auth for each procedure (ICU, theatre, physiotherapy)</td></tr></tbody></table>
+
+<p>Pre-auth failure rate target: &lt; 2% of admissions.</p>
+
+<h3>Stage 3–4: Clinical Documentation and Concurrent Review</h3>
+
+<p>Concurrent review: for admissions &gt; 4–5 days, schemes send a case manager who reviews clinical necessity. The scheme may recommend early discharge. The clinician must document clinical justification for continued stay.</p>
+
+<p>Revenue protection: Ensure treating physician completes progress notes daily. Absence of documentation = scheme will not authorise additional days.</p>
+
+<h3>Stage 5: Coding</h3>
+
+<p>See Section 4. Coding must be completed within 24–48 hours of discharge for timely claim submission. Coding backlogs directly inflate days in AR.</p>
+
+<h3>Stage 6: Claim Scrubbing</h3>
+
+<p>Before submission, claims pass through a scrubber (automated rules engine) that checks:</p>
+
+<ul><li>ICD-10 code validity and age/sex appropriateness.</li><li>Procedure code compatibility (bundling edits — can these two codes be billed together?).</li><li>Duplicate claim detection.</li><li>Modifier requirements (e.g., bilateral modifier applied?).</li><li>Pre-auth reference number present.</li></ul>
+
+<p>Clean claim rate target: &gt; 95% of claims pass scrubbing on first submission.</p>
+
+<h3>Stage 7: Submission</h3>
+
+<ul><li><strong>EDI (Electronic Data Interchange)</strong>: dominant in SA private sector. Standards: EDIFACT or HL7 FHIR-based claim messages via switches (Healthbridge, etc.).</li><li><strong>Paper</strong>: still used for smaller practices and some public sector; high error rate and slow turnaround.</li></ul>
+
+<p>Submission timing: target within 3 business days of discharge. Most schemes impose a 6-month claim submission deadline; after that, the claim may be rejected as "out of time."</p>
+
+<h3>Stage 8: Adjudication</h3>
+
+<p>The scheme's adjudication engine processes the claim. Possible outcomes:</p>
+
+<table><thead><tr><th>Outcome</th><th>Description</th></tr></thead><tbody><tr><td>Approved and paid</td><td>Claim accepted at submitted or tariff amount</td></tr><tr><td>Approved at lower amount</td><td>Tariff reduction applied; co-payment to member</td></tr><tr><td>Pended</td><td>Awaiting additional information (clinical motivation, pre-auth, duplicate check)</td></tr><tr><td>Denied</td><td>Rejected; reason code provided</td></tr><tr><td>Partial payment</td><td>Some line items approved; others denied</td></tr></tbody></table>
+
+<p>Adjudication turnaround: Medical Schemes Act requires schemes to process claims within 30 days of receipt. Track receipt-to-payment against this benchmark.</p>
+
+<h3>Stage 9: Payment and Remittance</h3>
+
+<p>Remittance advice (RA) must be matched to the original claim. Unmatched RAs create phantom credits and understate AR. Automated remittance posting is essential for volumes &gt; 500 claims/month.</p>
+
+<h3>Days in Accounts Receivable (AR)</h3>
+
+<pre><code class="lang-text">Days in AR = (Total AR Balance / Annual Revenue) × 365</code></pre>
+
+<p>Or more precisely:</p>
+
+<pre><code class="lang-text">Days in AR = Total AR / (Revenue last 90 days / 90)</code></pre>
+
+<p>Benchmark:</p>
+<ul><li>Private hospital (medical aid): &lt; 45 days</li><li>Private specialist practice: &lt; 35 days</li><li>RAF claims: budget separately; 120–180 days common</li><li>COID claims: budget separately; 90–150 days common</li></ul>
+
+<p>AR aging buckets: 0–30, 31–60, 61–90, 91–120, 121–180, 180+ days. Any claim &gt; 90 days needs active follow-up; &gt; 180 days is impairment risk.</p>
+
+<hr>
+
+<h2>7. Denial Management</h2>
+
+<h3>Top Denial Reasons in SA Private Healthcare</h3>
+
+<table><thead><tr><th>Rank</th><th>Denial Reason</th><th>Frequency</th></tr></thead><tbody><tr><td>1</td><td>No pre-authorisation obtained</td><td>~28% of denials</td></tr><tr><td>2</td><td>Incorrect or invalid ICD-10 code</td><td>~18%</td></tr><tr><td>3</td><td>Benefit exhausted / sub-limit reached</td><td>~14%</td></tr><tr><td>4</td><td>Duplicate claim submission</td><td>~10%</td></tr><tr><td>5</td><td>Not a PMB condition (or code doesn't map to DTP)</td><td>~9%</td></tr><tr><td>6</td><td>Out-of-network / non-DSP provider</td><td>~8%</td></tr><tr><td>7</td><td>Service not covered under the option</td><td>~7%</td></tr><tr><td>8</td><td>Missing clinical motivation</td><td>~6%</td></tr></tbody></table>
+
+<h3>Denial Rate Benchmark</h3>
+
+<pre><code class="lang-text">Denial Rate = (Number of denied claims / Total claims submitted) × 100</code></pre>
+
+<p>Target: &lt; 5% overall denial rate. Denial rates &gt; 10% indicate systemic revenue cycle failure requiring process review.</p>
+
+<h3>Denial Workflow</h3>
+
+<pre><code class="lang-text">Denial received → Reason code categorised → Assignable to (1) coding, (2) pre-auth, (3) clinical, (4) admin
+                → Correctable? → Yes: rework and resubmit
+                                → No: appeal or write-off</code></pre>
+
+<p>Resubmission window: Schemes typically allow 90 days from original denial to resubmit a corrected claim. Track this deadline rigorously.</p>
+
+<h3>Appeals</h3>
+
+<p>Appeal levels:</p>
+
+<ol><li><strong>Internal scheme appeal</strong> — submit written appeal with supporting documentation (clinical motivation letter from treating physician, ICD-10 mapping justification, pre-auth records).</li><li><strong>CMS Complaint</strong> — if internal appeal fails. CMS has jurisdiction over scheme conduct.</li><li><strong>Appeal Board</strong> — formal quasi-judicial hearing for significant amounts.</li></ol>
+
+<p>Appeal success rates: A well-documented appeal for a PMB denial should succeed &gt; 70% of the time. Poorly documented appeals succeed &lt; 30%.</p>
+
+<p>Key appeal documents:</p>
+
+<ul><li>Clinical motivation letter (physician signature required).</li><li>Proof of pre-auth attempt or emergency circumstances.</li><li>ICD-10 to DTP mapping table (for PMB disputes).</li><li>Itemised account matching the claim.</li></ul>
+
+<h3>Write-off Governance</h3>
+
+<p>Write-offs must not be at individual coder or billing clerk discretion. Governance framework:</p>
+
+<table><thead><tr><th>Write-off Amount</th><th>Approval Level</th></tr></thead><tbody><tr><td>&lt; R500</td><td>Billing supervisor</td></tr><tr><td>R500 – R5,000</td><td>Revenue Cycle Manager</td></tr><tr><td>R5,000 – R50,000</td><td>CFO / Finance Director</td></tr><tr><td>&gt; R50,000</td><td>Board / Audit Committee</td></tr></tbody></table>
+
+<p>Write-off reasons must be coded (expired, clinical error, commercial decision, PMB dispute settled). Monthly write-off report to Finance Director is a minimum control.</p>
+
+<p>Bad debt provision: IFRS 9 expected credit loss (ECL) model applies. Provision rates by payer and aging bucket should be set annually based on historical collection data.</p>
+
+<hr>
+
+<h2>8. Financial KPIs for Healthcare</h2>
+
+<h3>Operating KPIs</h3>
+
+<table><thead><tr><th>KPI</th><th>Formula</th><th>Benchmark</th></tr></thead><tbody><tr><td>Revenue per Bed Day</td><td>Net patient revenue / Total inpatient bed days</td><td>Varies by facility type; track trend</td></tr><tr><td>Cost per Patient Day (CPPD)</td><td>Total operating costs / Total inpatient bed days</td><td>Private hospital R8,000–R20,000+ (2025)</td></tr><tr><td>Occupancy Rate</td><td>Occupied bed days / Available bed days × 100</td><td>Target &gt; 65% for breakeven; &gt; 75% for profitability</td></tr><tr><td>Occupancy Breakeven</td><td>Fixed costs / (Revenue per bed day − Variable cost per bed day)</td><td>Site-specific calculation</td></tr><tr><td>Theatre Utilisation</td><td>Actual theatre hours used / Available theatre hours × 100</td><td>Target &gt; 70%</td></tr><tr><td>Theatre Cost per Case</td><td>Total theatre costs / Number of theatre cases</td><td>Benchmark against procedure mix</td></tr></tbody></table>
+
+<h3>Revenue Cycle KPIs</h3>
+
+<table><thead><tr><th>KPI</th><th>Formula</th><th>Benchmark</th></tr></thead><tbody><tr><td>Clean Claim Rate</td><td>Claims passing scrubber first time / Total claims × 100</td><td>&gt; 95%</td></tr><tr><td>Denial Rate</td><td>Denied claims / Total submitted claims × 100</td><td>&lt; 5%</td></tr><tr><td>Days in AR</td><td>See Section 6</td><td>&lt; 45 days (medical aid)</td></tr><tr><td>Collection Rate</td><td>Cash collected / Net collectible revenue × 100</td><td>&gt; 96%</td></tr><tr><td>Bad Debt Rate</td><td>Bad debt write-offs / Gross revenue × 100</td><td>&lt; 2% (private)</td></tr><tr><td>Pre-auth Failure Rate</td><td>Failed pre-auths / Total admissions × 100</td><td>&lt; 2%</td></tr><tr><td>Appeal Success Rate</td><td>Successful appeals / Total appeals × 100</td><td>&gt; 60%</td></tr><tr><td>Cost to Collect</td><td>Revenue cycle operating costs / Net collections × 100</td><td>&lt; 3%</td></tr></tbody></table>
+
+<h3>Service Line Financial KPIs</h3>
+
+<table><thead><tr><th>KPI</th><th>Description</th></tr></thead><tbody><tr><td>Contribution Margin by Service Line</td><td>(Revenue − Variable costs) / Revenue × 100 per service line (theatre, ICU, emergency, maternity, etc.)</td></tr><tr><td>Pharmacy Spend as % of Revenue</td><td>Total pharmacy costs / Net patient revenue × 100; benchmark &lt; 12% for acute care</td></tr><tr><td>Implant / Prosthesis Cost per Case</td><td>Track separately; high-cost items require cost-benefit visibility</td></tr><tr><td>Length of Stay (LOS) vs DRG Expected</td><td>Actual LOS / DRG expected LOS; ratio &gt; 1.0 signals outlier risk</td></tr></tbody></table>
+
+<h3>Contribution Margin Formula</h3>
+
+<pre><code class="lang-text">Contribution Margin (Rand) = Net Revenue − Variable Costs
+Contribution Margin % = Contribution Margin / Net Revenue × 100</code></pre>
+
+<p>Variable costs include: consumables, pharmacy, linen, theatre gases, per-diem nursing supplements for high-census periods.</p>
+
+<p>Fixed costs include: base nursing staff, depreciation, rent/facilities, management.</p>
+
+<p>A service line with positive contribution margin covers its variable costs and contributes to fixed cost absorption. Negative contribution margin service lines should be reviewed clinically before financial closure decisions.</p>
+
+<h3>Breakeven Occupancy</h3>
+
+<pre><code class="lang-text">Breakeven Occupancy % = Fixed Costs / ((Revenue per Bed Day − Variable Cost per Bed Day) × Available Bed Days) × 100</code></pre>
+
+<p>Example: A 100-bed facility with fixed costs of R15M/month, revenue per bed day R12,000, variable cost per bed day R4,000:</p>
+
+<pre><code class="lang-text">Contribution per bed day = R12,000 − R4,000 = R8,000
+Available bed days/month = 100 × 30 = 3,000
+Breakeven = R15,000,000 / (R8,000 × 3,000) = 62.5%</code></pre>
+
+<p>The facility breaks even at 62.5% occupancy; below this it loses money.</p>
+
+<hr>
+
+<h2>9. Public Sector Healthcare Finance</h2>
+
+<h3>Budget Framework: MTEF</h3>
+
+<p>South Africa's public sector operates on the Medium Term Expenditure Framework (MTEF) — a rolling three-year budget cycle. National Treasury issues the MTEF in February each year as part of the national budget. Provincial health departments receive their allocations and must plan three years out.</p>
+
+<p>Key instruments:</p>
+
+<table><thead><tr><th>Instrument</th><th>Purpose</th></tr></thead><tbody><tr><td>MTEF</td><td>Three-year rolling expenditure envelope per department</td></tr><tr><td>Estimates of National Expenditure (ENE)</td><td>Detailed annual budget tables per programme</td></tr><tr><td>Estimates of Provincial Revenue and Expenditure (EPRE)</td><td>Provincial equivalent</td></tr><tr><td>Adjusted Estimates (AENE)</td><td>Mid-year adjustments; tabled in October</td></tr></tbody></table>
+
+<h3>Department of Health Budget Structure (Programmes 1–7)</h3>
+
+<p>The national Department of Health budget is structured in seven programmes:</p>
+
+<table><thead><tr><th>Programme</th><th>Name</th><th>Key Activities</th></tr></thead><tbody><tr><td>1</td><td>Administration</td><td>DoH management, governance</td></tr><tr><td>2</td><td>National Health Insurance</td><td>NHI fund development, district health management grants</td></tr><tr><td>3</td><td>Communicable and Non-Communicable Diseases</td><td>HIV/AIDS, TB, malaria, mental health, NCD programmes</td></tr><tr><td>4</td><td>Primary Health Care</td><td>PHC, immunisation, school health, environmental health</td></tr><tr><td>5</td><td>Hospital Systems</td><td>Tertiary/academic hospital grants, revitalisation</td></tr><tr><td>6</td><td>Health Regulation and Compliance Management</td><td>MCC/SAHPRA, CMS oversight, emergency services</td></tr><tr><td>7</td><td>Human Resources</td><td>Health workforce, training, bursaries</td></tr></tbody></table>
+
+<p>Provincial health departments mirror this structure but with different programme numbering depending on the province's MTEF presentation.</p>
+
+<h3>Conditional Grants</h3>
+
+<p>Conditional grants are transfers from national government to provinces with conditions attached. Provinces cannot use them for other purposes.</p>
+
+<table><thead><tr><th>Grant</th><th>Purpose</th><th>Administered By</th></tr></thead><tbody><tr><td>Health Facility Revitalisation Grant (HFRG)</td><td>Capital: new builds, refurbishments, medical equipment</td><td>DoH / Treasury</td></tr><tr><td>National Health Insurance Indirect Grant</td><td>NHI implementation support, ideal clinic programme</td><td>DoH</td></tr><tr><td>HIV, TB, Malaria and Community Outreach Grant</td><td>ARVs, TB treatment, VMMC, community health workers</td><td>DoH</td></tr><tr><td>Health Professions Training and Development Grant</td><td>Training of health professionals at academic hospitals</td><td>DoH</td></tr><tr><td>Comprehensive HIV and AIDS Grant (direct)</td><td>Large HIV/AIDS programme spend; largest health conditional grant</td><td>DoH</td></tr></tbody></table>
+
+<p>Grant conditions include spending milestones, reporting requirements, and business case approval for capital projects. Under-spending on conditional grants triggers rollback (funds returned to National Treasury); over-spending is not permitted.</p>
+
+<h3>Equitable Share Formula</h3>
+
+<p>The equitable share is the constitutionally mandated transfer to provinces for funding provincial services. The health component uses a formula weighted by:</p>
+
+<ul><li>Population size.</li><li>Poverty index (share of population below poverty line).</li><li>Age structure (elderly and child populations are more resource-intensive).</li><li>Current health service backlogs.</li></ul>
+
+<p>Provincial health departments receive the bulk of their funding through the equitable share, not conditional grants. The equitable share is unconditional — provinces have fiscal autonomy in allocation within their envelopes, subject to the MTEF.</p>
+
+<h3>Programme-Based Budgeting (PBB)</h3>
+
+<p>PBB links budget allocations to programme outputs and outcomes. In health:</p>
+
+<ul><li>Inputs: Rand allocation per programme.</li><li>Outputs: Number of patients treated, immunisations administered, ARV patients on treatment.</li><li>Outcomes: Under-5 mortality rate, TB cure rate, maternal mortality ratio.</li></ul>
+
+<p>Performance is measured via the Annual Performance Plan (APP) and reported quarterly to the relevant portfolio committee. Poor performance on outputs can trigger conditional grant clawbacks or MEC interventions.</p>
+
+<h3>Uniform Patient Fee Schedule (UPFS)</h3>
+
+<p>Public sector facilities charge patients who can afford to pay using the UPFS. Patients are means-tested (means test income thresholds are updated annually). UPFS categories:</p>
+
+<table><thead><tr><th>Category</th><th>Description</th></tr></thead><tbody><tr><td>Category H</td><td>Free care — patients who cannot afford to pay</td></tr><tr><td>Category A–F</td><td>Graduated fees based on income; Category F = full fees (not state-subsidised)</td></tr></tbody></table>
+
+<p>UPFS revenue collected at provincial hospitals is paid into the provincial revenue fund. It does not stay with the facility — a disincentive for aggressive collection in the public sector.</p>
+
+<h3>Key Public Sector Finance Risks</h3>
+
+<table><thead><tr><th>Risk</th><th>Mitigation</th></tr></thead><tbody><tr><td>Underspending on conditional grants</td><td>Monthly expenditure tracking; grant management officer designated</td></tr><tr><td>Irregular expenditure (PFMA s1)</td><td>Supply chain compliance; pre-approval for deviations</td></tr><tr><td>Unauthorised expenditure</td><td>Budget control reports; early warning at 80% of vote used</td></tr><tr><td>Accruals and payables to suppliers</td><td>Prompt Payment Act (30 days); accruals breach PFMA if not budgeted</td></tr><tr><td>Fruitless and wasteful expenditure</td><td>Consequence management; disciplinary process per PFMA s38</td></tr></tbody></table>
+
+<p>The Public Finance Management Act (PFMA) 1 of 1999 is the primary governance instrument for public sector finance. The Accounting Officer (Director-General or HOD) bears personal liability for PFMA breaches.</p>
+
+<hr>
+
+<h2>Quick Reference: South African Healthcare Finance Regulatory Landscape</h2>
+
+<table><thead><tr><th>Legislation / Instrument</th><th>Relevance</th></tr></thead><tbody><tr><td>Medical Schemes Act 131 of 1998</td><td>Medical aid schemes, PMBs, scheme registration, CMS</td></tr><tr><td>Medical Schemes Act Regulations</td><td>PMB conditions, benefit definitions, CMS powers</td></tr><tr><td>NHRPL / NHCF (BHF)</td><td>Reference tariff; not legally binding</td></tr><tr><td>ICD-10 (SA adaptation)</td><td>DoH Blue Book: SA coding guidelines</td></tr><tr><td>HPCSA Rules</td><td>Professional conduct; coding fraud</td></tr><tr><td>Road Accident Fund Act 56 of 1996</td><td>RAF claims</td></tr><tr><td>COIDA 130 of 1993</td><td>Compensation Fund claims</td></tr><tr><td>NHI Act 20 of 2023</td><td>Future single-payer; not yet operational</td></tr><tr><td>PFMA 1 of 1999</td><td>Public sector financial management</td></tr><tr><td>MFMA 56 of 2003</td><td>Municipal health services financial management</td></tr><tr><td>UPFS (DoH)</td><td>Public sector patient fee schedule</td></tr></tbody></table>
+
+<hr>
+
+<h2>Common Pitfalls — Healthcare Finance Director Checklist</h2>
+
+<ul><li>[ ] Pre-auth process is documented, owned, and KPI-tracked (failure rate &lt; 2%).</li><li>[ ] ICD-10 coding is done by trained coders, not by billing clerks retrospectively.</li><li>[ ] RAF and COID AR is budgeted separately with appropriate bad debt provisions.</li><li>[ ] PMB disputes have a documented escalation path to CMS.</li><li>[ ] Write-off governance framework exists with tiered approval levels.</li><li>[ ] Monthly denial rate and AR aging reports go to CFO / Finance Director.</li><li>[ ] CMI is tracked monthly; drops trigger coding quality investigation.</li><li>[ ] Conditional grants have designated grant managers and monthly expenditure reports.</li><li>[ ] PFMA compliance controls are in place: irregular, unauthorised, and fruitless expenditure registers maintained.</li><li>[ ] NHI developments are monitored; scenario planning for single-payer impact exists.</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/health/finance/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

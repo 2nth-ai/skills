@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/google/workspace/gmail — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><a href="#">google</a><span class="breadcrumb-sep">›</span><a href="#">workspace</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">gmail</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/google/workspace/gmail/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/google/workspace/gmail</div>
+      <h1>GMAIL</h1>
+      <p class="skill-desc">Gmail API integration skill.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Gmail REST API v1, OAuth 2.0, Service Account + Domain Delegation, Cloudflare Workers</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../../tech/google/workspace.html">tech/google/workspace</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech/google/workspace</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Gmail API</h1>
+
+<p>The Gmail REST API v1 gives programmatic access to a user's inbox — read, send, label, search, and watch for new messages. Combined with Cloudflare Workers and Workers AI, it's the foundation of AI-powered email automation.</p>
+
+<p>Docs: https://developers.google.com/gmail/api/reference/rest</p>
+
+<h2>The 2nth Model: Gmail as an AI-powered ops layer</h2>
+
+<table><thead><tr><th>Role</th><th>Without AI</th><th>With Gmail AI + 2nth</th></tr></thead><tbody><tr><td><strong>Business owner</strong></td><td>Reads every enquiry manually</td><td>AI classifies, summarises, and routes — owner sees only what needs a decision</td></tr><tr><td><strong>Sales</strong></td><td>Manually drafts follow-ups</td><td>AI drafts reply from thread context; human reviews and sends</td></tr><tr><td><strong>Ops</strong></td><td>Manually extracts order details from email</td><td>AI parses order data into WooCommerce / QuickBooks automatically</td></tr><tr><td><strong>Support</strong></td><td>Searches inbox to find history</td><td>AI retrieves full customer thread history on demand</td></tr></tbody></table>
+
+<h2>Base URL and auth</h2>
+
+<pre><code class="lang-text">Base: https://gmail.googleapis.com/gmail/v1/users/{userId}/
+userId: 'me' for the authenticated user, or user@domain.com for service account impersonation</code></pre>
+
+<p>All requests require <code>Authorization: Bearer {access_token}</code>. See <code>tech/google</code> for token management.</p>
+
+<p><strong>Minimum scopes:</strong></p>
+
+<table><thead><tr><th>Operation</th><th>Scope</th></tr></thead><tbody><tr><td>Read messages</td><td><code>https://www.googleapis.com/auth/gmail.readonly</code></td></tr><tr><td>Send email</td><td><code>https://www.googleapis.com/auth/gmail.send</code></td></tr><tr><td>Modify labels</td><td><code>https://www.googleapis.com/auth/gmail.modify</code></td></tr><tr><td>Full access</td><td><code>https://mail.google.com/</code></td></tr></tbody></table>
+
+<p>Prefer <code>gmail.readonly</code> + <code>gmail.send</code> over <code>gmail.modify</code> or full access unless labels are required.</p>
+
+<h2>Core operations</h2>
+
+<h3>List messages (search)</h3>
+<pre><code class="lang-typescript">const res = await fetch(
+  `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${encodeURIComponent('is:unread in:inbox')}&amp;maxResults=20`,
+  { headers: { Authorization: `Bearer ${token}` } }
+);
+const { messages } = await res.json(); // [{ id, threadId }]</code></pre>
+
+<p><strong>Gmail search operators</strong> (same as the UI):</p>
+<pre><code class="lang-text">is:unread          — unread only
+in:inbox           — inbox only
+from:someone@co.za — from sender
+subject:invoice    — subject contains
+has:attachment     — has attachment
+after:2026/01/01   — date range
+label:needs-reply  — has label</code></pre>
+
+<h3>Get a message</h3>
+<pre><code class="lang-typescript">const msg = await fetch(
+  `https://gmail.googleapis.com/gmail/v1/users/me/messages/${messageId}?format=full`,
+  { headers: { Authorization: `Bearer ${token}` } }
+).then(r =&gt; r.json());
+
+// Extract headers
+const headers = msg.payload.headers;
+const subject = headers.find(h =&gt; h.name === 'Subject')?.value;
+const from    = headers.find(h =&gt; h.name === 'From')?.value;
+const date    = headers.find(h =&gt; h.name === 'Date')?.value;
+
+// Extract plain text body
+function extractBody(payload: any): string {
+  if (payload.mimeType === 'text/plain' &amp;&amp; payload.body?.data) {
+    return atob(payload.body.data.replace(/-/g, '+').replace(/_/g, '/'));
+  }
+  if (payload.parts) {
+    for (const part of payload.parts) {
+      const text = extractBody(part);
+      if (text) return text;
+    }
+  }
+  return '';
+}
+const body = extractBody(msg.payload);</code></pre>
+
+<h3>Send a message</h3>
+<pre><code class="lang-typescript">function buildEmail({ to, from, subject, html, replyToMessageId, threadId }: {
+  to: string; from: string; subject: string; html: string;
+  replyToMessageId?: string; threadId?: string;
+}): string {
+  const headers = [
+    `To: ${to}`,
+    `From: ${from}`,
+    `Subject: ${subject}`,
+    `MIME-Version: 1.0`,
+    `Content-Type: text/html; charset=utf-8`,
+    replyToMessageId ? `In-Reply-To: ${replyToMessageId}` : '',
+    replyToMessageId ? `References: ${replyToMessageId}` : '',
+  ].filter(Boolean).join('\r\n');
+
+  const raw = `${headers}\r\n\r\n${html}`;
+  return btoa(raw).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    raw: buildEmail({ to, from, subject, html }),
+    threadId, // include to keep in same thread
+  }),
+});</code></pre>
+
+<h3>Apply a label</h3>
+<pre><code class="lang-typescript">// First: get label ID by name
+const { labels } = await fetch(
+  'https://gmail.googleapis.com/gmail/v1/users/me/labels',
+  { headers: { Authorization: `Bearer ${token}` } }
+).then(r =&gt; r.json());
+const labelId = labels.find(l =&gt; l.name === 'Needs Reply')?.id;
+
+// Apply label + mark as read
+await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${messageId}/modify`, {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    addLabelIds: [labelId],
+    removeLabelIds: ['UNREAD'],
+  }),
+});</code></pre>
+
+<h2>Real-time inbox: Watch API pipeline</h2>
+
+<p>The Watch API eliminates polling. New emails trigger a Pub/Sub notification → Cloudflare Worker processes within seconds.</p>
+
+<h3>Architecture</h3>
+<pre><code class="lang-text">Gmail inbox (new email arrives)
+  → Gmail pushes notification to Cloud Pub/Sub topic
+  → Pub/Sub pushes to Cloudflare Worker endpoint
+  → Worker fetches full message
+  → Workers AI classifies intent
+  → Claude drafts reply / extracts data / routes to D1</code></pre>
+
+<h3>Step 1: Set up Pub/Sub topic</h3>
+<pre><code class="lang-bash">gcloud pubsub topics create gmail-watch
+gcloud pubsub subscriptions create gmail-watch-sub \
+  --topic=gmail-watch \
+  --push-endpoint=https://your-worker.workers.dev/gmail/webhook \
+  --ack-deadline=60
+
+# Grant Gmail permission to publish to topic
+gcloud pubsub topics add-iam-policy-binding gmail-watch \
+  --member="serviceAccount:gmail-api-push@system.gserviceaccount.com" \
+  --role="roles/pubsub.publisher"</code></pre>
+
+<h3>Step 2: Register the watch</h3>
+<pre><code class="lang-typescript">// POST to Gmail watch — expires after 7 days, must renew
+async function registerWatch(token: string, projectId: string) {
+  return fetch('https://gmail.googleapis.com/gmail/v1/users/me/watch', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      topicName: `projects/${projectId}/topics/gmail-watch`,
+      labelIds: ['INBOX'],
+      labelFilterAction: 'include',
+    }),
+  }).then(r =&gt; r.json()); // returns { historyId, expiration }
+}</code></pre>
+
+<h3>Step 3: Handle the Pub/Sub push in a Worker</h3>
+<pre><code class="lang-typescript">export default {
+  async fetch(request: Request, env: Env): Promise&lt;Response&gt; {
+    if (request.method !== 'POST') return new Response('Method not allowed', { status: 405 });
+
+    const body = await request.json() as {
+      message: { data: string; messageId: string; publishTime: string }
+    };
+
+    // Decode the Pub/Sub message
+    const notification = JSON.parse(atob(body.message.data)) as {
+      emailAddress: string;
+      historyId: string;
+    };
+
+    // Fetch new messages since last historyId
+    const token = await getAccessToken(env); // from tech/google
+    const history = await fetch(
+      `https://gmail.googleapis.com/gmail/v1/users/me/history?startHistoryId=${notification.historyId}&amp;historyTypes=messageAdded`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    ).then(r =&gt; r.json());
+
+    for (const record of history.history ?? []) {
+      for (const added of record.messagesAdded ?? []) {
+        await processMessage(added.message.id, token, env);
+      }
+    }
+
+    return new Response('OK', { status: 200 }); // ack to Pub/Sub
+  }
+};
+
+async function processMessage(messageId: string, token: string, env: Env) {
+  const msg = await fetch(
+    `https://gmail.googleapis.com/gmail/v1/users/me/messages/${messageId}?format=full`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  ).then(r =&gt; r.json());
+
+  const body = extractBody(msg.payload);
+  const subject = msg.payload.headers.find(h =&gt; h.name === 'Subject')?.value ?? '';
+  const from = msg.payload.headers.find(h =&gt; h.name === 'From')?.value ?? '';
+
+  // Classify with Workers AI
+  const classification = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+    messages: [
+      { role: 'system', content: 'Classify this email as: enquiry, order, complaint, or spam. Reply with one word only.' },
+      { role: 'user', content: `Subject: ${subject}\n\n${body.slice(0, 500)}` },
+    ],
+  });
+
+  const intent = classification.response.trim().toLowerCase();
+
+  // Store in D1
+  await env.DB.prepare(
+    'INSERT INTO emails (message_id, from_address, subject, intent, body, received_at) VALUES (?,?,?,?,?,?)'
+  ).bind(messageId, from, subject, intent, body, Date.now()).run();
+
+  // Apply label based on intent
+  if (intent === 'enquiry' || intent === 'order') {
+    await applyLabel(messageId, 'Needs Reply', token);
+  }
+}</code></pre>
+
+<h3>Watch renewal (Cloud Scheduler)</h3>
+<pre><code class="lang-typescript">// Endpoint: POST /gmail/renew-watch
+// Triggered by Cloud Scheduler every 6 days
+export async function renewWatch(env: Env) {
+  const token = await getAccessToken(env);
+  const result = await registerWatch(token, env.GOOGLE_PROJECT_ID);
+  // Store new expiration in KV
+  await env.KV.put('gmail_watch_expiry', result.expiration);
+}</code></pre>
+
+<h2>AI integration patterns</h2>
+
+<h3>Pattern 1: Classify → route</h3>
+<pre><code class="lang-typescript">// Fast: Workers AI (Llama 3.1 8B) for intent classification
+const { response: intent } = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+  messages: [
+    { role: 'system', content: 'Classify as: enquiry | order | complaint | invoice | spam' },
+    { role: 'user', content: emailBody.slice(0, 800) },
+  ],
+});</code></pre>
+
+<h3>Pattern 2: Summarise + draft reply</h3>
+<pre><code class="lang-typescript">// Claude via AI Gateway for quality drafts
+const draft = await fetch(env.AI_GATEWAY_URL + '/anthropic/v1/messages', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY },
+  body: JSON.stringify({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 500,
+    messages: [{
+      role: 'user',
+      content: `Draft a professional reply to this email. Be concise and warm.\n\nFrom: ${from}\nSubject: ${subject}\n\n${body}`,
+    }],
+  }),
+}).then(r =&gt; r.json());
+
+const replyDraft = draft.content[0].text;
+// Store draft in D1 — human reviews before sending</code></pre>
+
+<h3>Pattern 3: Extract structured data</h3>
+<pre><code class="lang-typescript">const extraction = await fetch(env.AI_GATEWAY_URL + '/anthropic/v1/messages', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY },
+  body: JSON.stringify({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 300,
+    messages: [{
+      role: 'user',
+      content: `Extract this as JSON: { customer_name, company, product_requested, quantity, delivery_address }.\nReturn only valid JSON.\n\n${body}`,
+    }],
+  }),
+}).then(r =&gt; r.json());
+
+const order = JSON.parse(extraction.content[0].text);
+// Insert into WooCommerce or D1</code></pre>
+
+<h2>Rate limits</h2>
+
+<table><thead><tr><th>Quota</th><th>Limit</th></tr></thead><tbody><tr><td>Gmail API units per user/second</td><td>250</td></tr><tr><td>Send quota (consumer)</td><td>500 messages/day</td></tr><tr><td>Send quota (Workspace)</td><td>2,000 messages/day</td></tr><tr><td>Message size</td><td>25MB</td></tr><tr><td>Watch registrations</td><td>1 active per user</td></tr></tbody></table>
+
+<p>On <code>429 rateLimitExceeded</code>: exponential backoff starting at 1s, max 5 retries.</p>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong>base64url encoding</strong>: Gmail body data uses base64url (<code>-</code> instead of <code>+</code>, <code>_</code> instead of <code>/</code>) — always use <code>replace(/-/g,'+').replace(/_/g,'/')</code> before <code>atob()</code></li><li><strong>Thread vs message</strong>: <code>threadId</code> links messages in the same conversation — always pass <code>threadId</code> when replying to keep thread intact</li><li><strong>Watch is per-user</strong>: One active watch per user. Calling <code>watch</code> again replaces the previous one — no need to <code>stop()</code> first</li><li><strong>historyId gaps</strong>: If your Worker is down when messages arrive, use <code>history.list</code> with the last known <code>historyId</code> to catch up — don't rely on the Pub/Sub notification alone</li><li><strong>MIME multipart</strong>: Most real emails are <code>multipart/alternative</code> — always recurse through <code>parts</code> to find <code>text/plain</code> or <code>text/html</code></li><li><strong>Label IDs not names</strong>: The modify endpoint requires label IDs (<code>Label_12345</code>) not names — always look up ID by name first and cache it</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/google/workspace/gmail/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

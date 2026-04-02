@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IoT Connectivity & Protocols — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">IoT Connectivity & Protocols</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/iot/connectivity/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">IoT Connectivity & Protocols</div>
+      <h1>IOT CONNECTIVITY & PROTOCOLS</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../iot/firmware.html">iot/firmware</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>IoT Connectivity &amp; Protocols</h1>
+
+<p>Choosing the wrong radio kills a product. A sensor network that drains batteries in weeks, a mesh that collapses under 50 nodes, or an MQTT broker mis-configured for QoS 2 at 10 000 devices — these are engineering failures that connectivity expertise prevents. This skill equips an agent with the protocol vocabulary, trade-off frameworks, configuration patterns, and SA-specific deployment context needed to make defensible wireless architecture decisions from first prototype to large-scale rollout.</p>
+
+<hr>
+
+<h2>1. Protocol Selection Matrix</h2>
+
+<p>Use this table for first-pass protocol selection. Always validate against the specific deployment constraints (battery budget, data rate, range, cost, spectrum, operator availability) before committing.</p>
+
+<table><thead><tr><th>Protocol</th><th>Frequency</th><th>Range (typical)</th><th>Data Rate</th><th>Power Profile</th><th>Topology</th><th>Licensing</th><th>Best For</th><th>Avoid When</th></tr></thead><tbody><tr><td><strong>WiFi 2.4 GHz</strong></td><td>2.4 GHz</td><td>30–100 m indoor</td><td>Up to 150 Mbps (n)</td><td>High (100–300 mA Tx)</td><td>Star (AP)</td><td>Unlicensed (ISM)</td><td>High-bandwidth, mains-powered, existing AP infra</td><td>Battery-critical, no AP infra, dense RF environments</td></tr><tr><td><strong>WiFi 5 GHz</strong></td><td>5 GHz</td><td>20–50 m indoor</td><td>Up to 3.5 Gbps (ac)</td><td>High</td><td>Star (AP)</td><td>Unlicensed</td><td>Video streaming, high-throughput gateways</td><td>Range-critical, older hardware, wall penetration</td></tr><tr><td><strong>BLE 5.x</strong></td><td>2.4 GHz</td><td>10–100 m (coded PHY up to 400 m)</td><td>125 kbps–2 Mbps</td><td>Very low (µA sleep, ~15 mA Tx)</td><td>Point-to-point, mesh</td><td>Unlicensed</td><td>Wearables, asset tags, proximity, mesh sensor nets</td><td>High throughput, &gt; 300 m range without repeaters</td></tr><tr><td><strong>LoRaWAN</strong></td><td>AU915 / AS923 (SA)</td><td>2–15 km urban, &gt; 30 km rural LOS</td><td>250 bps–50 kbps</td><td>Ultra-low (2–10 µA sleep)</td><td>Star-of-stars (via gateway)</td><td>Unlicensed (sub-GHz ISM)</td><td>Smart meters, agriculture, asset tracking, wide-area low-data</td><td>Real-time control, &gt; 50 bytes/msg frequently, high message rate</td></tr><tr><td><strong>Zigbee</strong></td><td>2.4 GHz</td><td>10–100 m per hop</td><td>250 kbps</td><td>Low (~30 mA Tx, µA sleep)</td><td>Mesh (coordinator/router/end)</td><td>Unlicensed</td><td>Home automation, building controls, dense sensor grids</td><td>Interoperability across vendors without Matter bridge</td></tr><tr><td><strong>Z-Wave</strong></td><td>868 / 908 / 916 MHz (sub-GHz)</td><td>30–100 m per hop</td><td>9.6–100 kbps</td><td>Low</td><td>Mesh</td><td>Unlicensed (sub-GHz)</td><td>Home automation, locks, switches (strong interop)</td><td>Industrial, &gt; 232 nodes, non-residential</td></tr><tr><td><strong>Thread / Matter</strong></td><td>2.4 GHz</td><td>10–30 m per hop</td><td>250 kbps (IEEE 802.15.4)</td><td>Low</td><td>IPv6 mesh</td><td>Unlicensed</td><td>Smart home (Apple/Google/Amazon ecosystem), new product design</td><td>Legacy systems, infrastructure without Thread border router</td></tr><tr><td><strong>NB-IoT</strong></td><td>LTE bands (B28 in SA)</td><td>Cellular coverage</td><td>200 kbps DL / 20 kbps UL</td><td>Very low with PSM/eDRX</td><td>Star (base station)</td><td>Licensed (cellular operator)</td><td>Stationary meters, trackers, 10-year battery target</td><td>Mobile devices, high message rate, areas without NB-IoT coverage</td></tr><tr><td><strong>LTE-M (Cat-M1)</strong></td><td>LTE bands</td><td>Cellular coverage</td><td>1 Mbps DL / 1 Mbps UL</td><td>Low-moderate</td><td>Star (base station)</td><td>Licensed (cellular operator)</td><td>Mobile assets, firmware OTA, voice + data, medium throughput</td><td>Ultra-low-power stationary sensors (NB-IoT better)</td></tr><tr><td><strong>4G LTE (Cat-1 / Cat-4)</strong></td><td>LTE bands</td><td>Cellular coverage</td><td>10–150 Mbps</td><td>Moderate-high</td><td>Star (base station)</td><td>Licensed</td><td>Video, high-data, gateways aggregating local devices</td><td>Low-power leaf nodes, cost-sensitive mass deployments</td></tr><tr><td><strong>5G (SA/NSA)</strong></td><td>sub-6 GHz / mmWave</td><td>Cellular / limited mmWave</td><td>1–10 Gbps theoretical</td><td>High</td><td>Star (base station)</td><td>Licensed</td><td>Industrial automation, private 5G campus, URLLC use cases</td><td>Low-power IoT, rural deployments, budget-constrained</td></tr><tr><td><strong>Sigfox</strong></td><td>868 MHz (EU), 915 MHz (AU/SA)</td><td>3–50 km</td><td>100 bps UL, 600 bps DL</td><td>Ultra-low</td><td>Star (base station)</td><td>Unlicensed + network service</td><td>Ultra-low-power wide-area (12 bytes/msg max)</td><td>Two-way heavy, &gt; 140 msg/day, time-sensitive</td></tr></tbody></table>
+
+<h3>SA-specific Sigfox note</h3>
+
+<p>Sigfox coverage in South Africa is operated by <strong>Squidnet</strong> (squidnet.co.za). Coverage is concentrated in Gauteng, Western Cape, and KZN metros. Verify coverage before committing — Squidnet publishes a coverage map. The 12-byte/message UL limit and 4 DL bytes per day make Sigfox viable only for sparse status/alarm use cases.</p>
+
+<h3>Quick decision flowchart</h3>
+
+<pre><code class="lang-text">Battery-powered AND wide area?
+  ├─ Stationary, &lt; 50 bytes, infrequent → LoRaWAN or NB-IoT
+  ├─ Mobile, needs ACK, firmware OTA   → LTE-M
+  └─ Ultra-sparse, &lt; 12 bytes          → Sigfox
+
+Mains-powered AND short range (&lt; 100 m)?
+  ├─ High throughput (video/audio)     → WiFi
+  ├─ Low throughput, existing AP       → WiFi (power save mode)
+  └─ Dense mesh, building controls     → Zigbee / Thread / Matter
+
+Short range AND battery-powered?
+  ├─ Consumer product, ecosystem fit   → BLE 5 or Thread/Matter
+  ├─ Asset tracking, proximity         → BLE (iBeacon / Eddystone)
+  └─ Industrial mesh, no smartphone    → Zigbee or BLE mesh
+
+Cellular required?
+  ├─ &gt; 10 years battery, stationary    → NB-IoT
+  ├─ Mobile, OTA, voice                → LTE-M
+  └─ Gateway / high throughput         → 4G Cat-1 / Cat-4</code></pre>
+
+<hr>
+
+<h2>2. WiFi Deep Dive</h2>
+
+<h3>Provisioning Methods</h3>
+
+<p>Provisioning is the most friction-prone step in WiFi IoT. Choose based on product UX constraints:</p>
+
+<table><thead><tr><th>Method</th><th>How it works</th><th>Pros</th><th>Cons</th></tr></thead><tbody><tr><td><strong>SoftAP</strong></td><td>Device creates its own AP; user connects phone to it, enters credentials via captive portal</td><td>Works offline, no app required</td><td>Two network switches for user, poor UX on iOS (prompts to leave network)</td></tr><tr><td><strong>BLE provisioning</strong></td><td>Device advertises BLE; companion app sends SSID/password over GATT</td><td>Smooth UX, no network switching</td><td>Requires app + BLE on device</td></tr><tr><td><strong>SmartConfig / ESP-NOW</strong></td><td>Router sends encoded SSID/password as broadcast packets; device sniffs promiscuously</td><td>No AP mode needed</td><td>Works only on 2.4 GHz, unreliable in dense RF, patented variants</td></tr><tr><td><strong>QR code</strong></td><td>Device generates QR embedding credentials; phone scans</td><td>Zero-touch if AP is pre-configured</td><td>Requires camera access, doesn't scale for field provisioning</td></tr><tr><td><strong>Enterprise (802.1X / EAP)</strong></td><td>RADIUS server authenticates device certificate</td><td>Highest security, IT-friendly</td><td>Requires PKI, certificate management, complex firmware</td></tr></tbody></table>
+
+<p>ESP-IDF recommendation: use <code>wifi_prov_mgr</code> with BLE transport for ESP32 products. It abstracts the provisioning FSM and supports SoftAP fallback.</p>
+
+<pre><code class="lang-c">// ESP-IDF: BLE provisioning manager init
+wifi_prov_mgr_config_t config = {
+    .scheme = wifi_prov_scheme_ble,
+    .scheme_event_handler = WIFI_PROV_SCHEME_BLE_EVENT_HANDLER_FREE_BTDM,
+};
+wifi_prov_mgr_init(config);
+wifi_prov_mgr_start_provisioning(security, pop, service_name, service_key);</code></pre>
+
+<h3>Connection Management and Reconnect Backoff</h3>
+
+<p>Never hard-loop on reconnect. Use exponential backoff with jitter to avoid thundering-herd on power restoration events (e.g., load-shedding recovery with 500 devices reconnecting simultaneously).</p>
+
+<pre><code class="lang-c">// Exponential backoff: start 1s, max 60s, ±20% jitter
+static uint32_t backoff_ms = 1000;
+static const uint32_t BACKOFF_MAX_MS = 60000;
+
+void wifi_reconnect_with_backoff(void) {
+    uint32_t jitter = (esp_random() % (backoff_ms / 5));
+    vTaskDelay(pdMS_TO_TICKS(backoff_ms + jitter));
+    esp_wifi_connect();
+    backoff_ms = MIN(backoff_ms * 2, BACKOFF_MAX_MS);
+}
+
+// Reset backoff on successful connection
+void on_wifi_connected(void) {
+    backoff_ms = 1000;
+}</code></pre>
+
+<h3>Power Save Modes</h3>
+
+<table><thead><tr><th>Mode</th><th>Standard</th><th>Description</th><th>Latency impact</th><th>Use case</th></tr></thead><tbody><tr><td><strong>Active</strong></td><td>802.11</td><td>Radio always on</td><td>None</td><td>Gateways, mains-powered continuous</td></tr><tr><td><strong>PS-Poll</strong></td><td>802.11 legacy</td><td>Device sleeps, wakes to check AP beacon (DTIM interval)</td><td>DTIM × 100ms typical</td><td>Low-update sensors</td></tr><tr><td><strong>TWT (Target Wake Time)</strong></td><td>WiFi 6 (802.11ax)</td><td>AP negotiates individual wake schedules per device</td><td>Predictable, low</td><td>Battery WiFi 6 devices</td></tr><tr><td><strong>Modem sleep</strong></td><td>ESP-IDF</td><td>CPU active, RF sleeps between transmissions</td><td>Minimal</td><td>Always-on processing, reduced RF power</td></tr><tr><td><strong>Light sleep</strong></td><td>ESP-IDF</td><td>CPU halted, RAM retained, wakes on timer/GPIO</td><td>1–5 ms</td><td>Periodic sensors</td></tr><tr><td><strong>Deep sleep</strong></td><td>ESP-IDF</td><td>Near full power-off, wake via RTC timer/ext GPIO</td><td>Full reconnect time</td><td>Very low duty cycle (&lt; 1/min)</td></tr></tbody></table>
+
+<p>For ESP32 deep sleep with WiFi: budget ~3–4 s for boot + WiFi connect + send + return to sleep. At 100 mAh CR2032, with a 15 mA average during active window and 10 µA sleep, deep sleep every 15 min yields ~8 months.</p>
+
+<h3>RSSI Thresholds</h3>
+
+<table><thead><tr><th>RSSI (dBm)</th><th>Signal quality</th><th>Recommendation</th></tr></thead><tbody><tr><td>&gt; -55</td><td>Excellent</td><td>Full throughput, reliable</td></tr><tr><td>-55 to -70</td><td>Good</td><td>Normal operation</td></tr><tr><td>-70 to -80</td><td>Fair</td><td>Marginal — consider AP placement</td></tr><tr><td>-80 to -90</td><td>Poor</td><td>Frequent disconnects, consider range extender</td></tr><tr><td>&lt; -90</td><td>Unusable</td><td>Device will not maintain association</td></tr></tbody></table>
+
+<p>Minimum viable RSSI for stable IoT operation: <strong>-75 dBm</strong>. Alert or log when RSSI drops below -72 dBm to catch degradation before failure.</p>
+
+<h3>Dual-Band Considerations</h3>
+
+<ul><li>Most IoT SoCs (ESP32, W600, ATWINC) are <strong>2.4 GHz only</strong>. 5 GHz capable modules (ESP32-S3 + external PA, Murata Type-1YN) cost more.</li><li>2.4 GHz is congested in urban environments — channels 1, 6, 11 only for non-overlapping.</li><li>5 GHz provides more channels (UNII-1/2/3) but shorter range and worse wall penetration.</li><li>For enterprise deployments with existing dual-band APs: band-steer IoT devices to 2.4 GHz explicitly via SSID isolation.</li></ul>
+
+<hr>
+
+<h2>3. BLE Deep Dive</h2>
+
+<h3>GATT Profile Design</h3>
+
+<p>GATT (Generic Attribute Profile) is the data model for BLE connections. Design hierarchy: <strong>Profile &gt; Service &gt; Characteristic &gt; Descriptor</strong>.</p>
+
+<pre><code class="lang-text">Custom IoT GATT Profile
+├── Device Information Service (0x180A) [standard]
+│   ├── Manufacturer Name String (0x2A29)
+│   ├── Model Number String (0x2A24)
+│   └── Firmware Revision String (0x2A26)
+├── Environmental Sensing Service (0x181A) [standard]
+│   ├── Temperature (0x2A6E) — int16, 0.01°C resolution
+│   ├── Humidity (0x2A6F) — uint16, 0.01% resolution
+│   └── Pressure (0x2A6D) — uint32, 0.1 Pa resolution
+└── Custom Control Service (128-bit UUID)
+    ├── Config Characteristic (READ | WRITE | WRITE_NO_RSP)
+    ├── Status Characteristic (READ | NOTIFY)
+    └── Log Characteristic (READ | INDICATE)</code></pre>
+
+<p>Use standard SIG-assigned UUIDs where they exist — scanners and generic apps understand them. Reserve 128-bit UUIDs for proprietary characteristics.</p>
+
+<h3>Advertising Data Structure</h3>
+
+<p>BLE advertising packet is 31 bytes. Extended advertising (BLE 5) extends to 255 bytes.</p>
+
+<pre><code class="lang-text">Standard AD structure (31 bytes total):
+[len][type][data] ... repeated
+
+Common AD types:
+0x01 - Flags (always include: 0x06 for BLE-only, non-discoverable-LE)
+0x02 - Incomplete list of 16-bit UUIDs
+0x03 - Complete list of 16-bit UUIDs
+0x07 - Complete list of 128-bit UUIDs
+0x08 - Shortened local name
+0x09 - Complete local name
+0xFF - Manufacturer specific data (first 2 bytes = company ID)
+
+Example: temperature beacon in manufacturer data
+[02][01][06]                      // Flags: LE General Discoverable, BR/EDR not supported
+[05][FF][FF FF][XX XX XX]         // Manufacturer: 0xFFFF (test), 3 bytes payload
+                                  // payload: temp MSB, temp LSB, battery %</code></pre>
+
+<h3>Connection Parameters</h3>
+
+<table><thead><tr><th>Parameter</th><th>Range</th><th>Recommended (sensor)</th><th>Recommended (streaming)</th></tr></thead><tbody><tr><td>Connection Interval</td><td>7.5 ms – 4 s</td><td>500 ms – 1 s</td><td>15–30 ms</td></tr><tr><td>Slave Latency</td><td>0–499</td><td>4–9</td><td>0</td></tr><tr><td>Supervision Timeout</td><td>100 ms – 32 s</td><td>6 s</td><td>2 s</td></tr><tr><td>MTU</td><td>23–517 bytes</td><td>247 (negotiate)</td><td>517</td></tr></tbody></table>
+
+<p>Effective throughput (bytes/s) = <code>(MTU - 3) × (1000 / connection_interval_ms) / (1 + slave_latency)</code>. At 247 MTU, 30 ms interval, 0 latency: ~7.3 kB/s application throughput.</p>
+
+<h3>Security Modes</h3>
+
+<table><thead><tr><th>Mode</th><th>Mechanism</th><th>MITM protection</th><th>Use case</th></tr></thead><tbody><tr><td>No security (Mode 1, Level 1)</td><td>None</td><td>No</td><td>Non-sensitive beacons</td></tr><tr><td>Just Works (Mode 1, Level 2)</td><td>Unauthenticated pairing</td><td>No</td><td>Basic pairing, no keyboard/display</td></tr><tr><td>Passkey Entry (Mode 1, Level 3)</td><td>6-digit PIN</td><td>Yes</td><td>Consumer products with display</td></tr><tr><td>Numeric Comparison (Mode 1, Level 3)</td><td>6-digit confirmation</td><td>Yes</td><td>Both devices have display</td></tr><tr><td>OOB (Mode 1, Level 3)</td><td>NFC or QR code</td><td>Yes</td><td>Manufacturing, high-security</td></tr><tr><td>LE Secure Connections (Mode 1, Level 4)</td><td>ECDH + AES-CMAC</td><td>Yes</td><td>Medical, industrial</td></tr></tbody></table>
+
+<p>Always use <strong>LE Secure Connections</strong> for any product handling personal data or controlling physical actuators.</p>
+
+<h3>BLE Mesh (Bluetooth Mesh Profile)</h3>
+
+<p>BLE mesh is a publish/subscribe flooding network over BLE advertising. Not the same as BLE connections.</p>
+
+<p>Key roles:</p>
+<ul><li><strong>Provisioner</strong>: configures new nodes into the network (typically a phone or gateway)</li><li><strong>Proxy node</strong>: bridges BLE mesh to GATT (for phone access without provisioning hardware)</li><li><strong>Relay node</strong>: re-broadcasts mesh messages (increases range)</li><li><strong>Friend node</strong>: buffers messages for Low Power Nodes</li><li><strong>Low Power Node (LPN)</strong>: sleeps most of the time, polls Friend node for queued messages</li></ul>
+
+<pre><code class="lang-text">Provisioning sequence:
+1. Unprovisioned device broadcasts Unprovisioned Device beacon
+2. Provisioner discovers device
+3. Provisioner opens provisioning bearer (PB-ADV or PB-GATT)
+4. ECDH key exchange → session key derivation
+5. Provisioner assigns: unicast address, NetKey, DevKey, IV Index
+6. Device is now a mesh node — configure AppKeys + model bindings</code></pre>
+
+<h3>iBeacon vs Eddystone</h3>
+
+<table><thead><tr><th>Feature</th><th>iBeacon (Apple)</th><th>Eddystone (Google)</th></tr></thead><tbody><tr><td>Frame type</td><td>Single (proximity UUID)</td><td>Multiple: UID, URL, TLM, EID</td></tr><tr><td>Unique IDs</td><td>UUID + Major + Minor</td><td>Namespace + Instance (UID)</td></tr><tr><td>Telemetry</td><td>Not in standard</td><td>TLM frame (battery, temp, pkt count)</td></tr><tr><td>Ephemeral IDs</td><td>No</td><td>EID frame (privacy-preserving tracking)</td></tr><tr><td>Platform lock-in</td><td>iOS CoreLocation</td><td>Android/Web/open</td></tr><tr><td>Best for</td><td>iOS proximity apps, retail</td><td>Fleet management, open ecosystem</td></tr></tbody></table>
+
+<p>For asset tracking in mixed environments: use Eddystone-UID for the device identity and add manufacturer-specific AD for sensor payload.</p>
+
+<hr>
+
+<h2>4. LoRaWAN Deep Dive</h2>
+
+<h3>LoRa Physical Layer: Spreading Factor vs Data Rate vs Range</h3>
+
+<p>LoRa modulates using CSS (Chirp Spread Spectrum). The Spreading Factor (SF) is the key trade-off parameter.</p>
+
+<table><thead><tr><th>SF</th><th>Bit Rate (125 kHz BW)</th><th>Time-on-Air (10 byte payload)</th><th>Range multiplier</th><th>Sensitivity</th></tr></thead><tbody><tr><td>SF7</td><td>5.47 kbps</td><td>~56 ms</td><td>1× (baseline)</td><td>-123 dBm</td></tr><tr><td>SF8</td><td>3.13 kbps</td><td>~103 ms</td><td>~1.4×</td><td>-126 dBm</td></tr><tr><td>SF9</td><td>1.76 kbps</td><td>~185 ms</td><td>~2×</td><td>-129 dBm</td></tr><tr><td>SF10</td><td>0.98 kbps</td><td>~329 ms</td><td>~2.8×</td><td>-132 dBm</td></tr><tr><td>SF11</td><td>0.54 kbps</td><td>~659 ms</td><td>~4×</td><td>-134.5 dBm</td></tr><tr><td>SF12</td><td>0.29 kbps</td><td>~1319 ms</td><td>~5.6×</td><td>-137 dBm</td></tr></tbody></table>
+
+<p>Higher SF = longer range, lower data rate, longer time-on-air, more duty-cycle consumption. Default to SF7 when gateway is nearby; ADR manages SF automatically in production.</p>
+
+<h3>LoRaWAN Architecture</h3>
+
+<pre><code class="lang-text">End Device (Class A/B/C)
+    │ LoRa RF
+    ▼
+Gateway (Semtech SX1301/SX1302 concentrator)
+    │ Backhaul (Ethernet / 4G / WiFi)
+    ▼
+Network Server (TTN / ChirpStack / Helium / Everynet)
+    │ HTTPS / MQTT / gRPC
+    ▼
+Application Server (your backend)</code></pre>
+
+<p>The gateway is a pure forwarder — it does not decode or authenticate LoRaWAN. Authentication happens at the network server using NwkSKey (network session key) and AppSKey (application session key).</p>
+
+<h3>Device Classes</h3>
+
+<table><thead><tr><th>Class</th><th>Receive windows</th><th>Power</th><th>Use case</th></tr></thead><tbody><tr><td><strong>A</strong> (mandatory)</td><td>2 short RX windows after every TX</td><td>Lowest</td><td>Most battery sensors — downlink only after uplink</td></tr><tr><td><strong>B</strong></td><td>Class A + scheduled beacon-synchronized RX slots</td><td>Medium</td><td>Actuators needing occasional downlink</td></tr><tr><td><strong>C</strong></td><td>Continuous RX (except during TX)</td><td>Highest (near-mains)</td><td>Actuators needing immediate downlink</td></tr></tbody></table>
+
+<h3>OTAA vs ABP</h3>
+
+<p><strong>Always use OTAA in production.</strong></p>
+
+<table><thead><tr><th></th><th>OTAA (Over-the-Air Activation)</th><th>ABP (Activation By Personalisation)</th></tr></thead><tbody><tr><td>Session keys</td><td>Derived fresh on each join</td><td>Hardcoded at provisioning</td></tr><tr><td>Frame counters</td><td>Reset on join (server handles)</td><td>Must persist across resets — brick risk</td></tr><tr><td>Security</td><td>Higher — keys not embedded in binary</td><td>Lower — session keys in firmware</td></tr><tr><td>Network Server</td><td>Must support join server</td><td>Simpler</td></tr><tr><td>Production suitability</td><td>Yes</td><td>Development/testing only</td></tr></tbody></table>
+
+<p>OTAA credentials to provision: <strong>DevEUI</strong> (hardware UID), <strong>AppEUI/JoinEUI</strong> (application identifier), <strong>AppKey</strong> (128-bit root key). Never commit AppKey to source control.</p>
+
+<h3>Duty Cycle Limits</h3>
+
+<p>LoRaWAN operates in unlicensed sub-GHz spectrum subject to duty cycle regulations.</p>
+
+<table><thead><tr><th>Region</th><th>Band</th><th>Duty Cycle Limit</th><th>Notes</th></tr></thead><tbody><tr><td>EU868</td><td>863–870 MHz</td><td>1% (10 ms/s on-air per sub-band)</td><td>ETSI EN 300 220</td></tr><tr><td>AU915</td><td>915–928 MHz</td><td>1%</td><td>Also used in some SA deployments</td></tr><tr><td>AS923</td><td>915–928 MHz</td><td>Varies by sub-region</td><td>Used by some SA operators</td></tr><tr><td>US915</td><td>902–928 MHz</td><td>No duty cycle — dwell time 400 ms</td><td>FCC Part 15</td></tr></tbody></table>
+
+<p>In South Africa, ICASA regulates sub-GHz ISM under the Radio Frequency Spectrum Regulations. The relevant licence-exempt band for LoRa is <strong>915–928 MHz (Industrial ISM)</strong>. Duty cycle limits are not explicitly mandated in SA regulations but best practice is to follow 1% as per equipment certification (most modules are CE/FCC certified with these limits baked in).</p>
+
+<h3>SA LoRaWAN Network Operators</h3>
+
+<table><thead><tr><th>Operator</th><th>Network</th><th>Coverage</th><th>Notes</th></tr></thead><tbody><tr><td><strong>Everynet</strong></td><td>Public LoRaWAN</td><td>Gauteng, WC, KZN metros + expanding</td><td>Roaming agreements, TTI-compatible API</td></tr><tr><td><strong>Squidnet</strong></td><td>Sigfox + LoRa hybrid</td><td>Metro-focused</td><td>Also Sigfox operator</td></tr><tr><td><strong>CSIR Smart Places</strong></td><td>Research / private</td><td>Pretoria campus + pilot sites</td><td>Not commercial</td></tr><tr><td><strong>MTN / Vodacom</strong></td><td>NB-IoT (not LoRa)</td><td>See Section 5</td><td>Cellular IoT, different technology</td></tr></tbody></table>
+
+<p>Private LoRaWAN gateway deployment is also viable using ChirpStack on a VPS + SX1302-based gateway hardware (RAK7268, Dragino LPS8N). Budget R8 000–R15 000 per gateway for outdoor IP67-rated units.</p>
+
+<h3>Network Server Comparison</h3>
+
+<table><thead><tr><th>Platform</th><th>Hosting</th><th>Cost</th><th>Best For</th></tr></thead><tbody><tr><td><strong>TTN (The Things Network)</strong></td><td>Cloud (community)</td><td>Free (fair use)</td><td>Prototyping, community coverage</td></tr><tr><td><strong>TTI (The Things Industries)</strong></td><td>Cloud (SLA)</td><td>Paid</td><td>Production, SLA required</td></tr><tr><td><strong>ChirpStack v4</strong></td><td>Self-hosted</td><td>Free (OSS)</td><td>Private deployments, full control</td></tr><tr><td><strong>Helium</strong></td><td>Decentralised</td><td>Token-based</td><td>US-heavy coverage, crypto complexity</td></tr><tr><td><strong>AWS IoT Core for LoRaWAN</strong></td><td>Cloud</td><td>AWS pricing</td><td>AWS-native backends</td></tr></tbody></table>
+
+<p>For SA production: self-hosted <strong>ChirpStack v4</strong> on a Cloudflare Worker-adjacent VPS (or Hetzner Johannesburg) gives full control without dependency on overseas network servers.</p>
+
+<h3>Confirmed vs Unconfirmed Uplinks</h3>
+
+<p>Use unconfirmed (Class A default) for most sensors. Confirmed uplinks consume an extra downlink slot, use duty cycle, and stress the network server at scale.</p>
+
+<p>Use confirmed uplinks for: alarm/alert events, actuation commands, critical data that must not be lost.</p>
+
+<h3>ADR (Adaptive Data Rate)</h3>
+
+<p>ADR is a network server feature that optimizes SF and TX power per device based on SNR history. Enable ADR for <strong>stationary devices only</strong>. For mobile assets (vehicles, livestock), disable ADR and set a fixed SF appropriate for worst-case range.</p>
+
+<pre><code class="lang-json">// ChirpStack device profile: ADR settings
+{
+  "adrAlgorithmId": "default",
+  "maxEirp": 16,
+  "uplinkInterval": 3600
+}</code></pre>
+
+<hr>
+
+<h2>5. Cellular IoT: NB-IoT and LTE-M</h2>
+
+<h3>NB-IoT vs LTE-M Comparison</h3>
+
+<table><thead><tr><th>Parameter</th><th>NB-IoT</th><th>LTE-M (Cat-M1)</th></tr></thead><tbody><tr><td>Bandwidth</td><td>200 kHz (in-band LTE or standalone)</td><td>1.4 MHz</td></tr><tr><td>DL peak rate</td><td>200 kbps</td><td>1 Mbps</td></tr><tr><td>UL peak rate</td><td>20 kbps (single-tone) / 200 kbps (multi-tone)</td><td>1 Mbps</td></tr><tr><td>Mobility</td><td>Stationary only (no handover)</td><td>Full mobility + handover</td></tr><tr><td>VoLTE</td><td>No</td><td>Yes</td></tr><tr><td>PSM support</td><td>Yes (deep sleep, operator-configured)</td><td>Yes</td></tr><tr><td>eDRX support</td><td>Yes</td><td>Yes</td></tr><tr><td>Coverage enhancement</td><td>+20 dB vs LTE (MCL 164 dBm)</td><td>+15 dB vs LTE (MCL 156 dBm)</td></tr><tr><td>Duplex</td><td>Half (FDD)</td><td>Half or Full (FDD)</td></tr><tr><td>Firmware OTA</td><td>Possible but slow</td><td>Practical (FOTA)</td></tr><tr><td>Use case fit</td><td>Fixed meters, sensors, 10-year battery</td><td>Mobile assets, OTA, voice</td></tr></tbody></table>
+
+<h3>SA Operator Support</h3>
+
+<table><thead><tr><th>Operator</th><th>NB-IoT</th><th>LTE-M</th><th>Coverage</th></tr></thead><tbody><tr><td><strong>Vodacom</strong></td><td>Yes (Band 28, 700 MHz)</td><td>Partial rollout</td><td>Major metros + national highway corridors</td></tr><tr><td><strong>MTN</strong></td><td>Yes (Band 28)</td><td>Partial rollout</td><td>Major metros</td></tr><tr><td><strong>Rain</strong></td><td>No public IoT service</td><td>No</td><td>Data-only</td></tr><tr><td><strong>Telkom</strong></td><td>Limited (check current status)</td><td>No</td><td>Limited</td></tr></tbody></table>
+
+<p>Both Vodacom and MTN NB-IoT coverage in SA is concentrated in Gauteng, Western Cape, KwaZulu-Natal, and Eastern Cape metros as of 2024. Rural coverage is thin — validate with operator coverage checker before committing to cellular IoT in agricultural or remote deployments.</p>
+
+<h3>PSM (Power Saving Mode) Configuration</h3>
+
+<p>PSM allows the device to power down the cellular modem completely between transmissions. The network buffers downlinks.</p>
+
+<pre><code class="lang-text">PSM timers (set via AT commands or network provisioning):
+T3412 (TAU - Tracking Area Update): how long the device can sleep before re-registering
+T3324 (Active Time): how long the device stays reachable after waking
+
+Example: T3412 = 1 hour, T3324 = 2 seconds
+→ Device wakes, sends uplink, remains reachable for 2s for downlink, sleeps for up to 1 hour
+→ Current in PSM: 2–10 µA (module-dependent)</code></pre>
+
+<p>AT command syntax (3GPP TS 27.007):</p>
+<pre><code class="lang-text">AT+CPSMS=1,"","","01000110","00000001"
+                              ^T3412    ^T3324</code></pre>
+<p>T3412 encoding: bits 5-7 = unit (000=10min, 001=1hr, 010=10hr), bits 0-4 = value.</p>
+
+<h3>eDRX (Extended Discontinuous Reception)</h3>
+
+<p>eDRX extends the DRX cycle beyond standard LTE (which is ~1.28 s) to minutes, reducing idle power. Unlike PSM, the device is still reachable within the eDRX cycle.</p>
+
+<pre><code class="lang-text">eDRX cycle values (NB-IoT):
+5.12 s, 10.24 s, 20.48 s, 40.96 s, 81.92 s, 163.84 s, 327.68 s, 655.36 s, 1310.72 s, 2621.44 s
+
+AT+CEDRXS=2,5,"0101"   // Enable eDRX, NB-IoT, requested cycle index 5 (~163s)</code></pre>
+
+<p>Combine PSM + eDRX for maximum battery life: eDRX for reachability windows, PSM for deep sleep between transmissions.</p>
+
+<h3>SIM Selection for IoT</h3>
+
+<table><thead><tr><th>SIM Type</th><th>Form factor</th><th>Temp range</th><th>Use case</th></tr></thead><tbody><tr><td>Standard consumer SIM</td><td>2FF/3FF/4FF</td><td>0–70°C</td><td>Development only</td></tr><tr><td>Industrial SIM</td><td>2FF/3FF/4FF</td><td>-40–+105°C</td><td>Outdoor/industrial deployments</td></tr><tr><td>Multi-IMSI SIM</td><td>4FF/MFF2</td><td>-40–+105°C</td><td>Roaming, operator switching without SIM swap</td></tr><tr><td>eSIM (eUICC)</td><td>MFF2 soldered</td><td>-40–+105°C</td><td>Sealed devices, remote carrier switching</td></tr><tr><td>iSIM (integrated)</td><td>On-die</td><td>SoC-dependent</td><td>Next-gen modules (Qualcomm 9205, Nordic nRF9161)</td></tr></tbody></table>
+
+<p>For SA deployments with devices that may be moved between metro areas (different operator coverage): use multi-IMSI SIM with both Vodacom and MTN profiles.</p>
+
+<h3>AT Command Reference (Quectel BG96 / EC21)</h3>
+
+<pre><code class="lang-text">// Check network registration
+AT+CEREG?                    // NB-IoT registration status
+AT+CREG?                     // General registration
+
+// Check signal quality
+AT+CSQ                       // RSSI (0-31 scale, 99=unknown)
+AT+QCSQ                      // Extended signal quality (RSRP, RSRQ, SINR)
+
+// Configure RAT preference
+AT+QCFG="nwscanseq",020301   // Prefer NB-IoT, then GSM, then LTE-M
+AT+QCFG="iotopmode",1        // NB-IoT only (0=LTE-M only, 2=both)
+
+// PSM configuration
+AT+CPSMS=1,"","","01000110","00000001"
+
+// MQTT via Quectel MQTT client
+AT+QMTOPEN=0,"broker.example.com",8883
+AT+QMTCONN=0,"device-id","user","pass"
+AT+QMTPUBEX=0,0,1,0,"topic/path",payload_length</code></pre>
+
+<p>SIMCom SIM7080G (popular for NB-IoT/LTE-M dual-mode) uses near-identical AT syntax.</p>
+
+<hr>
+
+<h2>6. MQTT</h2>
+
+<h3>Broker Comparison</h3>
+
+<table><thead><tr><th>Broker</th><th>Hosting</th><th>Throughput</th><th>SA latency</th><th>Notes</th></tr></thead><tbody><tr><td><strong>Mosquitto</strong></td><td>Self-hosted</td><td>High (single-threaded bottleneck at ~100k)</td><td>Depends on host</td><td>OSS, lightweight, good for edge/gateway</td></tr><tr><td><strong>HiveMQ</strong></td><td>Cloud / self-hosted</td><td>Very high (clustered)</td><td>EU/US PoPs</td><td>Enterprise features, MQTT 5 native</td></tr><tr><td><strong>EMQX</strong></td><td>Cloud / self-hosted</td><td>Extremely high (10M+ connections)</td><td>EU/US PoPs, SA via VPS</td><td>OSS community edition available</td></tr><tr><td><strong>AWS IoT Core</strong></td><td>Cloud</td><td>Managed</td><td>~200ms from SA</td><td>Deep AWS integration, per-message pricing</td></tr><tr><td><strong>Azure IoT Hub</strong></td><td>Cloud</td><td>Managed</td><td>~180ms from SA (ZA South region)</td><td>Good for Azure backends</td></tr><tr><td><strong>Cloudflare Pub/Sub</strong></td><td>Edge</td><td>High</td><td>~10ms from SA (Johannesburg PoP)</td><td>MQTT 3.1.1, beta — check GA status</td></tr></tbody></table>
+
+<p>For lowest-latency SA production: self-hosted EMQX on Hetzner Johannesburg (HEL DC + JNB DC available) or Azure South Africa North (Johannesburg).</p>
+
+<h3>QoS Levels</h3>
+
+<table><thead><tr><th>QoS</th><th>Delivery guarantee</th><th>Broker storage</th><th>Use case</th></tr></thead><tbody><tr><td><strong>0</strong> (At most once)</td><td>No guarantee</td><td>None</td><td>High-frequency telemetry (loss acceptable)</td></tr><tr><td><strong>1</strong> (At least once)</td><td>Guaranteed, may duplicate</td><td>Until PUBACK</td><td>Most sensor data, events</td></tr><tr><td><strong>2</strong> (Exactly once)</td><td>Guaranteed, no duplicates</td><td>PUBREC/PUBREL/PUBCOMP 4-way handshake</td><td>Billing data, commands, financial events</td></tr></tbody></table>
+
+<p>QoS 2 is 4× the message exchanges of QoS 0. At 10 000 devices × 1 msg/min, QoS 2 is ~40 000 MQTT packets/min vs ~10 000 for QoS 0. Default to QoS 1; use QoS 2 only where duplicates cause real harm.</p>
+
+<h3>LWT (Last Will and Testament)</h3>
+
+<p>LWT allows the broker to publish a message on behalf of a client when the connection drops unexpectedly (no DISCONNECT sent).</p>
+
+<pre><code class="lang-python">import paho.mqtt.client as mqtt
+
+client = mqtt.Client(client_id="device-001")
+client.will_set(
+    topic="fleet/site-a/device-001/status",
+    payload='{"online": false, "reason": "unexpected_disconnect"}',
+    qos=1,
+    retain=True
+)
+client.connect("broker.example.com", 8883)
+# On clean disconnect: publish {"online": false, "reason": "graceful"} then DISCONNECT
+# On ungraceful disconnect: broker publishes LWT automatically</code></pre>
+
+<h3>Topic Hierarchy Design</h3>
+
+<pre><code class="lang-text">Recommended hierarchy:
+{tenant}/{site}/{device_id}/{measurement}
+
+Examples:
+acme/jhb-factory/motor-01/temperature
+acme/jhb-factory/motor-01/vibration
+acme/jhb-factory/motor-01/status       ← retained, LWT target
+acme/jhb-factory/+/temperature         ← wildcard: all temps at site
+acme/+/+/status                        ← all device statuses across tenant
+acme/#                                 ← all messages for tenant (use sparingly)
+
+System topics (use $ prefix, broker-internal):
+$SYS/broker/clients/connected
+$SYS/broker/messages/received</code></pre>
+
+<p>Avoid: deep hierarchies &gt; 6 levels, variable-length segments, device IP or transient identifiers in topic paths.</p>
+
+<h3>TLS Mutual Authentication</h3>
+
+<pre><code class="lang-bash"># Generate CA, server cert, client cert (production: use proper PKI)
+openssl genrsa -out ca.key 4096
+openssl req -new -x509 -days 3650 -key ca.key -out ca.crt
+
+openssl genrsa -out device-001.key 2048
+openssl req -new -key device-001.key -out device-001.csr -subj "/CN=device-001"
+openssl x509 -req -days 3650 -in device-001.csr -CA ca.crt -CAkey ca.key \
+  -CAcreateserial -out device-001.crt</code></pre>
+
+<pre><code class="lang-python"># Paho Python: TLS mutual auth
+client.tls_set(
+    ca_certs="ca.crt",
+    certfile="device-001.crt",
+    keyfile="device-001.key",
+    tls_version=ssl.PROTOCOL_TLS
+)</code></pre>
+
+<p>Store device private key in secure element (ATECC608A, ESP32 eFuse) — never in plain flash.</p>
+
+<h3>MQTT 5 Key Features</h3>
+
+<table><thead><tr><th>Feature</th><th>Description</th><th>Benefit</th></tr></thead><tbody><tr><td>Reason codes</td><td>Extended return codes on PUBACK, SUBACK, etc.</td><td>Better error diagnostics</td></tr><tr><td>User properties</td><td>Key-value pairs in any packet</td><td>Metadata without payload modification</td></tr><tr><td>Message expiry</td><td>TTL on published messages</td><td>Stale data prevention</td></tr><tr><td>Subscription options</td><td>No local, retain as published</td><td>Fine-grained control</td></tr><tr><td>Shared subscriptions</td><td>Load-balanced consumers on same topic</td><td>Horizontal scaling of consumers</td></tr><tr><td>Flow control</td><td>Receive maximum (client-side throttle)</td><td>Back-pressure without dropping</td></tr><tr><td>Topic alias</td><td>Replace long topic strings with integer IDs</td><td>Reduces packet size for constrained devices</td></tr></tbody></table>
+
+<p>MQTT 5 adoption in IoT devices is growing but not universal. Verify broker and client library support before using MQTT 5 features.</p>
+
+<hr>
+
+<h2>7. CoAP &amp; HTTP</h2>
+
+<h3>CoAP (RFC 7252)</h3>
+
+<p>CoAP is UDP-based, designed for constrained devices. It mirrors HTTP semantics (GET/POST/PUT/DELETE) but with a fraction of the overhead (~4-byte fixed header vs ~200-byte HTTP minimum).</p>
+
+<table><thead><tr><th>Feature</th><th>CoAP</th><th>MQTT</th><th>HTTP</th></tr></thead><tbody><tr><td>Transport</td><td>UDP</td><td>TCP</td><td>TCP</td></tr><tr><td>Header overhead</td><td>4 bytes</td><td>2 bytes</td><td>~200 bytes</td></tr><tr><td>Request-response</td><td>Yes (like HTTP)</td><td>No (pub/sub)</td><td>Yes</td></tr><tr><td>Push/subscribe</td><td>Observe option</td><td>Native pub/sub</td><td>SSE/WebSocket</td></tr><tr><td>Security</td><td>DTLS</td><td>TLS</td><td>TLS</td></tr><tr><td>Multicast</td><td>Yes</td><td>No</td><td>No</td></tr><tr><td>Best for</td><td>Request-response on constrained networks</td><td>Event-driven telemetry</td><td>REST APIs, webhooks</td></tr></tbody></table>
+
+
+<pre><code class="lang-text">Confirmable (CON): reliable delivery
+  Client → Server: CON GET /temperature (MID: 1234)
+  Server → Client: ACK 2.05 Content (MID: 1234) [piggybacked response]
+  If no ACK: client retransmits with exponential backoff (2s, 4s, 8s, 16s)
+
+Non-Confirmable (NON): fire and forget
+  Client → Server: NON GET /temperature (MID: 5678)
+  [No ACK required — server may still respond as NON]</code></pre>
+
+<p>Use CON for commands and configuration; NON for high-frequency telemetry where loss is acceptable.</p>
+
+
+<p>CoAP Observe lets a client subscribe to resource state changes without polling:</p>
+
+<pre><code class="lang-text">Client → Server: GET /temperature Observe:0    // Register observation
+Server → Client: 2.05 Content, temperature=22.1°C, Observe:12345   // Initial + token
+Server → Client: 2.05 Content, temperature=22.4°C, Observe:12346   // On change
+...
+Client → Server: GET /temperature Observe:1    // Deregister</code></pre>
+
+
+<p>For firmware OTA over CoAP (large payloads that exceed UDP MTU):</p>
+
+<pre><code class="lang-text">Client → Server: GET /firmware/v2.1.0  Block2: NUM=0, SZX=6 (1024 bytes)
+Server → Client: 2.05 Content, Block2: NUM=0, M=1, SZX=6  [block 0, more follows]
+Client → Server: GET /firmware/v2.1.0  Block2: NUM=1, SZX=6
+Server → Client: 2.05 Content, Block2: NUM=1, M=1, SZX=6  [block 1, more follows]
+...
+Server → Client: 2.05 Content, Block2: NUM=N, M=0, SZX=6  [last block]</code></pre>
+
+
+<ul><li>Devices already use UDP stack (smaller ROM footprint than TCP)</li><li>Request-response semantics are natural (actuator commands with immediate status return)</li><li>Multicast needed (broadcast to all devices on a subnet)</li><li>Network is too constrained for persistent TCP connections</li><li>CoAP-to-HTTP proxy exists in infrastructure (RFC 8075)</li></ul>
+
+<h3>HTTP/HTTPS for IoT</h3>
+
+<p>HTTP is appropriate for IoT devices that: are mains-powered, have a full TCP/IP stack, and need to integrate with REST APIs or webhooks without a broker.</p>
+
+
+<pre><code class="lang-text">Device-facing API conventions:
+POST /v1/telemetry           // Batch telemetry upload
+PUT  /v1/devices/{id}/config // Push config to device (device polls)
+GET  /v1/devices/{id}/commands // Device polls for pending commands
+POST /v1/devices/{id}/ota/accept // Device acknowledges OTA job
+
+Response codes:
+200 OK         - Success with body
+202 Accepted   - Command queued (async)
+204 No Content - Success, no body (telemetry ack)
+304 Not Modified - Config unchanged (ETag/If-None-Match polling)
+429 Too Many Requests - Rate limit hit (device must back off)</code></pre>
+
+
+<table><thead><tr><th>Pattern</th><th>Protocol</th><th>Server state</th><th>Latency</th><th>Device complexity</th><th>Use case</th></tr></thead><tbody><tr><td>Polling</td><td>HTTP GET</td><td>Stateless</td><td>High (poll interval)</td><td>Low</td><td>Simple devices, infrequent updates</td></tr><tr><td>Long-polling</td><td>HTTP GET (hold open)</td><td>Session state</td><td>Low</td><td>Medium</td><td>Command delivery without broker</td></tr><tr><td>SSE (Server-Sent Events)</td><td>HTTP/1.1 chunked</td><td>Connection state</td><td>Low</td><td>Medium</td><td>Server-to-device push, one-way</td></tr><tr><td>WebSocket</td><td>HTTP upgrade → WS</td><td>Connection state</td><td>Very low</td><td>Higher</td><td>Bidirectional real-time</td></tr><tr><td>MQTT</td><td>TCP</td><td>Broker state</td><td>Very low</td><td>Low (library)</td><td>Best general IoT choice</td></tr></tbody></table>
+
+
+<p>For battery/bandwidth-constrained devices sending JSON:</p>
+
+<pre><code class="lang-python">import gzip, json
+
+payload = {"t": 22.4, "h": 65.2, "p": 101325, "bat": 87}
+compressed = gzip.compress(json.dumps(payload).encode())
+# Raw JSON: ~50 bytes → Compressed: ~45 bytes (small payloads: minimal gain)
+# At 100 fields: raw ~800 bytes → compressed ~200 bytes (significant)
+
+# HTTP header:
+headers = {
+    "Content-Encoding": "gzip",
+    "Content-Type": "application/json"
+}</code></pre>
+
+<p>For very constrained devices: use <strong>CBOR</strong> (Concise Binary Object Representation, RFC 7049) instead of JSON. CBOR encodes the same data structure in ~30–50% fewer bytes with no compression overhead.</p>
+
+<hr>
+
+<h2>8. Mesh Networking</h2>
+
+<h3>Zigbee Mesh</h3>
+
+<p>Zigbee uses IEEE 802.15.4 at the PHY/MAC layer with the Zigbee network layer on top.</p>
+
+
+<table><thead><tr><th>Role</th><th>Description</th><th>Power</th><th>Routing</th><th>Notes</th></tr></thead><tbody><tr><td><strong>Coordinator</strong></td><td>Forms the network, selects PAN ID and channel</td><td>Mains</td><td>Yes</td><td>Exactly one per network — single point of failure</td></tr><tr><td><strong>Router</strong></td><td>Extends mesh, routes messages</td><td>Mains</td><td>Yes</td><td>Can also host application (e.g., smart plug)</td></tr><tr><td><strong>End Device</strong></td><td>Leaf node, sleeps between transmissions</td><td>Battery</td><td>No</td><td>Must associate with a parent router</td></tr></tbody></table>
+
+
+<ul><li><strong>PAN ID</strong>: 16-bit identifier, use random to avoid collision with neighbours</li><li><strong>Channel</strong>: IEEE 802.15.4 channels 11–26 (2.4 GHz). Avoid channels 11, 15, 20, 25 which overlap with WiFi channels 1, 6, 11. Use channels 15, 20, 25, 26 for minimal WiFi interference.</li><li><strong>Network size</strong>: Theoretically 65 535 nodes, practically 200–300 before routing table memory becomes a bottleneck on router nodes</li><li><strong>Hop limit</strong>: Default 10 hops, configurable</li><li><strong>Mesh healing</strong>: Zigbee re-routes automatically around failed nodes (seconds to minutes depending on network activity)</li></ul>
+
+
+<table><thead><tr><th>Profile</th><th>Use case</th><th>Interop</th></tr></thead><tbody><tr><td>Zigbee Home Automation (HA)</td><td>Lights, switches, sensors</td><td>Partial — vendor extensions break interop</td></tr><tr><td>Zigbee Light Link (ZLL)</td><td>Philips Hue, LED systems</td><td>Better interop in lighting</td></tr><tr><td>Zigbee 3.0</td><td>Unified profile</td><td>Better than HA, not perfect</td></tr><tr><td>Matter (over Thread)</td><td>Replacing Zigbee in consumer</td><td>Full interop (Apple/Google/Amazon)</td></tr></tbody></table>
+
+<p>For new consumer product design in 2024+: prefer <strong>Matter over Thread</strong> over Zigbee. For industrial/building automation with existing Zigbee infrastructure: continue with Zigbee 3.0.</p>
+
+<h3>Thread (OpenThread)</h3>
+
+<p>Thread is an IPv6-native mesh networking protocol built on IEEE 802.15.4. It is the transport layer beneath Matter.</p>
+
+
+<table><thead><tr><th>Role</th><th>Description</th></tr></thead><tbody><tr><td><strong>Leader</strong></td><td>Manages network data, assigns router IDs (elected dynamically)</td></tr><tr><td><strong>Router</strong></td><td>Participates in mesh routing, maintains routing table</td></tr><tr><td><strong>Reed (Router Eligible End Device)</strong></td><td>Can become a Router if elected</td></tr><tr><td><strong>Sleepy End Device (SED)</strong></td><td>Battery node, polls parent for buffered messages</td></tr><tr><td><strong>Border Router</strong></td><td>Connects Thread network to IP network (WiFi/Ethernet); runs on Thread + WiFi hardware</td></tr></tbody></table>
+
+
+<p>Every Thread device has a Link-Local address and a Mesh-Local address (derived from PAN and device EUI). Border Router advertises a global prefix — devices self-assign global addresses (SLAAC). No NAT required; Thread devices are directly addressable over IPv6.</p>
+
+<pre><code class="lang-text">Thread address types:
+fe80::/10          Link-Local (single hop)
+fd00::/8           Mesh-Local (intra-mesh, ULA)
+2001:db8::/32      Global (if Border Router provides prefix)</code></pre>
+
+<p>OpenThread (open-source implementation by Google, used in Matter) runs on ESP32-H2, Nordic nRF52840, Silicon Labs EFR32MG24, and others.</p>
+
+<h3>BLE Mesh Provisioning Sequence (Summary)</h3>
+
+<pre><code class="lang-text">1. Factory-reset device broadcasts: Unprovisioned Device beacon (UUID)
+2. Provisioner (phone/gateway) scans → selects device → opens PB-ADV bearer
+3. Invite PDU → Capabilities PDU (device reports algorithms, OOB info)
+4. Start PDU → Public Key exchange → ECDH → confirmation exchange
+5. Random values exchanged → session key derived
+6. Network key (NetKey), unicast address, IV Index, flags sent to device
+7. Device is now provisioned → Provisioner configures:
+   - Application keys (AppKey) bound to models
+   - Publication address (where to publish sensor data)
+   - Subscription addresses (which addresses to listen to)</code></pre>
+
+<h3>WiFi Mesh</h3>
+
+<p>WiFi mesh is typically a gateway aggregation layer, not a battery-node network.</p>
+
+<table><thead><tr><th>Implementation</th><th>Platform</th><th>Notes</th></tr></thead><tbody><tr><td><strong>ESP-MESH (ESP-MDF)</strong></td><td>ESP32 family</td><td>Proprietary Espressif mesh over WiFi; no AP required; up to 1000 nodes</td></tr><tr><td><strong>Painless Mesh</strong></td><td>ESP8266/ESP32 (Arduino)</td><td>OSS, simple, small networks (&lt; 50 nodes)</td></tr><tr><td><strong>802.11s</strong></td><td>Linux (hostapd, wpa_supplicant)</td><td>Standard WiFi mesh, used in router products</td></tr><tr><td><strong>EasyMesh (802.11ax)</strong></td><td>WiFi 6 APs</td><td>Multi-vendor AP mesh, enterprise backhaul</td></tr></tbody></table>
+
+<p>ESP-MESH topology: root node connects to router AP; child nodes connect to root or intermediate nodes. All nodes are peers — no single coordinator failure risk.</p>
+
+<h3>Range Extension Strategies</h3>
+
+<table><thead><tr><th>Strategy</th><th>Cost</th><th>Complexity</th><th>Best for</th></tr></thead><tbody><tr><td>Additional gateways/APs</td><td>Medium</td><td>Low</td><td>WiFi, LoRaWAN coverage gaps</td></tr><tr><td>Mesh repeater/router nodes</td><td>Low-medium</td><td>Low</td><td>Zigbee, Thread, BLE mesh, ESP-MESH</td></tr><tr><td>Directional antenna</td><td>Low</td><td>Low</td><td>LoRa long-range links, point-to-point</td></tr><tr><td>Higher-gain omnidirectional antenna</td><td>Low</td><td>Very low</td><td>LoRa, NB-IoT (where external antenna port available)</td></tr><tr><td>Elevated gateway placement</td><td>Low</td><td>Low</td><td>LoRaWAN — rooftop vs ground level is 10× range</td></tr><tr><td>Cellular signal booster</td><td>High</td><td>Medium</td><td>NB-IoT/LTE-M in basements, metal buildings</td></tr><tr><td>Wired backbone + wireless at leaf</td><td>Medium</td><td>Medium</td><td>Industrial mesh — Ethernet to each zone, wireless within zone</td></tr></tbody></table>
+
+<h3>Gateway Placement for LoRaWAN</h3>
+
+<p>The single most impactful variable for LoRaWAN coverage is gateway elevation. Rules of thumb:</p>
+
+<ul><li>Rooftop (&gt; 10 m) vs ground level: 3–10× range improvement</li><li>Line-of-sight to building cluster: gateway on the tallest structure in the cluster</li><li>Water towers, cell masts (where co-location is permitted): best sites for rural agriculture</li><li>Minimum 3 gateways for redundancy and geolocation (TDOA)</li><li>SX1302-based concentrators (RAK2287, Dragino PG1301) support 8 simultaneous channels — route all AU915/AS923 sub-bands</li></ul>
+
+<hr>
+
+<h2>9. SA Spectrum and Regulatory Context</h2>
+
+<h3>ICASA Spectrum Licensing</h3>
+
+<p>ICASA (Independent Communications Authority of South Africa) regulates the radio frequency spectrum under the Electronic Communications Act (ECA) 36 of 2005.</p>
+
+<table><thead><tr><th>Band</th><th>Use</th><th>Licence status</th><th>IoT relevance</th></tr></thead><tbody><tr><td>433 MHz</td><td>ISM (short range)</td><td>Licence-exempt</td><td>Short-range devices, keyfobs, some sensors</td></tr><tr><td>868 MHz</td><td>ISM (European allocation)</td><td>Not formally designated in SA</td><td>Some EU-certified devices operate here — grey area</td></tr><tr><td>915–928 MHz</td><td>ISM (industrial)</td><td>Licence-exempt</td><td>LoRa, Sigfox, some sub-GHz sensors</td></tr><tr><td>2.4 GHz</td><td>ISM</td><td>Licence-exempt</td><td>WiFi, BLE, Zigbee, Thread</td></tr><tr><td>5 GHz</td><td>UNII / ISM</td><td>Licence-exempt (with DFS requirements)</td><td>WiFi 5/6</td></tr><tr><td>700 MHz (B28)</td><td>Licensed cellular</td><td>Operator licence (Vodacom/MTN)</td><td>NB-IoT, LTE-M</td></tr><tr><td>1800/2100/2600 MHz</td><td>Licensed cellular</td><td>Operator licence</td><td>LTE Cat-1/4, 5G</td></tr></tbody></table>
+
+<p>Key point: LoRaWAN devices in SA operate on 915–928 MHz under the licence-exempt ISM allocation. However, devices must comply with ICASA type approval requirements (equipment must be approved under the ICASA Equipment Regulations). Most modules certified in CE/FCC/RCM are accepted but verify — ICASA does conduct enforcement actions.</p>
+
+<p>For commercial deployments: confirm equipment type approval with your module vendor. Semtech SX1276/SX1302 modules from major vendors (RAK Wireless, Murata, HopeRF) generally carry adequate certification.</p>
+
+<h3>Power Limits</h3>
+
+<p>SA licence-exempt equipment (GN 3100 and successor regulations):</p>
+<ul><li>915 MHz ISM: 25 mW EIRP (typical LoRa operating power — 14–20 dBm module output, antenna dependent)</li><li>2.4 GHz ISM: 100 mW EIRP for most applications</li><li>5 GHz: 200 mW EIRP (UNII-1), 1 W (UNII-3)</li></ul>
+
+<hr>
+
+<h2>Common Gotchas</h2>
+
+<ul><li><strong>LoRaWAN ABP in production</strong>: frame counters do not reset on power cycle with ABP — device will be rejected by network server after reboot. Production devices must use OTAA.</li><li><strong>NB-IoT coverage assumption</strong>: Vodacom/MTN coverage maps show outdoor coverage. Indoor and basement penetration can be 20–30 dB worse. Test with the actual module + antenna at the deployment site before committing.</li><li><strong>BLE connection parameter negotiation</strong>: iOS enforces minimum connection interval of 15 ms regardless of what the peripheral requests. Android is more permissive. Design throughput estimates for iOS constraints.</li><li><strong>WiFi deep sleep reconnect time</strong>: ESP32 deep sleep with WiFi reconnect takes 3–5 seconds, not milliseconds. At 1-minute intervals, this is 5–8% duty cycle just for connection — budget accordingly in power calculations.</li><li><strong>MQTT QoS 1 duplicates</strong>: QoS 1 guarantees at-least-once, not exactly-once. Your application must be idempotent or include a sequence number / message ID for deduplication.</li><li><strong>LoRaWAN duty cycle at SF12</strong>: a single SF12 transmission of 50 bytes is ~2.8 seconds on-air. At 1% duty cycle, the device must wait 280 seconds before the next transmission. Do not use SF12 for anything requiring more than ~300 messages/day.</li><li><strong>Zigbee channel and WiFi co-channel interference</strong>: Zigbee channel 11 (2405 MHz) overlaps with WiFi channel 1. In dense office/residential environments, this causes 40–60% packet loss. Always survey and select a Zigbee channel with minimum WiFi overlap.</li><li><strong>NB-IoT PSM downlink latency</strong>: in PSM, the device is unreachable until it wakes and re-registers. T3412 can be up to 310 hours. Design your application so downlinks are queued and delivered at next uplink — do not expect real-time downlink on NB-IoT with PSM.</li><li><strong>Sigfox 12-byte limit</strong>: the 12-byte UL payload limit is a hard limit, not a soft guideline. Design your payload encoding around it from day one. Trying to retrofit a richer data model later is costly.</li><li><strong>SA LoRaWAN coverage</strong>: assume no coverage outside the four major metros until validated with a field test. Private gateway deployment is often the only viable option for agricultural or mining sites.</li><li><strong>BLE mesh and scan window</strong>: BLE mesh uses advertising-based flooding. High node density with default scan windows can saturate the 2.4 GHz channel. Tune advertising intervals and use Friend/LPN node pairs for battery-powered end nodes in dense deployments.</li><li><strong>Thread border router is a single point of failure</strong>: in production Thread networks, deploy at least two border routers for redundancy. OpenThread supports multiple border routers natively — they synchronise network data automatically.</li></ul>
+
+<hr>
+
+<h2>See Also</h2>
+
+<ul><li><a href="../firmware/SKILL.md" target="_blank" rel="noopener">iot/firmware SKILL.md</a> — Firmware OTA, RTOS, power management</li><li><a href="../hardware/SKILL.md" target="_blank" rel="noopener">iot/hardware SKILL.md</a> — SoC selection, antenna design, PCB layout</li><li><a href="https://lora-alliance.org/resource_hub/lorawan-104-specification-package/" target="_blank" rel="noopener">LoRaWAN specification v1.0.4</a></li><li><a href="https://www.chirpstack.io/docs/" target="_blank" rel="noopener">ChirpStack v4 documentation</a></li><li><a href="https://openthread.io/guides" target="_blank" rel="noopener">OpenThread documentation</a></li><li><a href="https://www.icasa.org.za/legislation-and-regulations/equipment-regulations" target="_blank" rel="noopener">ICASA Equipment Regulations (GN 3100)</a></li><li><a href="https://everynet.com" target="_blank" rel="noopener">Everynet SA coverage</a></li><li><a href="https://squidnet.co.za" target="_blank" rel="noopener">Squidnet SA coverage</a></li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/iot/connectivity/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

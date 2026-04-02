@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharmacy & Medicines Management — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Pharmacy & Medicines Management</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/health/pharmacy/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Pharmacy & Medicines Management</div>
+      <h1>PHARMACY & MEDICINES MANAGEMENT</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Pharmacy &amp; Medicines Management</h1>
+
+<p>Medicines are the highest-volume clinical intervention in any healthcare organisation and one of the largest cost lines. Pharmacy management sits at the intersection of clinical safety, procurement efficiency, and regulatory compliance.</p>
+
+<h2>The South African Medicines Regulatory Framework</h2>
+
+<h3>SAHPRA (South African Health Products Regulatory Authority)</h3>
+
+<p>SAHPRA (formerly MCC — Medicines Control Council) regulates medicines, medical devices, and clinical trials under the Medicines and Related Substances Act 101 of 1965 (as amended).</p>
+
+<p><strong>Responsibilities</strong>:</p>
+<ul><li>Registration of medicines (Schedule 0–8)</li><li>Licensing of manufacturers, wholesalers, pharmacies</li><li>Post-market surveillance (pharmacovigilance)</li><li>Clinical trial authorisation</li><li>Scheduling of substances</li></ul>
+
+<h3>Scheduling System</h3>
+
+<table><thead><tr><th>Schedule</th><th>Category</th><th>Examples</th><th>Who May Supply</th></tr></thead><tbody><tr><td>S0</td><td>General sale</td><td>Paracetamol ≤8 tablets, low-strength antihistamines</td><td>Any retail outlet</td></tr><tr><td>S1</td><td>Pharmacy sale</td><td>Standard paracetamol packs, ibuprofen</td><td>Pharmacy without prescription</td></tr><tr><td>S2</td><td>Pharmacist prescription</td><td>Stronger analgesics, some antihistamines</td><td>Pharmacist may initiate</td></tr><tr><td>S3</td><td>Prescription (repeat)</td><td>Oral contraceptives, statins, amlodipine</td><td>Registered prescriber; repeats allowed</td></tr><tr><td>S4</td><td>Prescription (no repeat without new Rx)</td><td>Antibiotics, antihypertensives (most), antidiabetics</td><td>Registered prescriber; no automatic repeat</td></tr><tr><td>S5</td><td>Controlled substance (moderate)</td><td>Codeine-containing combinations &gt; threshold</td><td>Strict record-keeping; triplicate book</td></tr><tr><td>S6</td><td>Controlled substance (high)</td><td>Morphine, pethidine, oxycodone</td><td>S6 register; DEA licence; biannual audit</td></tr><tr><td>S7</td><td>Prohibited (research only)</td><td>MDMA, LSD</td><td>Research exemption only</td></tr><tr><td>S8</td><td>Prohibited</td><td>Heroin</td><td>No civilian use</td></tr></tbody></table>
+
+<p><strong>Key</strong>: S5 and S6 require separate registers, counting, and reconciliation. S6 requires a DEA (Drug Enforcement Authority within SAHPRA) licence. Mismanagement of controlled substances is a criminal offence and grounds for deregistration.</p>
+
+<h3>Pharmacy Act 53 of 1974</h3>
+
+<p>Governs pharmacy practice:</p>
+<ul><li>Only a registered pharmacist may compound, dispense, and supervise the dispensing of medicines</li><li>Pharmacist's assistant (post-basic) may dispense under pharmacist supervision</li><li>A medical practitioner may dispense from their practice (Section 22C licence) — but this is controversial and increasingly restricted</li><li>Community service year is compulsory for pharmacists after internship</li></ul>
+
+<hr>
+
+<h2>Essential Medicines List (EML)</h2>
+
+<p>The National EML and Standard Treatment Guidelines (STGs) define the medicines that should be available at each level of care:</p>
+
+<table><thead><tr><th>Level</th><th>Scope</th><th>Key Document</th></tr></thead><tbody><tr><td>PHC / Clinic</td><td>~300 medicines</td><td>Primary Care STGs</td></tr><tr><td>District Hospital</td><td>~500 medicines</td><td>District Hospital STGs</td></tr><tr><td>Regional Hospital</td><td>~700 medicines</td><td>Regional Hospital STGs</td></tr><tr><td>Tertiary/Academic</td><td>Full formulary</td><td>Tertiary/Academic Hospital STGs</td></tr></tbody></table>
+
+<p><strong>Principle</strong>: Prescribe from the EML at the appropriate care level. Off-formulary prescribing requires motivation and approval. Private sector equivalents are the hospital formulary and the medical aid formulary.</p>
+
+<h3>Formulary Management in Private Hospitals</h3>
+
+<p>Hospital pharmacy formularies:</p>
+<ul><li><strong>Closed formulary</strong>: Only listed medicines available; must motivate for non-formulary items</li><li><strong>Preferred formulary</strong>: Listed items are first-line; alternatives available with additional co-payment</li><li><strong>Open formulary</strong>: Any medicine available; controls via therapeutic interchange and generic substitution</li></ul>
+
+<p>Generic substitution is mandatory in South Africa under the Medicines Act unless the prescriber writes "no substitution" and the patient agrees to pay the price difference.</p>
+
+<hr>
+
+<h2>Medicine Pricing in South Africa</h2>
+
+<h3>Single Exit Price (SEP)</h3>
+
+<p>Introduced in 2004 under the Medicines and Related Substances Amendment Act. All manufacturers and importers must publish a SEP for each medicine. The SEP is the maximum price at which a medicine may be sold to any buyer in South Africa (with the exception of SEP-exempt exports).</p>
+
+<p><strong>Dispensing fee</strong>: Pharmacists charge a dispensing fee on top of the SEP. The fee is regulated by the DoH and is tiered based on the SEP of the medicine:</p>
+
+<table><thead><tr><th>SEP Range</th><th>Dispensing Fee (approx.)</th></tr></thead><tbody><tr><td>R0 – R85.99</td><td>R14.00 flat</td></tr><tr><td>R86 – R185.99</td><td>R16.00</td></tr><tr><td>R186+</td><td>Sliding scale capped</td></tr></tbody></table>
+
+<p><em>Exact fee schedule published annually by the DoH.</em></p>
+
+<h3>Medicine Price Register</h3>
+
+<p>All registered medicines with their SEP are listed on the Medicine Price Register (MPR), publicly available. This enables price comparison and procurement benchmarking.</p>
+
+<h3>Tender Pricing (Public Sector)</h3>
+
+<p>National Department of Health negotiates national contracts for high-volume medicines via competitive tender (NDoH Pharmaceutical Contracts). Provincial health departments procure against these contracts. SLA compliance and delivery performance are tracked by the DoH.</p>
+
+<hr>
+
+<h2>Pharmacovigilance</h2>
+
+<h3>Adverse Drug Reaction (ADR) Reporting</h3>
+
+<p>All healthcare professionals have an obligation to report suspected ADRs to SAHPRA via the MedSafety / VigiBase system (South Africa participates in the WHO Programme for International Drug Monitoring).</p>
+
+<p><strong>Reportable events</strong>:</p>
+<ul><li>All ADRs to newly registered medicines (&lt; 5 years post-registration)</li><li>Serious ADRs to any medicine (hospitalisation, disability, death, congenital abnormality)</li><li>Unexpected ADRs not described in the package insert</li><li>ADRs in special populations (children, pregnant women, elderly)</li></ul>
+
+<p><strong>Naranjo Algorithm</strong> — assesses causality of suspected ADR:</p>
+<pre><code class="lang-text">Score ≥ 9:   Definite ADR
+Score 5–8:   Probable ADR
+Score 1–4:   Possible ADR
+Score ≤ 0:   Doubtful ADR</code></pre>
+
+<h3>Drug-Drug Interactions (DDIs)</h3>
+
+<p>High-risk interaction pairs common in SA context:</p>
+
+<table><thead><tr><th>Drug A</th><th>Drug B</th><th>Risk</th><th>Management</th></tr></thead><tbody><tr><td>Warfarin</td><td>Fluconazole</td><td>Major — INR ↑↑</td><td>Avoid / reduce warfarin dose / monitor INR</td></tr><tr><td>Rifampicin</td><td>ARVs (PIs, NNRTIs)</td><td>Major — induces CYP3A4</td><td>Use rifabutin / switch ARV regimen</td></tr><tr><td>Metformin</td><td>IV contrast media</td><td>Major — lactic acidosis risk</td><td>Hold metformin 48h peri-procedure</td></tr><tr><td>TMP-SMX</td><td>ACE inhibitor</td><td>Moderate — hyperkalaemia</td><td>Monitor K⁺; avoid in renal impairment</td></tr><tr><td>Clopidogrel</td><td>Omeprazole</td><td>Moderate — reduced antiplatelet effect</td><td>Use pantoprazole instead</td></tr><tr><td>Clozapine</td><td>Ciprofloxacin</td><td>Major — clozapine levels ↑</td><td>Avoid; monitor clozapine levels</td></tr></tbody></table>
+
+<hr>
+
+<h2>Hospital Pharmacy Operations</h2>
+
+<h3>Medicine Supply Chain</h3>
+
+<pre><code class="lang-text">NDoH/Provincial Tender → Primary Depot (NDOH Depot / Provincial Depot)
+                             ↓
+                     Secondary Depot (District)
+                             ↓
+                     Facility Pharmacy (Hospital)
+                             ↓
+                     Ward Dispensing / Satellite Pharmacy
+                             ↓
+                     Patient / Bedside Administration</code></pre>
+
+<p><strong>Stockout prevention</strong>:</p>
+<ul><li>Maintain min/max par levels based on 6-month consumption data</li><li>Buffer stock: 2–4 weeks for essential medicines; 4–8 weeks for ARVs</li><li>Daily review of ward requisitions vs stock on hand</li><li>Alert system for medicines approaching reorder level</li><li>National Drug Action Committee (NDAC) stockout reporting</li></ul>
+
+<h3>Dispensing Systems</h3>
+
+<table><thead><tr><th>System</th><th>Description</th><th>Best For</th></tr></thead><tbody><tr><td><strong>Traditional dispensing</strong></td><td>Pharmacist-checked individual patient packs</td><td>Small facilities; outpatient</td></tr><tr><td><strong>Ward stock (floor stock)</strong></td><td>Medicines stocked in ward, nurses administer</td><td>Routine ward medicines</td></tr><tr><td><strong>Unit dose dispensing</strong></td><td>24-hour supply per patient, individually labelled</td><td>ICU, high-dependency, reducing medication errors</td></tr><tr><td><strong>Automated dispensing cabinets (ADCs)</strong></td><td>Pyxis, Omnicell — controlled electronic dispensing</td><td>Theatre, ED, ICU — high-value/controlled substances</td></tr></tbody></table>
+
+<h3>Medication Error Prevention</h3>
+
+<p>WHO High-Alert Medicines (require double-checks at administration):</p>
+<ul><li>Concentrated electrolytes (KCl, hypertonic saline) — never on wards</li><li>Insulin — independent double-check before administration</li><li>Chemotherapy — pharmacist verification + second nurse check</li><li>Anticoagulants (heparin, warfarin, LMWHs)</li><li>Neuromuscular blocking agents — must be labelled; never stored with other injectables</li><li>Opioids — S6 register + double-check</li></ul>
+
+<p><strong>Look-alike / sound-alike (LASA) medicines</strong>: Physical separation, different-coloured labels, TALL man lettering (e.g., DOBUTamine vs DOPamine).</p>
+
+<hr>
+
+<h2>ARV (Antiretroviral) Medicines Management</h2>
+
+<p>South Africa runs the world's largest ARV programme (approximately 5.5 million people on treatment). ARV supply chain management is a national priority.</p>
+
+<h3>Current First-Line Regimen (Adults)</h3>
+
+<p>Per SA ARV Treatment Guidelines (2023):</p>
+<ul><li><strong>TLD</strong>: Tenofovir (TDF) 300mg + Lamivudine (3TC) 300mg + Dolutegravir (DTG) 50mg — one tablet daily</li></ul>
+
+<h3>ARV-Specific Management Requirements</h3>
+
+<ul><li>2-month dispensing intervals (stable patients) to reduce facility visits — Adherence Clubs and CCMDD (Central Chronic Medicines Dispensing and Distribution)</li><li>CCMDD: pick-up points in the community (spaza shops, community sites) for chronic stable patients</li><li>DTG in pregnancy: safe (early concern about NTDs resolved with folic acid supplementation)</li><li>Viral load monitoring: 6-monthly for stable patients; monthly if unsuppressed</li><li>Resistance testing (genotyping): on treatment failure before switching regimen</li></ul>
+
+<h3>TB-ARV Co-treatment Drug Interactions</h3>
+
+<p>Rifampicin (TB treatment backbone) is a potent CYP3A4 inducer:</p>
+<ul><li>Rifampicin + DTG: DTG dose doubled to 50mg twice daily</li><li>Rifampicin + PI-based regimens: not recommended (use rifabutin instead, or switch to EFV-based)</li><li>Standard approach: use TLD with DTG 50mg BD during rifampicin-containing TB treatment; revert to once-daily DTG after TB treatment completes</li></ul>
+
+<hr>
+
+<h2>Pharmacy Metrics</h2>
+
+<table><thead><tr><th>KPI</th><th>Benchmark</th><th>Notes</th></tr></thead><tbody><tr><td>Stockout rate (tracer medicines)</td><td>&lt; 2%</td><td>Monitor monthly; report to NDAC</td></tr><tr><td>Prescription turnaround time (outpatient)</td><td>&lt; 30 minutes</td><td>Patient satisfaction driver</td></tr><tr><td>Dispensing error rate</td><td>&lt; 0.1%</td><td>Near-miss captures important</td></tr><tr><td>Generic dispensing rate</td><td>&gt; 80%</td><td>Cost reduction; SAHPRA encourages</td></tr><tr><td>ADR reporting rate</td><td>&gt; 0.5/100 beds/year</td><td>Underreporting is systemic</td></tr><tr><td>Controlled substance discrepancy rate</td><td>0%</td><td>Any discrepancy triggers investigation</td></tr><tr><td>Medicine expenditure as % of total facility spend</td><td>15–25% private; 25–35% public</td><td>Varies by case mix</td></tr></tbody></table>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/health/pharmacy/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

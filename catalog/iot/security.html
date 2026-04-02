@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IoT Security — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">IoT Security</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/iot/security/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">IoT Security</div>
+      <h1>IOT SECURITY</h1>
+      <p class="skill-desc">></p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../iot/firmware.html">iot/firmware</a><a class="skill-chip" href="../../iot/connectivity.html">iot/connectivity</a>
+       </div>
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>IoT Security</h1>
+
+<p>IoT devices are the largest and most poorly-secured attack surface in most organisations. A sensor node with default credentials on a production network is a pivot point into that network. Security must be designed in from day one — retrofitting is expensive and often incomplete.</p>
+
+<hr>
+
+<h2>Threat Model First</h2>
+
+<p>Before implementing security controls, define the threat model for the deployment:</p>
+
+<table><thead><tr><th>Threat Actor</th><th>Capability</th><th>Likely Attack</th></tr></thead><tbody><tr><td>Script kiddie</td><td>Low</td><td>Shodan scan; default credential login; known CVE exploitation</td></tr><tr><td>Opportunistic attacker</td><td>Medium</td><td>Network sniffing; replay attacks; firmware extraction from discarded device</td></tr><tr><td>Targeted attacker</td><td>High</td><td>Side-channel attacks (power analysis, timing); fault injection; supply chain</td></tr><tr><td>Insider</td><td>Variable</td><td>Physical access; privileged API misuse; credential theft</td></tr><tr><td>Nation-state</td><td>Very high</td><td>Hardware backdoors; zero-days; supply chain compromise</td></tr></tbody></table>
+
+<p>For most commercial IoT deployments, design against opportunistic and medium-capability targeted attackers. Nation-state-level threats require hardware security modules (HSM) and are out of scope for typical projects.</p>
+
+<hr>
+
+<h2>Device Identity &amp; Certificates</h2>
+
+<h3>Certificate Hierarchy</h3>
+
+<pre><code class="lang-text">Root CA (offline; air-gapped)
+    └── Intermediate CA (online; signs device certs)
+            └── Device Certificate (per-device; CN = serial number)</code></pre>
+
+<p><strong>Never use the Root CA online.</strong> If the intermediate CA is compromised, revoke and reissue — the Root CA remains trusted.</p>
+
+<h3>Device Certificate Fields</h3>
+
+<pre><code class="lang-text">Subject: CN=SN-{serial}, O=YourCompany, C=ZA
+Subject Alternative Names: URI:urn:company:device:{serial}
+Key Usage: Digital Signature, Key Encipherment
+Extended Key Usage: TLS Web Client Authentication
+Validity: 10 years (device lifetime)
+Key: ECDSA P-256 (preferred) or RSA-2048</code></pre>
+
+<h3>Certificate Injection at Manufacture</h3>
+
+<p>Three approaches:</p>
+
+<table><thead><tr><th>Approach</th><th>When</th><th>Security</th><th>Complexity</th></tr></thead><tbody><tr><td><strong>Factory injection (pre-provisioning)</strong></td><td>During PCB test/programming</td><td>High — private key never leaves secure factory</td><td>High — requires secure factory process</td></tr><tr><td><strong>First-boot provisioning (TOFU)</strong></td><td>Device generates keypair on first boot; sends CSR to provisioning endpoint</td><td>Medium — trust-on-first-use window is vulnerable</td><td>Medium</td></tr><tr><td><strong>Claim certificate (AWS Fleet Provisioning)</strong></td><td>Device ships with a claim cert; exchanges for permanent cert after first connection</td><td>High — claim cert has limited permissions</td><td>Medium</td></tr></tbody></table>
+
+<h3>Key Storage</h3>
+
+<table><thead><tr><th>Platform</th><th>Secure Storage</th></tr></thead><tbody><tr><td>ESP32</td><td>eFuse (burn once); Flash Encryption + NVS encryption</td></tr><tr><td>STM32</td><td>STSAFE-A (secure element); Option bytes</td></tr><tr><td>nRF52</td><td>CryptoCell-310 (hardware crypto); ACL on flash</td></tr><tr><td>Generic</td><td>ATECC608B (external secure element; I²C; ECC508/608 family)</td></tr></tbody></table>
+
+<p><strong>ATECC608B</strong> is the pragmatic choice for any MCU without built-in hardware crypto:</p>
+<ul><li>Stores private keys in hardware — key never exposed to MCU firmware</li><li>Performs ECDH and ECDSA operations in hardware</li><li>Tamper-resistant; physically unclonable function (PUF) seed</li><li>$0.70 in volume; simple I²C interface</li></ul>
+
+<hr>
+
+<h2>TLS for IoT</h2>
+
+<h3>TLS 1.3 vs 1.2</h3>
+
+<p>Prefer TLS 1.3:</p>
+<ul><li>Fewer round-trips (1-RTT vs 2-RTT) → faster handshake → less energy</li><li>Forward secrecy mandatory — past sessions safe if long-term key compromised</li><li>Removed weak cipher suites (RC4, 3DES, SHA-1)</li><li>0-RTT session resumption for reconnecting devices</li></ul>
+
+<h3>Cipher Suite Selection for Constrained Devices</h3>
+
+<table><thead><tr><th>Suite</th><th>Key Exchange</th><th>Auth</th><th>Bulk Cipher</th><th>Notes</th></tr></thead><tbody><tr><td>TLS_AES_128_GCM_SHA256</td><td>ECDHE</td><td>ECDSA</td><td>AES-128-GCM</td><td>TLS 1.3 default; best balance</td></tr><tr><td>TLS_CHACHA20_POLY1305_SHA256</td><td>ECDHE</td><td>ECDSA</td><td>ChaCha20</td><td>Better on MCUs without AES hardware</td></tr><tr><td>TLS_AES_256_GCM_SHA384</td><td>ECDHE</td><td>ECDSA</td><td>AES-256-GCM</td><td>Higher security; higher compute</td></tr></tbody></table>
+
+<p>On ESP32, STM32H7, nRF52840: hardware AES acceleration → use AES-128-GCM. On Cortex-M0/M0+: no hardware AES → ChaCha20-Poly1305 is faster.</p>
+
+<h3>Mutual TLS (mTLS)</h3>
+
+<p>Both server and client authenticate with certificates. Required for device-to-cloud where you need to verify device identity, not just encrypt the channel.</p>
+
+<pre><code class="lang-c">// mbedTLS mTLS configuration (simplified)
+mbedtls_ssl_conf_own_cert(&amp;ssl_conf, &amp;device_cert, &amp;device_key);
+mbedtls_ssl_conf_ca_chain(&amp;ssl_conf, &amp;server_ca_cert, NULL);
+mbedtls_ssl_conf_authmode(&amp;ssl_conf, MBEDTLS_SSL_VERIFY_REQUIRED);</code></pre>
+
+<h3>DTLS for UDP-based Protocols</h3>
+
+<p>CoAP runs over UDP → use DTLS (Datagram TLS). Same security as TLS but handles packet loss and reordering. DTLS 1.3 now standardised (RFC 9147).</p>
+
+<h3>Certificate Pinning</h3>
+
+<p>For devices connecting to a known fixed endpoint, pin the server certificate or public key:</p>
+
+<pre><code class="lang-c">// Compare server cert fingerprint against known-good value
+const uint8_t EXPECTED_SHA256[32] = { 0xAB, 0xCD, ... };
+// Verify in TLS handshake callback
+if (memcmp(cert_fingerprint, EXPECTED_SHA256, 32) != 0) {
+    // Abort connection — possible MITM
+    return MBEDTLS_ERR_X509_CERT_VERIFY_FAILED;
+}</code></pre>
+
+<hr>
+
+<h2>Secure Boot</h2>
+
+<p>Prevents unsigned firmware from running on the device. Critical for preventing firmware replacement with malicious code.</p>
+
+<h3>Chain of Trust</h3>
+
+<pre><code class="lang-text">Hardware Root of Trust (immutable ROM / OTP / Secure Element)
+    → Bootloader (verified by hardware RoT)
+        → Application firmware (verified by bootloader signature)
+            → Loaded modules / OTA updates (verified by app)</code></pre>
+
+<h3>ESP32 Secure Boot V2</h3>
+
+<pre><code class="lang-text">1. Generate signing key: espsecure.py generate_signing_key --version 2 secure_boot_signing_key.pem
+2. Burn public key digest to eFuse (IRREVERSIBLE): espsecure.py burn_efuse secure_boot_signing_key.pem
+3. Sign firmware: espsecure.py sign_data --version 2 --keyfile signing_key.pem firmware.bin
+4. Enable in sdkconfig: CONFIG_SECURE_BOOT=y, CONFIG_SECURE_BOOT_V2_ENABLED=y</code></pre>
+
+<p><strong>Flash Encryption</strong> (complement to Secure Boot):</p>
+<ul><li>Encrypts contents of flash with AES-256-XTS</li><li>Prevents reading firmware from flash via JTAG or desoldering</li><li>Enable alongside Secure Boot: <code>CONFIG_FLASH_ENCRYPTION_ENABLED=y</code></li></ul>
+
+<h3>STM32 Secure Boot (STM32Trust / SBSFU)</h3>
+
+<ul><li>Option byte: RDP (Read-Out Protection) Level 0/1/2</li></ul>
+<p>  - Level 0: Full debug access (development)   - Level 1: Flash not readable via debug; RAM accessible (testing)   - Level 2: Debug interface completely disabled (production — IRREVERSIBLE)</p>
+<ul><li>SBSFU framework: complete dual-bank OTA with signature verification</li></ul>
+
+<h3>MCUboot (Multi-platform)</h3>
+
+<p>MCUboot is the open-source bootloader for Zephyr, mynewt, and others:</p>
+<pre><code class="lang-text">CONFIG_BOOTLOADER_MCUBOOT=y
+CONFIG_MCUBOOT_SIGNATURE_TYPE_RSA=y      # or ECDSA
+CONFIG_MCUBOOT_GENERATE_SIGNING_KEY=y
+# After build, sign with: imgtool sign --key signing_key.pem firmware.bin signed.bin</code></pre>
+
+<hr>
+
+<h2>OTA Update Security</h2>
+
+<p>An insecure OTA mechanism is worse than no OTA — it gives attackers a reliable way to install malware on every device in your fleet.</p>
+
+<h3>OTA Security Checklist</h3>
+
+<ul><li>[ ] Firmware image signed with ECDSA-P256 or RSA-2048+ (minimum)</li><li>[ ] Signature verified by bootloader before swap — not by application</li><li>[ ] Download over TLS 1.2+ with server certificate verification</li><li>[ ] No OTA rollback to a version with known vulnerabilities (anti-rollback counter in eFuse)</li><li>[ ] Version number verified — refuse downgrades unless explicitly authorised</li><li>[ ] Hash (SHA-256) of image verified after download, before bootloader swap</li><li>[ ] Atomic update — partial write treated as corrupt image → rollback to known-good</li><li>[ ] OTA authorisation token — per-device, time-limited token to prevent replay of update commands</li></ul>
+
+<h3>Delta OTA</h3>
+
+<p>Full firmware images are 100KB–4MB+. Delta updates send only the diff:</p>
+<ul><li><strong>JanPatch</strong>: patch format for constrained devices; applies binary diff</li><li><strong>bsdiff/bspatch</strong>: larger device; generates compact diffs</li><li>Savings: 60–90% bandwidth reduction on minor version updates</li><li>Requirement: device must hold complete base image to apply patch</li></ul>
+
+<hr>
+
+<h2>Network Security</h2>
+
+<h3>Network Segmentation</h3>
+
+<p>IoT devices must never be on the same network segment as corporate IT systems:</p>
+
+<pre><code class="lang-text">Internet
+    → Firewall
+        → Corporate LAN (office PCs, servers) — VLAN 10
+        → IoT Network — VLAN 20 (isolated)
+            → IoT devices (sensors, gateways)
+            → IoT gateway → cloud only (no LAN access)
+        → Guest WiFi — VLAN 30</code></pre>
+
+<p>Rules: IoT VLAN can reach internet (specific IPs/ports). IoT VLAN cannot reach corporate LAN. Corporate LAN can reach IoT management interface (read-only dashboards) via reverse proxy — never direct device access.</p>
+
+<h3>Firewall Rules for IoT</h3>
+
+<pre><code class="lang-text"># IoT devices: whitelist outbound only
+ALLOW  IoT → broker.yourcompany.com:8883 (MQTT over TLS)
+ALLOW  IoT → api.yourcompany.com:443 (HTTPS OTA, provisioning)
+ALLOW  IoT → time.cloudflare.com:123 (NTP)
+DENY   IoT → ANY (everything else)
+DENY   ANY → IoT (no inbound connections to devices)</code></pre>
+
+<h3>Disabling Unnecessary Services</h3>
+
+<p>Default-on services that must be disabled in production:</p>
+
+<table><thead><tr><th>Service</th><th>Risk</th><th>Action</th></tr></thead><tbody><tr><td>Telnet</td><td>Cleartext; trivially intercepted</td><td>Disable entirely</td></tr><tr><td>HTTP (port 80)</td><td>Cleartext config/API</td><td>Force HTTPS redirect or disable</td></tr><tr><td>JTAG/SWD</td><td>Full flash read/write/debug access</td><td>Disable (lock) before production</td></tr><tr><td>Serial debug console</td><td>Firmware exposure; command injection</td><td>Disable or require auth</td></tr><tr><td>mDNS/Bonjour</td><td>Device discovery by attacker</td><td>Disable on production network</td></tr><tr><td>UPnP</td><td>Port-forwarding attacks</td><td>Disable on gateway devices</td></tr></tbody></table>
+
+<hr>
+
+<h2>POPIA Compliance for IoT</h2>
+
+<p>IoT devices collecting personal information are subject to POPIA (Protection of Personal Information Act).</p>
+
+<h3>What Counts as Personal Information in IoT</h3>
+
+<table><thead><tr><th>Data Type</th><th>Personal?</th><th>Notes</th></tr></thead><tbody><tr><td>MAC address</td><td>Yes</td><td>Persistent identifier; linked to person/premises</td></tr><tr><td>IP address</td><td>Yes</td><td>Dynamic but linkable</td></tr><tr><td>GPS coordinates</td><td>Yes (precise location)</td><td>Precise location = personal; grid-level = debatable</td></tr><tr><td>Energy consumption (smart meter)</td><td>Yes</td><td>Reveals behaviour patterns (home/away, sleep times)</td></tr><tr><td>Video/image</td><td>Yes</td><td>Biometric data — special category</td></tr><tr><td>Health sensor data</td><td>Yes (special category)</td><td>POPIA s26 — heightened obligations</td></tr><tr><td>Anonymous aggregate (e.g. "50 devices on this block")</td><td>No</td><td>Aggregated; not individually identifiable</td></tr></tbody></table>
+
+<h3>POPIA Obligations for IoT Systems</h3>
+
+<ol><li><strong>Purpose limitation</strong>: Only collect data needed for stated purpose. A temperature sensor for HVAC efficiency monitoring should not collect presence data unless explicitly disclosed.</li><li><strong>Data minimisation</strong>: Don't store raw data longer than needed. Roll up: 1-minute readings → hourly averages after 30 days → daily averages after 1 year.</li><li><strong>Security</strong>: Encrypt data at rest and in transit. Access controls on the IoT platform. Audit logs for data access.</li><li><strong>Retention</strong>: Define and automate deletion. A device decommissioned 3 years ago should have its data purged.</li><li><strong>Breach notification</strong>: A compromised IoT gateway that exfiltrates personal data is a POPIA breach. 72-hour notification clock applies (aligned with POPIA reasonable-time requirement — typically interpreted as 72h).</li><li><strong>Cross-border transfer</strong>: IoT platform hosted in the US/EU requires POPIA cross-border transfer compliance (adequate protection or contractual safeguards).</li></ol>
+
+<h3>Privacy by Design in IoT</h3>
+
+<ul><li>Collect the minimum data needed on-device; compute locally where possible</li><li>Hash or pseudonymise identifiers at the edge before transmission</li><li>Store device serial numbers separately from measurement data (join only when needed)</li><li>Log data access — who queried which device data and when</li></ul>
+
+<hr>
+
+<h2>Common IoT Attack Vectors</h2>
+
+<table><thead><tr><th>Attack</th><th>Description</th><th>Mitigation</th></tr></thead><tbody><tr><td><strong>Default credentials</strong></td><td>Factory username/password unchanged</td><td>Force credential change on first boot; no hardcoded credentials in firmware</td></tr><tr><td><strong>Unencrypted MQTT</strong></td><td>Port 1883 plaintext; trivially sniffed</td><td>Always use MQTT over TLS (port 8883)</td></tr><tr><td><strong>Replay attack</strong></td><td>Attacker re-sends captured valid packet</td><td>Include timestamp + nonce in message; reject messages &gt;30s old</td></tr><tr><td><strong>Firmware extraction</strong></td><td>Read flash via JTAG or desoldering</td><td>Flash encryption (ESP32, STM32 RDP Level 2)</td></tr><tr><td><strong>Physical tampering</strong></td><td>Device opened; UART connected</td><td>Tamper-evident enclosure; epoxy potting; disable debug interfaces</td></tr><tr><td><strong>DNS hijacking</strong></td><td>Device resolves broker hostname to attacker IP</td><td>Certificate verification (not just TLS); certificate pinning for critical infrastructure</td></tr><tr><td><strong>OTA poisoning</strong></td><td>Malicious firmware pushed as update</td><td>Firmware signing; bootloader signature verification</td></tr><tr><td><strong>Side-channel</strong></td><td>Power analysis to extract private keys</td><td>Hardware secure element (ATECC608B); constant-time crypto implementations</td></tr><tr><td><strong>Supply chain</strong></td><td>Counterfeit components; backdoored firmware</td><td>Supplier vetting; firmware signing from day 1; chip authentication (DS28E50)</td></tr></tbody></table>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/iot/security/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>
