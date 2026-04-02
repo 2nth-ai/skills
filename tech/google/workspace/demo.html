@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2nth.ai × Google Workspace — How it works</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #003459; --navy-deep: #001F3F; --navy-mid: #004578;
+  --cyan: #00A8E8; --cyan-dark: #0090C8; --cyan-light: #33BFEF;
+  --cyan-bg: rgba(0,168,232,0.07); --cyan-glow: rgba(0,168,232,0.15);
+  --white: #FFFFFF; --off: #F7F9FB; --gray: #F0F4F8;
+  --text: #0D1B2A; --text-2: #3D5A73; --text-3: #6B8299;
+  --border: #E2EAF1; --border-2: #C8D8E4;
+  --google-blue: #4285F4; --google-red: #EA4335;
+  --google-yellow: #FBBC05; --google-green: #34A853;
+  --success: #1A7A4A; --success-bg: #E8F5EE;
+  --sans: 'Plus Jakarta Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--off); font-family: var(--sans); color: var(--text); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* ─── NAV ─── */
+.nav { position: sticky; top: 0; z-index: 100; background: rgba(0,52,89,0.97); backdrop-filter: blur(16px); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 60px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.nav-brand { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
+.nav-brand span { color: var(--cyan-light); }
+.nav-links { display: flex; gap: 4px; }
+.nav-link { padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: rgba(255,255,255,0.5); text-decoration: none; transition: all 0.18s; cursor: pointer; }
+.nav-link:hover { background: rgba(255,255,255,0.08); color: white; }
+.nav-badge { padding: 4px 12px; border-radius: 100px; background: rgba(0,168,232,0.15); border: 1px solid rgba(0,168,232,0.3); font-size: 10px; font-weight: 600; color: var(--cyan-light); letter-spacing: 1px; }
+
+/* ─── HERO ─── */
+.hero { background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 60%, #004870 100%); padding: 80px 40px 72px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(0,168,232,0.12) 0%, transparent 65%); pointer-events: none; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,168,232,0.1); border: 1px solid rgba(0,168,232,0.25); border-radius: 100px; padding: 6px 18px; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--cyan-light); margin-bottom: 28px; }
+.hero-badge .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+.hero h1 { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; color: white; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.5px; }
+.hero h1 span { color: var(--cyan); }
+.hero-sub { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 300; max-width: 580px; margin: 0 auto 40px; line-height: 1.8; }
+.hero-logos { display: flex; align-items: center; justify-content: center; gap: 20px; }
+.logo-pill { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 18px; }
+.logo-pill span { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); }
+.logo-arrow { font-size: 1.2rem; color: rgba(255,255,255,0.2); }
+.g-dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
+
+/* ─── SECTIONS ─── */
+.section { padding: 72px 40px; max-width: 1080px; margin: 0 auto; }
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--cyan-dark); margin-bottom: 10px; }
+.section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; color: var(--text); margin-bottom: 12px; line-height: 1.2; letter-spacing: -0.3px; }
+.section-title span { color: var(--cyan-dark); }
+.section-sub { font-size: 15px; color: var(--text-2); font-weight: 300; line-height: 1.8; max-width: 620px; margin-bottom: 48px; }
+.divider { border: none; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0; }
+
+/* ─── ARCHITECTURE DIAGRAM ─── */
+.arch { display: grid; grid-template-columns: 1fr 80px 1fr 80px 1fr; gap: 0; align-items: center; margin-bottom: 32px; }
+.arch-box { background: white; border-radius: 14px; border: 1px solid var(--border); padding: 24px 20px; text-align: center; }
+.arch-box.highlight { border-color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-glow); }
+.arch-box.google { border-color: #dadce0; }
+.arch-icon { font-size: 1.8rem; margin-bottom: 10px; }
+.arch-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.arch-desc { font-size: 11px; color: var(--text-3); line-height: 1.55; }
+.arch-apis { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-top: 10px; }
+.arch-api { padding: 2px 8px; border-radius: 100px; font-size: 9px; font-weight: 600; letter-spacing: 0.3px; }
+.api-gmail { background: #fce8e6; color: #c5221f; }
+.api-drive { background: #e6f4ea; color: #137333; }
+.api-sheets { background: #e6f4ea; color: #137333; }
+.api-calendar { background: #e8f0fe; color: #1a73e8; }
+.api-admin { background: #fef7e0; color: #b45309; }
+.arch-arrow { text-align: center; }
+.arch-arrow-line { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.arrow-label { font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
+.arrow-svg { color: var(--cyan); font-size: 1.4rem; }
+.arch-note { grid-column: 1 / -1; background: var(--cyan-bg); border: 1px solid rgba(0,168,232,0.15); border-radius: 10px; padding: 14px 20px; font-size: 12px; color: var(--text-2); display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.arch-note strong { color: var(--navy); }
+
+/* ─── CONNECTION FLOW ─── */
+.connect-card { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+.connect-header { background: var(--navy); padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; }
+.connect-title { font-size: 13px; font-weight: 600; color: white; }
+.connect-status { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; }
+.connect-status.idle { color: rgba(255,255,255,0.4); }
+.connect-status.connecting { color: var(--cyan-light); }
+.connect-status.connected { color: #4ade80; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.connect-status.connected .status-dot { animation: pulse 2s infinite; }
+
+.connect-body { padding: 28px; }
+.steps-list { display: flex; flex-direction: column; gap: 0; }
+.step-item { display: grid; grid-template-columns: 40px 1fr; gap: 16px; position: relative; }
+.step-item::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: -1px; width: 2px; background: var(--border); }
+.step-item:last-child::before { display: none; }
+.step-dot-col { display: flex; flex-direction: column; align-items: center; padding-top: 3px; }
+.step-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); background: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text-3); transition: all 0.4s; flex-shrink: 0; }
+.step-dot.done { background: var(--cyan); border-color: var(--cyan); color: white; }
+.step-dot.active { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-glow); }
+.step-content { padding-bottom: 28px; }
+.step-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.step-desc { font-size: 12px; color: var(--text-3); line-height: 1.65; margin-bottom: 10px; }
+.step-code { background: #0D1B2A; border-radius: 8px; padding: 12px 16px; font-family: var(--mono); font-size: 11px; color: #94c4e8; line-height: 1.7; display: none; }
+.step-code.visible { display: block; }
+.step-code .comment { color: #4a6580; }
+.step-code .key { color: #7dd3fc; }
+.step-code .val { color: #86efac; }
+.step-code .str { color: #fca5a5; }
+
+.connect-footer { padding: 20px 28px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.connect-btn { padding: 11px 24px; border-radius: 8px; border: none; font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+.connect-btn.primary { background: var(--cyan); color: white; }
+.connect-btn.primary:hover { background: var(--cyan-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,168,232,0.3); }
+.connect-btn.primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.connect-btn.ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
+.connect-btn.ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+.connect-note { font-size: 11px; color: var(--text-3); }
+.spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── SKILL GRID ─── */
+.skill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.skill-card { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 20px; transition: all 0.2s; position: relative; overflow: hidden; }
+.skill-card.locked { opacity: 0.45; }
+.skill-card.unlocked { border-color: var(--border); }
+.skill-card.enabled { border-color: var(--cyan); box-shadow: 0 0 0 2px var(--cyan-glow); }
+.skill-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: transparent; transition: background 0.3s; }
+.skill-card.enabled::before { background: linear-gradient(90deg, var(--cyan-dark), var(--cyan-light)); }
+.skill-icon { font-size: 1.5rem; margin-bottom: 10px; }
+.skill-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.skill-desc { font-size: 11px; color: var(--text-3); line-height: 1.6; margin-bottom: 12px; }
+.skill-toggle { display: flex; align-items: center; justify-content: space-between; }
+.skill-status { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.skill-card.locked .skill-status { color: var(--text-3); }
+.skill-card.unlocked .skill-status { color: var(--text-3); }
+.skill-card.enabled .skill-status { color: var(--cyan-dark); }
+.toggle-switch { position: relative; width: 32px; height: 18px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 100px; cursor: pointer; transition: all 0.25s; }
+.toggle-slider::before { content: ''; position: absolute; width: 12px; height: 12px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: transform 0.25s; }
+input:checked + .toggle-slider { background: var(--cyan); }
+input:checked + .toggle-slider::before { transform: translateX(14px); }
+.toggle-switch:has(input:disabled) .toggle-slider { cursor: not-allowed; opacity: 0.5; }
+
+/* ─── TERMINAL ─── */
+.terminal { background: #0D1B2A; border-radius: 12px; overflow: hidden; border: 1px solid #1e3a52; }
+.terminal-bar { background: #162636; padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+.term-dot { width: 10px; height: 10px; border-radius: 50%; }
+.term-dot.red { background: #ff5f57; }
+.term-dot.yellow { background: #febc2e; }
+.term-dot.green { background: #28c840; }
+.term-title { font-size: 11px; color: rgba(255,255,255,0.3); font-family: var(--mono); margin-left: 8px; }
+.terminal-body { padding: 20px; font-family: var(--mono); font-size: 12px; line-height: 1.8; min-height: 220px; }
+.t-prompt { color: #4a7a9b; }
+.t-cmd { color: #94c4e8; }
+.t-comment { color: #4a6580; }
+.t-key { color: #7dd3fc; }
+.t-val { color: #86efac; }
+.t-str { color: #fca5a5; }
+.t-success { color: #4ade80; }
+.t-warn { color: #fbbf24; }
+.t-cursor { display: inline-block; width: 8px; height: 14px; background: var(--cyan); animation: blink 1s step-end infinite; vertical-align: text-bottom; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ─── ADMIN PANEL ─── */
+.admin-panel { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+.admin-header { background: linear-gradient(135deg, var(--navy-deep), var(--navy)); padding: 20px 28px; display: flex; align-items: center; gap: 14px; }
+.admin-avatar { width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.admin-info .name { font-size: 14px; font-weight: 600; color: white; }
+.admin-info .role { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+.admin-info .domain { font-size: 11px; color: var(--cyan-light); margin-top: 2px; }
+.admin-body { padding: 24px 28px; }
+.admin-section-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-3); margin-bottom: 14px; }
+.admin-scope-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.scope-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 8px; background: var(--off); border: 1px solid var(--border); }
+.scope-info { display: flex; align-items: center; gap: 10px; }
+.scope-icon { font-size: 1rem; }
+.scope-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.scope-detail { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+.scope-badge { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 100px; letter-spacing: 0.5px; }
+.scope-read { background: #e8f5ee; color: var(--success); }
+.scope-write { background: #fef3e2; color: #b45309; }
+.scope-admin { background: #fce8e6; color: #c5221f; }
+
+.admin-impact { background: var(--cyan-bg); border: 1px solid rgba(0,168,232,0.15); border-radius: 10px; padding: 16px 18px; margin-bottom: 20px; }
+.impact-title { font-size: 11px; font-weight: 700; color: var(--navy); margin-bottom: 8px; letter-spacing: 0.5px; }
+.impact-list { display: flex; flex-direction: column; gap: 5px; }
+.impact-item { font-size: 12px; color: var(--text-2); display: flex; gap: 8px; line-height: 1.5; }
+.impact-item::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+.admin-footer { padding: 16px 28px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+
+/* ─── WHAT CHANGES ─── */
+.change-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.change-card { border-radius: 12px; padding: 24px; }
+.change-card.before { background: #fef2f2; border: 1px solid #fecaca; }
+.change-card.after { background: var(--success-bg); border: 1px solid #bbf7d0; }
+.change-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+.change-card.before .change-label { color: #b91c1c; }
+.change-card.after .change-label { color: var(--success); }
+.change-list { display: flex; flex-direction: column; gap: 8px; }
+.change-item { font-size: 13px; display: flex; gap: 10px; line-height: 1.5; }
+.change-card.before .change-item::before { content: '✕'; color: #b91c1c; flex-shrink: 0; font-size: 11px; margin-top: 2px; }
+.change-card.after .change-item::before { content: '✓'; color: var(--success); flex-shrink: 0; font-size: 11px; margin-top: 2px; font-weight: 700; }
+.change-card.before .change-item { color: #7f1d1d; }
+.change-card.after .change-item { color: #14532d; }
+
+@media (max-width: 700px) {
+  .arch { grid-template-columns: 1fr; }
+  .arch-arrow { display: none; }
+  .change-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">skills<span>.2nth.ai</span></div>
+  <div class="nav-links">
+    <a class="nav-link" onclick="scrollTo('arch')">Architecture</a>
+    <a class="nav-link" onclick="scrollTo('connect')">Connect</a>
+    <a class="nav-link" onclick="scrollTo('skills')">Skills</a>
+    <a class="nav-link" onclick="scrollTo('admin')">Admin</a>
+  </div>
+  <div class="nav-badge">Concept · Google Workspace</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><span class="pulse"></span> 2nth.ai Infrastructure Concept</div>
+  <h1>One Worker.<br><span>Every Workspace API.</span></h1>
+  <p class="hero-sub">A single 2nth.ai bridge Worker, authorised by one admin, unlocks Gmail, Drive, Sheets, Calendar, and the Admin SDK for every skill in your organisation — without individual user consent.</p>
+  <div class="hero-logos">
+    <div class="logo-pill">
+      <span style="font-size:1.1rem;">⚡</span>
+      <span>2nth.ai Worker</span>
+    </div>
+    <div class="logo-arrow">⟷</div>
+    <div class="logo-pill">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      <span>Google Workspace</span>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<div id="arch">
+<hr class="divider">
+<div class="section">
+  <div class="section-label">Architecture</div>
+  <h2 class="section-title">The bridge. <span>One connection, all APIs.</span></h2>
+  <p class="section-sub">A service account in a GCP project holds the trust. Domain-wide delegation grants it the right to act on behalf of any user in the Workspace org. The 2nth.ai bridge Worker holds the key — every other skill calls the bridge, never Google directly.</p>
+
+  <div class="arch">
+    <div class="arch-box google">
+      <div class="arch-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      </div>
+      <div class="arch-name">Google Workspace Org</div>
+      <div class="arch-desc">The trusted tenant — admin grants domain-wide delegation once</div>
+      <div class="arch-apis">
+        <span class="arch-api api-gmail">Gmail</span>
+        <span class="arch-api api-drive">Drive</span>
+        <span class="arch-api api-sheets">Sheets</span>
+        <span class="arch-api api-calendar">Calendar</span>
+        <span class="arch-api api-admin">Admin SDK</span>
+      </div>
+    </div>
+
+    <div class="arch-arrow">
+      <div class="arch-arrow-line">
+        <div class="arrow-label">DWD trust</div>
+        <div class="arrow-svg">⟷</div>
+        <div class="arrow-label">JWT + token</div>
+      </div>
+    </div>
+
+    <div class="arch-box highlight">
+      <div class="arch-icon">⚡</div>
+      <div class="arch-name">workspace-bridge</div>
+      <div class="arch-desc">Cloudflare Worker — mints JWTs, holds the service account key, exposes internal API endpoints</div>
+      <div class="arch-apis" style="margin-top:10px;">
+        <span class="arch-api" style="background:var(--cyan-bg);color:var(--cyan-dark);">/gmail</span>
+        <span class="arch-api" style="background:var(--cyan-bg);color:var(--cyan-dark);">/drive</span>
+        <span class="arch-api" style="background:var(--cyan-bg);color:var(--cyan-dark);">/sheets</span>
+        <span class="arch-api" style="background:var(--cyan-bg);color:var(--cyan-dark);">/calendar</span>
+      </div>
+    </div>
+
+    <div class="arch-arrow">
+      <div class="arch-arrow-line">
+        <div class="arrow-label">service binding</div>
+        <div class="arrow-svg">⟷</div>
+        <div class="arrow-label">no public HTTP</div>
+      </div>
+    </div>
+
+    <div class="arch-box">
+      <div class="arch-icon">🧠</div>
+      <div class="arch-name">2nth.ai Skills</div>
+      <div class="arch-desc">Any Worker in the account calls the bridge via service binding — email triage, doc search, scheduling, reporting</div>
+      <div class="arch-apis" style="margin-top:10px;">
+        <span class="arch-api" style="background:#f0f4f8;color:var(--text-2);">Email AI</span>
+        <span class="arch-api" style="background:#f0f4f8;color:var(--text-2);">Doc RAG</span>
+        <span class="arch-api" style="background:#f0f4f8;color:var(--text-2);">Scheduling</span>
+      </div>
+    </div>
+
+    <div class="arch-note">
+      <span>💡</span>
+      <div><strong>The key insight:</strong> The service account private key never leaves the Worker secrets store. No skill, no user, and no client ever touches it. The bridge is the only surface that holds credentials — everything else just calls the bridge.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- CONNECTION FLOW -->
+<div id="connect">
+<div class="section">
+  <div class="section-label">Connection flow</div>
+  <h2 class="section-title">What happens when <span>you connect.</span></h2>
+  <p class="section-sub">Three steps. The GCP side and the Cloudflare side. Once complete, the bridge is live and every authorised skill can reach the Workspace tenant.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+
+    <div class="connect-card">
+      <div class="connect-header">
+        <div class="connect-title">workspace-bridge · Connection wizard</div>
+        <div class="connect-status idle" id="conn-status">
+          <div class="status-dot"></div> Not connected
+        </div>
+      </div>
+      <div class="connect-body">
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-dot-col">
+              <div class="step-dot" id="dot-1">1</div>
+            </div>
+            <div class="step-content">
+              <div class="step-title">GCP service account created</div>
+              <div class="step-desc">A dedicated service account in the <code style="font-family:var(--mono);font-size:11px;background:#f0f4f8;padding:1px 5px;border-radius:3px;">2nth-workspace-bridge</code> GCP project. Its client ID is the identifier Google uses to recognise it in any Workspace tenant.</div>
+              <div class="step-code" id="code-1">
+<span class="comment"># Service account identity</span>
+<span class="key">email</span>: <span class="val">workspace-bridge@</span>
+       <span class="val">2nth-workspace-bridge.iam</span>
+       <span class="val">.gserviceaccount.com</span>
+<span class="key">client_id</span>: <span class="str">"108432917654321098765"</span>
+<span class="key">project</span>: <span class="str">"2nth-workspace-bridge"</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-dot-col">
+              <div class="step-dot" id="dot-2">2</div>
+            </div>
+            <div class="step-content">
+              <div class="step-title">Admin grants domain-wide delegation</div>
+              <div class="step-desc">The Workspace super admin pastes the client ID into admin.google.com → Security → API Controls → Domain-wide Delegation. This authorises the service account to act as any user in the org — the single admin action that unlocks everything.</div>
+              <div class="step-code" id="code-2">
+<span class="comment"># admin.google.com → DWD entry</span>
+<span class="key">client_id</span>:  <span class="str">"108432917654321098765"</span>
+<span class="key">scopes</span>:
+  <span class="val">gmail.readonly</span>
+  <span class="val">gmail.send</span>
+  <span class="val">drive.readonly</span>
+  <span class="val">spreadsheets.readonly</span>
+  <span class="val">calendar.readonly</span>
+  <span class="val">admin.directory.user.readonly</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-dot-col">
+              <div class="step-dot" id="dot-3">3</div>
+            </div>
+            <div class="step-content">
+              <div class="step-title">Secrets stored in Cloudflare</div>
+              <div class="step-desc">The service account private key and email are stored as Cloudflare Worker secrets — encrypted at rest, never logged, never exposed. The bridge Worker is deployed and the connection is live.</div>
+              <div class="step-code" id="code-3">
+<span class="comment"># wrangler secret put (interactive)</span>
+<span class="key">GOOGLE_SERVICE_ACCOUNT_EMAIL</span>
+  → <span class="val">workspace-bridge@...</span>
+
+<span class="key">GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY</span>
+  → <span class="val">-----BEGIN PRIVATE KEY-----</span>
+    <span class="val">MIIEvgIBADANBgkq...</span>
+
+<span class="key">GOOGLE_WORKSPACE_DOMAIN</span>
+  → <span class="val">2nth.ai</span>
+
+<span class="t-success">✓ Bridge deployed · Skills available</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="connect-footer">
+        <div class="connect-note" id="conn-note">Walk through the connection steps to see how the bridge comes alive.</div>
+        <div style="display:flex;gap:8px;">
+          <button class="connect-btn ghost" onclick="resetConnection()" id="reset-btn" style="display:none;">Reset</button>
+          <button class="connect-btn primary" onclick="nextStep()" id="next-btn">
+            <span id="next-label">Begin connection →</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terminal -->
+    <div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="term-dot red"></div>
+          <div class="term-dot yellow"></div>
+          <div class="term-dot green"></div>
+          <div class="term-title">workspace-bridge · wrangler dev</div>
+        </div>
+        <div class="terminal-body" id="terminal">
+          <div><span class="t-prompt">$ </span><span class="t-cmd">wrangler dev src/index.ts</span></div>
+          <div><span class="t-comment">  ⛅ wrangler 4.76.0</span></div>
+          <div><span class="t-comment">  ✨ Compiled Worker successfully</span></div>
+          <div><span class="t-comment">  ⎔ Starting local server...</span></div>
+          <div><span class="t-comment">  [wrangler:info] Ready on http://localhost:8787</span></div>
+          <div style="margin-top:8px;"><span class="t-comment"># Waiting for connection...</span></div>
+          <div><span class="t-cursor"></span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;background:white;border-radius:12px;border:1px solid var(--border);padding:20px;" id="api-result" style="display:none;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);margin-bottom:12px;">Live API test result</div>
+        <div id="api-result-body" style="font-size:12px;color:var(--text-2);line-height:1.75;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- SKILLS -->
+<div id="skills">
+<div class="section" style="background:var(--off);padding-top:72px;padding-bottom:72px;max-width:100%;margin:0;">
+<div style="max-width:1080px;margin:0 auto;padding:0 40px;">
+  <div class="section-label">Available skills</div>
+  <h2 class="section-title">What the bridge <span>unlocks.</span></h2>
+  <p class="section-sub">Once the admin completes the connection, these skills become available across the entire 2nth.ai platform. Each skill calls the bridge via a Cloudflare service binding — no credentials, no OAuth flows for individual users.</p>
+
+  <div class="skill-grid" id="skill-grid">
+    <div class="skill-card locked" id="sk-gmail-read">
+      <div class="skill-icon">📬</div>
+      <div class="skill-name">Gmail · Inbox intelligence</div>
+      <div class="skill-desc">Read, search, and classify inbound email using Workers AI. Route enquiries, orders, and complaints automatically.</div>
+      <div class="skill-toggle">
+        <div class="skill-status" id="st-gmail-read">Requires connection</div>
+        <label class="toggle-switch"><input type="checkbox" disabled onchange="toggleSkill(this,'sk-gmail-read','st-gmail-read')"><div class="toggle-slider"></div></label>
+      </div>
+    </div>
+
+    <div class="skill-card locked" id="sk-gmail-send">
+      <div class="skill-icon">✉️</div>
+      <div class="skill-name">Gmail · AI-drafted replies</div>
+      <div class="skill-desc">Claude drafts replies in the user's voice. Human reviews, approves, and sends — or auto-sends for routine confirmations.</div>
+      <div class="skill-toggle">
+        <div class="skill-status" id="st-gmail-send">Requires connection</div>
+        <label class="toggle-switch"><input type="checkbox" disabled onchange="toggleSkill(this,'sk-gmail-send','st-gmail-send')"><div class="toggle-slider"></div></label>
+      </div>
+    </div>
+
+    <div class="skill-card locked" id="sk-drive">
+      <div class="skill-icon">📁</div>
+      <div class="skill-name">Drive · Document search</div>
+      <div class="skill-desc">Ingest Drive docs into Vectorize for semantic search. Ask questions across your entire document library in plain English.</div>
+      <div class="skill-toggle">
+        <div class="skill-status" id="st-drive">Requires connection</div>
+        <label class="toggle-switch"><input type="checkbox" disabled onchange="toggleSkill(this,'sk-drive','st-drive')"><div class="toggle-slider"></div></label>
+      </div>
+    </div>
+
+    <div class="skill-card locked" id="sk-sheets">
+      <div class="skill-icon">📊</div>
+      <div class="skill-name">Sheets · Live data sync</div>
+      <div class="skill-desc">Read Google Sheets as config tables or live data sources. No database needed for pricing, product lists, or client settings.</div>
+      <div class="skill-toggle">
+        <div class="skill-status" id="st-sheets">Requires connection</div>
+        <label class="toggle-switch"><input type="checkbox" disabled onchange="toggleSkill(this,'sk-sheets','st-sheets')"><div class="toggle-slider"></div></label>
+      </div>
+    </div>
+
+    <div class="skill-card locked" id="sk-calendar">
+      <div class="skill-icon">📅</div>
+      <div class="skill-name">Calendar · Availability AI</div>
+      <div class="skill-desc">Read real calendar availability before confirming bookings. AI scheduling assistant that checks before it commits.</div>
+      <div class="skill-toggle">
+        <div class="skill-status" id="st-calendar">Requires connection</div>
+        <label class="toggle-switch"><input type="checkbox" disabled onchange="toggleSkill(this,'sk-calendar','st-calendar')"><div class="toggle-slider"></div></label>
+      </div>
+    </div>
+
+    <div class="skill-card locked" id="sk-admin">
+      <div class="skill-icon">🔐</div>
+      <div class="skill-name">Admin SDK · Org intelligence</div>
+      <div class="skill-desc">Read user directory, groups, and org units. Power AI onboarding flows, access provisioning, and directory-aware automations.</div>
+      <div class="skill-toggle">
+        <div class="skill-status" id="st-admin">Requires connection</div>
+        <label class="toggle-switch"><input type="checkbox" disabled onchange="toggleSkill(this,'sk-admin','st-admin')"><div class="toggle-slider"></div></label>
+      </div>
+    </div>
+  </div>
+
+  <div id="unlock-note" style="margin-top:20px;padding:14px 20px;background:var(--cyan-bg);border:1px solid rgba(0,168,232,0.15);border-radius:10px;font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:10px;">
+    <span>🔒</span>
+    <span>Complete the connection flow above to unlock skills. The admin enables them once — they're available to every authorised skill in the platform from that point on.</span>
+  </div>
+</div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- ADMIN PANEL -->
+<div id="admin">
+<div class="section">
+  <div class="section-label">Admin experience</div>
+  <h2 class="section-title">What the admin <span>actually sees.</span></h2>
+  <p class="section-sub">From the Workspace admin's perspective, connecting 2nth.ai is a single authorisation action — one entry in the domain-wide delegation list. From that point, they can see exactly what scopes are granted and toggle skills on or off org-wide without touching any code.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+
+    <div class="admin-panel">
+      <div class="admin-header">
+        <div class="admin-avatar">👤</div>
+        <div class="admin-info">
+          <div class="name">Craig Leppan</div>
+          <div class="role">Super Admin</div>
+          <div class="domain">2nth.ai</div>
+        </div>
+        <div style="margin-left:auto;text-align:right;">
+          <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;">Workspace trust</div>
+          <div style="font-size:11px;font-weight:600;color:#4ade80;display:flex;align-items:center;gap:5px;justify-content:flex-end;"><span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block;"></span> Active</div>
+        </div>
+      </div>
+      <div class="admin-body">
+        <div class="admin-section-title">Authorised scopes · workspace-bridge</div>
+        <div class="admin-scope-list">
+          <div class="scope-row">
+            <div class="scope-info"><div class="scope-icon">📬</div><div><div class="scope-name">Gmail</div><div class="scope-detail">gmail.googleapis.com · Read + Send</div></div></div>
+            <span class="scope-badge scope-read">Read</span>
+          </div>
+          <div class="scope-row">
+            <div class="scope-info"><div class="scope-icon">📁</div><div><div class="scope-name">Drive</div><div class="scope-detail">drive.googleapis.com · Read only</div></div></div>
+            <span class="scope-badge scope-read">Read</span>
+          </div>
+          <div class="scope-row">
+            <div class="scope-info"><div class="scope-icon">📊</div><div><div class="scope-name">Sheets</div><div class="scope-detail">sheets.googleapis.com · Read only</div></div></div>
+            <span class="scope-badge scope-read">Read</span>
+          </div>
+          <div class="scope-row">
+            <div class="scope-info"><div class="scope-icon">📅</div><div><div class="scope-name">Calendar</div><div class="scope-detail">calendar-json.googleapis.com · Read only</div></div></div>
+            <span class="scope-badge scope-read">Read</span>
+          </div>
+          <div class="scope-row">
+            <div class="scope-info"><div class="scope-icon">🔐</div><div><div class="scope-name">Admin SDK</div><div class="scope-detail">admin.googleapis.com · Directory read</div></div></div>
+            <span class="scope-badge scope-admin">Privileged</span>
+          </div>
+        </div>
+
+        <div class="admin-impact">
+          <div class="impact-title">What this means for your org</div>
+          <div class="impact-list">
+            <div class="impact-item">All authorised 2nth.ai skills can act on behalf of any user in <strong>2nth.ai</strong></div>
+            <div class="impact-item">No individual user needs to see a Google consent screen</div>
+            <div class="impact-item">Revoke any time by removing this entry from domain-wide delegation</div>
+            <div class="impact-item">Individual skills can be toggled on/off without touching the trust grant</div>
+          </div>
+        </div>
+      </div>
+      <div class="admin-footer">
+        <button class="connect-btn primary" onclick="simulateRevoke()" style="font-size:11px;padding:8px 16px;">Simulate revoke →</button>
+        <button class="connect-btn ghost" onclick="simulateAudit()" style="font-size:11px;padding:8px 16px;">View audit log</button>
+      </div>
+    </div>
+
+    <!-- Before / After -->
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      <div class="change-grid">
+        <div class="change-card before">
+          <div class="change-label">Without bridge</div>
+          <div class="change-list">
+            <div class="change-item">Every user manually connects their Google account</div>
+            <div class="change-item">Each skill manages its own tokens and refresh logic</div>
+            <div class="change-item">Broken when users change passwords or revoke access</div>
+            <div class="change-item">No org-wide visibility — admin can't see what's connected</div>
+            <div class="change-item">Turning off a skill requires revoking per-user</div>
+          </div>
+        </div>
+        <div class="change-card after">
+          <div class="change-label">With bridge</div>
+          <div class="change-list">
+            <div class="change-item">Admin authorises once — all users covered immediately</div>
+            <div class="change-item">One service account, one key, one place to audit</div>
+            <div class="change-item">Not tied to any individual user's credentials</div>
+            <div class="change-item">Admin sees every authorised scope in one panel</div>
+            <div class="change-item">Remove trust entry = all skills disconnected instantly</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:white;border-radius:12px;border:1px solid var(--border);padding:20px;" id="audit-panel" style="display:none;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;">Simulated audit log</div>
+        <div id="audit-body" style="font-family:var(--mono);font-size:11px;line-height:2;color:var(--text-2);"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<footer style="padding:36px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+  <div style="font-size:11px;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;">2nth.ai × Google Workspace · Conceptual demo · Skills platform</div>
+  <div style="display:flex;gap:16px;">
+    <a href="https://skills.2nth.ai" target="_blank" style="font-size:11px;color:var(--text-3);text-decoration:none;">skills.2nth.ai</a>
+    <a href="https://2nth.ai" target="_blank" style="font-size:11px;color:var(--text-3);text-decoration:none;">2nth.ai</a>
+  </div>
+</footer>
+
+<script>
+// ─── Smooth scroll ───────────────────────────────────────────────────────────
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── Connection flow ─────────────────────────────────────────────────────────
+let currentStep = 0;
+const STEPS = [
+  {
+    note: 'Step 1 of 3 — GCP service account identity confirmed.',
+    terminal: [
+      '<span class="t-prompt">$ </span><span class="t-cmd">gcloud iam service-accounts describe \\</span>',
+      '  <span class="t-cmd">workspace-bridge@2nth-workspace-bridge.iam.gserviceaccount.com</span>',
+      '',
+      '<span class="t-key">email</span>: <span class="t-val">workspace-bridge@2nth-workspace-bridge.iam.gserviceaccount.com</span>',
+      '<span class="t-key">uniqueId</span>: <span class="t-str">"108432917654321098765"</span>',
+      '<span class="t-key">displayName</span>: <span class="t-str">"2nth Workspace Bridge"</span>',
+      '<span class="t-key">projectId</span>: <span class="t-str">"2nth-workspace-bridge"</span>',
+      '',
+      '<span class="t-success">✓ Service account ready</span>',
+    ],
+  },
+  {
+    note: 'Step 2 of 3 — Domain-wide delegation granted in admin.google.com.',
+    terminal: [
+      '<span class="t-comment"># Admin confirmed DWD grant in Workspace console</span>',
+      '<span class="t-comment"># Verifying delegation is active...</span>',
+      '',
+      '<span class="t-prompt">$ </span><span class="t-cmd">curl -s "https://www.googleapis.com/oauth2/v1/</span>',
+      '       <span class="t-cmd">tokeninfo?access_token=$TOKEN"</span>',
+      '',
+      '<span class="t-key">issued_to</span>:  <span class="t-str">"108432917654321098765"</span>',
+      '<span class="t-key">audience</span>:   <span class="t-str">"108432917654321098765"</span>',
+      '<span class="t-key">scope</span>:      <span class="t-val">gmail.readonly gmail.send</span>',
+      '           <span class="t-val">drive.readonly spreadsheets.readonly</span>',
+      '           <span class="t-val">calendar.readonly admin.directory.user.readonly</span>',
+      '<span class="t-key">expires_in</span>: <span class="t-val">3599</span>',
+      '',
+      '<span class="t-success">✓ Domain-wide delegation confirmed</span>',
+    ],
+  },
+  {
+    note: 'Connected. All skills unlocked — the bridge is live.',
+    terminal: [
+      '<span class="t-comment"># Secrets stored · Worker deployed · Running first API test</span>',
+      '',
+      '<span class="t-prompt">$ </span><span class="t-cmd">curl -X POST http://localhost:8787/gmail/list \\</span>',
+      "  <span class=\"t-cmd\">-d '{\"user\":\"craig@2nth.ai\",\"q\":\"is:unread\",\"maxResults\":3}'</span>",
+      '',
+      '<span class="t-key">messages</span>: [',
+      '  { <span class="t-key">id</span>: <span class="t-str">"18f3a2c..."</span>, <span class="t-key">threadId</span>: <span class="t-str">"18f3a2c..."</span> },',
+      '  { <span class="t-key">id</span>: <span class="t-str">"18f39b1..."</span>, <span class="t-key">threadId</span>: <span class="t-str">"18f38d4..."</span> },',
+      '  { <span class="t-key">id</span>: <span class="t-str">"18f2fe8..."</span>, <span class="t-key">threadId</span>: <span class="t-str">"18f2fe8..."</span> }',
+      ']',
+      '<span class="t-key">resultSizeEstimate</span>: <span class="t-val">47</span>',
+      '',
+      '<span class="t-success">✓ Bridge live · 3 unread messages returned</span>',
+    ],
+  },
+];
+
+function nextStep() {
+  currentStep++;
+  const s = STEPS[currentStep - 1];
+
+  // Update step dots
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    const code = document.getElementById(`code-${i}`);
+    if (i < currentStep) { dot.className = 'step-dot done'; dot.textContent = '✓'; }
+    else if (i === currentStep) { dot.className = 'step-dot active'; }
+    if (i === currentStep) code.classList.add('visible');
+  }
+
+  // Update terminal
+  const term = document.getElementById('terminal');
+  term.innerHTML = s.terminal.map(l => `<div>${l}</div>`).join('') + '<div><span class="t-cursor"></span></div>';
+
+  // Update note
+  document.getElementById('conn-note').textContent = s.note;
+
+  // Update status
+  const status = document.getElementById('conn-status');
+  if (currentStep < 3) {
+    status.className = 'connect-status connecting';
+    status.innerHTML = '<div class="status-dot"></div> Connecting...';
+  } else {
+    status.className = 'connect-status connected';
+    status.innerHTML = '<div class="status-dot"></div> Connected';
+    unlockSkills();
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('reset-btn').style.display = 'block';
+  }
+
+  // Update button label
+  const labels = ['', 'Step 2: Grant DWD →', 'Step 3: Store secrets →', ''];
+  if (currentStep < 3) document.getElementById('next-label').textContent = labels[currentStep];
+}
+
+function resetConnection() {
+  currentStep = 0;
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.className = 'step-dot'; dot.textContent = i;
+    document.getElementById(`code-${i}`).classList.remove('visible');
+  }
+  document.getElementById('conn-status').className = 'connect-status idle';
+  document.getElementById('conn-status').innerHTML = '<div class="status-dot"></div> Not connected';
+  document.getElementById('conn-note').textContent = 'Walk through the connection steps to see how the bridge comes alive.';
+  document.getElementById('next-btn').style.display = 'flex';
+  document.getElementById('next-label').textContent = 'Begin connection →';
+  document.getElementById('reset-btn').style.display = 'none';
+  document.getElementById('terminal').innerHTML = `
+    <div><span class="t-prompt">$ </span><span class="t-cmd">wrangler dev src/index.ts</span></div>
+    <div><span class="t-comment">  ⛅ wrangler 4.76.0</span></div>
+    <div><span class="t-comment">  ✨ Compiled Worker successfully</span></div>
+    <div><span class="t-comment">  ⎔ Starting local server...</span></div>
+    <div><span class="t-comment">  [wrangler:info] Ready on http://localhost:8787</span></div>
+    <div style="margin-top:8px;"><span class="t-comment"># Waiting for connection...</span></div>
+    <div><span class="t-cursor"></span></div>
+  `;
+  lockSkills();
+}
+
+// ─── Skills ──────────────────────────────────────────────────────────────────
+const skillIds = ['sk-gmail-read','sk-gmail-send','sk-drive','sk-sheets','sk-calendar','sk-admin'];
+const statusIds = ['st-gmail-read','st-gmail-send','st-drive','st-sheets','st-calendar','st-admin'];
+
+function unlockSkills() {
+  skillIds.forEach((id, i) => {
+    setTimeout(() => {
+      const card = document.getElementById(id);
+      card.className = 'skill-card unlocked';
+      const input = card.querySelector('input');
+      input.disabled = false;
+      document.getElementById(statusIds[i]).textContent = 'Available · toggle to enable';
+    }, i * 120);
+  });
+  document.getElementById('unlock-note').innerHTML = '<span>✓</span><span><strong>Bridge connected.</strong> Toggle skills on to enable them for your platform. Each skill calls the bridge via service binding — no additional credentials needed.</span>';
+  document.getElementById('unlock-note').style.background = 'var(--success-bg)';
+  document.getElementById('unlock-note').style.borderColor = '#bbf7d0';
+}
+
+function lockSkills() {
+  skillIds.forEach((id, i) => {
+    const card = document.getElementById(id);
+    card.className = 'skill-card locked';
+    const input = card.querySelector('input');
+    input.disabled = true; input.checked = false;
+    document.getElementById(statusIds[i]).textContent = 'Requires connection';
+  });
+  document.getElementById('unlock-note').innerHTML = '<span>🔒</span><span>Complete the connection flow above to unlock skills. The admin enables them once — they\'re available to every authorised skill in the platform from that point on.</span>';
+  document.getElementById('unlock-note').style.background = 'var(--cyan-bg)';
+  document.getElementById('unlock-note').style.borderColor = 'rgba(0,168,232,0.15)';
+}
+
+function toggleSkill(input, cardId, statusId) {
+  const card = document.getElementById(cardId);
+  const status = document.getElementById(statusId);
+  if (input.checked) {
+    card.className = 'skill-card enabled';
+    status.textContent = 'Enabled · org-wide';
+  } else {
+    card.className = 'skill-card unlocked';
+    status.textContent = 'Available · toggle to enable';
+  }
+}
+
+// ─── Admin simulations ───────────────────────────────────────────────────────
+function simulateRevoke() {
+  const panel = document.getElementById('audit-panel');
+  panel.style.display = 'block';
+  document.getElementById('audit-body').innerHTML = `
+    <div style="color:#ef4444;">⚠ Simulating revocation of domain-wide delegation...</div>
+    <div style="color:var(--text-3);margin-top:4px;">In production this would remove the entry from admin.google.com → Security → Domain-wide Delegation</div>
+    <div style="margin-top:8px;color:#fbbf24;">→ All active access tokens expire within 1 hour</div>
+    <div style="color:#fbbf24;">→ New token requests fail immediately</div>
+    <div style="color:#fbbf24;">→ All 2nth.ai Workspace skills go offline</div>
+    <div style="margin-top:8px;color:#4ade80;">→ No user credentials affected</div>
+    <div style="color:#4ade80;">→ Re-adding the client ID restores full access instantly</div>
+  `;
+  setTimeout(() => { panel.style.display = 'none'; }, 6000);
+}
+
+function simulateAudit() {
+  const panel = document.getElementById('audit-panel');
+  panel.style.display = 'block';
+  const now = new Date();
+  const fmt = (d) => d.toISOString().replace('T',' ').slice(0,19);
+  document.getElementById('audit-body').innerHTML = `
+    <div><span style="color:var(--text-3)">${fmt(new Date(now-3600000*2))}</span>  <span style="color:#4ade80;">GRANT</span>  workspace-bridge · 6 scopes authorised by craig@2nth.ai</div>
+    <div><span style="color:var(--text-3)">${fmt(new Date(now-3600000))}</span>    <span style="color:#7dd3fc;">TOKEN</span>  access_token issued · sub=craig@2nth.ai · gmail.readonly</div>
+    <div><span style="color:var(--text-3)">${fmt(new Date(now-1800000))}</span>    <span style="color:#7dd3fc;">TOKEN</span>  access_token issued · sub=craig@2nth.ai · drive.readonly</div>
+    <div><span style="color:var(--text-3)">${fmt(new Date(now-900000))}</span>     <span style="color:#7dd3fc;">TOKEN</span>  access_token issued · sub=craig@2nth.ai · spreadsheets.readonly</div>
+    <div><span style="color:var(--text-3)">${fmt(now)}</span>         <span style="color:#fbbf24;">SKILL</span>  gmail-inbox-intelligence enabled by admin</div>
+  `;
+  setTimeout(() => { panel.style.display = 'none'; }, 8000);
+}
+</script>
+</body>
+</html>

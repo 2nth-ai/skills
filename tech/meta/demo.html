@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2nth.ai × Meta Business — WhatsApp AI Pattern</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #003459; --navy-deep: #001F3F;
+  --cyan: #00A8E8; --cyan-dark: #0090C8; --cyan-light: #33BFEF;
+  --cyan-bg: rgba(0,168,232,0.07);
+  --wa-green: #128C7E; --wa-light: #25D366; --wa-teal: #075E54;
+  --wa-bg: #ECE5DD; --wa-header: #128C7E;
+  --wa-out: #DCF8C6; --wa-in: #FFFFFF;
+  --wa-blue: #34B7F1; --wa-gray: #8696A0;
+  --wa-sidebar: #FFFFFF; --wa-sidebar-hover: #F5F6F6;
+  --off: #F7F9FB;
+  --text: #0D1B2A; --text-2: #3D5A73; --text-3: #6B8299;
+  --border: #E2EAF1;
+  --success: #1A7A4A; --success-bg: #E8F5EE;
+  --sans: 'Plus Jakarta Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--off); font-family: var(--sans); color: var(--text); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* NAV */
+.nav { position: sticky; top: 0; z-index: 100; background: rgba(0,52,89,0.97); backdrop-filter: blur(16px); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 60px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.nav-brand { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
+.nav-brand span { color: var(--cyan-light); }
+.nav-links { display: flex; gap: 4px; }
+.nav-link { padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: rgba(255,255,255,0.5); text-decoration: none; transition: all 0.18s; cursor: pointer; }
+.nav-link:hover { background: rgba(255,255,255,0.08); color: white; }
+.nav-badge { padding: 4px 12px; border-radius: 100px; background: rgba(18,140,126,0.25); border: 1px solid rgba(37,211,102,0.4); font-size: 10px; font-weight: 600; color: #4dd890; letter-spacing: 1px; }
+
+/* HERO */
+.hero { background: linear-gradient(160deg, var(--navy-deep) 0%, #061a0f 50%, #0a2318 100%); padding: 80px 40px 72px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(37,211,102,0.12) 0%, transparent 65%); pointer-events: none; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(18,140,126,0.2); border: 1px solid rgba(37,211,102,0.35); border-radius: 100px; padding: 6px 18px; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #4dd890; margin-bottom: 28px; }
+.hero-badge .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--wa-light); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+.hero h1 { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; color: white; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.5px; }
+.hero h1 span { color: #4dd890; }
+.hero-sub { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 300; max-width: 600px; margin: 0 auto 40px; line-height: 1.8; }
+.hero-pills { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.hero-pill { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 9px 16px; }
+.hero-pill span { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.75); }
+.hero-arrow { font-size: 1rem; color: rgba(255,255,255,0.2); }
+
+/* SECTIONS */
+.section { padding: 72px 40px; max-width: 1080px; margin: 0 auto; }
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--wa-green); margin-bottom: 10px; }
+.section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; color: var(--text); margin-bottom: 12px; line-height: 1.2; letter-spacing: -0.3px; }
+.section-title span { color: var(--wa-teal); }
+.section-sub { font-size: 15px; color: var(--text-2); font-weight: 300; line-height: 1.8; max-width: 640px; margin-bottom: 48px; }
+.divider { border: none; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0; }
+code.inline { font-family: var(--mono); font-size: 11px; background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; }
+
+/* ARCH */
+.arch { display: grid; grid-template-columns: 1fr 52px 1fr 52px 1fr 52px 1fr; gap: 0; align-items: center; margin-bottom: 24px; }
+.arch-box { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 18px 14px; text-align: center; }
+.arch-box.highlight { border-color: var(--wa-green); box-shadow: 0 0 0 2px rgba(18,140,126,0.15); }
+.arch-icon { font-size: 1.5rem; margin-bottom: 8px; }
+.arch-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.arch-desc { font-size: 10px; color: var(--text-3); line-height: 1.5; }
+.arch-tag { display: inline-block; margin-top: 8px; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+.tag-wa { background: rgba(18,140,126,0.1); color: var(--wa-teal); }
+.tag-cf { background: var(--cyan-bg); color: var(--cyan-dark); }
+.tag-meta { background: rgba(24,119,242,0.1); color: #1877f2; }
+.arch-arrow { text-align: center; }
+.arch-arrow-inner { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.arrow-label { font-size: 8px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-3); }
+.arrow-svg { color: var(--wa-green); font-size: 1.1rem; }
+.arch-note { grid-column:1/-1; background: rgba(18,140,126,0.06); border: 1px solid rgba(18,140,126,0.18); border-radius: 10px; padding: 13px 18px; font-size: 12px; color: var(--text-2); display: flex; align-items: flex-start; gap: 10px; margin-top: 4px; }
+.arch-note strong { color: var(--navy); }
+
+/* WINDOW RULES TABLE */
+.window-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 16px; }
+.window-table th { background: var(--wa-teal); color: rgba(255,255,255,0.85); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 11px 16px; text-align: left; }
+.window-table td { padding: 11px 16px; border-top: 1px solid var(--border); font-size: 12px; }
+.window-table tr:hover td { background: var(--off); }
+.wt-ok { color: var(--success); font-weight: 600; }
+.wt-block { color: #b91c1c; font-weight: 600; }
+.wt-note { color: var(--text-3); font-size: 11px; }
+
+/* CONNECT */
+.connect-card { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+.connect-header { background: var(--wa-teal); padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; }
+.connect-title { font-size: 13px; font-weight: 600; color: white; }
+.connect-status { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; }
+.connect-status.idle { color: rgba(255,255,255,0.4); }
+.connect-status.connecting { color: #86efac; }
+.connect-status.connected { color: #4ade80; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.connect-status.connected .status-dot { animation: pulse 2s infinite; }
+.connect-body { padding: 28px; }
+.steps-list { display: flex; flex-direction: column; }
+.step-item { display: grid; grid-template-columns: 40px 1fr; gap: 16px; position: relative; }
+.step-item::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: -1px; width: 2px; background: var(--border); }
+.step-item:last-child::before { display: none; }
+.step-dot-col { display: flex; flex-direction: column; align-items: center; padding-top: 3px; }
+.step-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); background: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text-3); transition: all 0.4s; flex-shrink: 0; }
+.step-dot.done { background: var(--wa-green); border-color: var(--wa-green); color: white; }
+.step-dot.active { border-color: var(--wa-green); color: var(--wa-green); box-shadow: 0 0 0 3px rgba(18,140,126,0.15); }
+.step-content { padding-bottom: 28px; }
+.step-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.step-desc { font-size: 12px; color: var(--text-3); line-height: 1.65; margin-bottom: 10px; }
+.step-code { background: #0D1B2A; border-radius: 8px; padding: 14px 16px; font-family: var(--mono); font-size: 11px; color: #94c4e8; line-height: 1.8; display: none; }
+.step-code.visible { display: block; }
+.step-code .comment { color: #4a6580; }
+.step-code .key { color: #7dd3fc; }
+.step-code .val { color: #86efac; }
+.step-code .str { color: #fca5a5; }
+.step-code .success { color: #4ade80; }
+.connect-footer { padding: 18px 28px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.connect-btn { padding: 10px 22px; border-radius: 8px; border: none; font-family: var(--sans); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+.connect-btn.primary { background: var(--wa-green); color: white; }
+.connect-btn.primary:hover { background: var(--wa-teal); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(18,140,126,0.4); }
+.connect-btn.primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.connect-btn.ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
+.connect-btn.ghost:hover { border-color: var(--wa-green); color: var(--wa-green); }
+.connect-note { font-size: 11px; color: var(--text-3); }
+.spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── WHATSAPP UI ─── */
+.wa-window { border-radius: 16px; overflow: hidden; border: 1px solid rgba(0,0,0,0.15); box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: flex; background: #111B21; }
+
+/* Sidebar */
+.wa-sidebar { width: 360px; display: flex; flex-direction: column; background: var(--wa-sidebar); border-right: 1px solid #E9EDEF; flex-shrink: 0; }
+.wa-sidebar-header { background: #F0F2F5; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+.wa-profile { display: flex; align-items: center; gap: 10px; }
+.wa-profile-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--wa-green); display: flex; align-items: center; justify-content: center; font-size: 16px; color: white; flex-shrink: 0; }
+.wa-profile-name { font-size: 15px; font-weight: 600; color: #111B21; }
+.wa-search { padding: 8px 12px 0; }
+.wa-search-box { background: #F0F2F5; border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: #8696A0; }
+.wa-chats { flex: 1; overflow-y: auto; }
+.wa-chat-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #F0F2F5; transition: background 0.1s; }
+.wa-chat-item:hover { background: #F5F6F6; }
+.wa-chat-item.active { background: #F0F2F5; }
+.wa-chat-avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.wa-chat-info { flex: 1; min-width: 0; }
+.wa-chat-name { font-size: 15px; font-weight: 600; color: #111B21; display: flex; justify-content: space-between; align-items: center; }
+.wa-chat-time { font-size: 11px; color: var(--wa-gray); font-weight: 400; }
+.wa-chat-preview { font-size: 13px; color: var(--wa-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+.wa-unread { background: var(--wa-light); color: white; font-size: 11px; font-weight: 700; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* Chat area */
+.wa-chat { flex: 1; display: flex; flex-direction: column; }
+.wa-chat-header { background: #F0F2F5; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+.wa-chat-header-avatar { width: 40px; height: 40px; border-radius: 50%; background: #6B7280; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.wa-chat-header-info { flex: 1; }
+.wa-chat-header-name { font-size: 15px; font-weight: 600; color: #111B21; }
+.wa-chat-header-status { font-size: 12px; color: var(--wa-gray); }
+.wa-chat-header-actions { display: flex; gap: 20px; color: var(--wa-gray); font-size: 18px; }
+.wa-messages { flex: 1; overflow-y: auto; padding: 12px 20px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 5 L55 20 L55 40 L30 55 L5 40 L5 20 Z' stroke='%23d1d5db' stroke-width='0.3' fill='none'/%3E%3C/svg%3E"); background-color: var(--wa-bg); display: flex; flex-direction: column; gap: 3px; min-height: 320px; max-height: 380px; }
+.wa-day-divider { text-align: center; margin: 10px 0; }
+.wa-day-label { background: rgba(255,255,255,0.9); padding: 4px 12px; border-radius: 8px; font-size: 11px; color: var(--wa-gray); display: inline-block; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+
+/* Messages */
+.wa-msg { display: flex; flex-direction: column; animation: wafade 0.2s ease; }
+@keyframes wafade { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+.wa-msg.out { align-items: flex-end; }
+.wa-msg.in { align-items: flex-start; }
+.wa-bubble { max-width: 68%; border-radius: 8px; padding: 7px 10px 6px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+.wa-msg.out .wa-bubble { background: var(--wa-out); border-radius: 8px 0 8px 8px; }
+.wa-msg.in .wa-bubble { background: var(--wa-in); border-radius: 0 8px 8px 8px; }
+.wa-bubble-sender { font-size: 12px; font-weight: 700; color: var(--wa-green); margin-bottom: 3px; }
+.wa-bubble-text { font-size: 14px; color: #111B21; line-height: 1.5; white-space: pre-wrap; }
+.wa-bubble-meta { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 3px; }
+.wa-bubble-time { font-size: 10px; color: var(--wa-gray); }
+.wa-ticks { font-size: 13px; }
+.ticks-sent { color: var(--wa-gray); }
+.ticks-read { color: var(--wa-blue); }
+
+/* Interactive buttons */
+.wa-interactive { max-width: 68%; }
+.wa-int-bubble { background: var(--wa-in); border-radius: 0 8px 4px 8px; padding: 10px 12px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+.wa-int-text { font-size: 14px; color: #111B21; line-height: 1.5; margin-bottom: 2px; }
+.wa-int-meta { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 4px; }
+.wa-int-time { font-size: 10px; color: var(--wa-gray); }
+.wa-int-buttons { background: white; border-radius: 0 0 8px 8px; overflow: hidden; border-top: 1px solid #E9EDEF; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+.wa-btn { display: block; width: 100%; padding: 12px; border: none; background: transparent; color: #00A5F4; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; border-top: 1px solid #E9EDEF; text-align: center; font-family: var(--sans); }
+.wa-btn:first-child { border-top: none; }
+.wa-btn:hover { background: #F5FBFF; }
+.wa-btn:disabled { color: var(--wa-gray); cursor: not-allowed; }
+.wa-btn-icon { margin-right: 6px; }
+
+/* Typing indicator */
+.wa-typing { display: flex; align-items: flex-start; gap: 8px; }
+.wa-typing-bubble { background: white; border-radius: 0 10px 10px 10px; padding: 10px 14px; display: flex; align-items: center; gap: 4px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+.wa-typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--wa-gray); animation: bounce 1.2s infinite; }
+.wa-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.wa-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+
+/* System event */
+.wa-system { text-align: center; margin: 6px 0; }
+.wa-system-label { background: rgba(255,255,255,0.85); padding: 4px 12px; border-radius: 8px; font-size: 11px; color: var(--wa-gray); display: inline-block; }
+
+/* Input bar */
+.wa-input-bar { background: #F0F2F5; padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+.wa-input-box { flex: 1; background: white; border-radius: 24px; padding: 9px 16px; display: flex; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.wa-input-box input { flex: 1; border: none; outline: none; font-family: var(--sans); font-size: 14px; color: #111B21; background: transparent; }
+.wa-input-box input::placeholder { color: var(--wa-gray); }
+.wa-send-btn { width: 46px; height: 46px; border-radius: 50%; background: var(--wa-green); border: none; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; flex-shrink: 0; }
+.wa-send-btn:hover { background: var(--wa-teal); }
+.wa-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Suggestions */
+.wa-suggestions { padding: 8px 16px 0; display: flex; gap: 8px; flex-wrap: wrap; background: #F0F2F5; }
+.wa-chip { padding: 6px 14px; border-radius: 100px; background: white; border: 1px solid #E9EDEF; font-size: 11px; color: var(--wa-teal); cursor: pointer; transition: all 0.15s; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.wa-chip:hover { background: #E7F8EE; border-color: var(--wa-light); }
+
+/* CHANGE GRID */
+.change-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.change-card { border-radius: 12px; padding: 24px; }
+.change-card.before { background: #fef2f2; border: 1px solid #fecaca; }
+.change-card.after { background: var(--success-bg); border: 1px solid #bbf7d0; }
+.change-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+.change-card.before .change-label { color: #b91c1c; }
+.change-card.after .change-label { color: var(--success); }
+.change-list { display: flex; flex-direction: column; gap: 8px; }
+.change-item { font-size: 13px; display: flex; gap: 10px; line-height: 1.5; }
+.change-card.before .change-item::before { content: '✕'; color: #b91c1c; flex-shrink: 0; font-size: 11px; margin-top: 2px; }
+.change-card.after .change-item::before { content: '✓'; color: var(--success); flex-shrink: 0; font-size: 11px; margin-top: 2px; font-weight: 700; }
+.change-card.before .change-item { color: #7f1d1d; }
+.change-card.after .change-item { color: #14532d; }
+
+@media (max-width: 768px) {
+  .arch { grid-template-columns: 1fr; }
+  .arch-arrow { display: none; }
+  .change-grid { grid-template-columns: 1fr; }
+  .wa-sidebar { display: none; }
+  .section { padding: 48px 20px; }
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">skills<span>.2nth.ai</span></div>
+  <div class="nav-links">
+    <a class="nav-link" onclick="scrollTo('arch')">Architecture</a>
+    <a class="nav-link" onclick="scrollTo('connect')">Connect</a>
+    <a class="nav-link" onclick="scrollTo('sim')">Simulator</a>
+    <a class="nav-link" onclick="scrollTo('after')">What changes</a>
+  </div>
+  <div class="nav-badge">Concept · WhatsApp Cloud API</div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge"><div class="pulse"></div>META BUSINESS</div>
+  <h1>WhatsApp is the<br><span>customer channel.</span></h1>
+  <p class="hero-sub">2 billion users. The channel SA customers already use. A message arrives, the Worker classifies, Claude replies — interactive buttons included — in under 5 seconds.</p>
+  <div class="hero-pills">
+    <div class="hero-pill"><span>💬</span><span>WhatsApp message</span></div>
+    <div class="hero-arrow">→</div>
+    <div class="hero-pill"><span>⚡</span><span>Worker + HMAC verify</span></div>
+    <div class="hero-arrow">→</div>
+    <div class="hero-pill"><span>🤖</span><span>AI reply + buttons</span></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="arch">
+  <div class="section-label">Architecture</div>
+  <h2 class="section-title">One webhook.<br><span>WhatsApp, Messenger, Instagram.</span></h2>
+  <p class="section-sub">Meta routes all products through the same webhook endpoint. One Worker, one signature check, differentiated by the <code class="inline">object</code> field — <code class="inline">whatsapp_business_account</code>, <code class="inline">page</code>, or <code class="inline">instagram</code>.</p>
+  <div class="arch">
+    <div class="arch-box">
+      <div class="arch-icon">💬</div>
+      <div class="arch-name">Customer</div>
+      <div class="arch-desc">Sends WhatsApp message — text, voice note, image, or taps a button</div>
+      <span class="arch-tag tag-wa">WhatsApp</span>
+    </div>
+    <div class="arch-arrow"><div class="arch-arrow-inner"><div class="arrow-label">HTTPS POST</div><div class="arrow-svg">→</div><div class="arrow-label">X-Hub-Sig</div></div></div>
+    <div class="arch-box highlight">
+      <div class="arch-icon">⚡</div>
+      <div class="arch-name">Cloudflare Worker</div>
+      <div class="arch-desc">HMAC-SHA256 verify → mark read → classify → build reply</div>
+      <span class="arch-tag tag-cf">ctx.waitUntil</span>
+    </div>
+    <div class="arch-arrow"><div class="arch-arrow-inner"><div class="arrow-label">ROUTE</div><div class="arrow-svg">→</div><div class="arrow-label">ASYNC</div></div></div>
+    <div class="arch-box">
+      <div class="arch-icon">🤖</div>
+      <div class="arch-name">Workers AI + Claude</div>
+      <div class="arch-desc">Intent classify → draft reply → build interactive message</div>
+      <span class="arch-tag tag-cf">Llama + Claude</span>
+    </div>
+    <div class="arch-arrow"><div class="arch-arrow-inner"><div class="arrow-label">Cloud API</div><div class="arrow-svg">→</div><div class="arrow-label">POST</div></div></div>
+    <div class="arch-box">
+      <div class="arch-icon">📲</div>
+      <div class="arch-name">Reply delivered</div>
+      <div class="arch-desc">Text, interactive buttons, or template — delivered with blue ticks</div>
+      <span class="arch-tag tag-wa">Cloud API</span>
+    </div>
+    <div class="arch-note" style="grid-column:1/-1">
+      💡 <strong>24-hour window:</strong> Within 24 hours of the customer's last message you can send any message type freely. After 24 hours, only <strong>approved templates</strong> can initiate contact. Always track the last message timestamp per phone number in KV. Always respond with <code class="inline">EVENT_RECEIVED</code> before any async processing — Meta retries non-200 responses.
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:40px">Messaging window</div>
+  <table class="window-table">
+    <thead><tr><th>Scenario</th><th>What you can send</th><th>Rule</th></tr></thead>
+    <tbody>
+      <tr><td class="diff-label">Customer messaged in last 24h</td><td class="wt-ok">Any type — text, buttons, list, media</td><td class="wt-note">Free-form session window — full AI reply</td></tr>
+      <tr><td class="diff-label">Customer messaged &gt;24h ago</td><td class="wt-block">Approved templates only</td><td class="wt-note">Business-initiated — must use pre-approved template</td></tr>
+      <tr><td class="diff-label">Never messaged before</td><td class="wt-block">Approved templates only</td><td class="wt-note">Cold outreach — opt-in required, template needed</td></tr>
+      <tr><td class="diff-label">Button / list reply from customer</td><td class="wt-ok">Resets 24h window</td><td class="wt-note">Any customer interaction reopens the session</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="connect">
+  <div class="section-label">Connection</div>
+  <h2 class="section-title">Three steps to<br><span>WhatsApp Cloud API</span></h2>
+  <p class="section-sub">Meta Business Manager, a System User token (non-expiring), and two Worker secrets. Webhook uses HMAC-SHA256 — same algorithm as Slack, different header name.</p>
+
+  <div class="connect-card">
+    <div class="connect-header">
+      <div class="connect-title">Meta Business setup — WhatsApp Cloud API</div>
+      <div class="connect-status idle" id="conn-status">
+        <div class="status-dot"></div>
+        <span id="conn-status-text">Not connected</span>
+      </div>
+    </div>
+    <div class="connect-body">
+      <div class="steps-list">
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot active" id="dot-1">1</div></div>
+          <div class="step-content">
+            <div class="step-title">Create Meta app + add WhatsApp product</div>
+            <div class="step-desc">developers.facebook.com → Create App → Business → Add WhatsApp. Meta gives you a test number with 5 free contacts. Upgrade to a production number via a WhatsApp Business Service Provider or directly in Business Manager.</div>
+            <div class="step-code" id="code-1">
+<span class="comment"># developers.facebook.com → My Apps → Create App → Business</span>
+<span class="comment"># Add Product → WhatsApp → Set up</span>
+
+<span class="key">App ID:</span>          <span class="str">1234567890</span>
+<span class="key">App Secret:</span>      <span class="str">abc123def456...  (Basic Settings)</span>
+<span class="key">Phone Number ID:</span> <span class="str">987654321098765  (WhatsApp → Getting Started)</span>
+<span class="key">WABA ID:</span>         <span class="str">111222333444555  (WhatsApp Business Account ID)</span>
+
+<span class="comment"># Business Manager → System Users → Create system user</span>
+<span class="comment"># Add assets: WhatsApp Business Account → Manage</span>
+<span class="comment"># Generate token → select whatsapp_business_messaging scope</span>
+<span class="key">System User Token:</span> <span class="str">EAAxxxxxxx...</span>  <span class="comment"># Non-expiring ✓</span>
+
+<span class="success">✓ App created — test number active — system user token generated</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot" id="dot-2">2</div></div>
+          <div class="step-content">
+            <div class="step-title">Configure webhook + store secrets</div>
+            <div class="step-desc">Set the Callback URL to your Worker. Meta sends a GET to verify it — the Worker returns the hub.challenge. Then store the four secrets and deploy.</div>
+            <div class="step-code" id="code-2">
+<span class="comment"># WhatsApp → Configuration → Webhook</span>
+<span class="key">Callback URL:</span>     <span class="str">https://your-worker.workers.dev/meta</span>
+<span class="key">Verify Token:</span>     <span class="str">my-secret-verify-token-2026</span>
+<span class="comment"># Subscribe to: messages</span>
+
+<span class="comment"># Meta verifies: GET /meta?hub.mode=subscribe&hub.challenge=xxx&hub.verify_token=...</span>
+<span class="success">← 200  "xxx"  (raw challenge string, not JSON) ✓</span>
+
+<span class="comment"># Store Worker secrets</span>
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">META_APP_SECRET</span>
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">WEBHOOK_VERIFY_TOKEN</span>
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">WHATSAPP_TOKEN</span>
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">WHATSAPP_PHONE_ID</span>
+<span class="success">✓ Webhook active — 4 secrets stored</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot" id="dot-3">3</div></div>
+          <div class="step-content">
+            <div class="step-title">Send test message + receive reply</div>
+            <div class="step-desc">Send a WhatsApp message to the test number. The webhook fires, the Worker classifies with Workers AI, Claude drafts the reply, and it's sent back via the Cloud API with an interactive button.</div>
+            <div class="step-code" id="code-3">
+<span class="comment"># Incoming webhook (POST from Meta)</span>
+X-Hub-Signature-256: <span class="str">sha256=a1b2c3...</span>
+{ "object": <span class="str">"whatsapp_business_account"</span>,
+  "entry": [{ "changes": [{ "value": {
+    "messages": [{ "from": <span class="str">"27821234567"</span>, "id": <span class="str">"wamid.xxx"</span>,
+                   "type": <span class="str">"text"</span>, "text": { "body": <span class="str">"Hi, what's my invoice status?"</span> } }],
+    "contacts": [{ "profile": { "name": <span class="str">"Sipho Mokoena"</span> }, "wa_id": <span class="str">"27821234567"</span> }]
+  } }] }] }
+
+<span class="comment"># Worker: verify → mark read → classify → send reply</span>
+<span class="key">POST</span> /v21.0/<span class="str">{PHONE_ID}</span>/messages
+{ "type": <span class="str">"interactive"</span>, "interactive": { "type": <span class="str">"button"</span>,
+    "body": { "text": <span class="str">"Hi Sipho, you have 1 open invoice for R 24,500..."</span> },
+    "action": { "buttons": [{"reply": {"id": <span class="str">"view"</span>, "title": <span class="str">"View invoice"</span>}},
+                              {"reply": {"id": <span class="str">"pay"</span>, "title": <span class="str">"Pay now"</span>}}] } } }
+
+<span class="success">✓ Reply delivered — blue ticks — WhatsApp Cloud API active</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="connect-footer">
+      <div class="connect-note" id="conn-note">Step through to simulate WhatsApp Cloud API setup.</div>
+      <div style="display:flex;gap:10px">
+        <button class="connect-btn ghost" onclick="resetConn()">Reset</button>
+        <button class="connect-btn primary" id="next-btn" onclick="nextStep()"><span id="next-label">Create app →</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="sim">
+  <div class="section-label">Simulator</div>
+  <h2 class="section-title">WhatsApp Business — <span>live conversation</span></h2>
+  <p class="section-sub">Send a message as Sipho Mokoena. The Worker verifies the webhook signature, classifies intent, and replies — with interactive buttons when the response calls for a decision.</p>
+
+  <div class="wa-window">
+    <!-- Sidebar -->
+    <div class="wa-sidebar">
+      <div class="wa-sidebar-header">
+        <div class="wa-profile">
+          <div class="wa-profile-avatar">2</div>
+          <span class="wa-profile-name">2nth Business</span>
+        </div>
+      </div>
+      <div class="wa-search">
+        <div class="wa-search-box">🔍 Search or start new chat</div>
+      </div>
+      <div class="wa-chats">
+        <div class="wa-chat-item active">
+          <div class="wa-chat-avatar" style="background:#075E54;">S</div>
+          <div class="wa-chat-info">
+            <div class="wa-chat-name">Sipho Mokoena <span class="wa-chat-time" id="chat-time">Now</span></div>
+            <div class="wa-chat-preview" id="chat-preview">Start a conversation →</div>
+          </div>
+        </div>
+        <div class="wa-chat-item">
+          <div class="wa-chat-avatar" style="background:#D4380D;">A</div>
+          <div class="wa-chat-info">
+            <div class="wa-chat-name">Angela Boulle <span class="wa-chat-time">Yesterday</span></div>
+            <div class="wa-chat-preview">Thank you for the order update ✓✓</div>
+          </div>
+        </div>
+        <div class="wa-chat-item">
+          <div class="wa-chat-avatar" style="background:#1677FF;">R</div>
+          <div class="wa-chat-info">
+            <div class="wa-chat-name">Retail Pro <span class="wa-chat-time">Mon</span></div>
+            <div class="wa-chat-preview">Invoice #INV-0831 query resolved ✓✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat -->
+    <div class="wa-chat">
+      <div class="wa-chat-header">
+        <div class="wa-chat-header-avatar">S</div>
+        <div class="wa-chat-header-info">
+          <div class="wa-chat-header-name">Sipho Mokoena</div>
+          <div class="wa-chat-header-status" id="header-status">+27 82 123 4567 · online</div>
+        </div>
+        <div class="wa-chat-header-actions"><span>🔍</span><span>⋮</span></div>
+      </div>
+      <div class="wa-messages" id="wa-messages">
+        <div class="wa-day-divider"><span class="wa-day-label">TODAY</span></div>
+        <div class="wa-system"><span class="wa-system-label">🔒 Messages are end-to-end encrypted. Tap for more info.</span></div>
+      </div>
+      <div class="wa-suggestions" id="wa-chips">
+        <div class="wa-chip" onclick="sendChip(this)">What's my invoice status?</div>
+        <div class="wa-chip" onclick="sendChip(this)">I want to make a payment</div>
+        <div class="wa-chip" onclick="sendChip(this)">Track my order</div>
+        <div class="wa-chip" onclick="sendChip(this)">I have a complaint</div>
+      </div>
+      <div class="wa-input-bar">
+        <div class="wa-input-box">
+          <input type="text" id="wa-input" placeholder="Type a message" onkeydown="if(event.key==='Enter') sendWA()">
+        </div>
+        <button class="wa-send-btn" id="wa-send" onclick="sendWA()">➤</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="after">
+  <div class="section-label">Before &amp; After</div>
+  <h2 class="section-title">What WhatsApp AI<br><span>changes for a business</span></h2>
+  <div class="change-grid">
+    <div class="change-card before">
+      <div class="change-label">Without WhatsApp AI</div>
+      <div class="change-list">
+        <div class="change-item">Customers WhatsApp the owner's personal number — no separation, no scale</div>
+        <div class="change-item">Invoice and order queries handled manually — owner stops what they're doing to reply</div>
+        <div class="change-item">After-hours messages sit unanswered until the next morning</div>
+        <div class="change-item">No record of what was asked or answered — context lost between conversations</div>
+        <div class="change-item">Template messages sent manually by copying and pasting into chats one by one</div>
+        <div class="change-item">WhatsApp Business app — no API, no automation, single device</div>
+      </div>
+    </div>
+    <div class="change-card after">
+      <div class="change-label">With 2nth WhatsApp AI</div>
+      <div class="change-list">
+        <div class="change-item">Business number on the Cloud API — multiple agents, no device required</div>
+        <div class="change-item">Invoice queries answered in 3 seconds — Workers AI classifies, D1 fetches data, Claude replies</div>
+        <div class="change-item">24/7 first response — AI handles tier-1 immediately, escalates complex issues to a human</div>
+        <div class="change-item">Full conversation history in D1 — context available on every message, CRM synced</div>
+        <div class="change-item">Bulk template sends triggered by Pub/Sub or Cloud Scheduler — invoice reminders, order updates, proactive alerts</div>
+        <div class="change-item">Interactive buttons guide customers to self-serve — fewer calls, faster resolution</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// ─── CONNECTION WIZARD ───
+let step = 0;
+function scrollTo(id) { document.getElementById(id)?.scrollIntoView({ behavior:'smooth', block:'start' }); }
+function nextStep() {
+  const btn = document.getElementById('next-btn');
+  const label = document.getElementById('next-label');
+  const note = document.getElementById('conn-note');
+  if (step === 0) {
+    step = 1;
+    document.getElementById('code-1').classList.add('visible');
+    document.getElementById('dot-1').classList.add('active');
+    document.getElementById('dot-2').classList.add('active');
+    label.textContent = 'Configure webhook →';
+    note.textContent = 'App created and system user token generated. Now configure the webhook.';
+    setStatus('connecting', 'Configuring...');
+  } else if (step === 1) {
+    step = 2;
+    markDone(1);
+    document.getElementById('code-2').classList.add('visible');
+    label.textContent = 'Send test message →';
+    note.textContent = 'Webhook verified and secrets stored. Send a test message to confirm the full flow.';
+  } else if (step === 2) {
+    step = 3;
+    markDone(2);
+    document.getElementById('dot-3').classList.add('active');
+    document.getElementById('code-3').classList.add('visible');
+    btn.disabled = true;
+    label.innerHTML = '<div class="spinner"></div> Connecting...';
+    note.textContent = 'Simulating incoming message and AI reply...';
+    setStatus('connecting', 'Connecting...');
+    setTimeout(() => {
+      markDone(3);
+      btn.disabled = true;
+      label.textContent = 'Connected ✓';
+      note.textContent = 'WhatsApp Cloud API active — try the simulator below.';
+      setStatus('connected', 'Connected');
+    }, 2400);
+  }
+}
+function markDone(n) { const d = document.getElementById('dot-'+n); d.className='step-dot done'; d.textContent='✓'; }
+function setStatus(cls, txt) { document.getElementById('conn-status').className='connect-status '+cls; document.getElementById('conn-status-text').textContent=txt; }
+function resetConn() {
+  step = 0;
+  ['code-1','code-2','code-3'].forEach(id => document.getElementById(id).classList.remove('visible'));
+  ['1','2','3'].forEach(n => { const d=document.getElementById('dot-'+n); d.className='step-dot'; d.textContent=n; });
+  document.getElementById('dot-1').classList.add('active');
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-label').textContent = 'Create app →';
+  document.getElementById('conn-note').textContent = 'Step through to simulate WhatsApp Cloud API setup.';
+  setStatus('idle', 'Not connected');
+}
+
+// ─── WHATSAPP SIMULATOR ───
+const now = () => { const d = new Date(); return d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', hour12: false }); };
+let busy = false;
+
+const RESPONSES = {
+  'invoice': {
+    intent: 'invoice',
+    text: 'Hi Sipho 👋 I can see you have *1 open invoice*:\n\n📄 *INV-0847* — R 24,500\n📅 Due: 14 March 2026 (18 days overdue)\n\nWhat would you like to do?',
+    buttons: [{ id: 'view_inv', title: '📋 View invoice' }, { id: 'pay_now', title: '💳 Pay now' }, { id: 'query', title: '❓ Query this' }],
+  },
+  'payment': {
+    intent: 'payment',
+    text: 'To make a payment for Invoice #INV-0847 (R 24,500), please use our EFT details:\n\n🏦 *Bank:* Standard Bank\n🔢 *Acc No:* 072 123 4567\n🏷️ *Reference:* INV-0847-SIPHO\n\nWould you like a payment reminder?',
+    buttons: [{ id: 'reminder', title: '⏰ Set reminder' }, { id: 'done', title: '✅ Payment sent' }],
+  },
+  'order': {
+    intent: 'order',
+    text: 'Here\'s the status of your most recent order:\n\n📦 *Order #ORD-2024-0312*\n🚚 Status: *Out for delivery*\n📍 Last scan: Kempton Park (2h ago)\n⏰ Estimated delivery: Today by 17:00\n\nNeed anything else?',
+    buttons: [{ id: 'reschedule', title: '📅 Reschedule' }, { id: 'contact', title: '📞 Contact driver' }],
+  },
+  'complaint': {
+    intent: 'complaint',
+    text: 'I\'m sorry to hear you have an issue, Sipho. I\'ve logged this and a team member will follow up within 2 hours during business hours.\n\n📝 *Ref:* SUP-2026-0441\n\nIs there anything I can help with immediately?',
+    buttons: [{ id: 'urgent', title: '🚨 Mark urgent' }, { id: 'ok', title: '👍 Thanks' }],
+  },
+};
+
+function getResp(text) {
+  const t = text.toLowerCase();
+  if (t.includes('invoice') || t.includes('statement') || t.includes('account')) return RESPONSES['invoice'];
+  if (t.includes('pay') || t.includes('eft') || t.includes('transfer')) return RESPONSES['payment'];
+  if (t.includes('order') || t.includes('deliver') || t.includes('track')) return RESPONSES['order'];
+  if (t.includes('complaint') || t.includes('problem') || t.includes('wrong') || t.includes('issue')) return RESPONSES['complaint'];
+  return {
+    intent: 'general',
+    text: `Hi Sipho 👋 I received your message: _"${text}"_\n\nIn a live deployment, Workers AI would classify this and Claude would draft a contextual reply using your account history from D1.\n\nHow else can I help?`,
+    buttons: [{ id: 'invoice', title: '📄 My invoices' }, { id: 'order', title: '📦 My orders' }],
+  };
+}
+
+function sendChip(el) { document.getElementById('wa-input').value = el.textContent; sendWA(); }
+
+function sendWA() {
+  if (busy) return;
+  const input = document.getElementById('wa-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  busy = true;
+  document.getElementById('wa-send').disabled = true;
+  document.getElementById('header-status').textContent = '+27 82 123 4567 · online';
+
+  const resp = getResp(text);
+  const ts = now();
+
+  addOutMsg(text, ts);
+  document.getElementById('chat-preview').textContent = text;
+
+  // System event
+  setTimeout(() => addSystem('⚡ Webhook received · X-Hub-Signature-256 verified · EVENT_RECEIVED sent'), 300);
+  setTimeout(() => addSystem(`🤖 Workers AI → intent: ${resp.intent} · mark as read sent`), 750);
+
+  // Typing indicator
+  setTimeout(() => {
+    document.getElementById('header-status').textContent = 'typing...';
+    addTyping();
+  }, 1200);
+
+  const replyDelay = 2400 + Math.random() * 600;
+  setTimeout(() => {
+    removeTyping();
+    document.getElementById('header-status').textContent = '+27 82 123 4567 · online';
+    addInMsg(resp.text, resp.buttons, now());
+    document.getElementById('chat-preview').textContent = 'Replied ✓✓';
+    busy = false;
+    document.getElementById('wa-send').disabled = false;
+    document.getElementById('wa-input').focus();
+  }, replyDelay);
+}
+
+function addOutMsg(text, ts) {
+  const msgs = document.getElementById('wa-messages');
+  const el = document.createElement('div');
+  el.className = 'wa-msg out';
+  el.innerHTML = `
+    <div class="wa-bubble">
+      <div class="wa-bubble-text">${text}</div>
+      <div class="wa-bubble-meta">
+        <span class="wa-bubble-time">${ts}</span>
+        <span class="wa-ticks ticks-sent">✓✓</span>
+      </div>
+    </div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(() => el.querySelector('.wa-ticks').className = 'wa-ticks ticks-read', 1800);
+}
+
+function addInMsg(text, buttons, ts) {
+  const msgs = document.getElementById('wa-messages');
+  const el = document.createElement('div');
+  el.className = 'wa-msg in';
+  const formatted = text.replace(/\*([^*]+)\*/g, '<strong>$1</strong>').replace(/_([^_]+)_/g, '<em>$1</em>').replace(/\n/g, '<br>');
+  const btnHtml = buttons.map(b =>
+    `<button class="wa-btn" onclick="handleBtn(this, '${b.id}', '${b.title}')">${b.title}</button>`
+  ).join('');
+  el.innerHTML = `
+    <div class="wa-interactive">
+      <div class="wa-int-bubble">
+        <div class="wa-bubble-sender">2nth Business</div>
+        <div class="wa-int-text">${formatted}</div>
+        <div class="wa-int-meta"><span class="wa-int-time">${ts}</span></div>
+      </div>
+      <div class="wa-int-buttons">${btnHtml}</div>
+    </div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function handleBtn(el, id, title) {
+  const container = el.closest('.wa-int-buttons');
+  container.querySelectorAll('.wa-btn').forEach(b => b.disabled = true);
+  el.style.color = var_val('--wa-green');
+  el.style.fontWeight = '700';
+  el.textContent = '✓ ' + title;
+
+  // Trigger a follow-up based on button
+  setTimeout(() => {
+    const followUps = {
+      pay_now: 'I want to pay now please',
+      view_inv: 'Show me the invoice details',
+      done: 'Payment sent ✓',
+      urgent: 'Please mark as urgent',
+      ok: 'Thank you',
+      reminder: 'Set a payment reminder for tomorrow',
+    };
+    const msg = followUps[id];
+    if (msg && !busy) {
+      document.getElementById('wa-input').value = msg;
+      sendWA();
+    }
+  }, 600);
+}
+
+function var_val(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+function addTyping() {
+  const msgs = document.getElementById('wa-messages');
+  const el = document.createElement('div');
+  el.className = 'wa-typing';
+  el.id = 'wa-typing';
+  el.innerHTML = `<div class="wa-typing-bubble"><div class="wa-typing-dot"></div><div class="wa-typing-dot"></div><div class="wa-typing-dot"></div></div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() { document.getElementById('wa-typing')?.remove(); }
+
+function addSystem(html) {
+  const msgs = document.getElementById('wa-messages');
+  const el = document.createElement('div');
+  el.className = 'wa-system';
+  el.innerHTML = `<span class="wa-system-label">${html}</span>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+</body>
+</html>

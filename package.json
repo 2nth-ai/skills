@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node catalog/build.js",
-    "deploy": "npm run build && wrangler pages deploy catalog --project-name=skills-2nth-ai --commit-dirty=true"
+    "deploy": "npm run build && wrangler pages deploy catalog --project-name=2nth-skills-hub --branch=main --commit-dirty=true",
+    "deploy:dev": "npm run build && wrangler pages deploy catalog --project-name=2nth-skills --branch=dev --commit-dirty=true"
   }
 }
