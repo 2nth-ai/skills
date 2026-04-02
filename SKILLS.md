@@ -156,6 +156,7 @@ tech/
     wireless/        SKILL.md  ✓ stub — Catalyst WLC, Meraki, RF design
     collaboration/   SKILL.md  ✓ stub — Webex, CUCM, Unity Connection, UCCX
     automation/      SKILL.md  ✓ stub — Netmiko, NAPALM, Ansible, DNA Center, NETCONF
+  elevenlabs/        SKILL.md  ✓ stub — TTS (flash/v3), voice cloning, STT, conversational AI agents, Cloudflare streaming
   claude-code/       SKILL.md  ✓ stub — Claude Code setup and patterns
   agent-protocols/   SKILL.md  ✓ production — MCP, A2A, ACP, multi-agent orchestration patterns
   mcp/               stub
