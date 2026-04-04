@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>biz/property/za/sans-10400 — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">biz</a><span class="breadcrumb-sep">›</span><a href="#">property</a><span class="breadcrumb-sep">›</span><a href="#">za</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">sans-10400</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/biz/property/za/sans-10400/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">biz/property/za/sans-10400</div>
+      <h1>SANS 10400</h1>
+      <p class="skill-desc">SANS 10400 South African National Building Regulations.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">SANS 10400:2011 base edition with updates through 2024</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../../biz/property/za.html">biz/property/za</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">biz/property/za</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>SANS 10400 — South African National Building Regulations</h1>
+
+<h2>Overview</h2>
+
+<p>SANS 10400 is the South African National Standard for the application of the National Building Regulations. Developed and maintained by the South African Bureau of Standards (SABS), the current base edition is SANS 10400:2011 with individual parts updated independently.</p>
+
+<p><strong>Two-layer structure:</strong></p>
+<ul><li><strong>The Regulations</strong> (law) — short, functional requirements from the National Building Regulations and Building Standards Act, 1977</li><li><strong>Deemed-to-satisfy requirements</strong> (SANS 10400) — detailed technical guidelines that, if followed, are considered compliant</li></ul>
+
+<p>A builder can comply either by following the deemed-to-satisfy requirements OR through a rational design prepared by a competent person demonstrating equivalent or better performance.</p>
+
+<blockquote>SANS 10400 is purchased from SABS (parts sold separately). The 1990 edition is freely available online but is outdated — many parts have been substantially revised.</blockquote>
+
+<h2>Complete Parts List</h2>
+
+<table><thead><tr><th>Part</th><th>Title</th><th>Key Scope</th></tr></thead><tbody><tr><td><strong>A</strong></td><td>General principles and requirements</td><td>Occupancy classification, plan submission, definitions, competent persons</td></tr><tr><td><strong>B</strong></td><td>Structural design</td><td>Structural integrity, loading, dolomite land requirements</td></tr><tr><td><strong>C</strong></td><td>Dimensions</td><td>Minimum room sizes, floor areas per occupancy, ceiling heights</td></tr><tr><td><strong>D</strong></td><td>Public safety</td><td>Safety of persons on/near buildings, swimming pool fencing</td></tr><tr><td><strong>E</strong></td><td>Demolition work</td><td>Requirements for demolition (no deemed-to-satisfy code)</td></tr><tr><td><strong>F</strong></td><td>Site operations</td><td>Site clearance, noise/dust control, waste, working hours</td></tr><tr><td><strong>G</strong></td><td>Excavations</td><td>Excavation safety, support of excavation faces</td></tr><tr><td><strong>H</strong></td><td>Foundations</td><td>Foundation design, geotechnical investigation requirements</td></tr><tr><td><strong>J</strong></td><td>Floors</td><td>Floor construction, damp-proofing of floors</td></tr><tr><td><strong>K</strong></td><td>Walls</td><td>Wall construction, masonry, damp-proof courses, boundary walls</td></tr><tr><td><strong>L</strong></td><td>Roofs</td><td>Roof construction, waterproofing (watertight 5+ years without maintenance)</td></tr><tr><td><strong>M</strong></td><td>Stairways</td><td>Stairway dimensions, handrails, balustrades (min 850mm–1m)</td></tr><tr><td><strong>N</strong></td><td>Glazing</td><td>Safety glazing requirements</td></tr><tr><td><strong>O</strong></td><td>Lighting and ventilation</td><td>Natural light, window sizes, mechanical ventilation</td></tr><tr><td><strong>P</strong></td><td>Drainage</td><td>Sanitary drainage design and discharge</td></tr><tr><td><strong>Q</strong></td><td>Non-water-borne sanitary disposal</td><td>Pit latrines, septic tanks (no waterborne sewerage areas)</td></tr><tr><td><strong>R</strong></td><td>Stormwater disposal</td><td>Stormwater management, discharge restrictions</td></tr><tr><td><strong>S</strong></td><td>Facilities for persons with disabilities</td><td>Ramps, accessible bathrooms, door widths, grab rails</td></tr><tr><td><strong>T</strong></td><td>Fire protection</td><td>Fire safety, escape routes, fire ratings, fire doors</td></tr><tr><td><strong>U</strong></td><td>Refuse disposal</td><td>Refuse storage and removal (no deemed-to-satisfy code)</td></tr><tr><td><strong>V</strong></td><td>Space heating</td><td>Requirements for heating installations</td></tr><tr><td><strong>W</strong></td><td>Fire installation</td><td>Fire detection and suppression systems</td></tr><tr><td><strong>X</strong></td><td>Energy usage in buildings</td><td>General energy requirements</td></tr><tr><td><strong>XA</strong></td><td>Energy usage in buildings (detailed)</td><td>Building envelope, orientation, services efficiency (updated 2021)</td></tr></tbody></table>
+
+<blockquote>There is no Part I (to avoid confusion with the number 1).</blockquote>
+
+<h2>Plan Submission Requirements (Part A)</h2>
+
+<p>Before any construction, plans and documents <strong>must</strong> be submitted to the local authority:</p>
+
+<ul><li>Site plan showing building in relation to boundaries and existing structures</li><li>Floor plans, elevations, and sections at prescribed scales</li><li>Structural design details (by a competent person)</li><li>Particulars of any building to be demolished</li><li>Details of materials to be used (colour-coded per convention)</li><li>Any other plans and particulars required by the local authority</li><li>Proof of NHBRC enrolment (for residential construction)</li></ul>
+
+<p>Plans must be drawn by or under the supervision of a "competent person" — architect, engineer, draughtsperson, or other professional recognized by the local authority.</p>
+
+<p><strong>Timeframe:</strong> Local authorities must approve or reject plans within <strong>30 working days</strong> (60 days for complex applications). If no response is received, the applicant may proceed as if approved — but this is risky in practice.</p>
+
+<h2>Occupancy Classifications (Part A, Regulation A20)</h2>
+
+<table><thead><tr><th>Class</th><th>Description</th><th>Examples</th></tr></thead><tbody><tr><td>A1–A5</td><td>Assembly / entertainment / worship / sport</td><td>Cinemas, schools, churches, stadiums</td></tr><tr><td>B1–B3</td><td>Commercial service (high → low risk)</td><td>Spray painting, workshops, offices</td></tr><tr><td>C1–C2</td><td>Exhibition / museum</td><td>Museums, galleries</td></tr><tr><td>D1–D4</td><td>Industrial (high → low risk) + plant rooms</td><td>Chemical plants, manufacturing, light industry</td></tr><tr><td>E1–E4</td><td>Institutional</td><td>Prisons, hospitals, old age homes, clinics</td></tr><tr><td>F1–F3</td><td>Mercantile</td><td>Supermarkets, retail shops, warehouses</td></tr><tr><td>G1</td><td>Office</td><td>Office buildings</td></tr><tr><td>H1–H5</td><td>Residential / hospitality</td><td>Hotels, hostels, houses, flats, guest houses</td></tr><tr><td>J1–J4</td><td>Storage / parking</td><td>Flammable materials, general storage, parking garages</td></tr></tbody></table>
+
+<h2>Parts by Project Type</h2>
+
+<h3>Residential (H3/H4)</h3>
+<p>Most relevant: <strong>A</strong> (plans), <strong>B</strong> (structure), <strong>C</strong> (dimensions), <strong>H</strong> (foundations), <strong>J</strong> (floors), <strong>K</strong> (walls), <strong>L</strong> (roofs), <strong>O</strong> (lighting/ventilation), <strong>P</strong> (drainage), <strong>R</strong> (stormwater), <strong>T</strong> (fire protection), <strong>XA</strong> (energy).</p>
+
+<h3>Commercial / mixed-use</h3>
+<p>Add: <strong>D</strong> (public safety), <strong>S</strong> (disability access), <strong>W</strong> (fire installation). Occupancy classification drives specific requirements for fire ratings, escape routes, and accessibility.</p>
+
+<h2>Energy Compliance (Part XA — updated 2021)</h2>
+
+<p>All new buildings must demonstrate energy compliance via one of three routes:</p>
+
+<ol><li><strong>Prescriptive</strong> — follow deemed-to-satisfy rules for building envelope, orientation, shading, and services</li><li><strong>Rational design</strong> — competent person demonstrates equivalent energy performance</li><li><strong>Software modelling</strong> — certified thermal calculation software shows performance meets or exceeds reference building</li></ol>
+
+<h2>Competent Person Requirements</h2>
+
+<table><thead><tr><th>Aspect</th><th>Required Professional</th></tr></thead><tbody><tr><td>Building plans</td><td>Architect, draughtsperson, or engineer</td></tr><tr><td>Structural design</td><td>Structural engineer (ECSA registered)</td></tr><tr><td>Electrical work</td><td>Registered electrician (must issue Certificate of Compliance)</td></tr><tr><td>Plumbing</td><td>Registered plumber (PIRB — must issue Certificate of Compliance)</td></tr><tr><td>Fire engineering</td><td>Professional Engineer/Technologist (ECSA registered, fire experience)</td></tr></tbody></table>
+
+<h2>Common Compliance Scenarios</h2>
+
+<h3>Building a house</h3>
+<ol><li>Engage competent person to draw plans</li><li>Submit plans to local authority for approval (Part A)</li><li>Ensure NHBRC enrolment (15 days before construction starts)</li><li>Construct per approved plans and SANS 10400</li><li>NHBRC inspections at key stages</li><li>Obtain occupancy certificate from local authority</li><li>Obtain electrical and plumbing Certificates of Compliance</li></ol>
+
+<h3>Additions and alterations</h3>
+<p>Same plan submission process. Plans must show existing structure AND proposed changes. Existing non-compliant elements may be flagged by inspectors.</p>
+
+<h3>Boundary walls and fences</h3>
+<p>Regulated under Part K. Height limits, structural requirements, and setback rules apply. Electric fence regulations are separate.</p>
+
+<h3>Swimming pools</h3>
+<p>Must comply with Part D (Public Safety) — fencing requirements to prevent child drowning. Minimum fence height and gate specifications apply.</p>
+
+<h2>Common Gotchas</h2>
+
+<ol><li><strong>The 1990 free edition is not current.</strong> Many parts were substantially revised in 2008/2011 and continue to be updated. Always verify against latest SABS publications.</li><li><strong>Deemed-to-satisfy ≠ the only way.</strong> Rational design by a competent person is equally valid — but requires professional sign-off.</li><li><strong>No Part I exists.</strong> Parts skip from H to J to avoid confusion with the number 1.</li><li><strong>Municipality variation is real.</strong> Local authorities may impose additional requirements beyond SANS 10400. Always confirm with the relevant municipality.</li><li><strong>Plan approval silence is not safe approval.</strong> While the Act allows proceeding after 30/60 days without response, doing so without written approval is risky in practice.</li></ol>
+
+<h2>See Also</h2>
+
+<ul><li><a href="https://www.sabs.co.za" target="_blank" rel="noopener">SABS Standards Portal</a></li><li><a href="../SKILL.md" target="_blank" rel="noopener">biz/property/za</a> — Parent skill with regulatory overview</li><li><a href="../nhbrc/SKILL.md" target="_blank" rel="noopener">biz/property/za/nhbrc</a> — NHBRC inspections and warranties</li><li><a href="../project-stages/SKILL.md" target="_blank" rel="noopener">biz/property/za/project-stages</a> — SANS 10400 mapped to project lifecycle</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/biz/property/za/sans-10400/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>
