@@ -1,5 +1,5 @@
 ---
-name: biz/spatial-gallery
+name: spatial-gallery
 description: |
   Build spatial gallery solutions for shared-space operators — visual directories
   of physical spaces with verified occupancy, hierarchical addressing, and live
@@ -13,16 +13,14 @@ description: |
   (6) integrating occupancy data from Salto, Kisi, Openpath, HID, or ButterflyMX hardware.
 license: MIT
 compatibility: Cloudflare Workers, Node.js, any runtime with HTTPS
-homepage: https://skills.2nth.ai/biz/spatial-gallery
-repository: https://github.com/2nth-ai/skills
-requires:
-  - biz/shared-space-ops
-improves:
-  - biz
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Shared Spaces, Gallery, Spatial, IoT, Proof of Presence, FOAM, Coworking, Property"
+  homepage: "https://skills.2nth.ai/biz/spatial-gallery"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "biz/shared-space-ops"
+  improves: "biz"
 allowed-tools: Bash(curl:*) Read Write Edit Glob Grep
 ---
 

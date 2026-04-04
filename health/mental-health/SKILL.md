@@ -1,10 +1,8 @@
 ---
-name: Mental Health Services
+name: mental-health
 description: >
   Mental health legislation, service delivery models, psychiatric care pathways,
   community mental health, and the South African Mental Health Care Act.
-requires: []
-improves: []
 metadata:
   domain: health
   subdomain: mental-health

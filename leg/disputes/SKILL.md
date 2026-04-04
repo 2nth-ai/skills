@@ -1,16 +1,13 @@
 ---
-name: Dispute Resolution
+name: disputes
 description: >
   (1) Business dispute management — demand letters, negotiation, mediation, arbitration,
   and litigation strategy for resolving commercial disputes without destroying the business.
-requires:
-  - leg
-  - leg/commercial
-improves: []
 metadata:
   domain: leg
   subdomain: disputes
   maturity: stable
+  requires: "leg, leg/commercial"
   jurisdiction: ZA
 ---
 

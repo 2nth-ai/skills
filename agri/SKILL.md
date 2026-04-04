@@ -8,11 +8,11 @@ description: |
   (4) farm-to-market — value chains, logistics, commodity pricing, export,
   (5) African agriculture — sector growth, policy, land reform, water rights.
 license: MIT
-homepage: https://skills.2nth.ai/agri
-repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/agri"
+  repository: "https://github.com/2nth-ai/skills"
   categories: "Agriculture, Agri-Tech, Sustainable Farming, Agricultural Finance"
 ---
 

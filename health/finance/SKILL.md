@@ -1,11 +1,9 @@
 ---
-name: Healthcare Finance & Revenue Cycle
+name: finance
 description: >
   Medical billing, ICD-10 coding, medical aid tariff structures, PMB (Prescribed
   Minimum Benefits), DRGs, revenue cycle management, and healthcare funding models
   in South Africa.
-requires: []
-improves: []
 metadata:
   domain: health
   subdomain: finance

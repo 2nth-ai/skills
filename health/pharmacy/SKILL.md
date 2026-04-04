@@ -1,10 +1,8 @@
 ---
-name: Pharmacy & Medicines Management
+name: pharmacy
 description: >
   Formulary management, drug procurement, pharmacovigilance, controlled substances,
   medicine pricing, and pharmacy law in South Africa.
-requires: []
-improves: []
 metadata:
   domain: health
   subdomain: pharmacy

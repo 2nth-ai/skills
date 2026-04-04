@@ -1,15 +1,13 @@
 ---
-name: Performance Marketing & Analytics
+name: performance
 description: >
   (1) Marketing metrics, CAC/LTV analysis, attribution, ROI measurement,
   and data-driven budget allocation across channels.
-requires:
-  - mkt
-improves: []
 metadata:
   domain: mkt
   subdomain: performance
   maturity: stable
+  requires: "mkt"
   jurisdiction: ZA
 ---
 

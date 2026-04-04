@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare
+name: cloudflare
 description: |
   Cloudflare platform skills. Use skills in this domain when:
   (1) building or deploying Cloudflare Workers or Pages applications,
@@ -9,14 +9,13 @@ description: |
   (5) deploying 2nth.ai platform components or client applications.
 license: MIT
 compatibility: Cloudflare Workers, Cloudflare Pages, Wrangler CLI
-homepage: https://skills.2nth.ai/tech/cloudflare
-repository: https://github.com/2nth-ai/skills
-improves:
-  - tech
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Cloudflare, Edge, Infrastructure, Workers, D1"
+  homepage: "https://skills.2nth.ai/tech/cloudflare"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "tech"
 allowed-tools: Bash(npx:*) Bash(wrangler:*) Read Write Edit Glob Grep
 ---
 

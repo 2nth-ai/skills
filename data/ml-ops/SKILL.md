@@ -1,15 +1,12 @@
 ---
-name: MLOps
+name: ml-ops
 description: >
   Taking ML models from notebook to production — model serving, CI/CD for ML,
   feature stores, monitoring, drift detection, and retraining pipelines.
-requires:
-  - data/science
-  - data/engineering
-improves: []
 metadata:
   domain: data
   subdomain: ml-ops
+  requires: "data/science, data/engineering"
   maturity: stable
 ---
 

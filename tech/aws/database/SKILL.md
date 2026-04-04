@@ -1,13 +1,11 @@
 ---
-name: tech/aws/database
+name: database
 description: AWS managed databases — RDS (PostgreSQL/MySQL), DynamoDB, Aurora, ElastiCache (Redis).
-requires:
-  - tech/aws
-improves:
-  - tech/aws
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  requires: "tech/aws"
+  improves: "tech/aws"
   maturity: stub
 ---
 

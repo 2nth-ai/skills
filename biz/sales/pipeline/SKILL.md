@@ -1,16 +1,13 @@
 ---
-name: Pipeline Management
+name: pipeline
 description: >
   (1) B2B pipeline management — stage definitions with exit criteria, deal hygiene,
   pipeline reviews, and velocity tracking across the sales cycle.
-requires:
-  - biz/sales
-  - biz/sales/qualification
-improves:
-  - biz/crm
 metadata:
   domain: biz
   subdomain: sales/pipeline
+  requires: "biz/sales, biz/sales/qualification"
+  improves: "biz/crm"
   maturity: stable
 ---
 

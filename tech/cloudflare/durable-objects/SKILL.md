@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/durable-objects
+name: durable-objects
 description: |
   Cloudflare Durable Objects — stateful edge compute. Use this skill when:
   (1) building real-time collaborative features requiring WebSocket connections,
@@ -11,16 +11,14 @@ description: |
   Requires Workers Paid plan ($5/mo).
 license: MIT
 compatibility: Cloudflare Workers (Paid plan required)
-homepage: https://skills.2nth.ai/tech/cloudflare/durable-objects
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Cloudflare, Durable Objects, WebSockets, Stateful, Real-time"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/durable-objects"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech/cloudflare"
 allowed-tools: Bash(npx:*) Bash(wrangler:*) Read Write Edit Glob Grep
 ---
 

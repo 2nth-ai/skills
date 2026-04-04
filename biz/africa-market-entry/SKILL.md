@@ -1,5 +1,5 @@
 ---
-name: biz/africa-market-entry
+name: africa-market-entry
 description: |
   Africa market entry and cross-border business strategy expert. Use this skill when:
   (1) advising on market entry strategy for African countries — regulatory, commercial, operational,
@@ -10,15 +10,13 @@ description: |
   (6) advising on cultural and business practice navigation across African markets.
 license: MIT
 compatibility: Any
-homepage: https://skills.2nth.ai/biz/africa-market-entry
-repository: https://github.com/2nth-ai/skills
-requires:
-  - fin/modelling
-improves:
-  - biz
 metadata:
   author: Gananda Connect (Barry Hawke)
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/biz/africa-market-entry"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "fin/modelling"
+  improves: "biz"
   categories: "Business, Africa, Market Entry, Cross-Border, Strategy"
 ---
 

@@ -1,11 +1,9 @@
 ---
-name: Electronics Hardware Design
+name: hardware
 description: >
   PCB design, schematic capture, component selection, signal integrity,
   EMC/EMI compliance, design-for-manufacture, and hardware bring-up for
   IoT and embedded electronics products.
-requires: []
-improves: []
 metadata:
   domain: iot
   subdomain: hardware

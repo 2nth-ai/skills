@@ -1,5 +1,5 @@
 ---
-name: biz/erp/woocommerce
+name: woocommerce
 description: |
   WooCommerce AI integration expert. Use this skill when:
   (1) querying the WooCommerce REST API — products, orders, customers, inventory, coupons, reports,
@@ -10,15 +10,13 @@ description: |
   (6) integrating WooCommerce with ERPs, accounting systems, or fulfilment providers via AI middleware.
 license: MIT
 compatibility: Any HTTP client, Node.js, Python, Cloudflare Workers, PHP
-homepage: https://skills.2nth.ai/biz/erp/woocommerce
-repository: https://github.com/2nth-ai/skills
-requires: []
-improves:
-  - biz/erp
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "E-Commerce, WooCommerce, WordPress, AI, Retail"
+  homepage: "https://skills.2nth.ai/biz/erp/woocommerce"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "biz/erp"
 allowed-tools: Bash(curl:*) Bash(npx:*) Read Write Edit Glob Grep
 ---
 

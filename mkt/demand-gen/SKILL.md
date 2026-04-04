@@ -1,16 +1,13 @@
 ---
-name: B2B Demand Generation
+name: demand-gen
 description: >
   (1) B2B demand generation — account-based marketing, lead scoring, MQL/SQL
   definition, funnel management, and marketing-sales alignment.
-requires:
-  - mkt
-  - mkt/performance
-improves: []
 metadata:
   domain: mkt
   subdomain: demand-gen
   maturity: stable
+  requires: "mkt, mkt/performance"
   jurisdiction: ZA
 ---
 

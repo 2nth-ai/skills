@@ -1,5 +1,5 @@
 ---
-name: biz/erp/erpnext
+name: erpnext
 description: |
   ERPNext integration expert. Use this skill when:
   (1) querying ERPNext doctypes — Items, BOMs, Work Orders, Stock, Sales/Purchase,
@@ -10,17 +10,14 @@ description: |
   (6) integrating ERPNext with external systems via its REST/RPC API.
 license: MIT
 compatibility: Any HTTP client, Python, or Cloudflare Workers
-homepage: https://skills.2nth.ai/biz/erp/erpnext
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-  - fin/reporting
-improves:
-  - biz/erp
 metadata:
   author: 2nth.ai
   version: "1.1.0"
   categories: "ERP, Manufacturing, REST API, ERPNext, Frappe"
+  homepage: "https://skills.2nth.ai/biz/erp/erpnext"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers, fin/reporting"
+  improves: "biz/erp"
 allowed-tools: Bash(curl:*) Bash(npx:*) Bash(python*) Read Write Edit Glob Grep
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: tech/elevenlabs
+name: elevenlabs
 description: |
   ElevenLabs voice AI skill. Use when:
   (1) generating realistic speech from text — TTS with 70+ languages, emotional control, streaming,
@@ -11,14 +11,13 @@ description: |
   (7) generating sound effects or music — AI-generated audio assets.
 license: MIT
 compatibility: ElevenLabs API v1, Python SDK, TypeScript/JavaScript SDK, React SDK
-homepage: https://skills.2nth.ai/tech/elevenlabs
-repository: https://github.com/2nth-ai/skills
-improves:
-  - tech
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   maturity: stub
+  homepage: "https://skills.2nth.ai/tech/elevenlabs"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "tech"
   categories: "ElevenLabs, TTS, text-to-speech, voice cloning, speech-to-text, voice agents, dubbing, sound effects, conversational AI, audio"
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: tech/claude-code
+name: claude-code
 description: |
   Claude Code setup and patterns. Use this skill when:
   (1) setting up a new Claude Code environment for a client or project,
@@ -9,14 +9,13 @@ description: |
   (5) designing the client onboarding flow for the 2nth.ai platform.
 license: MIT
 compatibility: Claude Code CLI, claude.ai/code
-homepage: https://skills.2nth.ai/tech/claude-code
-repository: https://github.com/2nth-ai/skills
-improves:
-  - tech
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Claude Code, AI Development, 2nth Platform"
+  homepage: "https://skills.2nth.ai/tech/claude-code"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "tech"
 allowed-tools: Read Write Edit Glob Grep
 ---
 

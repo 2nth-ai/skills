@@ -1,5 +1,5 @@
 ---
-name: biz/property/za/cidb
+name: cidb
 description: |
   CIDB Construction Industry Development Board contractor registration and grading. Use this skill when:
   (1) checking contractor eligibility for South African construction tenders,
@@ -11,16 +11,14 @@ description: |
   (7) understanding financial sponsorship rules for CIDB grading.
 license: MIT
 compatibility: CIDB Act 38 of 2000, tender value ranges revised October 2019
-homepage: https://skills.2nth.ai/biz/property/za/cidb
-repository: https://github.com/2nth-ai/skills
-requires:
-  - biz/property/za
-improves:
-  - biz/property/za
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "CIDB, Contractors, Grading, Tenders, South Africa, Procurement"
+  homepage: "https://skills.2nth.ai/biz/property/za/cidb"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "biz/property/za"
+  improves: "biz/property/za"
 allowed-tools: Read Glob Grep
 ---
 

@@ -1,14 +1,12 @@
 ---
-name: Data Analysis
+name: analysis
 description: >
   SQL analytics, exploratory data analysis (EDA), statistical reasoning,
   A/B testing, and translating data findings into business decisions.
-requires:
-  - data/engineering
-improves: []
 metadata:
   domain: data
   subdomain: analysis
+  requires: "data/engineering"
   maturity: stable
 ---
 

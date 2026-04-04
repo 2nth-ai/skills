@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/analytics-engine
+name: analytics-engine
 description: |
   Cloudflare Analytics Engine — time-series metrics at the edge. Use this skill when:
   (1) recording token usage, request counts, or latency metrics per client/skill/agent,
@@ -10,15 +10,13 @@ description: |
   Included with Workers Paid plan.
 license: MIT
 compatibility: Cloudflare Workers (Paid plan)
-homepage: https://skills.2nth.ai/tech/cloudflare/analytics-engine
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/analytics-engine"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech/cloudflare"
   categories: "Cloudflare, Analytics Engine, Metrics, Token Economy, Observability"
 ---
 

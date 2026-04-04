@@ -1,5 +1,5 @@
 ---
-name: fin/investor-readiness
+name: investor-readiness
 description: |
   Investor readiness assessment expert. Use this skill when:
   (1) assessing whether a business is ready to raise capital — governance, financials, legal,
@@ -10,16 +10,13 @@ description: |
   (6) advising on board composition, shareholder agreements, and ESOP structures.
 license: MIT
 compatibility: Any
-homepage: https://skills.2nth.ai/fin/investor-readiness
-repository: https://github.com/2nth-ai/skills
-requires:
-  - fin/capital-raising
-  - fin/modelling
-improves:
-  - fin
 metadata:
   author: Gananda Connect (Barry Hawke)
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/fin/investor-readiness"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "fin/capital-raising, fin/modelling"
+  improves: "fin"
   categories: "Finance, Investor Readiness, Governance, Fundraising"
 ---
 

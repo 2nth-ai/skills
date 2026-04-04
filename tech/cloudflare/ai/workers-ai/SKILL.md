@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/ai/workers-ai
+name: workers-ai
 description: |
   Cloudflare Workers AI — edge inference. Use this skill when:
   (1) running LLM inference at the edge with zero cold starts (Llama, Mistral, Phi),
@@ -10,16 +10,14 @@ description: |
   (6) running image classification, speech-to-text, or translation at the edge.
 license: MIT
 compatibility: Cloudflare Workers
-homepage: https://skills.2nth.ai/tech/cloudflare/ai/workers-ai
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech/cloudflare/ai
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Cloudflare, Workers AI, LLM, Embeddings, Edge Inference"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/ai/workers-ai"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech/cloudflare/ai"
 allowed-tools: Bash(npx:*) Bash(wrangler:*) Read Write Edit Glob Grep
 ---
 

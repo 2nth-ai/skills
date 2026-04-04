@@ -1,19 +1,17 @@
 ---
-name: leg/contracts
+name: contracts
 description: |
   Contracts subdomain manifest. Routes to contract-specific skills:
   (1) contract review — first-pass review, risk scoring, redlines, deviation reports.
 license: MIT
 compatibility: Any
-homepage: https://skills.2nth.ai/leg/contracts
-repository: https://github.com/2nth-ai/skills
-requires: []
-improves:
-  - leg
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Legal, Contracts"
+  homepage: "https://skills.2nth.ai/leg/contracts"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "leg"
 allowed-tools: Read
 ---
 

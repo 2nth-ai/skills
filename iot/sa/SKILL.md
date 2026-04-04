@@ -1,16 +1,13 @@
 ---
-name: South Africa IoT Context
+name: sa
 description: >
   SA-specific IoT deployment context: ICASA type approval, local spectrum regulations,
   LoRaWAN/NB-IoT operators, load shedding-resilient design, local suppliers,
   smart metering (Eskom AMI), and municipal IoT initiatives.
-requires:
-  - iot/connectivity
-  - iot/power
-improves: []
 metadata:
   domain: iot
   subdomain: sa
+  requires: "iot/connectivity, iot/power"
   maturity: stable
 ---
 

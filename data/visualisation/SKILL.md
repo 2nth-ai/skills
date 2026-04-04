@@ -1,14 +1,12 @@
 ---
-name: Data Visualisation & BI
+name: visualisation
 description: >
   Dashboard design, BI tool selection, data storytelling, self-serve analytics,
   and building reporting infrastructure that executives actually use.
-requires:
-  - data/analysis
-improves: []
 metadata:
   domain: data
   subdomain: visualisation
+  requires: "data/analysis"
   maturity: stable
 ---
 

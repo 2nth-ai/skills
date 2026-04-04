@@ -1,16 +1,14 @@
 ---
-name: Sales Qualification
+name: qualification
 description: >
   (1) Deal qualification frameworks — MEDDIC, MEDDPICC, and BANT — to assess whether
   an opportunity is real, winnable, and worth pursuing.
-requires:
-  - biz/sales
-improves:
-  - biz/crm
 metadata:
   domain: biz
   subdomain: sales/qualification
   maturity: stable
+  requires: "biz/sales"
+  improves: "biz/crm"
   frameworks: [MEDDIC, MEDDPICC, BANT]
 ---
 

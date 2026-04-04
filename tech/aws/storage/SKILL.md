@@ -1,13 +1,11 @@
 ---
-name: tech/aws/storage
+name: storage
 description: AWS storage — S3 object storage, EBS block storage, EFS file system, Glacier archival.
-requires:
-  - tech/aws
-improves:
-  - tech/aws
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  requires: "tech/aws"
+  improves: "tech/aws"
   maturity: stub
 ---
 

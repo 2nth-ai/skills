@@ -1,0 +1,64 @@
+{
+  "$schema": "https://2nth.ai/schemas/tutor-config.json",
+  "_comment": "Copy this file, fill in the values, and run: node build-tutor.js <config-path>",
+
+  "id": "example-tutor",
+  "name": "Example Tutor",
+  "tagline": "Your AI study coach",
+  "exam_date": "2026-08-01",
+  "level": "Level 1",
+  "provider": "Example Institute",
+
+  "branding": {
+    "accent": "#D4638F",
+    "accent_dim": "#B84D75",
+    "bg": "#FFF5F5",
+    "card": "#FFFFFF",
+    "text": "#5C4A4E",
+    "heading": "#2D1F22",
+    "user_name": "Student",
+    "user_initial": "S",
+    "coach_name": "Coach",
+    "coach_initial": "C",
+    "logo_icon": "book"
+  },
+
+  "billing": {
+    "initial_tokens": 1000000,
+    "token_zar_rate": 1000,
+    "model": "@cf/meta/llama-3.1-70b-instruct",
+    "max_tokens": 2048,
+    "temperature": 0.7
+  },
+
+  "subjects": [
+    {
+      "id": "subject-1",
+      "label": "Subject 1",
+      "topics": "Topic A, Topic B, Topic C"
+    },
+    {
+      "id": "subject-2",
+      "label": "Subject 2",
+      "topics": "Topic D, Topic E"
+    }
+  ],
+
+  "system_prompt_prefix": "You are an expert tutor for {name} ({level}). You help students prepare for their exam on {exam_date}. You are encouraging but rigorous. Use clear explanations with examples. When giving practice questions, provide answers with full explanations.",
+
+  "quick_actions": [
+    { "label": "Practice Questions", "prompt": "Give me 5 practice questions on the current topic" },
+    { "label": "Key Formulas", "prompt": "Explain the key formulas I need to memorise" },
+    { "label": "Exam Traps", "prompt": "What are the most common exam traps and mistakes?" },
+    { "label": "Flashcards", "prompt": "Create a flashcard set for the main concepts" },
+    { "label": "60s Summary", "prompt": "Summarise this topic in 60 seconds" },
+    { "label": "Worked Example", "prompt": "Walk me through a worked example step by step" }
+  ],
+
+  "welcome_message": "Welcome! I'm your AI study coach for {name} {level}. Your exam is on {exam_date}. Select a subject above and let's get started.",
+
+  "deploy": {
+    "project_name": "example-tutor",
+    "custom_domain": "example.2nth.ai"
+  }
+}

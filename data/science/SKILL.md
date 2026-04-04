@@ -1,15 +1,12 @@
 ---
-name: Data Science
+name: science
 description: >
   Machine learning model development — problem framing, feature engineering,
   model selection, evaluation, and communicating results to non-technical stakeholders.
-requires:
-  - data/analysis
-  - data/engineering
-improves: []
 metadata:
   domain: data
   subdomain: science
+  requires: "data/analysis, data/engineering"
   maturity: stable
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: fin/m-and-a
+name: m-and-a
 description: |
   Mergers and acquisitions advisory expert. Use this skill when:
   (1) screening acquisition targets — criteria definition, longlist generation, initial assessment,
@@ -10,16 +10,13 @@ description: |
   (6) handling African cross-border M&A — exchange control, competition authority, sector regulators.
 license: MIT
 compatibility: Any
-homepage: https://skills.2nth.ai/fin/m-and-a
-repository: https://github.com/2nth-ai/skills
-requires:
-  - fin/modelling
-  - fin/reporting
-improves:
-  - fin
 metadata:
   author: Gananda Connect (Barry Hawke)
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/fin/m-and-a"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "fin/modelling, fin/reporting"
+  improves: "fin"
   categories: "Finance, M&A, Mergers, Acquisitions, Due Diligence"
 ---
 

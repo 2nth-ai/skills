@@ -1,13 +1,11 @@
 ---
-name: tech/aws/networking
+name: networking
 description: AWS networking — VPC design, Route 53, CloudFront CDN, ALB/NLB load balancers, VPC endpoints.
-requires:
-  - tech/aws
-improves:
-  - tech/aws
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  requires: "tech/aws"
+  improves: "tech/aws"
   maturity: stub
 ---
 

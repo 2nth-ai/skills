@@ -1,10 +1,8 @@
 ---
-name: Public Health & Epidemiology
+name: public-health
 description: >
   Population health management, epidemiology, disease surveillance, community
   health programmes, and South Africa's primary healthcare system.
-requires: []
-improves: []
 metadata:
   domain: health
   subdomain: public-health

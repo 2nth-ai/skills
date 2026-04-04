@@ -1,5 +1,5 @@
 ---
-name: biz/hr/recruitment
+name: recruitment
 description: |
   Recruitment value chain — AI augmentation across every stage from sourcing to signed offer. Use this skill when:
   (1) drafting or optimising job descriptions for clarity, inclusivity, and SEO,
@@ -10,17 +10,13 @@ description: |
   (6) integrating with ATS platforms (Greenhouse, Lever, Workday, BambooHR, SmartRecruiters).
 license: MIT
 compatibility: Any ATS via REST API; Cloudflare Workers AI for CV parsing
-homepage: https://skills.2nth.ai/biz/hr/recruitment
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-  - tech/cloudflare/ai/workers-ai
-  - tech/cloudflare/ai/ai-gateway
-improves:
-  - biz/hr
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/biz/hr/recruitment"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers, tech/cloudflare/ai/workers-ai, tech/cloudflare/ai/ai-gateway"
+  improves: "biz/hr"
   categories: "HR, Recruitment, Talent Acquisition, ATS, JD, CV Screening"
 ---
 

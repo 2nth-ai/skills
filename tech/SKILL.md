@@ -14,11 +14,11 @@ description: |
   (10) infrastructure as code — Wrangler, Terraform, GCP, deployment pipelines,
   (11) Recall.ai — meeting bot API for recording, transcribing Zoom/Meet/Teams/Webex calls.
 license: MIT
-homepage: https://skills.2nth.ai/tech
-repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/tech"
+  repository: "https://github.com/2nth-ai/skills"
   categories: "Technology, Cloudflare, AWS, Lambda, ECS, IAM, Cisco, IOS, NX-OS, networking, Firepower, Meraki, Webex, CUCM, Netmiko, Google Cloud, GCP, Gmail, Workspace, Microsoft, Azure AI, Copilot, Slack, Discord, Meta, WhatsApp, Facebook, Messenger, Instagram, X, Twitter, Claude Code, Infrastructure"
 ---
 

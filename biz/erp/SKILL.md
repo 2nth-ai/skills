@@ -1,5 +1,5 @@
 ---
-name: biz/erp
+name: erp
 description: |
   ERP integration skills. Use skills in this subdomain when working with:
   (1) Sage X3 — GraphQL API, master data, sales, purchasing, stock,
@@ -7,13 +7,12 @@ description: |
   (3) Shopify — Admin + Storefront API, e-commerce operations,
   (4) any ERP system for AI-powered reporting or workflow automation.
 license: MIT
-homepage: https://skills.2nth.ai/biz/erp
-repository: https://github.com/2nth-ai/skills
-improves:
-  - biz
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/biz/erp"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "biz"
   categories: "ERP, Business, Integration"
 ---
 

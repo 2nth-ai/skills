@@ -1,5 +1,5 @@
 ---
-name: biz/property/za/sans-10400
+name: sans-10400
 description: |
   SANS 10400 South African National Building Regulations. Use this skill when:
   (1) advising on building code compliance — structural design, materials, fire protection, energy usage,
@@ -11,16 +11,14 @@ description: |
   (7) comparing deemed-to-satisfy vs rational design compliance routes.
 license: MIT
 compatibility: SANS 10400:2011 base edition with updates through 2024
-homepage: https://skills.2nth.ai/biz/property/za/sans-10400
-repository: https://github.com/2nth-ai/skills
-requires:
-  - biz/property/za
-improves:
-  - biz/property/za
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "SANS 10400, Building Codes, South Africa, Construction Standards, SABS"
+  homepage: "https://skills.2nth.ai/biz/property/za/sans-10400"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "biz/property/za"
+  improves: "biz/property/za"
 allowed-tools: Read Glob Grep
 ---
 

@@ -1,16 +1,14 @@
 ---
-name: CCMA Process & Dispute Resolution
+name: ccma
 description: >
   (1) CCMA — Commission for Conciliation, Mediation and Arbitration — unfair dismissal
   claims, conciliation, arbitration, and defending employer cases in South Africa.
-requires:
-  - leg/employment
-improves: []
 metadata:
   domain: leg
   subdomain: employment/ccma
   maturity: stable
   jurisdiction: ZA
+  requires: "leg/employment"
   legislation: Labour Relations Act 66 of 1995
 ---
 

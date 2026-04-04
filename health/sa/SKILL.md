@@ -1,10 +1,8 @@
 ---
-name: South African Healthcare Landscape
+name: sa
 description: >
   The SA two-tier healthcare system, NHI, medical aid schemes, regulatory bodies,
   public sector structure, private hospital groups, and the policy environment.
-requires: []
-improves: []
 metadata:
   domain: health
   subdomain: sa

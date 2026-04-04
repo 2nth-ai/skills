@@ -1,10 +1,8 @@
 ---
-name: Healthcare Operations
+name: operations
 description: >
   Facility operations, bed management, capacity planning, staffing models,
   patient flow optimisation, and operational KPIs for healthcare organisations.
-requires: []
-improves: []
 metadata:
   domain: health
   subdomain: operations

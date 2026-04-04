@@ -1,15 +1,13 @@
 ---
-name: Management Accounts
+name: management-accounts
 description: >
   (1) Monthly management accounts — income statement, balance sheet, cash flow statement,
   variance analysis, and KPI dashboards for operational financial decision-making.
-requires:
-  - fin/accounting
-improves:
-  - fin/modelling
 metadata:
   domain: fin
   subdomain: management-accounts
+  requires: "fin/accounting"
+  improves: "fin/modelling"
   maturity: stable
 ---
 

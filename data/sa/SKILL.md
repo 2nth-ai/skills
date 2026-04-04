@@ -1,14 +1,12 @@
 ---
-name: South African Data Landscape
+name: sa
 description: >
   Data infrastructure, cloud providers, connectivity constraints, POPIA specifics,
   and the practical realities of data work in South Africa.
-requires:
-  - data/governance
-improves: []
 metadata:
   domain: data
   subdomain: sa
+  requires: "data/governance"
   maturity: stable
 ---
 

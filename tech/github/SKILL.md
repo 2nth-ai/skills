@@ -1,5 +1,5 @@
 ---
-name: tech/github
+name: github
 description: |
   GitHub platform skill. Use when:
   (1) automating repositories — create, update, branch, tag via REST API,
@@ -11,14 +11,13 @@ description: |
   (7) working with GitHub in Cloudflare Workers or AWS Lambda — Octokit, REST, webhooks.
 license: MIT
 compatibility: GitHub REST API v3, GraphQL API v4, Octokit v21 (TypeScript/JS), GitHub Actions, GitHub Apps
-homepage: https://skills.2nth.ai/tech/github
-repository: https://github.com/2nth-ai/skills
-improves:
-  - tech
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   maturity: stub
+  homepage: "https://skills.2nth.ai/tech/github"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "tech"
   categories: "GitHub, REST API, Octokit, GitHub Actions, GitHub Apps, Copilot, webhooks, CI/CD, repositories, issues, pull requests"
 ---
 

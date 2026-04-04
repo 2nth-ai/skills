@@ -1,5 +1,5 @@
 ---
-name: biz/property/za/nhbrc
+name: nhbrc
 description: |
   NHBRC National Home Builders Registration Council. Use this skill when:
   (1) advising on home builder registration requirements in South Africa,
@@ -11,16 +11,14 @@ description: |
   (7) determining whether a construction project falls under NHBRC scope (residential only).
 license: MIT
 compatibility: Housing Consumers Protection Measures Act, 1998 (Act 95 of 1998)
-homepage: https://skills.2nth.ai/biz/property/za/nhbrc
-repository: https://github.com/2nth-ai/skills
-requires:
-  - biz/property/za
-improves:
-  - biz/property/za
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "NHBRC, Home Builders, Warranties, Inspections, South Africa, Residential"
+  homepage: "https://skills.2nth.ai/biz/property/za/nhbrc"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "biz/property/za"
+  improves: "biz/property/za"
 allowed-tools: Read Glob Grep
 ---
 

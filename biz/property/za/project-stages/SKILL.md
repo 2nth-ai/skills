@@ -1,5 +1,5 @@
 ---
-name: biz/property/za/project-stages
+name: project-stages
 description: |
   South African property development lifecycle with ERP integration. Use this skill when:
   (1) planning a property development project mapped to SA regulatory milestones,
@@ -11,19 +11,14 @@ description: |
   (7) creating handover documentation packages for SA residential construction.
 license: MIT
 compatibility: ERPNext v14+, adaptable to any ERP or project management system
-homepage: https://skills.2nth.ai/biz/property/za/project-stages
-repository: https://github.com/2nth-ai/skills
-requires:
-  - biz/property/za
-  - biz/property/za/sans-10400
-  - biz/property/za/cidb
-  - biz/property/za/nhbrc
-improves:
-  - biz/property/za
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Project Management, ERP, ERPNext, Construction Lifecycle, Compliance Checklists, South Africa"
+  homepage: "https://skills.2nth.ai/biz/property/za/project-stages"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "biz/property/za, biz/property/za/sans-10400, biz/property/za/cidb, biz/property/za/nhbrc"
+  improves: "biz/property/za"
 allowed-tools: Read Write Edit Glob Grep Bash(bench:*) Bash(erpnext:*)
 ---
 

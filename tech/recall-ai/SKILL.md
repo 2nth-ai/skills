@@ -1,5 +1,5 @@
 ---
-name: tech/recall-ai
+name: recall-ai
 description: |
   Integrate with the Recall.ai Meeting Bot API to send bots to video meetings
   (Zoom, Google Meet, Microsoft Teams, Webex, Slack Huddles), retrieve recordings,
@@ -12,14 +12,13 @@ description: |
   (6) any project that needs programmatic access to meeting conversation data via Recall.ai.
 license: MIT
 compatibility: Any runtime with HTTPS — Node.js, Python, Cloudflare Workers, etc.
-homepage: https://skills.2nth.ai/tech/recall-ai
-repository: https://github.com/2nth-ai/skills
-improves:
-  - tech
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Meeting Intelligence, Transcription, Recall.ai, Video, Zoom, Google Meet, Teams, Webhooks"
+  homepage: "https://skills.2nth.ai/tech/recall-ai"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "tech"
 allowed-tools: Bash(curl:*) Read Write Edit Glob Grep
 ---
 

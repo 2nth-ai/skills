@@ -1,5 +1,5 @@
 ---
-name: biz/accounting/xero
+name: xero
 description: |
   Xero cloud accounting AI integration expert. Use this skill when:
   (1) creating, querying, or updating Xero invoices (ACCREC accounts receivable or ACCPAY accounts payable),
@@ -12,15 +12,13 @@ description: |
   (8) integrating Xero with external systems via the Xero REST API.
 license: MIT
 compatibility: Any HTTP client, Cloudflare Workers, Node.js
-homepage: https://skills.2nth.ai/biz/accounting/xero
-repository: https://github.com/2nth-ai/skills
-requires: []
-improves:
-  - biz/accounting
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Accounting, Xero, OAuth 2.0, Invoicing, Reconciliation"
+  homepage: "https://skills.2nth.ai/biz/accounting/xero"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "biz/accounting"
 allowed-tools: Bash(curl:*) Read Write Edit Glob Grep
 ---
 

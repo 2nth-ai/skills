@@ -1,16 +1,14 @@
 ---
-name: Corporate Governance (South Africa)
+name: corporate
 description: >
   (1) SA corporate governance — Companies Act 71 of 2008, director duties, shareholder
   agreements, MOI, King IV, and the obligations of running a compliant South African company.
-requires:
-  - leg
-improves: []
 metadata:
   domain: leg
   subdomain: corporate
   maturity: stable
   jurisdiction: ZA
+  requires: "leg"
   legislation: Companies Act 71 of 2008; King IV Report on Corporate Governance 2016
 ---
 

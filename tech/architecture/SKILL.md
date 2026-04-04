@@ -1,5 +1,5 @@
 ---
-name: tech/architecture
+name: architecture
 description: |
   Code architecture AI expert. Use this skill when:
   (1) generating Architecture Decision Records (ADRs) in MADR or Nygard format from decision context and constraints,
@@ -8,21 +8,19 @@ description: |
   (4) generating C4 model diagrams (context, container, component) in Mermaid syntax,
   (5) detecting anti-patterns — distributed monolith, chatty microservices, god service, anemic domain model,
   (6) selecting a database technology (relational, document, time-series, graph, vector) based on workload characteristics,
-  (7) planning migration strategies — strangler fig, parallel run, big-bang — with risk profiles,
-  (8) structuring non-functional requirements (availability, latency, throughput, consistency, security),
-  (9) identifying and documenting existing architecture decisions retrospectively.
+  (7) planning migration strategies — strangler fig, parallel run, big-bang,
+  (8) structuring NFRs (availability, latency, throughput, consistency, security),
+  (9) documenting existing architecture decisions retrospectively.
 license: MIT
 compatibility: Any — outputs Markdown, Mermaid, JSON
-homepage: https://skills.2nth.ai/tech/architecture
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Engineering, Architecture, ADR, System Design, Patterns"
+  homepage: "https://skills.2nth.ai/tech/architecture"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech"
 allowed-tools: Read Write Edit Glob Grep
 ---
 

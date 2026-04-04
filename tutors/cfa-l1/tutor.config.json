@@ -1,0 +1,61 @@
+{
+  "id": "cfa-l1",
+  "name": "CFA",
+  "tagline": "Your AI exam coach",
+  "exam_date": "2026-08-01",
+  "level": "Level 1",
+  "provider": "CFA Institute 2026",
+
+  "branding": {
+    "accent": "#D4638F",
+    "accent_dim": "#B84D75",
+    "bg": "#FFF5F5",
+    "card": "#FFFFFF",
+    "text": "#5C4A4E",
+    "heading": "#2D1F22",
+    "user_name": "Koo",
+    "user_initial": "K",
+    "coach_name": "CFA Coach",
+    "coach_initial": "C",
+    "logo_icon": "chart"
+  },
+
+  "billing": {
+    "initial_tokens": 1000000,
+    "token_zar_rate": 1000,
+    "model": "@cf/meta/llama-3.1-70b-instruct",
+    "max_tokens": 2048,
+    "temperature": 0.7
+  },
+
+  "subjects": [
+    { "id": "quant", "label": "Quantitative Methods", "topics": "Rates and Returns, Time Value of Money, Statistical Measures, Probability Trees, Portfolio Mathematics, Simulation Methods, Estimation and Inference, Hypothesis Testing, Simple Linear Regression, Big Data Techniques" },
+    { "id": "econ", "label": "Economics", "topics": "Firm and Market Structures, Business Cycles, Fiscal Policy, Monetary Policy, Geopolitics, International Trade, Capital Flows and FX, Exchange Rate Calculations" },
+    { "id": "corp", "label": "Corporate Issuers", "topics": "Organizational Forms, Investors and Stakeholders, Working Capital and Liquidity, Corporate Governance, Capital Investment and Allocation, Capital Structure, Business Models" },
+    { "id": "fsa", "label": "Financial Statements", "topics": "Introduction to Financial Statements, Income Statements, Balance Sheets, Cash Flow Statements, Financial Analysis Techniques, Inventories, Long-Lived Assets, Income Taxes, Non-Current Liabilities, Financial Reporting Quality" },
+    { "id": "equity", "label": "Equity Investments", "topics": "Market Organization and Structure, Security Market Indexes, Efficient Markets, Overview of Equity Securities, Company Analysis, Industry Analysis, Equity Valuation Concepts and Basic Tools" },
+    { "id": "fi", "label": "Fixed Income", "topics": "Fixed-Income Features, Cash Flows and Types, Issuance and Trading, Bond Valuation Prices and Yields, Government Issuers, Corporate Issuers, Credit Analysis, Interest Rate Risk, Securitization" },
+    { "id": "deriv", "label": "Derivatives", "topics": "Derivative Features, Forward Commitments, Contingent Claims, Derivative Benefits Risks and Uses, Arbitrage Replication and Cost of Carry" },
+    { "id": "alts", "label": "Alternatives", "topics": "Alternative Investment Features Methods and Structures, Performance and Returns, Hedge Funds, Private Capital, Real Assets, Digital Assets" },
+    { "id": "pm", "label": "Portfolio Management", "topics": "Portfolio Management Overview, Portfolio Risk and Return Part I and II, Basics of Portfolio Planning and Construction, Risk Management Introduction" },
+    { "id": "ethics", "label": "Ethics & Standards", "topics": "Ethics and Trust, Code of Ethics, Standards of Professional Conduct, GIPS Standards, Professionalism, Integrity of Capital Markets, Duties to Clients, Duties to Employers" }
+  ],
+
+  "system_prompt_prefix": "You are an expert CFA Level 1 tutor for the 2026 exam. You know the full CFA Institute curriculum across all 10 topic areas. You help students prepare by explaining concepts clearly, providing exam-style practice questions with full answer explanations, worked examples, key formulas, and exam strategy. Be encouraging but rigorous. If a student is struggling, break the concept down using analogies, real-world examples, or simpler language. Reference the CFA Institute curriculum when appropriate. Format formulas clearly using code blocks.",
+
+  "quick_actions": [
+    { "label": "Practice Questions", "prompt": "Give me 5 exam-style multiple choice questions on the current topic" },
+    { "label": "Key Formulas", "prompt": "List the key formulas I need to memorise for this topic" },
+    { "label": "Exam Traps", "prompt": "What are the most common exam traps and mistakes for this topic?" },
+    { "label": "Flashcards", "prompt": "Create a set of flashcards for the main concepts" },
+    { "label": "60s Summary", "prompt": "Summarise this topic in 60 seconds — just the essentials" },
+    { "label": "Worked Example", "prompt": "Walk me through a worked example step by step with calculations" }
+  ],
+
+  "welcome_message": "Hey Koo! Ready to study for your CFA Level 1? Your exam is in August 2026 — let's make every session count. Pick a topic above or ask me anything.",
+
+  "deploy": {
+    "project_name": "cfa-tutor",
+    "custom_domain": "cfa.2nth.ai"
+  }
+}

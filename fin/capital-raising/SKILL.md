@@ -1,5 +1,5 @@
 ---
-name: fin/capital-raising
+name: capital-raising
 description: |
   Capital raising expert. Use this skill when:
   (1) structuring a capital raise — equity, debt, mezzanine, convertible notes,
@@ -10,16 +10,13 @@ description: |
   (6) targeting African markets — PE/VC landscape, DFI funding, impact investors.
 license: MIT
 compatibility: Any
-homepage: https://skills.2nth.ai/fin/capital-raising
-repository: https://github.com/2nth-ai/skills
-requires:
-  - fin/modelling
-  - fin/reporting
-improves:
-  - fin
 metadata:
   author: Gananda Connect (Barry Hawke)
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/fin/capital-raising"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "fin/modelling, fin/reporting"
+  improves: "fin"
   categories: "Finance, Capital Raising, Fundraising, Investor Relations"
 ---
 

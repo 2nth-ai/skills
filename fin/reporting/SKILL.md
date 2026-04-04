@@ -1,5 +1,5 @@
 ---
-name: fin/reporting
+name: reporting
 description: |
   Financial reporting skills. Use this skill when:
   (1) building KPI dashboards from ERP or CRM data,
@@ -9,13 +9,12 @@ description: |
   (5) formatting financial outputs for display in Cloudflare Workers or Pages.
 license: MIT
 compatibility: Any JavaScript/TypeScript, Cloudflare Workers
-homepage: https://skills.2nth.ai/fin/reporting
-repository: https://github.com/2nth-ai/skills
-improves:
-  - fin
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/fin/reporting"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "fin"
   categories: "Finance, Reporting, KPIs, Dashboards"
 ---
 

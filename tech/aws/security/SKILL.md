@@ -1,5 +1,5 @@
 ---
-name: tech/aws/security
+name: security
 description: |
   AWS security skill. Use when: (1) designing IAM policies — least-privilege roles, resource-based policies,
   (2) managing VPC security — security groups, NACLs, private subnets, VPC endpoints,
@@ -8,17 +8,14 @@ description: |
   (5) securing Lambda and ECS workloads — execution roles, task roles, no hardcoded credentials.
 license: MIT
 compatibility: AWS CLI v2, CDK v2, SDK v3 (TypeScript/Python), Terraform
-homepage: https://skills.2nth.ai/tech/aws/security
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/aws
-improves:
-  - tech/aws
-  - tech
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "AWS, IAM, VPC, Security Groups, KMS, Secrets Manager, CloudTrail, GuardDuty"
+  homepage: "https://skills.2nth.ai/tech/aws/security"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/aws"
+  improves: "tech/aws, tech"
 allowed-tools: Bash(aws:*) Read Write Edit Glob Grep
 ---
 

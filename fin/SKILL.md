@@ -11,11 +11,11 @@ description: |
   (7) M&A — mergers, acquisitions, due diligence, deal structuring,
   (8) investor readiness — governance, compliance, valuation benchmarking.
 license: MIT
-homepage: https://skills.2nth.ai/fin
-repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/fin"
+  repository: "https://github.com/2nth-ai/skills"
   categories: "Finance, Reporting, Treasury, Tax"
 ---
 

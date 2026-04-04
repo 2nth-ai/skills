@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/pages
+name: pages
 description: |
   Cloudflare Pages — static hosting + serverless functions. Use this skill when:
   (1) deploying frontend apps, marketing sites, or documentation from a Git repo,
@@ -9,15 +9,13 @@ description: |
   Unlimited sites, 500 builds/month on free plan.
 license: MIT
 compatibility: Cloudflare Pages, Wrangler CLI
-homepage: https://skills.2nth.ai/tech/cloudflare/pages
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/pages"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech/cloudflare"
   categories: "Cloudflare, Pages, Static Hosting, Serverless, CI/CD"
 ---
 

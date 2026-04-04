@@ -1,16 +1,13 @@
 ---
-name: Sales Discovery
+name: discovery
 description: >
   (1) Discovery call frameworks — SPIN Selling and structured questioning — to uncover
   buyer pain, quantify impact, and build urgency before pitching.
-requires:
-  - biz/sales
-  - biz/sales/qualification
-improves: []
 metadata:
   domain: biz
   subdomain: sales/discovery
   maturity: stable
+  requires: "biz/sales, biz/sales/qualification"
   frameworks: [SPIN Selling, Gap Selling, Challenger Sale]
 ---
 

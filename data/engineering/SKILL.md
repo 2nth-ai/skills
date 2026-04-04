@@ -1,14 +1,12 @@
 ---
-name: Data Engineering
+name: engineering
 description: >
   Data pipeline design, ETL/ELT patterns, data warehouse modelling, streaming
   vs batch, orchestration, and data quality in production pipelines.
-requires:
-  - data/strategy
-improves: []
 metadata:
   domain: data
   subdomain: engineering
+  requires: "data/strategy"
   maturity: stable
 ---
 

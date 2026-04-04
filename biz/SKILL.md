@@ -9,11 +9,11 @@ description: |
   (5) business operations, workflow automation, reporting,
   (6) property development compliance — building codes, contractor registration, construction warranties.
 license: MIT
-homepage: https://skills.2nth.ai/biz
-repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/biz"
+  repository: "https://github.com/2nth-ai/skills"
   categories: "Business, ERP, CRM, Operations"
 ---
 

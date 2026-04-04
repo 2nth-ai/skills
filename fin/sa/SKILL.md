@@ -1,15 +1,13 @@
 ---
-name: South African Finance & Tax
+name: sa
 description: >
   (1) South African financial and tax domain — SARS compliance, VAT Act, Income Tax Act,
   Companies Act obligations, and B-BBEE for businesses operating in South Africa.
-requires:
-  - fin/accounting
-improves: []
 metadata:
   domain: fin
   subdomain: sa
   maturity: stable
+  requires: "fin/accounting"
   jurisdiction: ZA
 ---
 

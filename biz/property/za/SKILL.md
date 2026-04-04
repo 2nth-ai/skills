@@ -1,5 +1,5 @@
 ---
-name: biz/property/za
+name: za
 description: |
   South African property development and construction compliance. Use this skill when:
   (1) the user mentions South African building regulations, SANS 10400, CIDB grading, or NHBRC registration,
@@ -10,12 +10,12 @@ description: |
   (6) any reference to SA building codes, SABS standards, NHBRC warranty, CIDB grade, or National Building Regulations.
 license: MIT
 compatibility: South African regulatory framework (current as of 2024)
-homepage: https://skills.2nth.ai/biz/property/za
-repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Property, Construction, Compliance, South Africa, Regulations"
+  homepage: "https://skills.2nth.ai/biz/property/za"
+  repository: "https://github.com/2nth-ai/skills"
 allowed-tools: Read Glob Grep
 ---
 

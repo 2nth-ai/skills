@@ -1,5 +1,5 @@
 ---
-name: biz/hr
+name: hr
 description: |
   Human Resources domain skills. Use skills in this domain when:
   (1) automating or augmenting the recruitment and talent acquisition process,
@@ -8,13 +8,12 @@ description: |
   (4) building people analytics, compensation benchmarking, or workforce planning tools,
   (5) supporting onboarding workflows, compliance documentation, or performance cycles.
 license: MIT
-homepage: https://skills.2nth.ai/biz/hr
-repository: https://github.com/2nth-ai/skills
-improves:
-  - biz
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/biz/hr"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "biz"
   categories: "HR, Recruitment, Talent, People, Onboarding"
 ---
 

@@ -1,16 +1,13 @@
 ---
-name: Social Media Strategy
+name: social
 description: >
   (1) Social media strategy, community management, platform selection,
   influencer marketing, and social content planning for B2B and B2C brands.
-requires:
-  - mkt
-  - mkt/content
-improves: []
 metadata:
   domain: mkt
   subdomain: social
   maturity: stable
+  requires: "mkt, mkt/content"
   jurisdiction: ZA
 ---
 

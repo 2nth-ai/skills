@@ -1,18 +1,13 @@
 ---
-name: Revenue Operations
+name: revops
 description: >
   (1) Revenue operations — quota design, compensation plans, territory management,
   CRM governance, and tech stack for a high-performance B2B sales function.
-requires:
-  - biz/sales
-  - biz/sales/pipeline
-  - biz/sales/forecasting
-improves:
-  - biz/crm
-  - fin/modelling
 metadata:
   domain: biz
   subdomain: sales/revops
+  requires: "biz/sales, biz/sales/pipeline, biz/sales/forecasting"
+  improves: "biz/crm, fin/modelling"
   maturity: stable
 ---
 

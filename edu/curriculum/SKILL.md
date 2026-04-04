@@ -1,5 +1,5 @@
 ---
-name: edu/curriculum
+name: curriculum
 description: |
   Curriculum designer AI expert. Use this skill when:
   (1) generating standards-aligned lesson plans for any subject, grade, and curriculum framework (CAPS, IEB, Cambridge, IB, Common Core, Australian, Ofsted),
@@ -13,15 +13,13 @@ description: |
   (9) producing remediation plans for learners struggling with specific topics.
 license: MIT
 compatibility: Any — outputs Markdown, DOCX, JSON
-homepage: https://skills.2nth.ai/edu/curriculum
-repository: https://github.com/2nth-ai/skills
-requires: []
-improves:
-  - edu
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Education, Curriculum Design, Lesson Plans, CAPS, IB, Cambridge"
+  homepage: "https://skills.2nth.ai/edu/curriculum"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "edu"
 allowed-tools: Read Write Edit
 ---
 

@@ -1,12 +1,9 @@
 ---
-name: Embedded Firmware Development
+name: firmware
 description: >
   Bare-metal and RTOS firmware for IoT devices — MCU architecture selection,
   FreeRTOS/Zephyr, peripheral drivers, OTA updates, power management in firmware,
   and CI/CD for embedded systems.
-requires:
-  - iot/hardware
-improves: []
 metadata:
   domain: iot
   subdomain: firmware
@@ -14,6 +11,7 @@ metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "IoT, Embedded, Firmware, RTOS, OTA, Power Management"
+  requires: "iot/hardware"
 allowed-tools: Bash(curl:*) Read Write Edit Glob Grep
 ---
 

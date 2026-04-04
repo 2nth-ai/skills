@@ -1,5 +1,5 @@
 ---
-name: agri/sustainable-farming
+name: sustainable-farming
 description: |
   Agricultural sector intelligence and sustainable farming expert. Use this skill when:
   (1) analysing crop economics — yield projections, input costs, margin analysis per hectare,
@@ -11,15 +11,13 @@ description: |
   (7) building investment cases for agricultural assets — farm valuations, comparable transactions.
 license: MIT
 compatibility: Any
-homepage: https://skills.2nth.ai/agri/sustainable-farming
-repository: https://github.com/2nth-ai/skills
-requires:
-  - fin/modelling
-improves:
-  - agri
 metadata:
   author: Gananda Connect (Barry Hawke)
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/agri/sustainable-farming"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "fin/modelling"
+  improves: "agri"
   categories: "Agriculture, Sustainable Farming, Crop Economics, Farm Valuation"
 ---
 

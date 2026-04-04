@@ -1,13 +1,11 @@
 ---
-name: tech/aws/messaging
+name: messaging
 description: AWS messaging — SQS queues, SNS topics, EventBridge event bus, Kinesis data streams.
-requires:
-  - tech/aws
-improves:
-  - tech/aws
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  requires: "tech/aws"
+  improves: "tech/aws"
   maturity: stub
 ---
 

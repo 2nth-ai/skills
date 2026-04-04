@@ -1,5 +1,5 @@
 ---
-name: agri/agri-tech-investment
+name: agri-tech-investment
 description: |
   Agri-tech investment assessment expert. Use this skill when:
   (1) evaluating precision farming technologies — satellite imagery, NDVI analysis, variable rate application,
@@ -11,16 +11,13 @@ description: |
   (7) comparing agri-tech solutions for African farming conditions.
 license: MIT
 compatibility: Any
-homepage: https://skills.2nth.ai/agri/agri-tech-investment
-repository: https://github.com/2nth-ai/skills
-requires:
-  - agri/sustainable-farming
-  - fin/modelling
-improves:
-  - agri
 metadata:
   author: Gananda Connect (Barry Hawke)
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/agri/agri-tech-investment"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "agri/sustainable-farming, fin/modelling"
+  improves: "agri"
   categories: "Agri-Tech, Precision Farming, AI Agriculture, Investment"
 ---
 

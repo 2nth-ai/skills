@@ -1,18 +1,15 @@
 ---
-name: South African Corporate Tax
+name: tax
 description: >
   (1) South African corporate income tax — Income Tax Act 58 of 1962, provisional tax,
   corporate tax rates, deductions, assessed losses, and SARS compliance for companies.
-requires:
-  - fin/sa
-improves:
-  - fin/accounting
-  - fin/modelling
 metadata:
   domain: fin
   subdomain: sa/tax
   maturity: stable
   jurisdiction: ZA
+  requires: "fin/sa"
+  improves: "fin/accounting, fin/modelling"
   legislation: Income Tax Act 58 of 1962
 ---
 

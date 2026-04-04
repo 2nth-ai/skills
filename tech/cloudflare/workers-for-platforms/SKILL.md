@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/workers-for-platforms
+name: workers-for-platforms
 description: |
   Cloudflare Workers for Platforms — multi-tenant Worker execution. Use this skill when:
   (1) building a platform where YOUR customers deploy their own Workers into your infrastructure,
@@ -8,16 +8,14 @@ description: |
   NOT for: deploying Workers on behalf of clients — use standard Workers + Accounts for that.
 license: MIT
 compatibility: Cloudflare Workers (Paid, Enterprise)
-homepage: https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "0.1.0"
   status: stub
+  homepage: "https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech/cloudflare"
   categories: "Cloudflare, Workers for Platforms, Multi-tenant, Platform"
 ---
 

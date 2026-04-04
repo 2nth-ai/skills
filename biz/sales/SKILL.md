@@ -1,14 +1,12 @@
 ---
-name: B2B Sales
+name: sales
 description: >
   (1) B2B sales domain — frameworks, methodology, and process for complex sales cycles
   from prospecting through close and expansion.
-requires: []
-improves:
-  - biz/crm
 metadata:
   domain: biz
   subdomain: sales
+  improves: "biz/crm"
   maturity: stable
 ---
 
