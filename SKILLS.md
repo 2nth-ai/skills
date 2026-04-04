@@ -60,6 +60,7 @@ biz/
       cidb/          SKILL.md  ✓ production — contractor grading (1–9), classes of works, tender values
       nhbrc/         SKILL.md  ✓ production — builder registration, 4-stage inspections, 3-tier warranty
       project-stages/ SKILL.md ✓ production — 9-stage lifecycle, ERPNext doctypes, compliance checklists
+  spatial-gallery/   SKILL.md  ✓ production — FOAM-inspired spatial index, gallery, proof of presence for shared spaces
   hr/                SKILL.md  ✓ stub — HR and talent domain manifest
     recruitment/     SKILL.md  ✓ production — full recruitment value chain, JD → offer
     onboarding/      stub
