@@ -11,7 +11,8 @@ description: |
   (7) Cisco — IOS/NX-OS networking, ASA/Firepower security, Meraki wireless, Webex collaboration, network automation,
   (8) Claude Code — setup, CLAUDE.md, skills integration, MCP servers,
   (9) MCP (Model Context Protocol) — building and consuming MCP servers,
-  (10) infrastructure as code — Wrangler, Terraform, GCP, deployment pipelines.
+  (10) infrastructure as code — Wrangler, Terraform, GCP, deployment pipelines,
+  (11) Recall.ai — meeting bot API for recording, transcribing Zoom/Meet/Teams/Webex calls.
 license: MIT
 homepage: https://skills.2nth.ai/tech
 repository: https://github.com/2nth-ai/skills
@@ -60,6 +61,7 @@ Skills for AI agents working with the 2nth.ai technology stack — Cloudflare ed
 | `tech/meta/instagram/` | Instagram Messaging API — DMs, story mentions, quick replies, 7-day window |
 | `tech/x/` | X (Twitter) API v2 — mention polling, filtered stream, OAuth 2.0 PKCE, DMs |
 | `tech/claude-code/` | Claude Code setup, CLAUDE.md patterns, skill injection |
+| `tech/recall-ai/` | Recall.ai meeting bot API — recording, transcripts, webhooks for Zoom/Meet/Teams/Webex |
 | `tech/mcp/` | Model Context Protocol — building and consuming servers |
 | `tech/iac/` | Infrastructure as code, Wrangler, deployment |
 

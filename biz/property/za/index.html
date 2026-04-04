@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA Property Compliance — 2nth.ai Skills</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50:'#f0fdf4', 100:'#dcfce7', 200:'#bbf7d0', 500:'#22c55e', 600:'#16a34a', 700:'#15803d', 800:'#166534', 900:'#14532d' },
+            slate: { 750:'#293548' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .pillar-card { transition: all 0.2s ease; }
+    .pillar-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+    .nav-link.active { color: #16a34a; border-bottom: 2px solid #16a34a; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .checklist-item { position: relative; padding-left: 1.75rem; }
+    .checklist-item::before { content: ''; position: absolute; left: 0; top: 0.35rem; width: 1rem; height: 1rem; border: 2px solid #d1d5db; border-radius: 0.25rem; }
+    details summary { cursor: pointer; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .chevron { transform: rotate(90deg); }
+    .chevron { transition: transform 0.2s ease; display: inline-block; }
+    table { border-collapse: collapse; }
+    th { text-align: left; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Top bar -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
+            <span class="text-white font-bold text-sm">2n</span>
+          </div>
+          <div>
+            <span class="font-bold text-gray-900">SA Property Compliance</span>
+            <span class="text-xs text-gray-400 ml-2 hidden sm:inline">biz/property/za</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-xs text-gray-400 hidden md:inline">2nth.ai skills</span>
+          <a href="https://github.com/2nth-ai/skills/tree/dev/biz/property" target="_blank" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex gap-1 overflow-x-auto -mb-px" id="nav">
+        <button onclick="show('overview')" class="nav-link active px-4 py-3 text-sm font-medium text-gray-500 hover:text-brand-600 whitespace-nowrap border-b-2 border-transparent" data-section="overview">Overview</button>
+        <button onclick="show('sans')" class="nav-link px-4 py-3 text-sm font-medium text-gray-500 hover:text-brand-600 whitespace-nowrap border-b-2 border-transparent" data-section="sans">SANS 10400</button>
+        <button onclick="show('cidb')" class="nav-link px-4 py-3 text-sm font-medium text-gray-500 hover:text-brand-600 whitespace-nowrap border-b-2 border-transparent" data-section="cidb">CIDB</button>
+        <button onclick="show('nhbrc')" class="nav-link px-4 py-3 text-sm font-medium text-gray-500 hover:text-brand-600 whitespace-nowrap border-b-2 border-transparent" data-section="nhbrc">NHBRC</button>
+        <button onclick="show('stages')" class="nav-link px-4 py-3 text-sm font-medium text-gray-500 hover:text-brand-600 whitespace-nowrap border-b-2 border-transparent" data-section="stages">Project Stages</button>
+        <button onclick="show('checklists')" class="nav-link px-4 py-3 text-sm font-medium text-gray-500 hover:text-brand-600 whitespace-nowrap border-b-2 border-transparent" data-section="checklists">Checklists</button>
+        <button onclick="show('erp')" class="nav-link px-4 py-3 text-sm font-medium text-gray-500 hover:text-brand-600 whitespace-nowrap border-b-2 border-transparent" data-section="erp">ERP Integration</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- ==================== OVERVIEW ==================== -->
+    <div id="overview" class="section active">
+
+      <!-- Hero -->
+      <div class="bg-gradient-to-br from-brand-800 to-brand-900 rounded-2xl p-8 md:p-12 text-white mb-10">
+        <h1 class="text-3xl md:text-4xl font-extrabold mb-3">South African Property Development & Construction Compliance</h1>
+        <p class="text-brand-200 text-lg max-w-3xl mb-6">A tactical reference for property developers, builders, architects, and project managers navigating South Africa's three-pillar regulatory framework.</p>
+        <div class="flex flex-wrap gap-3">
+          <span class="bg-white/10 backdrop-blur px-3 py-1 rounded-full text-sm font-medium">SANS 10400</span>
+          <span class="bg-white/10 backdrop-blur px-3 py-1 rounded-full text-sm font-medium">CIDB Act 38/2000</span>
+          <span class="bg-white/10 backdrop-blur px-3 py-1 rounded-full text-sm font-medium">NHBRC Act 95/1998</span>
+          <span class="bg-white/10 backdrop-blur px-3 py-1 rounded-full text-sm font-medium">ERPNext Ready</span>
+        </div>
+      </div>
+
+      <!-- Three pillars -->
+      <h2 class="text-xl font-bold mb-4">The Three Pillars</h2>
+      <p class="text-gray-500 mb-6 max-w-3xl">Every SA construction project must satisfy three interlocking regulatory bodies. Miss one and the entire compliance chain breaks.</p>
+
+      <div class="grid md:grid-cols-3 gap-6 mb-12">
+        <!-- SANS -->
+        <div class="pillar-card bg-white rounded-xl border border-gray-200 p-6 cursor-pointer" onclick="show('sans')">
+          <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <h3 class="font-bold text-lg mb-1">SANS 10400</h3>
+          <p class="text-sm text-gray-500 mb-3">The Technical Code</p>
+          <p class="text-sm text-gray-600 mb-4">Defines <strong>how</strong> structures must be designed and built. 23 parts covering everything from foundations to energy efficiency.</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full">Plans</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full">Materials</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full">Structural</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full">Fire</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full">Energy</span>
+          </div>
+        </div>
+        <!-- CIDB -->
+        <div class="pillar-card bg-white rounded-xl border border-gray-200 p-6 cursor-pointer" onclick="show('cidb')">
+          <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 class="font-bold text-lg mb-1">CIDB</h3>
+          <p class="text-sm text-gray-500 mb-3">The Contractor Registry</p>
+          <p class="text-sm text-gray-600 mb-4">Defines <strong>who</strong> is eligible to build. Grades 1&ndash;9 with tender value limits. Mandatory for all public sector work.</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="bg-amber-50 text-amber-700 text-xs px-2 py-0.5 rounded-full">Grading</span>
+            <span class="bg-amber-50 text-amber-700 text-xs px-2 py-0.5 rounded-full">Tenders</span>
+            <span class="bg-amber-50 text-amber-700 text-xs px-2 py-0.5 rounded-full">Procurement</span>
+            <span class="bg-amber-50 text-amber-700 text-xs px-2 py-0.5 rounded-full">Classes</span>
+          </div>
+        </div>
+        <!-- NHBRC -->
+        <div class="pillar-card bg-white rounded-xl border border-gray-200 p-6 cursor-pointer" onclick="show('nhbrc')">
+          <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 class="font-bold text-lg mb-1">NHBRC</h3>
+          <p class="text-sm text-gray-500 mb-3">Consumer Protection</p>
+          <p class="text-sm text-gray-600 mb-4">Defines <strong>what warranties and inspections</strong> apply to residential construction. 4 inspections, 3-tier warranty.</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded-full">Registration</span>
+            <span class="bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded-full">Inspections</span>
+            <span class="bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded-full">Warranties</span>
+            <span class="bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded-full">Enrolment</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key legislation -->
+      <h2 class="text-xl font-bold mb-4">Key Legislation</h2>
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-12">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr><th class="px-6 py-3 font-semibold text-gray-600">Act</th><th class="px-6 py-3 font-semibold text-gray-600">Purpose</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr><td class="px-6 py-3 font-medium">National Building Regulations and Building Standards Act, 1977 (Act 103 of 1977)</td><td class="px-6 py-3 text-gray-600">Primary building law</td></tr>
+            <tr><td class="px-6 py-3 font-medium">Housing Consumers Protection Measures Act, 1998 (Act 95 of 1998)</td><td class="px-6 py-3 text-gray-600">Establishes the NHBRC</td></tr>
+            <tr><td class="px-6 py-3 font-medium">Construction Industry Development Board Act, 2000 (Act 38 of 2000)</td><td class="px-6 py-3 text-gray-600">Establishes the CIDB</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Compliance chain visual -->
+      <h2 class="text-xl font-bold mb-4">The Compliance Chain</h2>
+      <p class="text-gray-500 mb-6 max-w-3xl">Before a single foundation is poured, a project needs all three pillars in place:</p>
+      <div class="flex flex-col md:flex-row items-stretch gap-4 mb-12">
+        <div class="flex-1 bg-blue-50 border border-blue-200 rounded-xl p-5 text-center">
+          <div class="text-blue-600 font-bold text-sm mb-1">Step 1</div>
+          <div class="font-semibold">SANS-compliant plans</div>
+          <div class="text-xs text-gray-500 mt-1">Approved by local authority</div>
+        </div>
+        <div class="hidden md:flex items-center text-gray-300 text-2xl font-light">&rarr;</div>
+        <div class="flex-1 bg-amber-50 border border-amber-200 rounded-xl p-5 text-center">
+          <div class="text-amber-600 font-bold text-sm mb-1">Step 2</div>
+          <div class="font-semibold">CIDB-registered contractor</div>
+          <div class="text-xs text-gray-500 mt-1">Grade matches project value</div>
+        </div>
+        <div class="hidden md:flex items-center text-gray-300 text-2xl font-light">&rarr;</div>
+        <div class="flex-1 bg-emerald-50 border border-emerald-200 rounded-xl p-5 text-center">
+          <div class="text-emerald-600 font-bold text-sm mb-1">Step 3</div>
+          <div class="font-semibold">NHBRC home enrolment</div>
+          <div class="text-xs text-gray-500 mt-1">15 days before construction</div>
+        </div>
+      </div>
+
+      <!-- Core principles -->
+      <h2 class="text-xl font-bold mb-4">Core Principles</h2>
+      <div class="grid md:grid-cols-2 gap-4 mb-12">
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="font-semibold mb-1">Cite specific regulations</div>
+          <p class="text-sm text-gray-500">Say "SANS 10400 Part K (Walls)" &mdash; not "the building regs."</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="font-semibold mb-1">Law vs deemed-to-satisfy</div>
+          <p class="text-sm text-gray-500">The Regulations are law. SANS 10400 is one accepted route &mdash; rational design is also valid.</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="font-semibold mb-1">Professional involvement</div>
+          <p class="text-sm text-gray-500">Many aspects require a "competent person" as defined in Part A. Flag it.</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="font-semibold mb-1">Local authority variation</div>
+          <p class="text-sm text-gray-500">Municipalities issue approvals and can impose additional requirements.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SANS 10400 ==================== -->
+    <div id="sans" class="section">
+      <div class="mb-8">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="bg-blue-100 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Technical Code</span>
+        </div>
+        <h1 class="text-3xl font-extrabold mb-2">SANS 10400</h1>
+        <p class="text-gray-500 max-w-3xl">South African National Standard for the application of the National Building Regulations. Base edition SANS 10400:2011, parts updated independently.</p>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 text-sm">
+        <strong>Two-layer structure:</strong> The <em>Regulations</em> are law (short functional requirements). The <em>deemed-to-satisfy requirements</em> (SANS 10400) are detailed technical guidelines. Comply via deemed-to-satisfy OR rational design by a competent person.
+      </div>
+
+      <!-- Parts table -->
+      <h2 class="text-xl font-bold mb-4">All 23 Parts</h2>
+      <div class="bg-white rounded-xl border border-gray-200 overflow-x-auto mb-10">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr><th class="px-4 py-3 font-semibold text-gray-600 w-16">Part</th><th class="px-4 py-3 font-semibold text-gray-600">Title</th><th class="px-4 py-3 font-semibold text-gray-600">Key Scope</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100" id="sans-parts">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Occupancy -->
+      <h2 class="text-xl font-bold mb-4">Occupancy Classifications (Part A)</h2>
+      <div class="bg-white rounded-xl border border-gray-200 overflow-x-auto mb-10">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr><th class="px-4 py-3 font-semibold text-gray-600 w-20">Class</th><th class="px-4 py-3 font-semibold text-gray-600">Description</th><th class="px-4 py-3 font-semibold text-gray-600">Examples</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100" id="occupancy-table">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Plan submission -->
+      <h2 class="text-xl font-bold mb-4">Plan Submission Requirements</h2>
+      <div class="bg-white rounded-xl border border-gray-200 p-6 mb-10">
+        <p class="text-sm text-gray-600 mb-4">Before any construction, these must be submitted to the local authority:</p>
+        <ul class="space-y-2 text-sm text-gray-700">
+          <li class="flex gap-2"><span class="text-brand-600 mt-0.5"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>Site plan showing building in relation to boundaries and existing structures</li>
+          <li class="flex gap-2"><span class="text-brand-600 mt-0.5"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>Floor plans, elevations, and sections at prescribed scales</li>
+          <li class="flex gap-2"><span class="text-brand-600 mt-0.5"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>Structural design details (by a competent person)</li>
+          <li class="flex gap-2"><span class="text-brand-600 mt-0.5"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>Details of materials (colour-coded per convention)</li>
+          <li class="flex gap-2"><span class="text-brand-600 mt-0.5"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>Proof of NHBRC enrolment (residential)</li>
+        </ul>
+        <div class="mt-4 p-3 bg-blue-50 rounded-lg text-sm">
+          <strong>Timeframe:</strong> Local authorities must respond within <strong>30 working days</strong> (60 for complex). Silence is technically approval &mdash; but risky in practice.
+        </div>
+      </div>
+
+      <!-- Competent persons -->
+      <h2 class="text-xl font-bold mb-4">Competent Person Requirements</h2>
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-10">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr><th class="px-4 py-3 font-semibold text-gray-600">Aspect</th><th class="px-4 py-3 font-semibold text-gray-600">Required Professional</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr><td class="px-4 py-3">Building plans</td><td class="px-4 py-3 text-gray-600">Architect, draughtsperson, or engineer</td></tr>
+            <tr><td class="px-4 py-3">Structural design</td><td class="px-4 py-3 text-gray-600">Structural engineer (ECSA registered)</td></tr>
+            <tr><td class="px-4 py-3">Electrical work</td><td class="px-4 py-3 text-gray-600">Registered electrician (issues CoC)</td></tr>
+            <tr><td class="px-4 py-3">Plumbing</td><td class="px-4 py-3 text-gray-600">Registered plumber (PIRB &mdash; issues CoC)</td></tr>
+            <tr><td class="px-4 py-3">Fire engineering</td><td class="px-4 py-3 text-gray-600">PE/PET registered with ECSA (fire experience)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Parts by project type -->
+      <h2 class="text-xl font-bold mb-4">Parts by Project Type</h2>
+      <div class="grid md:grid-cols-2 gap-6 mb-10">
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 class="font-bold mb-2">Residential (H3/H4)</h3>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">A</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">B</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">C</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">H</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">J</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">K</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">L</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">O</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">P</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">R</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">T</span>
+            <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-mono">XA</span>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 class="font-bold mb-2">Commercial / Mixed-use</h3>
+          <p class="text-sm text-gray-500 mb-2">All residential parts plus:</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="bg-purple-50 text-purple-700 text-xs px-2 py-0.5 rounded-full font-mono">D</span>
+            <span class="bg-purple-50 text-purple-700 text-xs px-2 py-0.5 rounded-full font-mono">S</span>
+            <span class="bg-purple-50 text-purple-700 text-xs px-2 py-0.5 rounded-full font-mono">W</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Energy -->
+      <h2 class="text-xl font-bold mb-4">Energy Compliance (Part XA &mdash; updated 2021)</h2>
+      <div class="grid md:grid-cols-3 gap-4 mb-10">
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="text-sm font-bold text-brand-700 mb-1">Route 1: Prescriptive</div>
+          <p class="text-sm text-gray-500">Follow deemed-to-satisfy rules for envelope, orientation, shading, services</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="text-sm font-bold text-brand-700 mb-1">Route 2: Rational Design</div>
+          <p class="text-sm text-gray-500">Competent person demonstrates equivalent energy performance</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="text-sm font-bold text-brand-700 mb-1">Route 3: Software Modelling</div>
+          <p class="text-sm text-gray-500">Certified thermal calculation software vs reference building</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== CIDB ==================== -->
+    <div id="cidb" class="section">
+      <div class="mb-8">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="bg-amber-100 text-amber-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Contractor Registry</span>
+        </div>
+        <h1 class="text-3xl font-extrabold mb-2">CIDB</h1>
+        <p class="text-gray-500 max-w-3xl">Construction Industry Development Board. Maintains the Register of Contractors and Register of Projects. No public sector client may award a contract to an unregistered contractor.</p>
+      </div>
+
+      <!-- Grading visual -->
+      <h2 class="text-xl font-bold mb-4">Grading System (Grades 1&ndash;9)</h2>
+      <div class="bg-white rounded-xl border border-gray-200 overflow-x-auto mb-10">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-4 py-3 font-semibold text-gray-600 w-20">Grade</th>
+              <th class="px-4 py-3 font-semibold text-gray-600">Max Tender Value</th>
+              <th class="px-4 py-3 font-semibold text-gray-600 w-32">Track Record</th>
+              <th class="px-4 py-3 font-semibold text-gray-600 w-32">Capital</th>
+              <th class="px-4 py-3 font-semibold text-gray-600">Visual</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100" id="grading-table">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Classes of works -->
+      <h2 class="text-xl font-bold mb-4">Classes of Works</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-10">
+        <div class="bg-white rounded-xl border border-gray-200 p-4 text-center"><div class="font-mono font-bold text-amber-600 text-lg">CE</div><div class="text-xs text-gray-500">Civil Engineering</div></div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4 text-center"><div class="font-mono font-bold text-amber-600 text-lg">GB</div><div class="text-xs text-gray-500">General Building</div></div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4 text-center"><div class="font-mono font-bold text-amber-600 text-lg">ME</div><div class="text-xs text-gray-500">Mechanical Eng.</div></div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4 text-center"><div class="font-mono font-bold text-amber-600 text-lg">EB</div><div class="text-xs text-gray-500">Electrical (Buildings)</div></div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4 text-center"><div class="font-mono font-bold text-amber-600 text-lg">EI</div><div class="text-xs text-gray-500">Electrical (Infra)</div></div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4 text-center"><div class="font-mono font-bold text-amber-600 text-lg">EP</div><div class="text-xs text-gray-500">Electrical (Power)</div></div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4 text-center"><div class="font-mono font-bold text-amber-600 text-lg">SB</div><div class="text-xs text-gray-500">Specialist Building</div></div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4 text-center"><div class="font-mono font-bold text-amber-600 text-lg">SC</div><div class="text-xs text-gray-500">Specialist Civil</div></div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4 text-center"><div class="font-mono font-bold text-amber-600 text-lg">SE</div><div class="text-xs text-gray-500">Specialist Electrical</div></div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4 text-center"><div class="font-mono font-bold text-amber-600 text-lg">SM</div><div class="text-xs text-gray-500">Specialist Mechanical</div></div>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-10 text-sm">
+        <strong>Designation format:</strong> <span class="font-mono bg-white px-2 py-0.5 rounded border">7GB</span> = Grade 7, General Building. A contractor can hold multiple class/grade combinations simultaneously.
+      </div>
+
+      <!-- Financial sponsorship -->
+      <h2 class="text-xl font-bold mb-4">Financial Sponsorship Rules</h2>
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-10">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr><th class="px-4 py-3 font-semibold text-gray-600">Sponsor Ownership</th><th class="px-4 py-3 font-semibold text-gray-600">Max Sponsorship</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr><td class="px-4 py-3">Financial institution (any)</td><td class="px-4 py-3 text-gray-600">No cap</td></tr>
+            <tr><td class="px-4 py-3">50%+ ownership of contractor</td><td class="px-4 py-3 text-gray-600">Full sponsorship</td></tr>
+            <tr><td class="px-4 py-3">25&ndash;49% ownership</td><td class="px-4 py-3 text-gray-600">&le; 75% of required capital</td></tr>
+            <tr><td class="px-4 py-3">&lt; 25% ownership</td><td class="px-4 py-3 text-gray-600">&le; 50% of required capital</td></tr>
+            <tr><td class="px-4 py-3">Non-financial (any)</td><td class="px-4 py-3 text-gray-600">&le; 15% of sponsor's net asset value</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Registration -->
+      <h2 class="text-xl font-bold mb-4">Registration</h2>
+      <div class="grid md:grid-cols-3 gap-4 mb-10">
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 class="font-bold mb-2 text-sm text-gray-900">New Registration</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>&bull; CIPC company docs</li>
+            <li>&bull; SARS tax clearance</li>
+            <li>&bull; Financial statements</li>
+            <li>&bull; Track record (Grade 2+)</li>
+            <li>&bull; Registration fee</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 class="font-bold mb-2 text-sm text-gray-900">Annual Renewal</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>&bull; CIDB verifies via CIPC</li>
+            <li>&bull; De-registered = flagged</li>
+            <li>&bull; Non-compliance = suspension</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 class="font-bold mb-2 text-sm text-gray-900">Grade Upgrade</h3>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>&bull; Projects at/near current grade</li>
+            <li>&bull; Updated financials</li>
+            <li>&bull; CIDB reassessment</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- BUILD -->
+      <h2 class="text-xl font-bold mb-4">BUILD Programme (April 2021)</h2>
+      <div class="bg-white rounded-xl border border-gray-200 p-6 mb-10">
+        <p class="text-sm text-gray-600 mb-3">Targets infrastructure projects <strong>&ge; R60 million</strong>:</p>
+        <ul class="text-sm text-gray-600 space-y-1">
+          <li>&bull; Public clients contribute 0.2% of project value (capped at R2m)</li>
+          <li>&bull; Grade 7&ndash;9 must develop Grade 1&ndash;6 contractors</li>
+          <li>&bull; Includes mentorship, skills training, and 4IR/BIM</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================== NHBRC ==================== -->
+    <div id="nhbrc" class="section">
+      <div class="mb-8">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="bg-emerald-100 text-emerald-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Consumer Protection</span>
+        </div>
+        <h1 class="text-3xl font-extrabold mb-2">NHBRC</h1>
+        <p class="text-gray-500 max-w-3xl">National Home Builders Registration Council. Protects housing consumers and regulates the home building industry. Residential only.</p>
+      </div>
+
+      <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-8 text-sm">
+        <strong>Criminal offence:</strong> Building homes without NHBRC registration carries a fine or imprisonment up to 1 year. Every home must be enrolled at least <strong>15 days</strong> before construction starts.
+      </div>
+
+      <!-- Registration process -->
+      <h2 class="text-xl font-bold mb-4">Builder Registration</h2>
+      <div class="bg-white rounded-xl border border-gray-200 p-6 mb-10">
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="font-bold text-sm mb-3">Application Steps</h3>
+            <ol class="text-sm text-gray-600 space-y-2 list-decimal list-inside">
+              <li>Visit NHBRC portal or provincial office</li>
+              <li>Complete Builder Registration Form</li>
+              <li>Submit documents (ID, CIPC, tax clearance, share certs)</li>
+              <li>Pay application fee: <strong>R745.61</strong></li>
+              <li>Attend <strong>Builders' Induction Workshop</strong></li>
+              <li>Pass <strong>Technical Assessment</strong> (2 attempts in 30 days)</li>
+              <li>Receive registration certificate</li>
+            </ol>
+          </div>
+          <div>
+            <h3 class="font-bold text-sm mb-3">Key Facts</h3>
+            <div class="space-y-3">
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="text-xs text-gray-400 uppercase tracking-wider">Annual renewal</div>
+                <div class="font-bold text-lg">R526.32</div>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="text-xs text-gray-400 uppercase tracking-wider">Home Builders Manual</div>
+                <div class="text-sm">Manual only: ~R88 &bull; Manual + SANS: ~R3,168</div>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="text-xs text-gray-400 uppercase tracking-wider">Technical assessment</div>
+                <div class="text-sm">2 attempts within 30 days of payment</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inspections -->
+      <h2 class="text-xl font-bold mb-4">4-Stage Inspection Framework</h2>
+      <div class="grid md:grid-cols-4 gap-4 mb-10">
+        <div class="bg-white rounded-xl border-2 border-emerald-200 p-5 relative">
+          <div class="absolute -top-3 left-4 bg-emerald-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">Stage 1</div>
+          <h3 class="font-bold mt-2 mb-2">Foundation</h3>
+          <ul class="text-xs text-gray-500 space-y-1">
+            <li>&bull; Excavation</li>
+            <li>&bull; Soil conditions</li>
+            <li>&bull; Foundation layout</li>
+            <li>&bull; Concrete quality</li>
+          </ul>
+          <div class="mt-3 text-xs text-blue-600 font-medium">SANS Parts G, H</div>
+        </div>
+        <div class="bg-white rounded-xl border-2 border-emerald-200 p-5 relative">
+          <div class="absolute -top-3 left-4 bg-emerald-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">Stage 2</div>
+          <h3 class="font-bold mt-2 mb-2">Wall Plate</h3>
+          <ul class="text-xs text-gray-500 space-y-1">
+            <li>&bull; Wall construction</li>
+            <li>&bull; Damp-proof course</li>
+            <li>&bull; Lintels</li>
+            <li>&bull; Wall plate level</li>
+          </ul>
+          <div class="mt-3 text-xs text-blue-600 font-medium">SANS Parts K, B</div>
+        </div>
+        <div class="bg-white rounded-xl border-2 border-emerald-200 p-5 relative">
+          <div class="absolute -top-3 left-4 bg-emerald-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">Stage 3</div>
+          <h3 class="font-bold mt-2 mb-2">Roof</h3>
+          <ul class="text-xs text-gray-500 space-y-1">
+            <li>&bull; Roof structure</li>
+            <li>&bull; Waterproofing</li>
+            <li>&bull; Truss installation</li>
+          </ul>
+          <div class="mt-3 text-xs text-blue-600 font-medium">SANS Part L</div>
+        </div>
+        <div class="bg-white rounded-xl border-2 border-emerald-200 p-5 relative">
+          <div class="absolute -top-3 left-4 bg-emerald-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">Stage 4</div>
+          <h3 class="font-bold mt-2 mb-2">Practical Completion</h3>
+          <ul class="text-xs text-gray-500 space-y-1">
+            <li>&bull; Overall finish</li>
+            <li>&bull; Plumbing & electrical</li>
+            <li>&bull; Drainage</li>
+            <li>&bull; Plan compliance</li>
+          </ul>
+          <div class="mt-3 text-xs text-blue-600 font-medium">SANS Parts J,O,P,R,T,W,XA</div>
+        </div>
+      </div>
+
+      <!-- Warranty -->
+      <h2 class="text-xl font-bold mb-4">3-Tier Warranty Structure</h2>
+      <div class="grid md:grid-cols-3 gap-4 mb-10">
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center font-bold text-yellow-700">3m</div>
+            <div>
+              <div class="font-bold text-sm">Tier 1: Minor Defects</div>
+              <div class="text-xs text-gray-400">Builder's direct obligation</div>
+            </div>
+          </div>
+          <p class="text-sm text-gray-600">Any deviation from plans, specifications, or agreement. Any deficiency in design, workmanship, or materials.</p>
+          <div class="mt-3 text-xs text-red-600 font-medium">NOT covered by NHBRC Warranty Fund</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center font-bold text-orange-700">1yr</div>
+            <div>
+              <div class="font-bold text-sm">Tier 2: Roof Leaks</div>
+              <div class="text-xs text-gray-400">NHBRC intervenes if builder fails</div>
+            </div>
+          </div>
+          <p class="text-sm text-gray-600">Any roof leak reported in writing within 1 year of occupation.</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center font-bold text-red-700">5yr</div>
+            <div>
+              <div class="font-bold text-sm">Tier 3: Structural Defects</div>
+              <div class="text-xs text-gray-400">NHBRC Warranty Fund backstop</div>
+            </div>
+          </div>
+          <p class="text-sm text-gray-600">Defects affecting structural integrity. Covered by the NHBRC Warranty Fund if builder defaults.</p>
+        </div>
+      </div>
+
+      <!-- Complaints -->
+      <h2 class="text-xl font-bold mb-4">Complaints & Conciliation</h2>
+      <div class="bg-white rounded-xl border border-gray-200 p-6 mb-10">
+        <div class="flex flex-col gap-3">
+          <div class="flex items-start gap-3"><div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold shrink-0">1</div><div class="text-sm text-gray-600">Consumer identifies defect within warranty period</div></div>
+          <div class="flex items-start gap-3"><div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold shrink-0">2</div><div class="text-sm text-gray-600">Notify builder <strong>in writing</strong> (keep proof)</div></div>
+          <div class="flex items-start gap-3"><div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold shrink-0">3</div><div class="text-sm text-gray-600">Builder has reasonable time to rectify</div></div>
+          <div class="flex items-start gap-3"><div class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold shrink-0">4</div><div class="text-sm text-gray-600">If builder fails &rarr; contact NHBRC Provincial Customer Care Office</div></div>
+          <div class="flex items-start gap-3"><div class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold shrink-0">5</div><div class="text-sm text-gray-600">NHBRC notifies builder and seeks response</div></div>
+          <div class="flex items-start gap-3"><div class="w-7 h-7 rounded-full bg-red-100 text-red-700 flex items-center justify-center text-xs font-bold shrink-0">6</div><div class="text-sm text-gray-600">If builder still fails &rarr; conciliation (refundable deposit) &rarr; arbitration</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PROJECT STAGES ==================== -->
+    <div id="stages" class="section">
+      <div class="mb-8">
+        <h1 class="text-3xl font-extrabold mb-2">Project Stages</h1>
+        <p class="text-gray-500 max-w-3xl">The SA residential property development lifecycle mapped to regulatory milestones from SANS 10400, CIDB, and NHBRC.</p>
+      </div>
+
+      <!-- Timeline -->
+      <div class="space-y-4 mb-12" id="stages-timeline">
+      </div>
+
+      <!-- Regulatory matrix -->
+      <h2 class="text-xl font-bold mb-4">Regulatory Milestones Matrix</h2>
+      <div class="bg-white rounded-xl border border-gray-200 overflow-x-auto mb-10">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-4 py-3 font-semibold text-gray-600">Stage</th>
+              <th class="px-4 py-3 font-semibold text-blue-600">SANS 10400</th>
+              <th class="px-4 py-3 font-semibold text-amber-600">CIDB</th>
+              <th class="px-4 py-3 font-semibold text-emerald-600">NHBRC</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr><td class="px-4 py-3 font-medium">Feasibility</td><td class="px-4 py-3 text-gray-600">Part B (geotech)</td><td class="px-4 py-3 text-gray-400">&mdash;</td><td class="px-4 py-3 text-gray-400">&mdash;</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Design</td><td class="px-4 py-3 text-gray-600">Part A (plans)</td><td class="px-4 py-3 text-gray-400">&mdash;</td><td class="px-4 py-3 text-gray-400">&mdash;</td></tr>
+            <tr class="bg-amber-50/50"><td class="px-4 py-3 font-medium">Pre-construction</td><td class="px-4 py-3 text-gray-600">Part F (site ops)</td><td class="px-4 py-3 text-amber-700 font-medium">Grade verification</td><td class="px-4 py-3 text-emerald-700 font-medium">Enrolment (15 days)</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Foundation</td><td class="px-4 py-3 text-gray-600">Parts G, H</td><td class="px-4 py-3 text-gray-400">&mdash;</td><td class="px-4 py-3 text-emerald-700 font-medium">Inspection 1</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Superstructure</td><td class="px-4 py-3 text-gray-600">Parts J, K, M</td><td class="px-4 py-3 text-gray-400">&mdash;</td><td class="px-4 py-3 text-emerald-700 font-medium">Inspection 2</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Roof</td><td class="px-4 py-3 text-gray-600">Parts L, N, XA</td><td class="px-4 py-3 text-gray-400">&mdash;</td><td class="px-4 py-3 text-emerald-700 font-medium">Inspection 3</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Services</td><td class="px-4 py-3 text-gray-600">Parts O, P, R, T, W</td><td class="px-4 py-3 text-gray-400">&mdash;</td><td class="px-4 py-3 text-gray-400">&mdash;</td></tr>
+            <tr class="bg-amber-50/50"><td class="px-4 py-3 font-medium">Completion</td><td class="px-4 py-3 text-gray-600">All parts</td><td class="px-4 py-3 text-amber-700 font-medium">Register on RoP</td><td class="px-4 py-3 text-emerald-700 font-medium">Inspection 4</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Handover</td><td class="px-4 py-3 text-gray-400">&mdash;</td><td class="px-4 py-3 text-gray-400">&mdash;</td><td class="px-4 py-3 text-emerald-700 font-medium">Warranty starts</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Post-occupation</td><td class="px-4 py-3 text-gray-400">&mdash;</td><td class="px-4 py-3 text-gray-400">&mdash;</td><td class="px-4 py-3 text-emerald-700 font-medium">3mo / 1yr / 5yr</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Documents -->
+      <h2 class="text-xl font-bold mb-4">Documents Required by Stage</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 class="font-bold text-sm mb-3">At Plan Submission</h3>
+          <ul class="text-xs text-gray-600 space-y-1">
+            <li>&bull; Architectural drawings</li>
+            <li>&bull; Structural engineer's calcs</li>
+            <li>&bull; Energy compliance (XA)</li>
+            <li>&bull; Geotech report</li>
+            <li>&bull; SG diagram & title deed</li>
+            <li>&bull; Municipal rates clearance</li>
+            <li>&bull; NHBRC enrolment proof</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 class="font-bold text-sm mb-3">During Construction</h3>
+          <ul class="text-xs text-gray-600 space-y-1">
+            <li>&bull; NHBRC inspection reports (x4)</li>
+            <li>&bull; Site diary / logbook</li>
+            <li>&bull; Material test certificates</li>
+            <li>&bull; Variation orders</li>
+            <li>&bull; Progress photographs</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 class="font-bold text-sm mb-3">At Handover</h3>
+          <ul class="text-xs text-gray-600 space-y-1">
+            <li>&bull; Occupancy certificate</li>
+            <li>&bull; Electrical CoC</li>
+            <li>&bull; Plumbing CoC</li>
+            <li>&bull; NHBRC final inspection</li>
+            <li>&bull; As-built drawings</li>
+            <li>&bull; Warranty docs</li>
+            <li>&bull; Maintenance manual</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 class="font-bold text-sm mb-3">Post-Occupation</h3>
+          <ul class="text-xs text-gray-600 space-y-1">
+            <li>&bull; Defect reports</li>
+            <li>&bull; Written notifications</li>
+            <li>&bull; Conciliation records</li>
+            <li>&bull; Rectification records</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== CHECKLISTS ==================== -->
+    <div id="checklists" class="section">
+      <div class="mb-8">
+        <h1 class="text-3xl font-extrabold mb-2">Compliance Checklists</h1>
+        <p class="text-gray-500 max-w-3xl">Stage-by-stage checklists aligned to SANS 10400 parts and NHBRC inspections. Use these to verify compliance before proceeding to the next stage.</p>
+      </div>
+
+      <div class="space-y-4" id="checklists-container">
+      </div>
+    </div>
+
+    <!-- ==================== ERP ==================== -->
+    <div id="erp" class="section">
+      <div class="mb-8">
+        <h1 class="text-3xl font-extrabold mb-2">ERP Integration</h1>
+        <p class="text-gray-500 max-w-3xl">ERPNext doctype mapping and validation rules for embedding SA construction compliance into your project management system.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-6 mb-10">
+        <!-- Project doctype -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+          <h3 class="font-bold mb-1">Project <span class="text-xs font-normal text-gray-400">(master doctype)</span></h3>
+          <div class="mt-3 space-y-1.5 font-mono text-xs" id="erp-project"></div>
+        </div>
+        <!-- Dwelling unit -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+          <h3 class="font-bold mb-1">Dwelling Unit <span class="text-xs font-normal text-gray-400">(child of Project)</span></h3>
+          <div class="mt-3 space-y-1.5 font-mono text-xs" id="erp-dwelling"></div>
+        </div>
+        <!-- Contractor -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+          <h3 class="font-bold mb-1">Contractor <span class="text-xs font-normal text-gray-400">(linked to Supplier)</span></h3>
+          <div class="mt-3 space-y-1.5 font-mono text-xs" id="erp-contractor"></div>
+        </div>
+        <!-- Compliance checklist -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+          <h3 class="font-bold mb-1">Compliance Checklist <span class="text-xs font-normal text-gray-400">(per stage)</span></h3>
+          <div class="mt-3 space-y-1.5 font-mono text-xs" id="erp-checklist"></div>
+        </div>
+      </div>
+
+      <!-- Validation rules -->
+      <h2 class="text-xl font-bold mb-4">Validation Rules</h2>
+      <div class="bg-white rounded-xl border border-gray-200 p-6 mb-10">
+        <div class="space-y-3">
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 bg-red-100 rounded flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3.5 h-3.5 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></div>
+            <div class="text-sm"><strong>Block</strong> tender award if contractor grade &lt; estimated project grade</div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 bg-red-100 rounded flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3.5 h-3.5 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></div>
+            <div class="text-sm"><strong>Block</strong> construction start if NHBRC enrolment &lt; 15 days before start date</div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 bg-amber-100 rounded flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg></div>
+            <div class="text-sm"><strong>Alert</strong> on contractor registration expiry (30/60/90 day warnings)</div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 bg-amber-100 rounded flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3.5 h-3.5 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg></div>
+            <div class="text-sm"><strong>Alert</strong> on builder NHBRC registration expiry</div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 bg-blue-100 rounded flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3.5 h-3.5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg></div>
+            <div class="text-sm"><strong>Auto-calculate</strong> warranty milestones from occupation date</div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 bg-blue-100 rounded flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3.5 h-3.5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg></div>
+            <div class="text-sm"><strong>Auto-verify</strong> contractor grade against tender value</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-200 mt-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="text-sm text-gray-400">2nth.ai &mdash; <span class="font-mono">biz/property/za</span> &mdash; Staging for review</div>
+      <div class="flex gap-4">
+        <a href="https://www.sabs.co.za" target="_blank" class="text-xs text-gray-400 hover:text-gray-600">SABS</a>
+        <a href="https://www.cidb.org.za" target="_blank" class="text-xs text-gray-400 hover:text-gray-600">CIDB</a>
+        <a href="https://www.nhbrc.org.za" target="_blank" class="text-xs text-gray-400 hover:text-gray-600">NHBRC</a>
+        <a href="https://github.com/2nth-ai/skills/tree/dev/biz/property" target="_blank" class="text-xs text-gray-400 hover:text-gray-600">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Navigation
+    function show(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelector(`[data-section="${id}"]`).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Handle hash navigation
+    if (window.location.hash) {
+      const id = window.location.hash.slice(1);
+      if (document.getElementById(id)) show(id);
+    }
+
+    // SANS 10400 parts data
+    const sansParts = [
+      ['A','General principles and requirements','Occupancy classification, plan submission, definitions, competent persons'],
+      ['B','Structural design','Structural integrity, loading, dolomite land requirements'],
+      ['C','Dimensions','Minimum room sizes, floor areas per occupancy, ceiling heights'],
+      ['D','Public safety','Safety of persons on/near buildings, swimming pool fencing'],
+      ['E','Demolition work','Requirements for demolition (no deemed-to-satisfy code)'],
+      ['F','Site operations','Site clearance, noise/dust control, waste, working hours'],
+      ['G','Excavations','Excavation safety, support of excavation faces'],
+      ['H','Foundations','Foundation design, geotechnical investigation requirements'],
+      ['J','Floors','Floor construction, damp-proofing of floors'],
+      ['K','Walls','Wall construction, masonry, damp-proof courses, boundary walls'],
+      ['L','Roofs','Roof construction, waterproofing (watertight 5+ years)'],
+      ['M','Stairways','Stairway dimensions, handrails, balustrades (850mm\u20131m)'],
+      ['N','Glazing','Safety glazing requirements'],
+      ['O','Lighting and ventilation','Natural light, window sizes, mechanical ventilation'],
+      ['P','Drainage','Sanitary drainage design and discharge'],
+      ['Q','Non-water-borne sanitary disposal','Pit latrines, septic tanks'],
+      ['R','Stormwater disposal','Stormwater management, discharge restrictions'],
+      ['S','Facilities for persons with disabilities','Ramps, accessible bathrooms, door widths, grab rails'],
+      ['T','Fire protection','Fire safety, escape routes, fire ratings, fire doors'],
+      ['U','Refuse disposal','Refuse storage and removal (no deemed-to-satisfy code)'],
+      ['V','Space heating','Requirements for heating installations'],
+      ['W','Fire installation','Fire detection and suppression systems'],
+      ['X','Energy usage in buildings','General energy requirements'],
+      ['XA','Energy usage (detailed)','Building envelope, orientation, services efficiency (2021)'],
+    ];
+    const sansBody = document.getElementById('sans-parts');
+    sansParts.forEach(([part, title, scope]) => {
+      sansBody.innerHTML += `<tr><td class="px-4 py-2.5 font-mono font-bold text-blue-600">${part}</td><td class="px-4 py-2.5 font-medium">${title}</td><td class="px-4 py-2.5 text-gray-600">${scope}</td></tr>`;
+    });
+
+    // Occupancy classifications
+    const occupancy = [
+      ['A1\u2013A5','Assembly / entertainment / worship / sport','Cinemas, schools, churches, stadiums'],
+      ['B1\u2013B3','Commercial service (high \u2192 low risk)','Spray painting, workshops, offices'],
+      ['C1\u2013C2','Exhibition / museum','Museums, galleries'],
+      ['D1\u2013D4','Industrial (high \u2192 low risk) + plant','Chemical plants, manufacturing, light industry'],
+      ['E1\u2013E4','Institutional','Prisons, hospitals, old age homes, clinics'],
+      ['F1\u2013F3','Mercantile','Supermarkets, retail, warehouses'],
+      ['G1','Office','Office buildings'],
+      ['H1\u2013H5','Residential / hospitality','Hotels, hostels, houses, flats, guest houses'],
+      ['J1\u2013J4','Storage / parking','Flammable materials, general storage, parking garages'],
+    ];
+    const occBody = document.getElementById('occupancy-table');
+    occupancy.forEach(([cls, desc, ex]) => {
+      occBody.innerHTML += `<tr><td class="px-4 py-2.5 font-mono font-bold">${cls}</td><td class="px-4 py-2.5">${desc}</td><td class="px-4 py-2.5 text-gray-600">${ex}</td></tr>`;
+    });
+
+    // CIDB grading
+    const grades = [
+      [1,'R200,000','None','None',2],
+      [2,'R1,000,000','Yes','Yes',5],
+      [3,'R3,000,000','Yes','Yes',10],
+      [4,'R6,000,000','Yes','Yes',15],
+      [5,'R13,000,000','Yes','Yes',25],
+      [6,'R40,000,000','Yes','Yes',40],
+      [7,'R80,000,000','Yes','Yes',60],
+      [8,'R200,000,000','Yes','Yes',80],
+      [9,'No limit','Yes','Yes',100],
+    ];
+    const gradeBody = document.getElementById('grading-table');
+    grades.forEach(([g, val, track, cap, pct]) => {
+      gradeBody.innerHTML += `<tr>
+        <td class="px-4 py-2.5 font-mono font-bold text-amber-600">${g}</td>
+        <td class="px-4 py-2.5 font-medium">${val}</td>
+        <td class="px-4 py-2.5 text-gray-600">${track}</td>
+        <td class="px-4 py-2.5 text-gray-600">${cap}</td>
+        <td class="px-4 py-2.5"><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-amber-500 h-2 rounded-full" style="width:${pct}%"></div></div></td>
+      </tr>`;
+    });
+
+    // Project stages timeline
+    const stages = [
+      {n:0, title:'Feasibility & Land Acquisition', color:'gray', items:['Zoning confirmation','Geotechnical investigation (SANS 10400-B)','Environmental impact assessment (NEMA)','Title deed & SG diagram review']},
+      {n:1, title:'Design & Plan Approval', color:'blue', items:['Engage competent person (architect/engineer)','Prepare plans per SANS 10400-A','Submit to local authority (30\u201360 days)','Appoint CIDB contractor','Register builder with NHBRC']},
+      {n:2, title:'Pre-Construction', color:'amber', items:['Enrol each home with NHBRC (15 days before)','Verify contractor CIDB grade vs project value','Site establishment per SANS 10400-F','Secure construction guarantee/insurance']},
+      {n:3, title:'Foundation', color:'emerald', items:['Clear site (SANS 10400-F)','Excavate (SANS 10400-G)','Lay foundations (SANS 10400-H)','NHBRC Inspection 1: Foundation'], badge:'Inspection 1'},
+      {n:4, title:'Superstructure', color:'emerald', items:['Walls per SANS 10400-K','Install lintels & wall plate','NHBRC Inspection 2: Wall plate','Floors per SANS 10400-J'], badge:'Inspection 2'},
+      {n:5, title:'Roof & Envelope', color:'emerald', items:['Roof structure (SANS 10400-L)','Waterproofing (5+ year durability)','Glazing (SANS 10400-N)','NHBRC Inspection 3: Roof','Energy check (SANS 10400-XA)'], badge:'Inspection 3'},
+      {n:6, title:'Services & Finishes', color:'purple', items:['Electrical (registered electrician \u2192 CoC)','Plumbing (registered plumber \u2192 CoC)','Drainage (Part P), Stormwater (Part R)','Fire protection (Part T), Ventilation (Part O)']},
+      {n:7, title:'Practical Completion & Handover', color:'emerald', items:['NHBRC Inspection 4: Practical completion','Occupancy certificate from local authority','Electrical & plumbing CoCs','As-built drawings','Handover package to consumer'], badge:'Inspection 4'},
+      {n:8, title:'Post-Occupation (Warranty)', color:'red', items:['3-month snag list (builder obligation)','1-year roof leak warranty','5-year structural warranty (NHBRC Fund)','Track defect reports']},
+    ];
+    const timeline = document.getElementById('stages-timeline');
+    stages.forEach(s => {
+      const badgeHtml = s.badge ? `<span class="bg-emerald-100 text-emerald-700 text-xs font-medium px-2 py-0.5 rounded-full ml-2">${s.badge}</span>` : '';
+      timeline.innerHTML += `
+        <details class="bg-white rounded-xl border border-gray-200 overflow-hidden group">
+          <summary class="px-6 py-4 flex items-center gap-3 hover:bg-gray-50">
+            <span class="chevron text-gray-400">&rsaquo;</span>
+            <span class="w-8 h-8 bg-${s.color}-100 rounded-lg flex items-center justify-center font-bold text-${s.color}-700 text-sm shrink-0">${s.n}</span>
+            <span class="font-semibold">${s.title}</span>
+            ${badgeHtml}
+          </summary>
+          <div class="px-6 pb-4 pt-1">
+            <ul class="space-y-1.5 text-sm text-gray-600">
+              ${s.items.map(i => `<li class="flex gap-2"><span class="text-${s.color}-500 mt-1">&bull;</span>${i}</li>`).join('')}
+            </ul>
+          </div>
+        </details>`;
+    });
+
+    // Checklists
+    const checklists = [
+      {title:'Pre-Construction', color:'amber', items:[
+        'Building plans approved by local authority',
+        'NHBRC home enrolment confirmed (\u226515 days before start)',
+        'Contractor CIDB registration verified (grade \u2265 project requirement)',
+        'Contractor NHBRC registration verified (current)',
+        'Geotechnical report obtained (if required)',
+        'Site establishment plan per SANS 10400-F',
+        'Construction guarantee/insurance in place',
+        'Environmental approval obtained (if required)',
+      ]},
+      {title:'Foundation', color:'emerald', items:[
+        'Site cleared per SANS 10400-F',
+        'Excavation per SANS 10400-G (safe faces, appropriate depth)',
+        'Foundation layout matches approved plans',
+        'Concrete quality per specification',
+        'Damp-proof membrane installed',
+        'NHBRC Inspection 1 completed and passed',
+        'Foundation sign-off by competent person',
+      ]},
+      {title:'Wall Plate', color:'blue', items:[
+        'Masonry per SANS 10400-K',
+        'Damp-proof course correctly positioned (above finished ground level)',
+        'Lintels correctly installed over all openings',
+        'Wall plate level and aligned',
+        'Window and door openings per approved plans',
+        'NHBRC Inspection 2 completed and passed',
+      ]},
+      {title:'Roof', color:'purple', items:[
+        'Roof structure per SANS 10400-L and engineer\u2019s design',
+        'Trusses correctly installed and braced',
+        'Waterproofing installed (5+ year durability)',
+        'Fascia and barge boards installed',
+        'Roof drainage connected',
+        'NHBRC Inspection 3 completed and passed',
+      ]},
+      {title:'Practical Completion', color:'brand', items:[
+        'All construction per approved plans and SANS 10400',
+        'Electrical installation complete with CoC',
+        'Plumbing installation complete with CoC',
+        'Drainage (Part P) connected and tested',
+        'Stormwater (Part R) properly channelled',
+        'Lighting and ventilation per SANS 10400-O',
+        'Fire protection per SANS 10400-T (if applicable)',
+        'Energy compliance per SANS 10400-XA demonstrated',
+        'Disability access per SANS 10400-S (if applicable)',
+        'NHBRC Inspection 4 completed and passed',
+        'Occupancy certificate obtained from local authority',
+        'As-built drawings compiled',
+        'Handover documentation package prepared',
+      ]},
+    ];
+    const checkContainer = document.getElementById('checklists-container');
+    checklists.forEach(c => {
+      checkContainer.innerHTML += `
+        <details class="bg-white rounded-xl border border-gray-200 overflow-hidden" open>
+          <summary class="px-6 py-4 flex items-center gap-3 hover:bg-gray-50 font-semibold">
+            <span class="chevron text-gray-400">&rsaquo;</span>
+            ${c.title}
+            <span class="text-xs text-gray-400 font-normal ml-auto">${c.items.length} items</span>
+          </summary>
+          <div class="px-6 pb-5 pt-1">
+            <div class="space-y-2">
+              ${c.items.map(item => `
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="mt-1 w-4 h-4 rounded border-gray-300 text-${c.color}-600 focus:ring-${c.color}-500">
+                  <span class="text-sm text-gray-700 group-hover:text-gray-900">${item}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+        </details>`;
+    });
+
+    // ERP fields
+    const erpData = {
+      project: [
+        ['project_name','Development name'],
+        ['project_type','Residential / Commercial / Mixed'],
+        ['local_authority','Municipality name'],
+        ['zoning_status','Confirmed / Pending / Requires rezoning'],
+        ['plan_approval_date','Date plans approved'],
+        ['plan_approval_reference','Local authority reference number'],
+        ['occupancy_classification','SANS 10400 Part A (H3, H4, etc.)'],
+        ['estimated_cidb_grade','Required contractor grade'],
+        ['environmental_approval','Required / Not required / Approved'],
+        ['geotechnical_report','Attached / Not required'],
+      ],
+      dwelling: [
+        ['unit_number','Unit identifier'],
+        ['nhbrc_enrolment_number','NHBRC enrolment reference'],
+        ['nhbrc_enrolment_date','Must be \u226515 days before start'],
+        ['construction_start_date','Actual start'],
+        ['inspection_1_date','Foundation inspection'],
+        ['inspection_1_result','Pass / Fail / Rectification'],
+        ['inspection_2_date','Wall plate inspection'],
+        ['inspection_3_date','Roof inspection'],
+        ['inspection_4_date','Practical completion'],
+        ['occupancy_certificate_date','From local authority'],
+        ['occupation_date','Consumer moves in'],
+        ['snag_list_deadline','Auto: +90 days'],
+        ['roof_warranty_expiry','Auto: +365 days'],
+        ['structural_warranty_expiry','Auto: +1825 days'],
+        ['electrical_coc_date','Electrical CoC'],
+        ['plumbing_coc_date','Plumbing CoC'],
+      ],
+      contractor: [
+        ['cidb_registration_number','CIDB reg number'],
+        ['cidb_grade','1\u20139'],
+        ['cidb_classes_of_works','Multi-select (CE, GB, ME\u2026)'],
+        ['cidb_registration_expiry','Annual renewal date'],
+        ['cidb_max_tender_value','Auto from grade'],
+        ['nhbrc_registration_number','For residential builders'],
+        ['nhbrc_registration_expiry','Annual renewal date'],
+        ['nhbrc_technical_manager','Appointed Technical Manager'],
+      ],
+      checklist: [
+        ['project','Link to Project'],
+        ['stage','Pre-construction / Foundation / \u2026'],
+        ['sans_10400_parts_applicable','Multi-select (A, B, C\u2026)'],
+        ['checklist_items','Child table of checks'],
+        ['overall_status','Pending / In Progress / Compliant'],
+        ['sign_off_by','Competent person name'],
+        ['sign_off_date','Date'],
+      ],
+    };
+
+    function renderErpFields(containerId, fields) {
+      const el = document.getElementById(containerId);
+      fields.forEach(([name, desc]) => {
+        el.innerHTML += `<div class="flex gap-2"><span class="text-brand-700 whitespace-nowrap">${name}</span><span class="text-gray-400">\u2014</span><span class="text-gray-500 font-sans">${desc}</span></div>`;
+      });
+    }
+    renderErpFields('erp-project', erpData.project);
+    renderErpFields('erp-dwelling', erpData.dwelling);
+    renderErpFields('erp-contractor', erpData.contractor);
+    renderErpFields('erp-checklist', erpData.checklist);
+  </script>
+</body>
+</html>
