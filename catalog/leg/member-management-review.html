@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy & Member Management — Dev Review</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#fafafa;--card:#fff;--border:#e5e7eb;--text:#18181b;--text2:#52525b;--muted:#a1a1aa;--accent:#7c3aed;--accent-light:rgba(124,58,237,.06);--green:#059669;--red:#ef4444;--amber:#d97706}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text2);line-height:1.7;-webkit-font-smoothing:antialiased}
+    .container{max-width:960px;margin:0 auto;padding:0 24px}
+    h1{font-size:32px;font-weight:700;color:var(--text);margin-bottom:8px}
+    h2{font-size:22px;font-weight:700;color:var(--text);margin:40px 0 12px}
+    h3{font-size:16px;font-weight:600;color:var(--text);margin:24px 0 8px}
+    .mono{font-family:'JetBrains Mono',monospace}
+    .tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 10px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;font-weight:600}
+    .tag-done{background:rgba(5,150,105,.08);color:var(--green)}
+    .tag-partial{background:rgba(217,119,6,.08);color:var(--amber)}
+    .tag-missing{background:rgba(239,68,68,.08);color:var(--red)}
+    .tag-planned{background:var(--accent-light);color:var(--accent)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:16px}
+    .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}
+    th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:8px 12px;border-bottom:2px solid var(--border)}
+    td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+    .check{color:var(--green);font-weight:700}
+    .cross{color:var(--red);font-weight:700}
+    .warn{color:var(--amber);font-weight:700}
+    code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(0,0,0,.04);padding:2px 6px;border-radius:3px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:640px){.grid{grid-template-columns:1fr}}
+    a{color:var(--accent)}
+    .priority{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+    .p0{background:var(--red)}.p1{background:var(--amber)}.p2{background:var(--accent)}.p3{background:var(--muted)}
+  </style>
+</head>
+<body>
+
+<div style="border-bottom:1px solid var(--border);padding:16px 0;margin-bottom:32px">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <span class="mono" style="font-size:12px;color:var(--accent);letter-spacing:1px">DEV REVIEW</span>
+      <span class="mono" style="font-size:12px;color:var(--muted);margin-left:12px">5 April 2026</span>
+    </div>
+    <span class="mono" style="font-size:11px;color:var(--muted)">2nth-skills/leg/member-management</span>
+  </div>
+</div>
+
+<div class="container" style="padding-bottom:60px">
+
+  <h1>Privacy & Member Management</h1>
+  <p style="font-size:16px;color:var(--text2);margin-bottom:32px;max-width:640px">
+    Compliance audit and implementation plan for POPIA/GDPR member management across 2nth.ai, 2nth.io, 2nth.org, and 2nth.me.
+  </p>
+
+  <!-- ═══ CURRENT STATE ═══ -->
+  <h2>Current State Audit</h2>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 style="margin:0">Property Compliance Status</h3>
+    </div>
+    <table>
+      <tr><th>Property</th><th>Auth</th><th>Consent Capture</th><th>Data Export</th><th>Deletion</th><th>Privacy Page</th><th>Audit Log</th></tr>
+      <tr>
+        <td><strong>2nth.ai</strong></td>
+        <td><span class="check">&#10003;</span> JWT + magic link</td>
+        <td><span class="check">&#10003;</span> consent_at + consent_ip</td>
+        <td><span class="cross">&#10007;</span> Not implemented</td>
+        <td><span class="cross">&#10007;</span> Not implemented</td>
+        <td><span class="warn">~</span> In partner-terms.html</td>
+        <td><span class="check">&#10003;</span> activity_log table</td>
+      </tr>
+      <tr>
+        <td><strong>2nth.io</strong></td>
+        <td><span class="check">&#10003;</span> OTP via 2nth.ai SSO</td>
+        <td><span class="cross">&#10007;</span> No consent record</td>
+        <td><span class="cross">&#10007;</span> Not implemented</td>
+        <td><span class="cross">&#10007;</span> Not implemented</td>
+        <td><span class="cross">&#10007;</span> None</td>
+        <td><span class="cross">&#10007;</span> None</td>
+      </tr>
+      <tr>
+        <td><strong>2nth.org</strong></td>
+        <td><span class="check">&#10003;</span> PIN + OTP</td>
+        <td><span class="cross">&#10007;</span> No consent record</td>
+        <td><span class="cross">&#10007;</span> Not implemented</td>
+        <td><span class="cross">&#10007;</span> Not implemented</td>
+        <td><span class="cross">&#10007;</span> None</td>
+        <td><span class="cross">&#10007;</span> None</td>
+      </tr>
+      <tr>
+        <td><strong>2nth.me</strong></td>
+        <td><span class="check">&#10003;</span> OTP (own KV)</td>
+        <td><span class="check">&#10003;</span> terms.html + implicit</td>
+        <td><span class="warn">~</span> Mentioned in terms, not built</td>
+        <td><span class="warn">~</span> Mentioned in terms, not built</td>
+        <td><span class="check">&#10003;</span> Comprehensive terms.html</td>
+        <td><span class="cross">&#10007;</span> None</td>
+      </tr>
+      <tr>
+        <td><strong>developers.2nth.ai</strong></td>
+        <td><span class="check">&#10003;</span> JWT + PIN</td>
+        <td><span class="cross">&#10007;</span> No consent record</td>
+        <td><span class="cross">&#10007;</span> Not implemented</td>
+        <td><span class="cross">&#10007;</span> Not implemented</td>
+        <td><span class="cross">&#10007;</span> None</td>
+        <td><span class="cross">&#10007;</span> None</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ═══ GAPS ═══ -->
+  <h2>Critical Gaps</h2>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-header">
+        <h3 style="margin:0"><span class="priority p0"></span>Data Export (Right of Access)</h3>
+        <span class="tag tag-missing">Missing</span>
+      </div>
+      <p style="font-size:14px">POPIA Section 23 and GDPR Article 15 require providing data subjects with a copy of their personal data. No property currently has a data export endpoint.</p>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px"><strong>Required:</strong> <code>GET /api/privacy/data-export</code> returning JSON of all user data.</p>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 style="margin:0"><span class="priority p0"></span>Account Deletion (Right to Erasure)</h3>
+        <span class="tag tag-missing">Missing</span>
+      </div>
+      <p style="font-size:14px">POPIA Section 24 and GDPR Article 17 require deletion on request. No property has a deletion flow. 2nth.me mentions it in terms but hasn't built it.</p>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px"><strong>Required:</strong> <code>POST /api/privacy/delete-account</code> with confirmation email.</p>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 style="margin:0"><span class="priority p0"></span>Consent Records</h3>
+        <span class="tag tag-partial">Partial</span>
+      </div>
+      <p style="font-size:14px">2nth.ai captures <code>consent_at</code> and <code>consent_ip</code> on registration. Other properties capture nothing. No granular consent types (marketing, profiling, etc.).</p>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px"><strong>Required:</strong> <code>consent_records</code> table with per-property, per-type tracking.</p>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 style="margin:0"><span class="priority p1"></span>Privacy Notices</h3>
+        <span class="tag tag-partial">Partial</span>
+      </div>
+      <p style="font-size:14px">Only 2nth.me has a comprehensive privacy page. 2nth.ai has partner terms but no standalone privacy notice. Other properties have nothing.</p>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px"><strong>Required:</strong> <code>/privacy</code> page on every property.</p>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 style="margin:0"><span class="priority p1"></span>Breach Register</h3>
+        <span class="tag tag-missing">Missing</span>
+      </div>
+      <p style="font-size:14px">POPIA Section 22 requires maintaining a breach register and notifying the Information Regulator within 72 hours. No schema or workflow exists.</p>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3 style="margin:0"><span class="priority p2"></span>Data Retention Enforcement</h3>
+        <span class="tag tag-missing">Missing</span>
+      </div>
+      <p style="font-size:14px">Activity logs, anonymous fingerprints, and expired tokens accumulate indefinitely. No scheduled purge worker exists.</p>
+    </div>
+  </div>
+
+  <!-- ═══ WHAT'S WORKING ═══ -->
+  <h2>What's Already Working</h2>
+
+  <div class="card">
+    <table>
+      <tr><th>Capability</th><th>Status</th><th>Where</th></tr>
+      <tr><td>Passwordless auth (no credential storage)</td><td><span class="check">&#10003;</span></td><td>All properties</td></tr>
+      <tr><td>HttpOnly + Secure + SameSite cookies</td><td><span class="check">&#10003;</span></td><td>All properties</td></tr>
+      <tr><td>No third-party tracking or analytics</td><td><span class="check">&#10003;</span></td><td>All properties</td></tr>
+      <tr><td>Encryption in transit (TLS 1.3)</td><td><span class="check">&#10003;</span></td><td>Cloudflare managed</td></tr>
+      <tr><td>Encryption at rest</td><td><span class="check">&#10003;</span></td><td>Cloudflare D1 + KV</td></tr>
+      <tr><td>Profile privacy (private by default)</td><td><span class="check">&#10003;</span></td><td>2nth.me</td></tr>
+      <tr><td>Consent timestamp + IP capture</td><td><span class="check">&#10003;</span></td><td>2nth.ai (D1)</td></tr>
+      <tr><td>Activity audit logging</td><td><span class="check">&#10003;</span></td><td>2nth.ai (D1)</td></tr>
+      <tr><td>Rate limiting on auth endpoints</td><td><span class="check">&#10003;</span></td><td>2nth.ai, 2nth.me</td></tr>
+      <tr><td>Brute-force lockout on OTP</td><td><span class="check">&#10003;</span></td><td>2nth.ai, 2nth.me</td></tr>
+      <tr><td>Session rotation (sliding window)</td><td><span class="check">&#10003;</span></td><td>2nth.ai</td></tr>
+      <tr><td>Scope-based partner access</td><td><span class="check">&#10003;</span></td><td>developers.2nth.ai</td></tr>
+      <tr><td>Partner profiles gated behind auth</td><td><span class="check">&#10003;</span></td><td>2nth.ai, developers</td></tr>
+    </table>
+  </div>
+
+  <!-- ═══ IMPLEMENTATION PLAN ═══ -->
+  <h2>Implementation Plan</h2>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 style="margin:0">Phase 1: Foundation (P0)</h3>
+      <span class="tag tag-planned">Next Sprint</span>
+    </div>
+    <table>
+      <tr><th>Task</th><th>Property</th><th>Effort</th></tr>
+      <tr><td>Add <code>consent_records</code> + <code>consent_audit</code> tables to D1</td><td>2nth.ai</td><td>Migration</td></tr>
+      <tr><td>Capture consent on registration (per-property, per-type)</td><td>All</td><td>Auth flow update</td></tr>
+      <tr><td>Build <code>/api/privacy/data-export</code></td><td>2nth.ai</td><td>New endpoint</td></tr>
+      <tr><td>Build <code>/api/privacy/delete-account</code> with email confirmation</td><td>2nth.ai</td><td>New endpoint + email</td></tr>
+      <tr><td>Add <code>/privacy</code> page to every property</td><td>All</td><td>Static HTML</td></tr>
+      <tr><td>Link privacy page from all signup/signin flows</td><td>All</td><td>HTML update</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 style="margin:0">Phase 2: Compliance (P1)</h3>
+      <span class="tag tag-planned">Q2 2026</span>
+    </div>
+    <table>
+      <tr><th>Task</th><th>Property</th><th>Effort</th></tr>
+      <tr><td>Build consent preference centre (granular opt-in/out UI)</td><td>2nth.ai, 2nth.me</td><td>New page</td></tr>
+      <tr><td>Data subject request handler (email workflow)</td><td>2nth.ai</td><td>New endpoint + Resend</td></tr>
+      <tr><td>Breach register table + admin page</td><td>2nth.ai</td><td>Migration + page</td></tr>
+      <tr><td>Information Officer registration with SA Regulator</td><td>B2BS.co.za</td><td>Legal process</td></tr>
+      <tr><td>Sub-processor DPA review (Resend, Hetzner, Paystack)</td><td>Legal</td><td>Contract review</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 style="margin:0">Phase 3: Automation (P2)</h3>
+      <span class="tag tag-planned">Q3 2026</span>
+    </div>
+    <table>
+      <tr><th>Task</th><th>Property</th><th>Effort</th></tr>
+      <tr><td>Scheduled data retention purge worker</td><td>2nth.ai</td><td>Cron trigger</td></tr>
+      <tr><td>Cross-property deletion propagation (OAuth client notification)</td><td>All</td><td>Webhook</td></tr>
+      <tr><td>Activity log viewer per user (self-service)</td><td>2nth.ai, 2nth.me</td><td>New page</td></tr>
+      <tr><td>Automated 30-day SLA tracking for data requests</td><td>2nth.ai</td><td>Worker</td></tr>
+      <tr><td>Privacy impact assessment template for new features</td><td>Process</td><td>Document</td></tr>
+    </table>
+  </div>
+
+  <!-- ═══ SCHEMAS ═══ -->
+  <h2>Proposed D1 Schema Changes</h2>
+
+  <div class="card">
+    <h3 style="margin-top:0">Migration: <code>0009_privacy_compliance.sql</code></h3>
+    <pre style="background:#f4f4f5;padding:16px;border-radius:6px;font-size:13px;overflow-x:auto;font-family:'JetBrains Mono',monospace;line-height:1.6"><code>-- Consent records (per user, per property, per type)
+CREATE TABLE IF NOT EXISTS consent_records (
+    id              TEXT PRIMARY KEY,
+    user_id         TEXT NOT NULL REFERENCES users(id),
+    property        TEXT NOT NULL,
+    consent_type    TEXT NOT NULL,
+    granted         INTEGER NOT NULL DEFAULT 1,
+    ip_address      TEXT,
+    user_agent      TEXT,
+    granted_at      TEXT NOT NULL DEFAULT (datetime('now')),
+    revoked_at      TEXT,
+    terms_version   TEXT,
+    UNIQUE(user_id, property, consent_type)
+);
+
+-- Consent change audit trail
+CREATE TABLE IF NOT EXISTS consent_audit (
+    id              TEXT PRIMARY KEY,
+    user_id         TEXT NOT NULL,
+    property        TEXT NOT NULL,
+    consent_type    TEXT NOT NULL,
+    action          TEXT NOT NULL,
+    old_value       INTEGER,
+    new_value       INTEGER NOT NULL,
+    ip_address      TEXT,
+    user_agent      TEXT,
+    created_at      TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Breach register
+CREATE TABLE IF NOT EXISTS breach_register (
+    id              TEXT PRIMARY KEY,
+    detected_at     TEXT NOT NULL,
+    description     TEXT NOT NULL,
+    affected_users  INTEGER,
+    data_types      TEXT,
+    severity        TEXT,
+    contained_at    TEXT,
+    regulator_notified_at TEXT,
+    users_notified_at TEXT,
+    remediation     TEXT,
+    status          TEXT NOT NULL DEFAULT 'open',
+    created_at      TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Data subject requests (30-day SLA tracking)
+CREATE TABLE IF NOT EXISTS data_requests (
+    id              TEXT PRIMARY KEY,
+    user_id         TEXT NOT NULL REFERENCES users(id),
+    request_type    TEXT NOT NULL,
+    status          TEXT NOT NULL DEFAULT 'pending',
+    requested_at    TEXT NOT NULL DEFAULT (datetime('now')),
+    acknowledged_at TEXT,
+    completed_at    TEXT,
+    sla_deadline    TEXT NOT NULL,
+    notes           TEXT
+);
+
+-- Index for quick lookups
+CREATE INDEX IF NOT EXISTS idx_consent_user ON consent_records(user_id);
+CREATE INDEX IF NOT EXISTS idx_consent_audit_user ON consent_audit(user_id);
+CREATE INDEX IF NOT EXISTS idx_data_requests_user ON data_requests(user_id);
+CREATE INDEX IF NOT EXISTS idx_data_requests_status ON data_requests(status);</code></pre>
+  </div>
+
+  <!-- ═══ LINKS ═══ -->
+  <h2>Reference Links</h2>
+
+  <div class="card">
+    <table>
+      <tr><th>Resource</th><th>URL</th></tr>
+      <tr><td>Member Management Skill</td><td><code>2nth-skills/leg/member-management/SKILL.md</code></td></tr>
+      <tr><td>GDPR & POPIA Compliance Skill</td><td><code>2nth-skills/leg/gdpr-compliance/SKILL.md</code></td></tr>
+      <tr><td>Existing POPIA Skill</td><td><code>2nth-skills/leg/data-privacy/SKILL.md</code></td></tr>
+      <tr><td>2nth.me Terms</td><td><a href="https://2nth-me.pages.dev/terms">2nth-me.pages.dev/terms</a></td></tr>
+      <tr><td>2nth.ai Partner Terms</td><td><a href="https://2nth-site.pages.dev/partner-terms.html">partner-terms.html</a></td></tr>
+      <tr><td>D1 Schema</td><td><code>2nth-site/migrations/0001_initial.sql</code></td></tr>
+      <tr><td>Auth Module</td><td><code>2nth-site/src/auth.ts</code></td></tr>
+      <tr><td>POPIA Act</td><td><a href="https://www.gov.za/documents/protection-personal-information-act">gov.za/POPIA</a></td></tr>
+      <tr><td>Information Regulator</td><td><a href="https://www.justice.gov.za/inforeg/">justice.gov.za/inforeg</a></td></tr>
+    </table>
+  </div>
+
+</div>
+
+</body>
+</html>
