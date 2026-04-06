@@ -8,7 +8,7 @@ description: |
   (4) identifying grant deadlines, CSI programme cycles, and seasonal funding windows,
   (5) discovering new funders from web research, CSI databases, or foundation directories.
 license: MIT
-compatibility: Cloudflare Workers + D1 + Claude API via AI Gateway
+compatibility: Cloudflare Workers + D1 + Workers AI (Claude API optional via AI Gateway)
 homepage: https://skills.2nth.ai/biz/npo/fundraising/funder-matching
 repository: https://github.com/2nth-ai/skills
 requires:
@@ -119,9 +119,9 @@ function relationshipWarmth(partners: string[], funder: Funder): number {
 }
 ```
 
-### Phase 2 — AI reasoning (Claude API)
+### Phase 2 — AI reasoning (Workers AI, Claude optional)
 
-Pass org profile + funder data to Claude for mission/sector alignment scoring and natural-language reasoning:
+Pass org profile + funder data to the AI model for mission/sector alignment scoring and natural-language reasoning. Default to Cloudflare Workers AI; fall back to Claude API only if configured.
 
 ```typescript
 async function aiScore(org: OrgProfile, funder: Funder, env: Env): Promise<AIScoreResult> {
@@ -156,6 +156,17 @@ Return JSON:
   "relevant_impact_areas": ["<which of the NPO's impact areas are most relevant>"]
 }`;
 
+  // Default: Cloudflare Workers AI (free tier, edge inference)
+  if (!env.ANTHROPIC_API_KEY) {
+    const result = await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
+      messages: [{ role: 'user', content: prompt }],
+      response_format: { type: 'json_object' },
+      max_tokens: 500,
+    });
+    return JSON.parse(result.response) as AIScoreResult;
+  }
+
+  // Optional upgrade: Claude API via AI Gateway (token metered)
   const res = await fetch(`${env.AI_GATEWAY_URL}/v1/messages`, {
     method: 'POST',
     headers: {

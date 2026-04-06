@@ -8,7 +8,7 @@ description: |
   (4) creating follow-up communications, thank-you letters, or reporting updates for donors,
   (5) adapting pitch content for different funder types (corporate vs foundation vs government).
 license: MIT
-compatibility: Cloudflare Workers + Claude API via AI Gateway
+compatibility: Cloudflare Workers + Workers AI (Claude API optional via AI Gateway)
 homepage: https://skills.2nth.ai/biz/npo/fundraising/grant-writing
 repository: https://github.com/2nth-ai/skills
 requires:
@@ -82,24 +82,38 @@ ${req.context ? `ADDITIONAL CONTEXT: ${req.context}` : ''}
 
 Return the ${req.type} content only. No meta-commentary.`;
 
-  const res = await fetch(`${env.AI_GATEWAY_URL}/v1/messages`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${env.ANTHROPIC_API_KEY}`,
-      'Content-Type': 'application/json',
-      'anthropic-version': '2023-06-01',
-      'cf-aig-metadata': JSON.stringify({ skill: 'biz/npo/fundraising/grant-writing', type: req.type }),
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6-20250514',
-      max_tokens: 1200,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
-    }),
-  });
+  let content: string;
 
-  const data = await res.json();
-  const content = data.content[0].text;
+  // Default: Cloudflare Workers AI (free tier, edge inference)
+  if (!env.ANTHROPIC_API_KEY) {
+    const result = await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      max_tokens: 1200,
+    });
+    content = result.response;
+  } else {
+    // Optional: Claude API via AI Gateway (token metered)
+    const res = await fetch(`${env.AI_GATEWAY_URL}/v1/messages`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.ANTHROPIC_API_KEY}`,
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
+        'cf-aig-metadata': JSON.stringify({ skill: 'biz/npo/fundraising/grant-writing', type: req.type }),
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6-20250514',
+        max_tokens: 1200,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
+    });
+    const data = await res.json();
+    content = data.content[0].text;
+  }
 
   // Save to pitches table
   await env.DB.prepare(`

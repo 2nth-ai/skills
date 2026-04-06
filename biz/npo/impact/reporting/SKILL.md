@@ -7,7 +7,7 @@ description: |
   (3) creating public impact pages shareable with prospective funders,
   (4) producing quarterly or annual impact summaries with charts and case studies.
 license: MIT
-compatibility: Cloudflare Workers + D1 + Claude API
+compatibility: Cloudflare Workers + D1 + Workers AI (Claude API optional)
 homepage: https://skills.2nth.ai/biz/npo/impact/reporting
 repository: https://github.com/2nth-ai/skills
 requires:
