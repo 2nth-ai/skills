@@ -6,14 +6,15 @@ description: |
   (2) CRM platforms — HubSpot, Salesforce,
   (3) e-commerce — Shopify, WooCommerce,
   (4) HR and talent — recruitment value chain, onboarding, performance,
-  (5) business operations, workflow automation, reporting.
+  (5) business operations, workflow automation, reporting,
+  (6) non-profit organisations — fundraising, funder matching, impact reporting, compliance.
 license: MIT
 homepage: https://skills.2nth.ai/biz
 repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai
   version: "1.0.0"
-  categories: "Business, ERP, CRM, Operations"
+  categories: "Business, ERP, CRM, Operations, NPO"
 ---
 
 # Business Skills
@@ -27,6 +28,7 @@ Skills for AI agents working in business systems — ERP, CRM, e-commerce, and o
 | `biz/erp/` | Enterprise resource planning systems |
 | `biz/crm/` | Customer relationship management |
 | `biz/hr/` | HR and talent — recruitment, onboarding, performance |
+| `biz/npo/` | Non-profit organisations — fundraising, impact, compliance |
 | `biz/ops/` | Operations, workflow, automation |
 
 Load the relevant subdomain or leaf skill directly. This manifest is for discovery.
