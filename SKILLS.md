@@ -37,6 +37,7 @@ Skills teach AI agents how to work effectively in a specific domain context. The
 | `agents/alex` | Fractional CDO | data/strategy, data/engineering, data/analysis, data/science, data/ml-ops, data/visualisation, data/governance, data/sa, tech/agent-protocols |
 | `agents/morgan` | Fractional Healthcare Director | health/operations, health/clinical-governance, health/finance, health/digital, health/public-health, health/mental-health, health/pharmacy, health/sa |
 | `agents/eric` | Fractional IoT Engineering Director | iot/hardware, iot/firmware, iot/connectivity, iot/sensors, iot/power, iot/security, iot/platform, iot/sa |
+| `agents/nora` | Fractional NPO Development Director | biz/npo/fundraising/*, biz/npo/impact/*, biz/npo/compliance/*, fin/accounting, data/analysis |
 | `agents/andi` | FinMechanics Africa Representative | fin/capital-markets, fin/capital-markets/trading-platforms, fin/sa |
 | `agents/sophia` | (specialist — see AGENT.md) | |
 
@@ -59,6 +60,21 @@ biz/
     onboarding/      stub
     performance/     stub
     compliance/      stub
+  npo/               SKILL.md  ✓ production — NPO domain: fundraising, impact, compliance, volunteers
+    fundraising/     SKILL.md  ✓ production — fundraising subdomain manifest
+      funder-matching/ SKILL.md ✓ production — AI funder discovery, scoring, alignment analysis
+      grant-writing/ SKILL.md  ✓ production — proposal and pitch generation per funder
+      donor-pipeline/ SKILL.md ✓ production — pipeline stages, activity tracking, follow-ups
+      csi-landscape/ SKILL.md  ✓ production — SA CSI ecosystem, Section 18A, BBBEE, ESG cycles
+    impact/          SKILL.md  ✓ production — impact measurement subdomain manifest
+      reporting/     SKILL.md  ✓ production — impact dashboards, donor reports, public pages
+      case-studies/  SKILL.md  ✓ production — structured impact story creation
+      multiplier/    SKILL.md  ✓ production — ROI and multiplier effect calculators
+    compliance/      SKILL.md  ✓ production — NPO compliance subdomain manifest
+      pbo-registration/ SKILL.md ✓ stub — PBO/NPC registration, SARS, Section 18A
+      grant-reporting/ SKILL.md ✓ stub — grant deadline tracking, deliverables
+    volunteer/       SKILL.md  ✓ stub — volunteer management subdomain manifest
+      management/    SKILL.md  ✓ stub — scheduling, hours tracking, onboarding
   ops/               stub
 
 data/
