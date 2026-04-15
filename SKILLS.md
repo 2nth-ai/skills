@@ -163,6 +163,15 @@ tech/
   agent-protocols/   SKILL.md  ✓ production — MCP, A2A, ACP, multi-agent orchestration patterns
   mcp/               stub
   iac/               stub
+  design/            SKILL.md  ✓ stub — UI/product design: tokens, components, frameworks, motion, typography, a11y, Figma, AI design tools
+    systems/         stub
+    frameworks/      stub
+    components/      stub
+    motion/          stub
+    typography/      stub
+    accessibility/   stub
+    figma/           stub
+    ai-tools/        stub
 ```
 
 ## How Skills Reference Each Other
