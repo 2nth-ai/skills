@@ -246,12 +246,8 @@ function renderPage({ skillPath, meta, bodyHtml, githubUrl, depth }) {
     .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
     .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
     .icon-sun, .icon-moon { display: none; }
-    html:not([data-theme="dark"]) .icon-sun { display: block; }
     html[data-theme="dark"] .icon-moon { display: block; }
-    @media (prefers-color-scheme: dark) {
-      html:not([data-theme]) .icon-sun { display: none; }
-      html:not([data-theme]) .icon-moon { display: block; }
-    }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
 
     .btn-gh {
       display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
@@ -511,9 +507,8 @@ function renderDomainIndex({ domain, meta, skills }) {
     .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
     .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
     .icon-sun, .icon-moon { display: none; }
-    html:not([data-theme="dark"]) .icon-sun { display: block; }
     html[data-theme="dark"] .icon-moon { display: block; }
-    @media (prefers-color-scheme: dark) { html:not([data-theme]) .icon-sun { display: none; } html:not([data-theme]) .icon-moon { display: block; } }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
 
     .btn-gh { display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500; transition: border-color 0.15s; white-space: nowrap; }
     .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }

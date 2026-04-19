@@ -26,9 +26,8 @@
     .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
     .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
     .icon-sun, .icon-moon { display: none; }
-    html:not([data-theme="dark"]) .icon-sun { display: block; }
     html[data-theme="dark"] .icon-moon { display: block; }
-    @media (prefers-color-scheme: dark) { html:not([data-theme]) .icon-sun { display: none; } html:not([data-theme]) .icon-moon { display: block; } }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
 
     .btn-gh { display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500; transition: border-color 0.15s; white-space: nowrap; }
     .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
@@ -533,6 +532,18 @@
 
         <div class="card">
           <div class="card-header">
+            <span class="card-name">design</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">design systems — tokens, theming, dark/light modes, the consistency layer,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="design.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/design" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
             <span class="card-name">discord</span>
             <div class="card-badges"><span class="badge badge-prod">production</span></div>
           </div>
@@ -572,7 +583,7 @@
             <span class="card-name">google</span>
             <div class="card-badges"><span class="badge badge-prod">production</span></div>
           </div>
-          <p class="card-desc">deploying or managing workloads on Google Cloud Platform (GCP) — Cloud Run, Cloud SQL, BigQuery, Vertex AI, Pub/Sub,</p>
+          <p class="card-desc">authenticating any Google API — gcloud CLI, service accounts, workload identity, OAuth 2.0 with PKCE,</p>
           <div class="card-links">
             <a class="card-link card-link-primary" href="google.html">View skill →</a>
             <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google" target="_blank" rel="noopener">GitHub ↗</a>
@@ -584,7 +595,7 @@
             <span class="card-name">google/cloud</span>
             <div class="card-badges"><span class="badge badge-prod">production</span></div>
           </div>
-          <p class="card-desc">deploying containerised applications to Cloud Run — serverless, scales to zero,</p>
+          <p class="card-desc">deploying compute — Cloud Run (serverless containers), Cloud Functions (events), GKE (Kubernetes), Compute Engine (VMs),</p>
           <div class="card-links">
             <a class="card-link card-link-primary" href="google/cloud.html">View skill →</a>
             <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/cloud" target="_blank" rel="noopener">GitHub ↗</a>
@@ -593,10 +604,94 @@
 
         <div class="card">
           <div class="card-header">
+            <span class="card-name">google/cloud/ai</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">GCP AI/ML skill. Use when: (1) running Gemini models (gemini-2.5-pro, gemini-2.5-flash, gemini-2.0-flash) via Vertex AI,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="google/cloud/ai.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/cloud/ai" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">google/cloud/compute</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">GCP compute skill. Use when: (1) deploying serverless containers on Cloud Run — scale-to-zero, pay per request,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="google/cloud/compute.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/cloud/compute" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">google/cloud/data</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">GCP data platform skill. Use when: (1) querying or loading data in BigQuery — serverless analytics, per-TB on-demand or capacity,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="google/cloud/data.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/cloud/data" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">google/cloud/database</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">GCP database skill (stub). Use when: (1) running managed Postgres/MySQL/SQL Server on Cloud SQL,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="google/cloud/database.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/cloud/database" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">google/cloud/networking</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">GCP networking skill (stub). Use when: (1) designing VPC networks — subnets, routes, firewalls, VPC peering,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="google/cloud/networking.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/cloud/networking" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">google/cloud/security</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">GCP security skill (stub). Use when: (1) modelling Cloud IAM policies — principals, roles, conditions, policy-simulator,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="google/cloud/security.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/cloud/security" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">google/cloud/storage</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">GCP storage skill (stub). Use when: (1) storing objects in Cloud Storage — buckets, lifecycle, versioning, signed URLs,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="google/cloud/storage.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/cloud/storage" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
             <span class="card-name">google/workspace</span>
             <div class="card-badges"><span class="badge badge-prod">production</span></div>
           </div>
-          <p class="card-desc">connecting to any Google Workspace API — Gmail, Drive, Sheets, Calendar, Admin SDK, Contacts,</p>
+          <p class="card-desc">reading, sending, or labelling email through the Gmail API,</p>
           <div class="card-links">
             <a class="card-link card-link-primary" href="google/workspace.html">View skill →</a>
             <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/workspace" target="_blank" rel="noopener">GitHub ↗</a>
@@ -605,37 +700,61 @@
 
         <div class="card">
           <div class="card-header">
+            <span class="card-name">google/workspace/admin</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">Workspace Admin SDK skill (stub). Use when: (1) provisioning users and groups via Directory API,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="google/workspace/admin.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/workspace/admin" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">google/workspace/calendar</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">Google Calendar API skill (stub). Use when: (1) creating events via events.insert with Google Meet auto-generation,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="google/workspace/calendar.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/workspace/calendar" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">google/workspace/drive</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">Google Drive API skill (stub). Use when: (1) creating, reading, or updating files/folders via Drive API v3,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="google/workspace/drive.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/workspace/drive" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
             <span class="card-name">google/workspace/gmail</span>
             <div class="card-badges"><span class="badge badge-prod">production</span></div>
           </div>
-          <p class="card-desc">reading, searching, or labelling emails in a Gmail inbox programmatically,</p>
+          <p class="card-desc">Gmail API skill. Use when: (1) reading, searching, or listing messages/threads via users.messages.list + get,</p>
           <div class="card-links">
             <a class="card-link card-link-primary" href="google/workspace/gmail.html">View skill →</a>
             <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/workspace/gmail" target="_blank" rel="noopener">GitHub ↗</a>
           </div>
         </div>
 
-        <div class="card card-stub">
+        <div class="card">
           <div class="card-header">
-            <span class="card-name">iac</span>
-            <div class="card-badges"><span class="badge badge-stub">stub</span></div>
+            <span class="card-name">google/workspace/sheets</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
           </div>
-          <p class="card-desc">Coming soon.</p>
+          <p class="card-desc">Google Sheets API skill (stub). Use when: (1) reading cell ranges or whole sheets via values.get / values.batchGet,</p>
           <div class="card-links">
-            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/tree/main/tech/iac" target="_blank" rel="noopener">GitHub ↗</a>
-            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/iac" target="_blank" rel="noopener">GitHub ↗</a>
-          </div>
-        </div>
-
-        <div class="card card-stub">
-          <div class="card-header">
-            <span class="card-name">mcp</span>
-            <div class="card-badges"><span class="badge badge-stub">stub</span></div>
-          </div>
-          <p class="card-desc">Coming soon.</p>
-          <div class="card-links">
-            <a class="card-link card-link-primary" href="https://github.com/2nth-ai/skills/tree/main/tech/mcp" target="_blank" rel="noopener">GitHub ↗</a>
-            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/mcp" target="_blank" rel="noopener">GitHub ↗</a>
+            <a class="card-link card-link-primary" href="google/workspace/sheets.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/google/workspace/sheets" target="_blank" rel="noopener">GitHub ↗</a>
           </div>
         </div>
 
@@ -696,6 +815,66 @@
           <div class="card-links">
             <a class="card-link card-link-primary" href="microsoft/azure-ai.html">View skill →</a>
             <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/microsoft/azure-ai" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">ollama</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">running open-weight models locally — Llama 3, Mistral, Gemma, Phi, Qwen, DeepSeek with zero cloud cost,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="ollama.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/ollama" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">ollama/api</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">calling Ollama from TypeScript/Python/curl — generate, chat, embed endpoints,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="ollama/api.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/ollama/api" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">ollama/deployment</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">running Ollama in Docker — containerised inference with GPU passthrough,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="ollama/deployment.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/ollama/deployment" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">ollama/modelfile</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">baking a system prompt permanently into a model — so callers don't need to pass it,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="ollama/modelfile.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/ollama/modelfile" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-name">ollama/models</span>
+            <div class="card-badges"><span class="badge badge-prod">production</span></div>
+          </div>
+          <p class="card-desc">choosing the right open-weight model for a task — size vs quality vs speed trade-offs,</p>
+          <div class="card-links">
+            <a class="card-link card-link-primary" href="ollama/models.html">View skill →</a>
+            <a class="card-link" href="https://github.com/2nth-ai/skills/tree/main/tech/ollama/models" target="_blank" rel="noopener">GitHub ↗</a>
           </div>
         </div>
 

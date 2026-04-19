@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/google/cloud/data — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><a href="#">google</a><span class="breadcrumb-sep">›</span><a href="#">cloud</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">data</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/google/cloud/data/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/google/cloud/data</div>
+      <h1>DATA</h1>
+      <p class="skill-desc">GCP data platform skill. Use when: (1) querying or loading data in BigQuery — serverless analytics, per-TB on-demand or capacity,</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">BigQuery standard SQL + BigQuery ML, Pub/Sub v1, Dataflow (Apache Beam 2.50+)</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../../tech/google/cloud.html">tech/google/cloud</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech/google/cloud</a><a class="skill-chip" href="#">tech/google</a><a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>BigQuery, Pub/Sub, Dataflow</h1>
+
+<p>The GCP data trio that covers analytics, messaging, and pipelines:</p>
+
+<ul><li><strong>BigQuery</strong> — serverless columnar analytics. Sub-second on billions of rows. Pay per TB scanned (on-demand) or per slot-hour (capacity). Primary warehouse for the 2nth.ai token economy tables, client activity, and Penny analytics.</li><li><strong>Pub/Sub</strong> — global managed message bus. At-least-once (pull/push) or exactly-once (pull with ordering keys). Replacement for Kafka for most use cases.</li><li><strong>Dataflow</strong> — managed Apache Beam for batch + streaming pipelines. Google templates handle GCS→BigQuery, Pub/Sub→BigQuery, Datastream CDC without custom code.</li></ul>
+
+<hr>
+
+<h2>BigQuery</h2>
+
+<h3>Create dataset + table</h3>
+
+<pre><code class="lang-bash"># Dataset (choose location carefully — queries must match dataset region)
+bq --location=africa-south1 mk --dataset \
+  --description "Production analytics" \
+  my-app-prod:analytics
+
+# Table with schema + partitioning + clustering
+bq mk --table \
+  --time_partitioning_field event_time \
+  --time_partitioning_type DAY \
+  --clustering_fields client_id,event_type \
+  --require_partition_filter \
+  my-app-prod:analytics.events \
+  client_id:STRING,event_type:STRING,event_time:TIMESTAMP,properties:JSON,ip:STRING</code></pre>
+
+<p><strong>Partitioning + clustering is the #1 cost lever.</strong> <code>--require_partition_filter</code> blocks full-table scans by forcing every query to include <code>WHERE event_time BETWEEN ...</code> — a cheap guardrail against accidental multi-TB queries.</p>
+
+<h3>Query</h3>
+
+<pre><code class="lang-bash"># CLI
+bq query --use_legacy_sql=false \
+  'SELECT client_id, COUNT(*) c FROM `my-app-prod.analytics.events`
+   WHERE event_time BETWEEN "2026-04-01" AND "2026-04-19"
+     AND event_type = "skill_invoked"
+   GROUP BY client_id ORDER BY c DESC LIMIT 10'
+
+# Dry-run to see bytes-will-scan BEFORE paying
+bq query --dry_run --use_legacy_sql=false 'SELECT * FROM `my-app-prod.analytics.events`'
+# Query successfully validated. Assuming the tables are not modified,
+# running this query will process 12.8 TB of data.</code></pre>
+
+<h3>Node SDK</h3>
+
+<pre><code class="lang-typescript">import { BigQuery } from '@google-cloud/bigquery';
+
+const bq = new BigQuery({ projectId: 'my-app-prod' });
+
+// Parameterised query (always — never template literals)
+const [rows] = await bq.query({
+  query: `
+    SELECT event_type, COUNT(*) AS c
+    FROM \`my-app-prod.analytics.events\`
+    WHERE event_time BETWEEN @start AND @end
+      AND client_id = @clientId
+    GROUP BY event_type
+    ORDER BY c DESC
+  `,
+  params: { start: '2026-04-01', end: '2026-04-19', clientId: '2n-014' },
+  location: 'africa-south1',
+});</code></pre>
+
+<h3>Streaming inserts (realtime)</h3>
+
+<pre><code class="lang-typescript">const table = bq.dataset('analytics').table('events');
+
+await table.insert([
+  {
+    client_id: '2n-014',
+    event_type: 'skill_invoked',
+    event_time: new Date().toISOString(),
+    properties: { skill: 'penny-briefing', duration_ms: 420 },
+  },
+], { raw: false });</code></pre>
+
+<p>Streaming inserts have no free tier (~$0.01/200MB). For high-volume events, prefer <strong>Storage Write API</strong> (BigQuery's newer, cheaper streaming endpoint) or <strong>Pub/Sub → BigQuery direct subscription</strong> (zero-ETL).</p>
+
+<h3>Pub/Sub → BigQuery subscription (zero-ETL)</h3>
+
+<pre><code class="lang-bash"># One-time setup: grant the Pub/Sub service account BQ writer
+PROJECT_NUMBER=$(gcloud projects describe my-app-prod --format="value(projectNumber)")
+bq add-iam-policy-binding \
+  --member "serviceAccount:service-${PROJECT_NUMBER}@gcp-sa-pubsub.iam.gserviceaccount.com" \
+  --role "roles/bigquery.dataEditor" \
+  my-app-prod:analytics
+
+# Create a subscription that writes directly to the table
+gcloud pubsub subscriptions create events-to-bq \
+  --topic events \
+  --bigquery-table=my-app-prod:analytics.events \
+  --use-topic-schema --drop-unknown-fields</code></pre>
+
+<p>No Dataflow, no Cloud Function, no code. Messages published to the topic land in the table in seconds.</p>
+
+<h3>Materialised views + scheduled queries</h3>
+
+<pre><code class="lang-sql">-- Materialised view auto-refreshes as base table gets new partitions
+CREATE MATERIALIZED VIEW `my-app-prod.analytics.daily_event_counts`
+PARTITION BY DATE(event_day)
+CLUSTER BY client_id
+AS
+SELECT
+  DATE(event_time) AS event_day,
+  client_id,
+  event_type,
+  COUNT(*) AS c
+FROM `my-app-prod.analytics.events`
+GROUP BY 1, 2, 3;</code></pre>
+
+<pre><code class="lang-bash"># Scheduled daily rollup (replaces a nightly ETL job)
+bq query \
+  --use_legacy_sql=false \
+  --destination_table my-app-prod:analytics.daily_rollup \
+  --schedule="every day 03:00" \
+  --time_partitioning_field event_day \
+  --time_partitioning_type DAY \
+  --replace=false \
+  --display_name "daily-rollup" \
+  'SELECT DATE(event_time) AS event_day, client_id, COUNT(*) c
+   FROM `my-app-prod.analytics.events`
+   WHERE event_time = TIMESTAMP(DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+   GROUP BY 1, 2'</code></pre>
+
+<h3>BigQuery ML (SQL-native models)</h3>
+
+<pre><code class="lang-sql">-- Train a simple churn model in SQL
+CREATE OR REPLACE MODEL `analytics.churn_predictor`
+OPTIONS(model_type='LOGISTIC_REG', input_label_cols=['churned']) AS
+SELECT
+  sessions_last_7d,
+  skill_invocations_last_30d,
+  days_since_signup,
+  churned
+FROM `analytics.churn_training`;
+
+-- Predict
+SELECT *
+FROM ML.PREDICT(MODEL `analytics.churn_predictor`,
+  (SELECT client_id, sessions_last_7d, skill_invocations_last_30d, days_since_signup
+   FROM `analytics.clients_live`));</code></pre>
+
+<p>BQML supports logistic/linear regression, k-means, matrix factorisation, ARIMA+, and XGBoost. For anything heavier, export to Vertex AI.</p>
+
+<hr>
+
+<h2>Pub/Sub</h2>
+
+<h3>Topic + subscription</h3>
+
+<pre><code class="lang-bash"># Create topic
+gcloud pubsub topics create events
+
+# Pull subscription (consumer pulls — default, most flexible)
+gcloud pubsub subscriptions create events-worker \
+  --topic events \
+  --ack-deadline 60 \
+  --message-retention-duration 7d
+
+# Push subscription (Pub/Sub POSTs to your HTTPS endpoint — Cloud Run / Functions)
+gcloud pubsub subscriptions create events-to-cloudrun \
+  --topic events \
+  --push-endpoint https://my-consumer-xyz-ew.a.run.app/events \
+  --push-auth-service-account pubsub-invoker@my-app-prod.iam.gserviceaccount.com \
+  --ack-deadline 60 \
+  --dead-letter-topic events-dlq \
+  --max-delivery-attempts 5</code></pre>
+
+<h3>Publish (Node)</h3>
+
+<pre><code class="lang-typescript">import { PubSub } from '@google-cloud/pubsub';
+
+const ps = new PubSub({ projectId: 'my-app-prod' });
+const topic = ps.topic('events', {
+  batching: { maxMessages: 100, maxMilliseconds: 100 },   // batch for throughput
+});
+
+await topic.publishMessage({
+  json: { clientId: '2n-014', type: 'skill_invoked', at: new Date().toISOString() },
+  attributes: { source: 'penny', version: '1' },
+  orderingKey: '2n-014',     // only if subscription has enableMessageOrdering
+});</code></pre>
+
+<h3>Pull consumer (Node)</h3>
+
+<pre><code class="lang-typescript">const sub = ps.subscription('events-worker', {
+  flowControl: { maxMessages: 50 },
+  enableExactlyOnceDelivery: true,
+});
+
+sub.on('message', async (message) =&gt; {
+  try {
+    const payload = JSON.parse(message.data.toString());
+    await handle(payload);
+    message.ack();
+  } catch (err) {
+    // With EOD enabled, nack() tells Pub/Sub to redeliver (or DLQ after max-attempts)
+    message.nack();
+  }
+});
+
+sub.on('error', (err) =&gt; console.error('sub error', err));</code></pre>
+
+<h3>Push consumer (Cloud Run)</h3>
+
+<pre><code class="lang-typescript">// Pub/Sub POSTs this JSON body — verify the Bearer token is from your push SA
+app.post('/events', async (req, res) =&gt; {
+  // Optional: verify req.headers.authorization contains a valid Google OIDC token
+  const { message } = req.body as { message: { data: string; attributes: Record&lt;string, string&gt; } };
+  const payload = JSON.parse(Buffer.from(message.data, 'base64').toString());
+  await handle(payload);
+  res.status(200).send();    // 200 ACKs, any other status triggers redelivery
+});</code></pre>
+
+<h3>Filters &amp; dead-letter</h3>
+
+<pre><code class="lang-bash"># Subscription-level filter — only receive messages matching an attribute expression
+gcloud pubsub subscriptions create high-value-events \
+  --topic events \
+  --message-filter='attributes.priority = "high" AND attributes.source != "test"'
+
+# Dead-letter topic catches permanently-failing messages after N attempts
+gcloud pubsub topics create events-dlq
+gcloud pubsub subscriptions update events-worker \
+  --dead-letter-topic events-dlq \
+  --max-delivery-attempts 5</code></pre>
+
+<hr>
+
+<h2>Dataflow</h2>
+
+<p>Dataflow runs Apache Beam pipelines — batch or streaming — on managed workers that auto-scale. Use when:</p>
+<ul><li>Volumes exceed what Cloud Run/Functions can handle (millions of events/min).</li><li>You need exactly-once semantics + windowing.</li><li>The pipeline is complex (multi-stage, joins, watermarks).</li></ul>
+
+<h3>Google-provided templates (no code)</h3>
+
+<p>Most common patterns already exist as templates — just run one:</p>
+
+<pre><code class="lang-bash"># Pub/Sub → BigQuery (streaming)
+gcloud dataflow jobs run pubsub-to-bq-events \
+  --gcs-location gs://dataflow-templates/latest/PubSub_to_BigQuery \
+  --region africa-south1 \
+  --staging-location gs://my-dataflow-staging/staging \
+  --parameters "inputTopic=projects/my-app-prod/topics/events,outputTableSpec=my-app-prod:analytics.events"
+
+# GCS → BigQuery (batch)
+gcloud dataflow jobs run gcs-to-bq-import \
+  --gcs-location gs://dataflow-templates/latest/GCS_Text_to_BigQuery \
+  --region africa-south1 \
+  --parameters "inputFilePattern=gs://my-raw/events/*.json,JSONPath=gs://my-config/schema.json,outputTable=my-app-prod:analytics.events,javascriptTextTransformGcsPath=gs://my-config/udf.js,javascriptTextTransformFunctionName=transform"</code></pre>
+
+<h3>Flex Template (custom Beam pipeline)</h3>
+
+<pre><code class="lang-python"># pipeline.py — Python Beam pipeline
+import apache_beam as beam
+from apache_beam.options.pipeline_options import PipelineOptions
+
+def parse_event(line):
+    import json
+    return json.loads(line)
+
+def run():
+    opts = PipelineOptions(
+        streaming=True,
+        project='my-app-prod',
+        region='africa-south1',
+        runner='DataflowRunner',
+        temp_location='gs://my-dataflow-staging/temp',
+    )
+    with beam.Pipeline(options=opts) as p:
+        (p
+         | 'Read'   &gt;&gt; beam.io.ReadFromPubSub(topic='projects/my-app-prod/topics/events')
+         | 'Parse'  &gt;&gt; beam.Map(parse_event)
+         | 'Enrich' &gt;&gt; beam.Map(lambda e: {**e, 'ingested_at': __import__('datetime').datetime.utcnow().isoformat()})
+         | 'Write'  &gt;&gt; beam.io.WriteToBigQuery(
+               'my-app-prod:analytics.events',
+               schema='client_id:STRING,event_type:STRING,event_time:TIMESTAMP,properties:JSON,ingested_at:TIMESTAMP',
+               write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND))
+
+if __name__ == '__main__':
+    run()</code></pre>
+
+<p>Packaging + running is a multi-step process — lean on templates first.</p>
+
+<hr>
+
+<h2>Datastream + CDC (Cloud SQL / Postgres → BigQuery)</h2>
+
+<p>For ops databases that need to flow into analytics without custom ETL:</p>
+
+<pre><code class="lang-bash"># Create connection profiles (source = Cloud SQL logical replication, target = BQ)
+gcloud datastream connection-profiles create source-cloudsql \
+  --location africa-south1 --type postgresql ...
+
+# Create stream — mirrors selected schemas/tables into BQ in near-real-time
+gcloud datastream streams create orders-to-bq \
+  --location africa-south1 \
+  --source source-cloudsql --source-config source.json \
+  --destination bq-target   --destination-config bq.json</code></pre>
+
+<p>CDC-landed tables in BigQuery get <code>_metadata_*</code> columns (source offset, operation type INSERT/UPDATE/DELETE, timestamp). Build analytics views on top.</p>
+
+<hr>
+
+<h2>Cost model</h2>
+
+<h3>BigQuery</h3>
+
+<table><thead><tr><th>Plan</th><th>Price</th></tr></thead><tbody><tr><td>On-demand query</td><td>~$5/TB scanned (us), ~$6.25/TB (eu, africa-south1)</td></tr><tr><td>Capacity (Editions)</td><td>~$0.04/slot-hour (Standard), ~$0.06 (Enterprise) — min 100 slots</td></tr><tr><td>Active storage</td><td>~$0.02/GB/month</td></tr><tr><td>Long-term storage (&gt;90d unchanged)</td><td>~$0.01/GB/month (automatic 50% off)</td></tr><tr><td>Streaming inserts</td><td>~$0.01 / 200MB (avoid — use Storage Write API or Pub/Sub sub)</td></tr></tbody></table>
+
+<p>A single analyst running <code>SELECT * FROM big_table</code> on a 5TB table costs ~$30. Partition filters + column selection + clustering commonly cut that by 90%+.</p>
+
+<h3>Pub/Sub</h3>
+
+<table><thead><tr><th>Component</th><th>Price</th></tr></thead><tbody><tr><td>Throughput</td><td>~$40/TB ingress or egress, first 10GB/month free</td></tr><tr><td>Message storage</td><td>~$0.27/GB-month (after default 1-day retention)</td></tr><tr><td>Seek (time-based)</td><td>additional storage cost</td></tr></tbody></table>
+
+<p>Typical event volumes (millions/day, small JSON) cost pennies. Dashboards with replayable event history are the main cost driver.</p>
+
+<h3>Dataflow</h3>
+
+<table><thead><tr><th>Component</th><th>Price</th></tr></thead><tbody><tr><td>vCPU</td><td>~$0.056/vCPU-hour (batch), ~$0.069 (streaming)</td></tr><tr><td>Memory</td><td>~$0.0035/GB-hour</td></tr><tr><td>Persistent disk</td><td>~$0.00005/GB-hour</td></tr><tr><td>Streaming Engine</td><td>+~$0.018/GB shuffled</td></tr></tbody></table>
+
+<p>Streaming Dataflow jobs run 24/7 — always consider whether a Pub/Sub → BigQuery subscription replaces the pipeline.</p>
+
+<hr>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong><code>SELECT <em></code> is expensive</strong>: BQ scans every column you select. Always name columns. A 1TB table with 50 columns averages ~20GB per column — <code>SELECT col</code> is 50x cheaper than <code>SELECT </em></code>.</li><li><strong>Region lock</strong>: A BigQuery dataset has a location. Queries can only join tables in the same location. Cross-region joins require a copy. Pick <code>africa-south1</code> or <code>EU</code> early — hard to move later.</li><li><strong><code>require_partition_filter</code> saves you</strong>: Turning it on at table creation blocks all partition-full-scans. Makes every query either work quickly + cheaply or fail loudly — much better than silent 10TB scans.</li><li><strong>Streaming inserts have no dedup</strong>: Use <code>insertId</code> on each row OR prefer the Storage Write API (exactly-once committed mode) for dedup.</li><li><strong>Pub/Sub "exactly-once" ≠ free</strong>: <code>enableExactlyOnceDelivery</code> is pull-only and introduces its own ack semantics (<code>ack()</code> returns a promise that resolves only after Pub/Sub confirms). Non-trivial to refactor to.</li><li><strong>Pub/Sub ordering + parallelism tradeoff</strong>: With an <code>orderingKey</code>, messages per key are serial. Parallelism comes from many keys. One hot key = one worker = no scale-out.</li><li><strong>Push subscription ack deadline</strong>: Default 10s, max 600s. If your handler is slow, raise <code>ack-deadline</code> OR return 202 and process async + explicit <code>modifyAckDeadline</code> calls.</li><li><strong>Dataflow costs surprise</strong>: A "small streaming job" running 24/7 at min 2 workers ≈ $150/month minimum. Always check whether a Pub/Sub → BQ subscription or a Cloud Run worker handles the volume.</li><li><strong>BQ scheduled queries run as a user or SA</strong>: If the author leaves and their account is deactivated, queries silently stop. Create scheduled queries under a service account you control.</li><li><strong><code>bq cp</code> is free cross-region within same continent</strong>: Useful for disaster recovery. Cross-continent <code>bq cp</code> costs standard egress.</li></ul>
+
+<h2>See Also</h2>
+
+<ul><li><a href="../compute/SKILL.md" target="_blank" rel="noopener">Cloud Run — Pub/Sub push consumers</a></li><li><a href="../ai/SKILL.md" target="_blank" rel="noopener">Vertex AI — use BQ as a Gemini grounding source</a></li><li><a href="../SKILL.md" target="_blank" rel="noopener">GCP parent for IAM + regions</a></li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/google/cloud/data/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

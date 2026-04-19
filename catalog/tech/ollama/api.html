@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/ollama/api — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><a href="#">ollama</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">api</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/ollama/api/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/ollama/api</div>
+      <h1>API</h1>
+      <p class="skill-desc">Ollama REST API and OpenAI-compatible endpoint skill. Use when:</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Ollama v0.5+, OpenAI SDK v4+</span>
+        
+      </div>
+      
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech/ollama</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Ollama — REST API &amp; OpenAI-Compatible Endpoint</h1>
+
+<blockquote><strong>Stub</strong> — core patterns below.</blockquote>
+
+<h2>Base URLs</h2>
+
+<table><thead><tr><th>Endpoint</th><th>URL</th></tr></thead><tbody><tr><td>Ollama native REST</td><td><code>http://localhost:11434/api/*</code></td></tr><tr><td>OpenAI-compatible</td><td><code>http://localhost:11434/v1/*</code></td></tr><tr><td>Remote (if OLLAMA_HOST set)</td><td><code>http://<host>:11434/api/*</code></td></tr></tbody></table>
+
+<h2>Generate (Single-turn)</h2>
+
+<pre><code class="lang-typescript">// Streaming (default)
+const res = await fetch('http://localhost:11434/api/generate', {
+  method: 'POST',
+  body: JSON.stringify({
+    model: 'llama3.2',
+    prompt: 'Why is the sky blue?',
+    system: 'Answer in one sentence.',
+    options: {
+      temperature: 0.7,
+      num_ctx: 8192,
+    },
+  }),
+});
+
+const reader = res.body!.getReader();
+const decoder = new TextDecoder();
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+  const lines = decoder.decode(value).split('\n').filter(Boolean);
+  for (const line of lines) {
+    const chunk = JSON.parse(line) as { response: string; done: boolean };
+    process.stdout.write(chunk.response);
+  }
+}
+
+// Non-streaming
+const res = await fetch('http://localhost:11434/api/generate', {
+  method: 'POST',
+  body: JSON.stringify({
+    model: 'llama3.2',
+    prompt: 'What is Cloudflare Workers?',
+    stream: false,
+  }),
+});
+const { response } = await res.json() as { response: string };</code></pre>
+
+<h2>Chat (Multi-turn)</h2>
+
+<pre><code class="lang-typescript">type Message = { role: 'system' | 'user' | 'assistant'; content: string };
+
+async function chat(messages: Message[]): Promise&lt;string&gt; {
+  const res = await fetch('http://localhost:11434/api/chat', {
+    method: 'POST',
+    body: JSON.stringify({
+      model: 'llama3.2',
+      messages,
+      stream: false,
+      options: { temperature: 0.8, num_ctx: 4096 },
+    }),
+  });
+  const data = await res.json() as { message: Message };
+  return data.message.content;
+}
+
+const reply = await chat([
+  { role: 'system', content: 'You are a concise assistant.' },
+  { role: 'user', content: 'What is RAG?' },
+]);</code></pre>
+
+<h2>Structured Output (JSON Mode)</h2>
+
+<pre><code class="lang-typescript">// Enforce a JSON schema in the response
+const res = await fetch('http://localhost:11434/api/chat', {
+  method: 'POST',
+  body: JSON.stringify({
+    model: 'llama3.2',
+    messages: [{ role: 'user', content: 'Extract: John Smith, age 34, engineer' }],
+    stream: false,
+    format: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        age: { type: 'number' },
+        role: { type: 'string' },
+      },
+      required: ['name', 'age', 'role'],
+    },
+  }),
+});
+const { message } = await res.json() as any;
+const person = JSON.parse(message.content); // { name: 'John Smith', age: 34, role: 'engineer' }</code></pre>
+
+<h2>Tool Calling</h2>
+
+<pre><code class="lang-typescript">const res = await fetch('http://localhost:11434/api/chat', {
+  method: 'POST',
+  body: JSON.stringify({
+    model: 'llama3.1:8b', // tool-use capable models: llama3.1, mistral-nemo, qwen2.5
+    messages: [{ role: 'user', content: 'What is the weather in Cape Town?' }],
+    tools: [
+      {
+        type: 'function',
+        function: {
+          name: 'get_weather',
+          description: 'Get current weather for a city',
+          parameters: {
+            type: 'object',
+            properties: {
+              city: { type: 'string', description: 'City name' },
+            },
+            required: ['city'],
+          },
+        },
+      },
+    ],
+    stream: false,
+  }),
+});
+
+const data = await res.json() as any;
+if (data.message.tool_calls) {
+  for (const call of data.message.tool_calls) {
+    const args = call.function.arguments; // { city: 'Cape Town' }
+    // Execute your tool function, then send result back in next message
+  }
+}</code></pre>
+
+<h2>OpenAI SDK Drop-in</h2>
+
+<pre><code class="lang-typescript">import OpenAI from 'openai';
+
+const ollama = new OpenAI({
+  baseURL: 'http://localhost:11434/v1',
+  apiKey: 'ollama',
+});
+
+// Works exactly like OpenAI — swap model name only
+const completion = await ollama.chat.completions.create({
+  model: 'llama3.2',
+  messages: [{ role: 'user', content: 'Hello!' }],
+});
+
+// Streaming
+const stream = await ollama.chat.completions.create({
+  model: 'llama3.2',
+  messages: [{ role: 'user', content: 'Count to 5.' }],
+  stream: true,
+});
+for await (const chunk of stream) {
+  process.stdout.write(chunk.choices[0]?.delta?.content ?? '');
+}
+
+// Embeddings
+const embedding = await ollama.embeddings.create({
+  model: 'nomic-embed-text',
+  input: 'Text to embed',
+});
+const vector = embedding.data[0].embedding; // number[]</code></pre>
+
+<h2>Model Management API</h2>
+
+<pre><code class="lang-bash"># Pull a model
+curl http://localhost:11434/api/pull \
+  -d '{"name":"llama3.2","stream":false}'
+
+# Delete a model
+curl -X DELETE http://localhost:11434/api/delete \
+  -d '{"name":"llama3.2"}'
+
+# Copy a model
+curl http://localhost:11434/api/copy \
+  -d '{"source":"llama3.2","destination":"my-llama"}'
+
+# Show model info
+curl http://localhost:11434/api/show \
+  -d '{"name":"llama3.2"}'
+
+# List loaded models (in VRAM)
+curl http://localhost:11434/api/ps
+
+# List all local models
+curl http://localhost:11434/api/tags</code></pre>
+
+<h2>Environment Variables</h2>
+
+<table><thead><tr><th>Variable</th><th>Default</th><th>Purpose</th></tr></thead><tbody><tr><td><code>OLLAMA_HOST</code></td><td><code>127.0.0.1:11434</code></td><td>Bind address — set <code>0.0.0.0:11434</code> to allow remote</td></tr><tr><td><code>OLLAMA_MODELS</code></td><td><code>~/.ollama/models</code></td><td>Model storage path</td></tr><tr><td><code>OLLAMA_NUM_GPU</code></td><td>auto</td><td>GPU layers — <code>0</code> forces CPU</td></tr><tr><td><code>OLLAMA_KEEP_ALIVE</code></td><td><code>5m</code></td><td>How long to keep models loaded</td></tr><tr><td><code>OLLAMA_MAX_LOADED_MODELS</code></td><td><code>1</code></td><td>Concurrent models in VRAM</td></tr><tr><td><code>OLLAMA_FLASH_ATTENTION</code></td><td><code>0</code></td><td>Enable flash attention (<code>1</code> for speed)</td></tr><tr><td><code>OLLAMA_CONTEXT_LENGTH</code></td><td>model default</td><td>Override default context window</td></tr></tbody></table>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/ollama/api/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

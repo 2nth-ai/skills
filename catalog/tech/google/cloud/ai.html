@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/google/cloud/ai — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><a href="#">google</a><span class="breadcrumb-sep">›</span><a href="#">cloud</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">ai</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/google/cloud/ai/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/google/cloud/ai</div>
+      <h1>AI</h1>
+      <p class="skill-desc">GCP AI/ML skill. Use when: (1) running Gemini models (gemini-2.5-pro, gemini-2.5-flash, gemini-2.0-flash) via Vertex AI,</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Vertex AI v1, Gen AI SDK (Node/Python), Model Garden</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../../tech/google/cloud.html">tech/google/cloud</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech/google/cloud</a><a class="skill-chip" href="#">tech/google</a><a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Vertex AI &amp; Gemini</h1>
+
+<p>Vertex AI is the production entry point for ML on GCP. It covers:</p>
+
+<ul><li><strong>Gemini models</strong> (Google's foundation models): <code>gemini-2.5-pro</code>, <code>gemini-2.5-flash</code>, <code>gemini-2.0-flash</code>, <code>gemini-1.5-pro</code>, <code>gemini-1.5-flash</code>.</li><li><strong>Third-party models via Model Garden</strong> — Claude (Sonnet 4.6, Opus 4.7, Haiku 4.5), Llama, Mistral, and others, billed through your GCP bill.</li><li><strong>Embeddings</strong> — <code>text-embedding-004</code>, <code>gemini-embedding-001</code>, <code>text-multilingual-embedding-002</code>.</li><li><strong>Custom model training, tuning, and deployment</strong> — managed endpoints, batch prediction, feature store.</li><li><strong>Vertex AI Search &amp; Conversation</strong> — managed RAG + agent runtime for enterprise apps.</li></ul>
+
+<p><strong>AI Studio vs Vertex AI</strong>: AI Studio (<code>aistudio.google.com</code>) is the prototyping UI — API key auth, consumer Google account, no VPC/IAM controls. <strong>Vertex AI</strong> is the production path — IAM, service accounts, regional endpoints, VPC Service Controls, quotas. Always use Vertex for anything user-facing.</p>
+
+<h2>When to pick what</h2>
+
+<table><thead><tr><th>Use case</th><th>Recommended</th></tr></thead><tbody><tr><td>South African app, low-latency chat</td><td>Gemini Flash in <code>europe-west2</code> (nearest with full model availability)</td></tr><tr><td>Complex reasoning, agentic</td><td>Gemini 2.5 Pro or Claude Opus 4.7 via Model Garden</td></tr><tr><td>Cheap high-volume summarisation</td><td>Gemini 2.0/2.5 Flash</td></tr><tr><td>Anthropic-loyal app needing GCP billing</td><td>Claude via Vertex Model Garden</td></tr><tr><td>RAG over private docs</td><td>Vertex AI Search OR Gemini + embeddings + your vector DB</td></tr><tr><td>On-device / edge inference</td><td>Not Vertex — use Gemini Nano (Android) or Workers AI</td></tr></tbody></table>
+
+<h2>Auth</h2>
+
+<p>Vertex AI uses <strong>Application Default Credentials (ADC)</strong> — no API keys. On GCE/Cloud Run/GKE, the attached service account is used automatically. Locally, <code>gcloud auth application-default login</code>.</p>
+
+<pre><code class="lang-bash"># Grant the service account Vertex AI user role
+gcloud projects add-iam-policy-binding my-app-prod \
+  --member "serviceAccount:my-service-sa@my-app-prod.iam.gserviceaccount.com" \
+  --role "roles/aiplatform.user"</code></pre>
+
+<h2>Gemini via Gen AI SDK (Node)</h2>
+
+<pre><code class="lang-bash">npm install @google/genai</code></pre>
+
+<pre><code class="lang-typescript">import { GoogleGenAI } from '@google/genai';
+
+// Vertex AI mode — uses ADC, no API key
+const ai = new GoogleGenAI({
+  vertexai: true,
+  project: 'my-app-prod',
+  location: 'europe-west2',
+});
+
+// Simple generate
+const res = await ai.models.generateContent({
+  model: 'gemini-2.5-flash',
+  contents: 'Summarise the POPIA requirements for processing SA personal data in 3 bullets.',
+});
+console.log(res.text);
+
+// With system instruction + generation config
+const res2 = await ai.models.generateContent({
+  model: 'gemini-2.5-pro',
+  contents: [
+    { role: 'user', parts: [{ text: 'Draft a 1-line product update for Penny briefings.' }] }
+  ],
+  config: {
+    systemInstruction: 'You are a concise technical writer. Max 25 words.',
+    temperature: 0.3,
+    maxOutputTokens: 60,
+    responseMimeType: 'application/json',
+    responseSchema: {
+      type: 'object',
+      properties: { headline: { type: 'string' }, emoji: { type: 'string' } },
+      required: ['headline', 'emoji'],
+    },
+  },
+});
+
+// Streaming
+const stream = await ai.models.generateContentStream({
+  model: 'gemini-2.5-flash',
+  contents: 'Write a 5-step plan for launching in SA.',
+});
+for await (const chunk of stream) {
+  process.stdout.write(chunk.text ?? '');
+}</code></pre>
+
+<h2>Function calling (tools)</h2>
+
+<pre><code class="lang-typescript">const tools = [{
+  functionDeclarations: [{
+    name: 'lookup_client',
+    description: 'Find a 2nth client by ID',
+    parameters: {
+      type: 'object',
+      properties: { clientId: { type: 'string' } },
+      required: ['clientId'],
+    },
+  }],
+}];
+
+const res = await ai.models.generateContent({
+  model: 'gemini-2.5-pro',
+  contents: 'Show me client 2n-014 summary',
+  config: { tools },
+});
+
+// Inspect and handle function calls
+const call = res.candidates?.[0]?.content?.parts?.[0]?.functionCall;
+if (call?.name === 'lookup_client') {
+  const data = await db.clients.get(call.args.clientId as string);
+  // Send function response back for final answer
+  const final = await ai.models.generateContent({
+    model: 'gemini-2.5-pro',
+    contents: [
+      { role: 'user', parts: [{ text: 'Show me client 2n-014 summary' }] },
+      { role: 'model', parts: [{ functionCall: call }] },
+      { role: 'function', parts: [{ functionResponse: { name: 'lookup_client', response: data } }] },
+    ],
+    config: { tools },
+  });
+  console.log(final.text);
+}</code></pre>
+
+<h2>Embeddings (RAG)</h2>
+
+<pre><code class="lang-typescript">// Generate embedding — 768 dims for text-embedding-004
+const emb = await ai.models.embedContent({
+  model: 'text-embedding-004',
+  contents: 'POPIA requires consent and purpose limitation for personal data.',
+  config: { taskType: 'RETRIEVAL_DOCUMENT', outputDimensionality: 768 },
+});
+const vec = emb.embeddings[0].values;   // number[]
+
+// Store in Vectorize / pgvector / Firestore vector search
+await env.VECTORIZE.insert([{ id: 'doc-1', values: vec, metadata: { source: 'popia.md' } }]);
+
+// Query with RETRIEVAL_QUERY task type for asymmetric retrieval
+const q = await ai.models.embedContent({
+  model: 'text-embedding-004',
+  contents: 'Do I need consent to collect email addresses?',
+  config: { taskType: 'RETRIEVAL_QUERY' },
+});
+const results = await env.VECTORIZE.query(q.embeddings[0].values, { topK: 5 });</code></pre>
+
+<p>Key embedding task types: <code>RETRIEVAL_DOCUMENT</code> (when storing), <code>RETRIEVAL_QUERY</code> (when searching), <code>SEMANTIC_SIMILARITY</code> (symmetric), <code>CLASSIFICATION</code>, <code>CLUSTERING</code>. Must match between index and query.</p>
+
+<h2>Claude via Vertex AI Model Garden</h2>
+
+<p>Anthropic's Claude is available through Vertex — billed on the GCP invoice, same IAM, same region boundary. Useful if your org requires single-vendor billing or VPC Service Controls around Anthropic inference.</p>
+
+<pre><code class="lang-bash"># Enable in Model Garden (one-time, per model, per region)
+# Console: Vertex AI → Model Garden → search "Claude 4.5 Sonnet" → Enable</code></pre>
+
+<pre><code class="lang-typescript">import Anthropic from '@anthropic-ai/vertex-sdk';
+
+const client = new AnthropicVertex({
+  projectId: 'my-app-prod',
+  region: 'europe-west4',   // Claude regions: us-east5, europe-west4, asia-southeast1
+});
+
+const msg = await client.messages.create({
+  model: 'claude-sonnet-4-6@20250106',   // Vertex uses pinned model revisions
+  max_tokens: 1024,
+  messages: [{ role: 'user', content: 'Write a 3-sentence POPIA compliance check.' }],
+});
+console.log(msg.content[0].type === 'text' ? msg.content[0].text : '');</code></pre>
+
+<p><strong>Regional caveat for Claude on Vertex</strong>: Claude models are only in a subset of regions — commonly <code>us-east5</code>, <code>europe-west4</code>, <code>asia-southeast1</code>. Not all sizes in all regions. Check Model Garden before designing.</p>
+
+<h2>Vertex AI endpoints (custom or tuned models)</h2>
+
+<pre><code class="lang-bash"># Deploy a tuned model or custom container to a managed endpoint
+gcloud ai endpoints create --display-name my-endpoint --region europe-west2
+
+ENDPOINT_ID=$(gcloud ai endpoints list --region europe-west2 \
+  --filter "displayName=my-endpoint" --format "value(name.scope(endpoints))")
+
+gcloud ai endpoints deploy-model $ENDPOINT_ID \
+  --region europe-west2 \
+  --model projects/my-app-prod/locations/europe-west2/models/MODEL_ID \
+  --display-name my-deployment \
+  --machine-type n1-standard-4 \
+  --min-replica-count 1 --max-replica-count 5</code></pre>
+
+<p>Endpoints with <code>min-replica-count >= 1</code> are billed 24/7 for the underlying machines. Consider <strong>batch prediction</strong> (cheaper, async) for non-interactive workloads.</p>
+
+<h2>Grounding with Google Search / your data</h2>
+
+<pre><code class="lang-typescript">// Gemini can ground responses in Google Search (reduces hallucination, adds citations)
+const res = await ai.models.generateContent({
+  model: 'gemini-2.5-flash',
+  contents: 'What are the SARS e-filing deadlines for 2026?',
+  config: {
+    tools: [{ googleSearch: {} }],
+  },
+});
+// Inspect res.candidates[0].groundingMetadata for citations</code></pre>
+
+<pre><code class="lang-typescript">// Ground in your own Vertex AI Search datastore (RAG without writing vector code)
+const res = await ai.models.generateContent({
+  model: 'gemini-2.5-pro',
+  contents: 'What does our onboarding contract say about notice period?',
+  config: {
+    tools: [{
+      retrieval: {
+        vertexAiSearch: {
+          datastore: 'projects/my-app-prod/locations/global/collections/default_collection/dataStores/my-contracts',
+        },
+      },
+    }],
+  },
+});</code></pre>
+
+<h2>Safety &amp; filters</h2>
+
+<pre><code class="lang-typescript">config: {
+  safetySettings: [
+    { category: 'HARM_CATEGORY_HATE_SPEECH',       threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+    { category: 'HARM_CATEGORY_HARASSMENT',        threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+    { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_LOW_AND_ABOVE' },
+    { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+  ],
+}</code></pre>
+
+<p>When a response is blocked, <code>res.candidates[0].finishReason === 'SAFETY'</code> and <code>text</code> is empty. Check <code>finishReason</code> on every call.</p>
+
+<h2>Cost model (approximate, per 1M tokens)</h2>
+
+<table><thead><tr><th>Model</th><th>Input</th><th>Output</th></tr></thead><tbody><tr><td>Gemini 2.5 Pro</td><td>~$1.25</td><td>~$5.00</td></tr><tr><td>Gemini 2.5 Flash</td><td>~$0.075</td><td>~$0.30</td></tr><tr><td>Gemini 2.0 Flash</td><td>~$0.075</td><td>~$0.30</td></tr><tr><td>Gemini 1.5 Pro</td><td>~$1.25</td><td>~$5.00 (≤128k)</td></tr><tr><td>Gemini 1.5 Flash</td><td>~$0.075</td><td>~$0.30 (≤128k)</td></tr><tr><td>Claude Sonnet 4.6 via Vertex</td><td>~$3.00</td><td>~$15.00</td></tr><tr><td>Claude Opus 4.7 via Vertex</td><td>~$15.00</td><td>~$75.00</td></tr><tr><td>Claude Haiku 4.5 via Vertex</td><td>~$0.80</td><td>~$4.00</td></tr><tr><td>text-embedding-004</td><td>~$0.025 / 1M input chars</td><td>—</td></tr></tbody></table>
+
+<p><strong>Context caching</strong> (Gemini): cache input prompts &gt; 32k tokens for a flat fee, then per-token reads at 25% of input cost. Big savings on repeated long-context prompts (same system prompt + knowledge base across many calls).</p>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong>AI Studio ≠ Vertex</strong>: Code samples from <code>ai.google.dev</code> often use API-key auth against the Gemini API (not Vertex). That flow has no IAM, no VPC-SC, no regional control. Always verify which endpoint your SDK hits — look for <code>vertexai: true</code>.</li><li><strong>Region mismatch silently fails</strong>: If the model isn't available in the region you specified, you get a cryptic 404. <code>gemini-2.5-pro</code> is widely available; third-party Model Garden models (Claude, Llama) are limited to specific regions.</li><li><strong>Quota per region, per model, per minute</strong>: <code>RESOURCE_EXHAUSTED</code> means you hit a per-minute quota. Request quota increases in Cloud Console → IAM &amp; Admin → Quotas. Default quotas for new projects are low.</li><li><strong><code>responseMimeType: application/json</code></strong>: Great for structured output but requires a <code>responseSchema</code> for reliability. Without the schema, Gemini often emits markdown-fenced JSON that fails to parse.</li><li><strong>Function calling can loop</strong>: Gemini may call the same function repeatedly if your responses lack distinguishing info. Track a per-conversation call count and break after N calls.</li><li><strong>Safety blocks on benign content</strong>: <code>HARM_CATEGORY_DANGEROUS_CONTENT</code> can trigger on security tutorials, medical advice, or legal questions. If your app is a regulated domain, loosen thresholds or expect blocks.</li><li><strong>Embedding dimensionality for vector DB</strong>: <code>text-embedding-004</code> supports dimension reduction (768 or 256). Must match your vector DB config. Changing mid-flight invalidates existing embeddings.</li><li><strong>Claude via Vertex uses @date suffix</strong>: Model IDs include a version date (<code>claude-sonnet-4-6@20250106</code>). Using an unpinned name can break without notice as Google moves defaults.</li><li><strong>Context caching TTL is 5 minutes default</strong>: Extend with <code>ttl: '3600s'</code> if your caching pattern relies on cross-request reuse.</li></ul>
+
+<h2>See Also</h2>
+
+<ul><li><a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/overview" target="_blank" rel="noopener">Gen AI SDK docs</a></li><li><a href="https://cloud.google.com/model-garden" target="_blank" rel="noopener">Model Garden (incl. Claude)</a></li><li><a href="../compute/SKILL.md" target="_blank" rel="noopener">Cloud Run — host your API next to Vertex</a></li><li><a href="../data/SKILL.md" target="_blank" rel="noopener">BigQuery for RAG datastore</a></li><li><a href="../../../aws/ai/SKILL.md" target="_blank" rel="noopener">AWS Bedrock sibling</a></li><li><a href="../../../cloudflare/ai/workers-ai/SKILL.md" target="_blank" rel="noopener">Cloudflare Workers AI (edge inference)</a></li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/google/cloud/ai/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>
