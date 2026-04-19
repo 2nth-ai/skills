@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FANUC M-20iB/35S Industrial Robot — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">FANUC M-20iB</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">35S Industrial Robot</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/build/robotics/fanuc/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">FANUC M-20iB/35S Industrial Robot</div>
+      <h1>35S INDUSTRIAL ROBOT</h1>
+      
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        <span style="font-size:13px;color:var(--text-muted)">v1.0</span>
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>FANUC M-20iB/35S Industrial Robot</h1>
+
+<p>6-axis industrial robot with 35kg payload, IP67 protection, and compact footprint. Designed for machine tending, assembly, and material handling in harsh environments.</p>
+
+<h2>Specifications</h2>
+
+<h3>Core Performance</h3>
+<table><thead><tr><th>Parameter</th><th>Value</th></tr></thead><tbody><tr><td>Model</td><td>M-20iB/35S</td></tr><tr><td>Manufacturer</td><td>FANUC</td></tr><tr><td>Axes</td><td>6 (controlled)</td></tr><tr><td>Payload</td><td>35 kg (77 lbs)</td></tr><tr><td>Reach</td><td>1445 mm (56.9 in)</td></tr><tr><td>Repeatability</td><td>±0.02 mm</td></tr><tr><td>Robot Weight</td><td>205 kg (452 lbs)</td></tr><tr><td>IP Rating</td><td>IP67 (fully encapsulated)</td></tr><tr><td>Mounting</td><td>Floor, inverted (ceiling), angle</td></tr><tr><td>Controller</td><td>R-30iB Plus / R-30iB Mate Plus</td></tr></tbody></table>
+
+<h3>Axis Motion Range</h3>
+<table><thead><tr><th>Axis</th><th>Range</th><th>Max Speed</th></tr></thead><tbody><tr><td>J1 (Rotation)</td><td>±340°</td><td>250°/s</td></tr><tr><td>J2 (Lower Arm)</td><td>+160° / -100°</td><td>250°/s</td></tr><tr><td>J3 (Upper Arm)</td><td>+375° / -163°</td><td>290°/s</td></tr><tr><td>J4 (Wrist Roll)</td><td>±380°</td><td>430°/s</td></tr><tr><td>J5 (Wrist Pitch)</td><td>±125°</td><td>430°/s</td></tr><tr><td>J6 (Wrist Yaw)</td><td>±360°</td><td>630°/s</td></tr></tbody></table>
+
+<h3>Wrist Specifications</h3>
+<table><thead><tr><th>Parameter</th><th>Value</th></tr></thead><tbody><tr><td>Wrist Type</td><td>Inline (slim profile)</td></tr><tr><td>J4 Moment</td><td>56 Nm</td></tr><tr><td>J5 Moment</td><td>56 Nm</td></tr><tr><td>J6 Moment</td><td>29.4 Nm</td></tr><tr><td>J4 Inertia</td><td>4.7 kg·m²</td></tr><tr><td>J5 Inertia</td><td>4.7 kg·m²</td></tr><tr><td>J6 Inertia</td><td>1.5 kg·m²</td></tr></tbody></table>
+
+<h3>Environmental</h3>
+<table><thead><tr><th>Parameter</th><th>Value</th></tr></thead><tbody><tr><td>Ambient Temp</td><td>0°C to 45°C</td></tr><tr><td>Humidity</td><td>Up to 96% RH (non-condensing)</td></tr><tr><td>Protection</td><td>IP67 — submersible, spray/moisture/dirt resistant</td></tr><tr><td>Vibration</td><td>0.5G or less</td></tr></tbody></table>
+
+<h2>Key Design Features</h2>
+
+<h3>Slim Arm Design</h3>
+<p>The M-20iB/35S has a lightweight upper arm and inline wrist significantly slimmer than previous generations. This allows the robot to operate in tight spaces and avoid interference with fixtures, conveyors, and peripheral equipment.</p>
+
+<h3>Strength-to-Weight Ratio</h3>
+<p>At 205 kg robot weight carrying 35 kg payload, the M-20iB/35S achieves a 17% payload-to-weight ratio — exceptional for its class. This means smaller pedestals, less floor reinforcement, and easier integration into existing cells.</p>
+
+<h3>IP67 Full Encapsulation</h3>
+<p>Every joint and cable is fully sealed. The robot operates reliably in:</p>
+<ul><li>Machining environments (coolant spray, swarf, mist)</li><li>Washdown applications (food, pharma)</li><li>Dusty environments (foundry, woodworking)</li><li>Wet environments (waterjet, cleaning)</li></ul>
+
+<h3>Flexible Mounting</h3>
+<ul><li><strong>Floor mount</strong> — standard installation</li><li><strong>Inverted (ceiling)</strong> — maximises floor space, ideal for machine tending from above</li><li><strong>Angle mount</strong> — angled pedestal for reaching into machines at optimal approach angles</li></ul>
+
+<h2>Applications</h2>
+
+<h3>Machine Tending</h3>
+<p>Primary use case. The slim arm profile and IP67 rating make it ideal for:</p>
+<ul><li>CNC lathe loading/unloading</li><li>Milling machine tending</li><li>Grinding and deburring cells</li><li>Multi-machine tending (one robot, multiple machines)</li></ul>
+
+<p><strong>Cycle time consideration:</strong> With 250°/s on J1/J2 and ±0.02mm repeatability, typical machine tending cycles achieve 8-12 second load/unload times depending on travel distance.</p>
+
+<h3>Assembly</h3>
+<ul><li>Precision component insertion (±0.02mm)</li><li>Screw driving and fastening</li><li>Press-fit operations</li><li>Multi-part assembly sequences</li></ul>
+
+<h3>Pick &amp; Place / Palletising</h3>
+<ul><li>High-speed part sorting</li><li>Bin picking (with vision system)</li><li>Layer palletising up to 35 kg per pick</li><li>De-palletising for machine feeding</li></ul>
+
+<h3>Material Handling</h3>
+<ul><li>Part transfer between stations</li><li>Conveyor pick-and-place</li><li>Tray loading/unloading</li><li>Buffer station management</li></ul>
+
+<h3>Dispensing</h3>
+<ul><li>Adhesive application</li><li>Sealant dispensing</li><li>Paint application (with IP67 no additional protection needed)</li><li>Coating operations</li></ul>
+
+<h3>Material Removal</h3>
+<ul><li>Deburring (with force control)</li><li>Grinding</li><li>Polishing</li><li>Trimming</li></ul>
+
+<h2>Controller: R-30iB Plus</h2>
+
+<h3>Key Capabilities</h3>
+<table><thead><tr><th>Feature</th><th>Description</th></tr></thead><tbody><tr><td>iRVision</td><td>Integrated 2D/3D vision (no external PC)</td></tr><tr><td>Force Sensing</td><td>iRCalibration for contact-based tasks</td></tr><tr><td>iRPickTool</td><td>High-speed conveyor tracking</td></tr><tr><td>Line Tracking</td><td>Synchronised motion with moving conveyors</td></tr><tr><td>DCS (Dual Check Safety)</td><td>Safety-rated speed and position monitoring</td></tr><tr><td>ROBOGUIDE</td><td>Offline programming and simulation</td></tr><tr><td>ZDT (Zero Down Time)</td><td>Predictive maintenance analytics</td></tr><tr><td>FANUC FIELD</td><td>IoT connectivity and edge computing</td></tr></tbody></table>
+
+<h3>Programming</h3>
+<table><thead><tr><th>Method</th><th>Description</th></tr></thead><tbody><tr><td>Teach Pendant (iPendant)</td><td>Primary programming interface, touchscreen</td></tr><tr><td>KAREL</td><td>FANUC's proprietary programming language (Pascal-based)</td></tr><tr><td>TP Programs</td><td>Teach pendant motion programs</td></tr><tr><td>ROBOGUIDE</td><td>Offline simulation and path planning</td></tr><tr><td>ROS Interface</td><td>Via third-party drivers (not native)</td></tr></tbody></table>
+
+<h3>Communication Protocols</h3>
+<ul><li>EtherNet/IP (native)</li><li>PROFINET</li><li>DeviceNet</li><li>CC-Link</li><li>EtherCAT (via gateway)</li><li>Modbus TCP/IP</li><li>OPC-UA (via FIELD system)</li></ul>
+
+<h2>Integration Notes</h2>
+
+<h3>End-of-Arm Tooling (EOAT)</h3>
+<table><thead><tr><th>Interface</th><th>Specification</th></tr></thead><tbody><tr><td>Mechanical</td><td>ISO 9409-1 flange</td></tr><tr><td>Pneumatic</td><td>Internal air lines through arm</td></tr><tr><td>Electrical</td><td>Tool I/O through connector at J6</td></tr><tr><td>Max Payload at Flange</td><td>35 kg</td></tr><tr><td>Max Payload at Wrist</td><td>Varies by offset — derate for CG offset</td></tr></tbody></table>
+
+<h3>Payload Derating</h3>
+<p>The 35 kg rating assumes centre of gravity at the flange face. For offset CG:</p>
+<pre><code class="lang-text">Effective payload = f(distance from flange, inertia limits)
+Use FANUC's payload checker utility in ROBOGUIDE
+Rule of thumb: 10% derating per 50mm CG offset</code></pre>
+
+<h3>Cell Design Considerations</h3>
+<ul><li><strong>Footprint:</strong> ~800mm diameter working envelope at floor level</li><li><strong>Height clearance:</strong> 2200mm minimum for floor mount</li><li><strong>Pedestal:</strong> Steel pedestal recommended, concrete anchor minimum M16 x 4</li><li><strong>Cable routing:</strong> Cables exit at base; allow 300mm radius for dress-out</li><li><strong>Safety fencing:</strong> DCS can reduce fencing requirements with safety-rated monitoring</li></ul>
+
+<h2>Maintenance Schedule</h2>
+
+<table><thead><tr><th>Interval</th><th>Task</th></tr></thead><tbody><tr><td>3 months</td><td>Visual inspection, check for leaks/damage</td></tr><tr><td>6 months</td><td>Grease J1-J3 (FANUC specified grease only)</td></tr><tr><td>12 months</td><td>Grease J4-J6, check belt tension</td></tr><tr><td>3 years</td><td>Replace batteries (encoder backup)</td></tr><tr><td>5 years</td><td>Full overhaul — belts, seals, bearings inspection</td></tr><tr><td>10,000 hrs</td><td>Reducer inspection</td></tr></tbody></table>
+
+<h3>Predictive Maintenance (ZDT)</h3>
+<p>FANUC's Zero Down Time system monitors:</p>
+<ul><li>Motor current signatures (detect wear)</li><li>Vibration patterns (bearing degradation)</li><li>Temperature trends (overload detection)</li><li>Cycle time drift (mechanical wear indicator)</li></ul>
+
+<h2>Comparison: M-20iB Family</h2>
+
+<table><thead><tr><th>Model</th><th>Payload</th><th>Reach</th><th>Weight</th><th>Use Case</th></tr></thead><tbody><tr><td>M-20iB/25</td><td>25 kg</td><td>1835 mm</td><td>250 kg</td><td>General purpose, longer reach</td></tr><tr><td><strong>M-20iB/35S</strong></td><td><strong>35 kg</strong></td><td><strong>1445 mm</strong></td><td><strong>205 kg</strong></td><td><strong>Compact, high payload</strong></td></tr><tr><td>M-20iD/25</td><td>25 kg</td><td>1835 mm</td><td>225 kg</td><td>Next-gen, slimmer, faster</td></tr><tr><td>M-20iD/35</td><td>35 kg</td><td>1831 mm</td><td>230 kg</td><td>Next-gen, full reach + payload</td></tr></tbody></table>
+
+<h2>Reference</h2>
+
+<ul><li>Product page: https://www.fanucamerica.com/products/robots/series/m-20/m-20ib-35s</li><li>ROBOGUIDE simulation: Available from FANUC authorised integrators</li><li>CAD models: Available on FANUC's partner portal (login required)</li><li>Training: FANUC Academy — Handling Tool Operation and Programming (40 hours)</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/build/robotics/fanuc/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>
