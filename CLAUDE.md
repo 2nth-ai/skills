@@ -30,6 +30,17 @@ agents/penny/AGENT.md     Penny's agent definition
 
 Changes to production skills (marked `✓ production` in SKILLS.md) require Penny's review before merging.
 
+## CI/CD
+
+GitHub Actions automate validation and deployment:
+
+- **Skill validation**: PRs that touch SKILL.md files are validated against SKILL_FORMAT.md (`.github/workflows/skill-validate.yml`)
+- **Preview deploys**: Every PR gets a preview at `<branch>.skills-2nth-ai.pages.dev` (`.github/workflows/preview-deploy.yml`)
+- **Production deploy**: Merges to `main` auto-deploy to `skills.2nth.ai` (`.github/workflows/deploy-production.yml`)
+- **Staging**: The `dev` branch deploys to `dev.skills.2nth.ai`
+
+The `agents/skills` agent (skills@2nth.ai) manages the review pipeline. See `agents/skills/AGENT.md`.
+
 ## Domain taxonomy
 
 Top-level domains are fixed: `edu`, `biz`, `leg`, `fin`, `tech`. Subdomains within each are infinitely extensible — add subdirectories as specialisations emerge. A leaf skill that gets used widely enough to spawn variants should be promoted to a subdomain with its own manifest.
