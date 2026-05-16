@@ -31,4 +31,4 @@ jobs:
           # non-ASCII (em-dashes, middle-dots, curly quotes) with code 8000111.
           # Without --commit-message, wrangler reads HEAD's raw commit message,
           # which we cannot guarantee is ASCII-clean.
-          command: pages deploy catalog --project-name=skills-2nth-ai --branch=main --commit-dirty=true --commit-message="Auto-deploy main ${{ github.sha }}"
+          command: pages deploy catalog --project-name=2nth-skills-hub --branch=main --commit-dirty=true --commit-message="Auto-deploy main ${{ github.sha }}"
