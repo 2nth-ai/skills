@@ -6,14 +6,15 @@ description: |
   (2) CRM platforms — HubSpot, Salesforce,
   (3) e-commerce — Shopify, WooCommerce,
   (4) HR and talent — recruitment value chain, onboarding, performance,
-  (5) business operations, workflow automation, reporting.
+  (5) CMS platforms — Ghost, WordPress, content and newsletter management,
+  (6) business operations, workflow automation, reporting.
 license: MIT
 homepage: https://skills.2nth.ai/biz
 repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai
   version: "1.0.0"
-  categories: "Business, ERP, CRM, Operations"
+  categories: "Business, ERP, CRM, CMS, Operations"
 ---
 
 # Business Skills
@@ -25,6 +26,7 @@ Skills for AI agents working in business systems — ERP, CRM, e-commerce, and o
 | Path | Focus |
 |------|-------|
 | `biz/accounting/` | Business accounting — Xero, QuickBooks, bookkeeping |
+| `biz/cms/` | Content management systems — Ghost, WordPress, newsletters |
 | `biz/erp/` | Enterprise resource planning — Sage X3, ERPNext, Shopify, WooCommerce |
 | `biz/hr/` | HR and talent — recruitment pipeline, onboarding, performance |
 | `biz/sales/` | B2B sales — prospecting, discovery, pipeline, proposals, RevOps |
