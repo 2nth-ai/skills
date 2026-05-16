@@ -39,6 +39,7 @@ Skills teach AI agents how to work effectively in a specific domain context. The
 | `agents/eric` | Fractional IoT Engineering Director | iot/hardware, iot/firmware, iot/connectivity, iot/sensors, iot/power, iot/security, iot/platform, iot/sa |
 | `agents/andi` | FinMechanics Africa Representative | fin/capital-markets, fin/capital-markets/trading-platforms, fin/sa |
 | `agents/sophia` | (specialist — see AGENT.md) | |
+| `agents/skills` | Repository Maintainer | tech/github, tech/cloudflare/pages, tech/agent-protocols, tech/claude-code |
 
 ## Skill Tree (current state)
 
@@ -51,6 +52,8 @@ biz/
     woocommerce/     SKILL.md  ✓ production — WooCommerce REST API v3, orders, products, inventory, webhooks
   accounting/        SKILL.md  ✓ production — accounting domain manifest
     xero/            SKILL.md  ✓ production — Xero REST API, OAuth 2.0, invoicing, reconciliation, reports
+  cms/               SKILL.md  ✓ production — content management systems domain manifest
+    ghost/           SKILL.md  ✓ production — Ghost CMS setup, Admin + Content API, themes, memberships, newsletters
   crm/
     hubspot/         stub
     salesforce/      stub
