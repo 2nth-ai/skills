@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tech/google/cloud/compute — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="#">tech</a><span class="breadcrumb-sep">›</span><a href="#">google</a><span class="breadcrumb-sep">›</span><a href="#">cloud</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">compute</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/tech/google/cloud/compute/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">tech/google/cloud/compute</div>
+      <h1>COMPUTE</h1>
+      <p class="skill-desc">GCP compute skill. Use when: (1) deploying serverless containers on Cloud Run — scale-to-zero, pay per request,</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">gcloud CLI v500+, Cloud Run gen2, Cloud Functions v2, GKE 1.30+</span>
+        
+      </div>
+      <div class="meta-requires">
+        <span class="meta-label">requires:</span>
+        <a class="skill-chip" href="../../../../tech/google/cloud.html">tech/google/cloud</a>
+       </div>
+      <div class="meta-requires">
+        <span class="meta-label">improves:</span>
+        <a class="skill-chip" href="#">tech/google/cloud</a><a class="skill-chip" href="#">tech/google</a><a class="skill-chip" href="#">tech</a>
+       </div>
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Google Cloud Compute</h1>
+
+<p>GCP offers four compute tiers. Pick the leftmost that fits — each step right costs more operational weight:</p>
+
+<p><strong>Cloud Run → Cloud Functions → GKE Autopilot → GKE Standard → Compute Engine</strong></p>
+
+<p>The 2nth.ai default is <strong>Cloud Run</strong>. It gives you containers with scale-to-zero, pay-per-request, global HTTPS endpoints, and integrates cleanly with Pub/Sub, Cloud SQL, Vertex AI, and Workspace DWD. Lambda-equivalent workloads that need &gt;60 min runtime, persistent state, or GPU specialisation move up to GKE or GCE.</p>
+
+<h2>Service comparison</h2>
+
+<table><thead><tr><th>Service</th><th>Best for</th><th>Cold start</th><th>Runtime</th><th>Scale-to-zero</th><th>Price model</th></tr></thead><tbody><tr><td><strong>Cloud Run</strong></td><td>HTTP/gRPC containers, event triggers</td><td>100–500ms</td><td>Up to 60 min/req</td><td>✓</td><td>vCPU-sec + GB-sec + requests</td></tr><tr><td><strong>Cloud Functions v2</strong></td><td>Single-function glue, event consumers</td><td>200–800ms</td><td>Up to 60 min</td><td>✓</td><td>Same as Cloud Run (runs on it)</td></tr><tr><td><strong>GKE Autopilot</strong></td><td>Multi-service K8s apps, complex routing</td><td>Node-level (minutes)</td><td>Unlimited</td><td>✗ (pod-level HPA)</td><td>vCPU + memory per pod-hour</td></tr><tr><td><strong>GKE Standard</strong></td><td>Full K8s control, DaemonSets, custom nodes</td><td>Node-level</td><td>Unlimited</td><td>✗</td><td>Node VM + control plane fee</td></tr><tr><td><strong>Compute Engine</strong></td><td>Stateful VMs, GPUs, legacy workloads</td><td>Instance boot (seconds)</td><td>Unlimited</td><td>✗</td><td>Per-second VM billing</td></tr></tbody></table>
+
+<hr>
+
+<h2>Cloud Run</h2>
+
+<p>Cloud Run runs <strong>any containerised HTTP server</strong> on Google's managed platform. You push an image, Google runs it — auto-scaling from 0 to thousands of instances, auto-TLS, auto-HTTPS URL. The sweet spot for ~90% of backend services.</p>
+
+<h3>Deploy from source (no Dockerfile needed)</h3>
+
+<pre><code class="lang-bash"># Cloud Run builds a container via Buildpacks and deploys in one command
+gcloud run deploy my-service \
+  --source . \
+  --region africa-south1 \
+  --allow-unauthenticated
+
+# Your app just needs to listen on the $PORT env var (default 8080)</code></pre>
+
+<h3>Deploy a pre-built container</h3>
+
+<pre><code class="lang-bash">gcloud run deploy my-service \
+  --image europe-west2-docker.pkg.dev/my-app-prod/my-repo/my-service:v1 \
+  --region africa-south1 \
+  --platform managed \
+  --allow-unauthenticated \
+  --memory 512Mi --cpu 1 \
+  --concurrency 80 \
+  --min-instances 0 --max-instances 100 \
+  --timeout 300 \
+  --set-env-vars NODE_ENV=production \
+  --set-secrets DB_URL=db-url:latest,API_KEY=stripe-key:latest \
+  --service-account my-service-sa@my-app-prod.iam.gserviceaccount.com</code></pre>
+
+<h3>Concurrency — the single biggest cost lever</h3>
+
+<p>Cloud Run bills per vCPU-second. A Node.js service doing mostly I/O can handle 80–250 concurrent requests per instance. Raising concurrency reduces the instance count you need.</p>
+
+<table><thead><tr><th>Workload</th><th>Concurrency</th></tr></thead><tbody><tr><td>CPU-bound (image processing, PDF)</td><td>1–5</td></tr><tr><td>I/O-bound Node/Python (typical API)</td><td>80 (default)</td></tr><tr><td>Async I/O heavy (proxies, streaming)</td><td>250–1000</td></tr></tbody></table>
+
+<pre><code class="lang-bash"># Lower for CPU-bound
+gcloud run services update my-service --concurrency 4 --region africa-south1
+
+# Higher for I/O-bound
+gcloud run services update my-service --concurrency 250 --region africa-south1</code></pre>
+
+<h3>CPU allocation: "request" vs "always-on"</h3>
+
+<table><thead><tr><th>Mode</th><th>When CPU is billed</th><th>When to use</th></tr></thead><tbody><tr><td><strong>CPU only during request handling</strong> (default)</td><td>Only while the instance has an active request</td><td>Web APIs, sync handlers</td></tr><tr><td><strong>CPU always allocated</strong> (<code>--no-cpu-throttling</code>)</td><td>Continuously while the instance is running</td><td>Background tasks, Queue consumers, min-instances &gt; 0</td></tr></tbody></table>
+
+<pre><code class="lang-bash"># Background worker with min-instances — pay for always-on CPU
+gcloud run services update my-worker \
+  --no-cpu-throttling \
+  --min-instances 1 \
+  --region africa-south1</code></pre>
+
+<h3>TypeScript service (Node 20)</h3>
+
+<pre><code class="lang-typescript">// src/index.ts — Fastify on Cloud Run
+import Fastify from 'fastify';
+
+const app = Fastify({ logger: true });
+
+app.get('/health', async () =&gt; ({ ok: true }));
+
+app.post('/api/process', async (req) =&gt; {
+  const body = req.body as { input: string };
+  // ...business logic
+  return { processed: body.input };
+});
+
+const port = Number(process.env.PORT ?? 8080);
+app.listen({ port, host: '0.0.0.0' }).catch((err) =&gt; {
+  app.log.error(err);
+  process.exit(1);
+});</code></pre>
+
+<pre><code class="lang-dockerfile"># Dockerfile — minimal, fast cold start
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY dist ./dist
+ENV NODE_ENV=production
+CMD ["node", "dist/index.js"]</code></pre>
+
+<h3>Pub/Sub push trigger</h3>
+
+<pre><code class="lang-bash"># Grant Pub/Sub permission to invoke your Cloud Run service
+gcloud run services add-iam-policy-binding my-consumer \
+  --region africa-south1 \
+  --member "serviceAccount:service-PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com" \
+  --role "roles/run.invoker"
+
+# Push subscription posts JSON to your HTTPS endpoint
+gcloud pubsub subscriptions create my-sub \
+  --topic my-topic \
+  --push-endpoint https://my-consumer-xyz-ew.a.run.app/events \
+  --push-auth-service-account "pubsub-invoker@my-app-prod.iam.gserviceaccount.com"</code></pre>
+
+<pre><code class="lang-typescript">// Cloud Run receives Pub/Sub push
+app.post('/events', async (req) =&gt; {
+  const { message } = req.body as { message: { data: string; attributes: Record&lt;string, string&gt; } };
+  const payload = JSON.parse(Buffer.from(message.data, 'base64').toString());
+  await handleEvent(payload);
+  return { ack: true };  // return 200 to ack
+});</code></pre>
+
+<h3>Cloud Run jobs (batch, not HTTP)</h3>
+
+<p>For cron-style or CLI-triggered batch work that doesn't need HTTP serving:</p>
+
+<pre><code class="lang-bash">gcloud run jobs create my-nightly-etl \
+  --image europe-west2-docker.pkg.dev/my-app-prod/my-repo/etl:v1 \
+  --region africa-south1 \
+  --tasks 10 \
+  --task-timeout 1h \
+  --parallelism 5 \
+  --cpu 2 --memory 4Gi \
+  --set-env-vars INPUT_BUCKET=raw,OUTPUT_BUCKET=processed
+
+# Run manually
+gcloud run jobs execute my-nightly-etl --region africa-south1
+
+# Schedule via Cloud Scheduler
+gcloud scheduler jobs create http nightly-etl-trigger \
+  --schedule "0 2 * * *" --time-zone "Africa/Johannesburg" \
+  --uri "https://REGION-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/PROJECT_ID/jobs/my-nightly-etl:run" \
+  --http-method POST \
+  --oauth-service-account-email scheduler-sa@my-app-prod.iam.gserviceaccount.com</code></pre>
+
+<h3>Calling Cloud Run from Cloudflare Workers (IAM-authenticated)</h3>
+
+<p>Cloud Run service accepts Google OIDC ID tokens. From a Cloudflare Worker, mint an ID token using a service-account key (stored in Workers secrets):</p>
+
+<pre><code class="lang-typescript">// Sign a Google-compatible JWT → exchange for ID token → call private Cloud Run
+export async function getIdentityToken(env: Env, audience: string): Promise&lt;string&gt; {
+  const now = Math.floor(Date.now() / 1000);
+  const jwtHeader = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const jwtPayload = btoa(JSON.stringify({
+    iss: env.GCP_SA_EMAIL,
+    scope: 'https://www.googleapis.com/auth/cloud-platform',
+    aud: 'https://oauth2.googleapis.com/token',
+    target_audience: audience,             // the Cloud Run URL
+    iat: now,
+    exp: now + 3600,
+  }));
+
+  // Sign with the SA private key (imported via SubtleCrypto)
+  const keyData = pemToArrayBuffer(env.GCP_SA_PRIVATE_KEY);
+  const cryptoKey = await crypto.subtle.importKey('pkcs8', keyData,
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', cryptoKey,
+    new TextEncoder().encode(`${jwtHeader}.${jwtPayload}`));
+  const signedJwt = `${jwtHeader}.${jwtPayload}.${arrayBufferToBase64Url(sig)}`;
+
+  // Exchange assertion for an ID token
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: signedJwt,
+    }),
+  });
+  const { id_token } = await res.json() as { id_token: string };
+  return id_token;
+}
+
+// Call private Cloud Run
+const idToken = await getIdentityToken(env, 'https://my-service-xyz-ew.a.run.app');
+const result = await fetch('https://my-service-xyz-ew.a.run.app/api/process', {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${idToken}`, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ input: 'hello' }),
+});</code></pre>
+
+<h3>Custom domain</h3>
+
+<pre><code class="lang-bash"># Map your domain (requires DNS verification)
+gcloud run domain-mappings create \
+  --service my-service \
+  --domain api.example.com \
+  --region africa-south1
+
+# Returns DNS records (A/AAAA or CNAME) to add at your registrar or Cloudflare</code></pre>
+
+<p>For Cloudflare-fronted custom domains, set Cloudflare DNS to "DNS only" (grey cloud) during verification, then re-enable proxy.</p>
+
+<hr>
+
+<h2>Cloud Functions v2</h2>
+
+<p>Cloud Functions v2 is a thin wrapper over Cloud Run — same scaling, same container, but the platform builds the container for you from a source function. Use it when you want zero Dockerfile boilerplate for a single event handler.</p>
+
+<pre><code class="lang-bash"># HTTP function
+gcloud functions deploy my-webhook \
+  --gen2 --runtime nodejs20 \
+  --region africa-south1 \
+  --trigger-http --allow-unauthenticated \
+  --entry-point handler \
+  --source .
+
+# Pub/Sub trigger
+gcloud functions deploy on-event \
+  --gen2 --runtime nodejs20 \
+  --region africa-south1 \
+  --trigger-topic my-topic \
+  --entry-point onEvent \
+  --source .
+
+# GCS object-created trigger
+gcloud functions deploy on-upload \
+  --gen2 --runtime nodejs20 \
+  --region africa-south1 \
+  --trigger-bucket my-bucket \
+  --entry-point onUpload \
+  --source .</code></pre>
+
+<pre><code class="lang-typescript">// index.ts
+import { http, cloudEvent } from '@google-cloud/functions-framework';
+
+http('handler', (req, res) =&gt; {
+  res.json({ ok: true, body: req.body });
+});
+
+cloudEvent('onEvent', (event) =&gt; {
+  const data = Buffer.from(event.data.message.data, 'base64').toString();
+  console.log('Pub/Sub:', JSON.parse(data));
+});</code></pre>
+
+<p><strong>When to use Functions over Cloud Run</strong>: a one-file glue handler with no build pipeline. <strong>When to skip Functions</strong>: anything with dependencies, multi-route, or that benefits from a Dockerfile — Cloud Run direct is cleaner and the same runtime.</p>
+
+<hr>
+
+<h2>GKE</h2>
+
+<p>GKE runs Kubernetes. Pick the mode first:</p>
+
+<table><thead><tr><th>Mode</th><th>Control over nodes</th><th>Billing</th><th>Best for</th></tr></thead><tbody><tr><td><strong>Autopilot</strong></td><td>None — Google manages</td><td>Per pod vCPU/mem + cluster fee</td><td>Default — ops-light K8s</td></tr><tr><td><strong>Standard</strong></td><td>Full — you pick VMs</td><td>Node VMs + cluster fee</td><td>DaemonSets, GPU pools, custom kernels</td></tr></tbody></table>
+
+<h3>Autopilot cluster</h3>
+
+<pre><code class="lang-bash">gcloud container clusters create-auto my-cluster \
+  --region africa-south1 \
+  --release-channel regular
+
+# Get kubeconfig
+gcloud container clusters get-credentials my-cluster --region africa-south1
+
+# Deploy
+kubectl apply -f deployment.yaml</code></pre>
+
+<pre><code class="lang-yaml"># deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-service
+spec:
+  replicas: 3
+  selector: { matchLabels: { app: my-service } }
+  template:
+    metadata: { labels: { app: my-service } }
+    spec:
+      serviceAccountName: my-service-ksa   # bound to GCP SA via Workload Identity
+      containers:
+        - name: app
+          image: europe-west2-docker.pkg.dev/my-app-prod/my-repo/my-service:v1
+          ports: [{ containerPort: 3000 }]
+          resources:
+            requests: { cpu: 250m, memory: 512Mi }
+            limits:   { cpu: 500m, memory: 1Gi }
+          readinessProbe:
+            httpGet: { path: /health, port: 3000 }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: my-service }
+spec:
+  type: LoadBalancer
+  selector: { app: my-service }
+  ports: [{ port: 80, targetPort: 3000 }]</code></pre>
+
+<h3>Workload Identity (GKE pod → GCP service account)</h3>
+
+<pre><code class="lang-bash"># Bind Kubernetes SA (KSA) to GCP SA (GSA) — no JSON keys in the pod
+gcloud iam service-accounts add-iam-policy-binding \
+  my-service-gsa@my-app-prod.iam.gserviceaccount.com \
+  --role roles/iam.workloadIdentityUser \
+  --member "serviceAccount:my-app-prod.svc.id.goog[default/my-service-ksa]"
+
+kubectl annotate serviceaccount my-service-ksa \
+  iam.gke.io/gcp-service-account=my-service-gsa@my-app-prod.iam.gserviceaccount.com</code></pre>
+
+<p>Now pods running as <code>my-service-ksa</code> get GCP-scoped tokens automatically via the metadata server. No key files in the container.</p>
+
+<hr>
+
+<h2>Compute Engine (VMs)</h2>
+
+<p>Use GCE when you need persistent VMs: legacy workloads that don't containerise, GPU/TPU specialisation, or very high-utilisation steady-state where committed-use discounts beat Cloud Run.</p>
+
+<pre><code class="lang-bash"># Create a small always-on VM
+gcloud compute instances create my-vm \
+  --machine-type e2-small \
+  --zone africa-south1-a \
+  --image-family debian-12 --image-project debian-cloud \
+  --boot-disk-size 20GB --boot-disk-type pd-balanced \
+  --service-account my-vm-sa@my-app-prod.iam.gserviceaccount.com \
+  --scopes cloud-platform \
+  --tags http-server \
+  --metadata-from-file startup-script=startup.sh
+
+# SSH via IAP (no external IP needed, no firewall rule for port 22)
+gcloud compute ssh my-vm --zone africa-south1-a --tunnel-through-iap</code></pre>
+
+<h3>Machine families (when to pick what)</h3>
+
+<table><thead><tr><th>Family</th><th>Example</th><th>Best for</th></tr></thead><tbody><tr><td><strong>E2</strong></td><td>e2-small, e2-medium</td><td>Cheap general purpose, dev/test</td></tr><tr><td><strong>N2</strong></td><td>n2-standard-4</td><td>Balanced production workloads</td></tr><tr><td><strong>T2D</strong></td><td>t2d-standard-4</td><td>AMD EPYC, best price/perf general</td></tr><tr><td><strong>C3</strong></td><td>c3-highcpu-8</td><td>Compute-bound, Intel Sapphire Rapids</td></tr><tr><td><strong>C2D</strong></td><td>c2d-standard-8</td><td>Compute-bound, AMD</td></tr><tr><td><strong>M2/M3</strong></td><td>m3-ultramem</td><td>In-memory databases, SAP HANA</td></tr><tr><td><strong>A3/G2</strong></td><td>a3-highgpu-8g</td><td>GPU (H100/L4) — ML training, video</td></tr></tbody></table>
+
+<h3>Preemptible / Spot VMs (cheap, interruptible)</h3>
+
+<pre><code class="lang-bash">gcloud compute instances create my-batch-vm \
+  --machine-type n2-standard-4 \
+  --zone africa-south1-a \
+  --provisioning-model SPOT \
+  --instance-termination-action STOP</code></pre>
+
+<p>Up to 60–91% off on-demand. Google can preempt with 30s notice.</p>
+
+<h3>Managed Instance Groups (auto-scaling fleet)</h3>
+
+<pre><code class="lang-bash"># Instance template
+gcloud compute instance-templates create my-template \
+  --machine-type n2-standard-2 \
+  --image-family debian-12 --image-project debian-cloud \
+  --metadata-from-file startup-script=startup.sh \
+  --tags http-server
+
+# Regional MIG with auto-scaling
+gcloud compute instance-groups managed create my-mig \
+  --base-instance-name my-app --region africa-south1 \
+  --template my-template --size 2
+
+gcloud compute instance-groups managed set-autoscaling my-mig \
+  --region africa-south1 \
+  --max-num-replicas 10 --min-num-replicas 2 \
+  --target-cpu-utilization 0.6 --cool-down-period 90</code></pre>
+
+<hr>
+
+<h2>Cost model (approximate, africa-south1)</h2>
+
+<h3>Cloud Run</h3>
+
+<table><thead><tr><th>Component</th><th>Price</th></tr></thead><tbody><tr><td>vCPU</td><td>~$0.000024 / vCPU-second (tier 1)</td></tr><tr><td>Memory</td><td>~$0.0000025 / GB-second</td></tr><tr><td>Requests</td><td>$0.40 / million</td></tr><tr><td>Free tier</td><td>2M requests + 180k vCPU-s + 360k GB-s / month</td></tr></tbody></table>
+
+<p>Example: 10M req/month, 512MB, avg 200ms, concurrency 80 → ~<strong>$25–40/month</strong>.</p>
+
+<h3>GKE</h3>
+
+<table><thead><tr><th>Component</th><th>Price</th></tr></thead><tbody><tr><td>Control plane</td><td>$0.10/hr (regional) per cluster ≈ <strong>$73/mo</strong></td></tr><tr><td>Autopilot vCPU</td><td>~$0.0445 / vCPU-hour</td></tr><tr><td>Autopilot memory</td><td>~$0.0049 / GB-hour</td></tr><tr><td>Standard (node VMs)</td><td>Per GCE instance pricing</td></tr></tbody></table>
+
+<p>One Autopilot pod at 250m CPU + 512Mi ≈ <strong>$10/month</strong> plus the $73 control-plane fee. GKE only makes sense from ~5+ services or when you need K8s specifically.</p>
+
+<h3>Compute Engine (approximate, on-demand)</h3>
+
+<table><thead><tr><th>Type</th><th>vCPU</th><th>RAM</th><th>$/hr</th><th>$/mo</th></tr></thead><tbody><tr><td>e2-small</td><td>2 (shared)</td><td>2GB</td><td>~$0.017</td><td>~$12</td></tr><tr><td>e2-medium</td><td>2 (shared)</td><td>4GB</td><td>~$0.034</td><td>~$25</td></tr><tr><td>n2-standard-2</td><td>2</td><td>8GB</td><td>~$0.098</td><td>~$72</td></tr><tr><td>n2-standard-4</td><td>4</td><td>16GB</td><td>~$0.195</td><td>~$142</td></tr><tr><td>c3-highcpu-8</td><td>8</td><td>16GB</td><td>~$0.320</td><td>~$234</td></tr></tbody></table>
+
+<p>Committed-use discounts: 1-year = ~25% off, 3-year = ~52% off. Spot: up to ~91% off.</p>
+
+
+<hr>
+
+<h2>Gotchas</h2>
+
+<ul><li><strong>Cloud Run CPU allocation default</strong>: CPU is only allocated during request processing. Background <code>setTimeout</code>/workers stall between requests. Set <code>--no-cpu-throttling</code> if your app does post-response work.</li><li><strong>Cloud Run cold starts on min-instances=0</strong>: 100–500ms for Node, 2–5s for JVM. Use <code>--min-instances 1</code> for latency-critical paths (billed 24/7 at idle CPU).</li><li><strong>Concurrency misconfig is the #1 cost overshoot</strong>: Default 80 is fine for I/O-bound Node. CPU-bound workloads (image resize, PDF) must drop to 1–5 or instances multiply and vCPU-seconds explode.</li><li><strong>Port is <code>$PORT</code>, not 3000</strong>: Cloud Run injects <code>PORT=8080</code> but expects your app to read the env var. Hardcoding any other port = endless cold-start failures.</li><li><strong>Cloud Functions v2 ≠ v1</strong>: V2 runs on Cloud Run; v1 is legacy and limited. Always <code>--gen2</code> for new work.</li><li><strong>GKE Autopilot denies privileged pods</strong>: Any DaemonSet or SecurityContext requiring <code>privileged: true</code> / <code>hostNetwork: true</code> won't schedule. Use Standard for those.</li><li><strong>Workload Identity annotation order</strong>: The <code>gcloud iam ... add-iam-policy-binding</code> must happen BEFORE <code>kubectl annotate</code> or tokens won't be issued. Both-ways breakage is silent — pods get no credentials, calls fail with ambiguous 403.</li><li><strong><code>gcloud run deploy --source .</code></strong>: Invisibly enables Cloud Build + Artifact Registry + grants Cloud Build's SA the roles it needs. First-run permission failures are cryptic — check [cloudbuild.googleapis.com] and the Cloud Build SA's IAM.</li><li><strong>africa-south1 GCE disk types</strong>: <code>pd-extreme</code> and local SSD availability varies by zone. Prefer <code>pd-balanced</code> for general VMs, <code>pd-ssd</code> for latency-sensitive databases.</li><li><strong>Egress from africa-south1</strong>: Same-continent egress is billed; cross-continent egress is expensive. If traffic is SA-served but compute runs in <code>europe-west2</code> as a fallback, design for bursty sync-back to <code>africa-south1</code> via Pub/Sub or scheduled Dataflow, not per-request.</li></ul>
+
+<h2>See Also</h2>
+
+<ul><li><a href="../SKILL.md" target="_blank" rel="noopener">GCP parent</a></li><li><a href="../ai/SKILL.md" target="_blank" rel="noopener">Vertex AI — run inference next to your compute</a></li><li><a href="../data/SKILL.md" target="_blank" rel="noopener">BigQuery + Pub/Sub</a></li><li><a href="../../../aws/compute/SKILL.md" target="_blank" rel="noopener">AWS compute (Lambda/ECS/EC2)</a></li><li><a href="../../../cloudflare/workers/SKILL.md" target="_blank" rel="noopener">Cloudflare Workers (the edge tier)</a></li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/tech/google/cloud/compute/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

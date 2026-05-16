@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+# Dependencies
+node_modules/
+
+# Cloudflare Wrangler local cache
+.wrangler/
+
+# Env files
+.env
+.env.local

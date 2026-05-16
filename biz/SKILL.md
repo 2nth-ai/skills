@@ -25,10 +25,13 @@ Skills for AI agents working in business systems — ERP, CRM, e-commerce, and o
 
 | Path | Focus |
 |------|-------|
-| `biz/erp/` | Enterprise resource planning systems |
-| `biz/crm/` | Customer relationship management |
-| `biz/hr/` | HR and talent — recruitment, onboarding, performance |
-| `biz/ops/` | Operations, workflow, automation |
-| `biz/property/` | Property development, construction compliance |
+| `biz/accounting/` | Business accounting — Xero, QuickBooks, bookkeeping |
+| `biz/africa-market-entry/` | Entering African markets — country selection, partner models, regulatory navigation |
+| `biz/erp/` | Enterprise resource planning — Sage X3, ERPNext, Shopify, WooCommerce |
+| `biz/hr/` | HR and talent — recruitment pipeline, onboarding, performance |
+| `biz/openbim/` | openBIM smart building platforms — IFC standards, construction-tech integration |
+| `biz/property/` | Property development, construction compliance — building codes, NHBRC |
+| `biz/sales/` | B2B sales — prospecting, discovery, pipeline, proposals, RevOps |
+| `biz/spatial-gallery/` | Spatial gallery deployments — 3D, retail, exhibition tech |
 
 Load the relevant subdomain or leaf skill directly. This manifest is for discovery.

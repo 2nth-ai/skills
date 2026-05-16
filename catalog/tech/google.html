@@ -33,12 +33,8 @@
     .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
     .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
     .icon-sun, .icon-moon { display: none; }
-    html:not([data-theme="dark"]) .icon-sun { display: block; }
     html[data-theme="dark"] .icon-moon { display: block; }
-    @media (prefers-color-scheme: dark) {
-      html:not([data-theme]) .icon-sun { display: none; }
-      html:not([data-theme]) .icon-moon { display: block; }
-    }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
 
     .btn-gh {
       display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
@@ -177,7 +173,7 @@
     <div class="skill-header">
       <div class="skill-path">tech/google</div>
       <h1>GOOGLE</h1>
-      <p class="skill-desc">Google platform skills — Cloud infrastructure and Workspace productivity APIs. Use skills in this domain when:</p>
+      <p class="skill-desc">Google platform skills. Shared OAuth 2.0 / service-account model spanning Google Cloud (GCP) and Google Workspace. Use skills in this domain when:</p>
       <div class="skill-meta">
         <span class="badge badge-prod">production</span>
         
@@ -194,82 +190,117 @@
       
 <h1>Google Platform</h1>
 
-<p>Two product families under one identity model:</p>
+<p>Google runs two overlapping product families under one identity plane:</p>
 
-<table><thead><tr><th>Family</th><th>Slug</th><th>What it covers</th></tr></thead><tbody><tr><td><strong>Google Cloud (GCP)</strong></td><td><code>tech/google/cloud</code></td><td>Compute, storage, data, AI/ML infrastructure</td></tr><tr><td><strong>Google Workspace</strong></td><td><code>tech/google/workspace</code></td><td>Gmail, Drive, Sheets, Calendar, Admin — productivity APIs</td></tr></tbody></table>
+<ul><li><strong>Google Cloud (GCP)</strong> — infrastructure: Cloud Run, Cloud SQL, BigQuery, Vertex AI, Pub/Sub, Cloud Storage.</li><li><strong>Google Workspace</strong> — productivity APIs: Gmail, Drive, Sheets, Calendar, Admin SDK.</li></ul>
 
-<p>Both families share the same authentication model — understand it once, apply everywhere.</p>
+<p>Both share <strong>OAuth 2.0 and service-account authentication</strong> and live under <strong>Cloud IAM</strong>, but the consent flows, scopes, and administrative domains differ. A Workspace admin grants domain-wide delegation to a GCP service account; a GCP IAM binding grants that same service account access to BigQuery. The two planes meet at the service-account identity.</p>
 
-<h2>Authentication model (shared across all Google APIs)</h2>
-
-<p>Google uses OAuth 2.0 for user-delegated access and service accounts for server-to-server access. These are the two patterns you will use in every Google integration.</p>
-
-<h3>OAuth 2.0 (user-delegated)</h3>
-<p>Used when the integration acts on behalf of a human user — reading their Gmail, accessing their Drive, etc.</p>
-
-<pre><code class="lang-text">1. Register app in Google Cloud Console → get client_id + client_secret
-2. Redirect user to accounts.google.com/o/oauth2/v2/auth with scopes
-3. Exchange auth code for access_token + refresh_token
-4. Store refresh_token securely (KV, D1, Secret Manager)
-5. Use access_token for API calls; refresh when expired (1-hour TTL)</code></pre>
-
-<p><strong>Required env vars:</strong></p>
-<pre><code class="lang-text">GOOGLE_CLIENT_ID
-GOOGLE_CLIENT_SECRET
-GOOGLE_REDIRECT_URI
-GOOGLE_REFRESH_TOKEN     # per-user, stored in KV/D1</code></pre>
-
-<h3>Service Accounts (server-to-server)</h3>
-<p>Used when the integration acts as a system identity — no user login required. Typical for GCP services, domain-wide delegation, background automation.</p>
-
-<pre><code class="lang-text">1. Create service account in Google Cloud Console
-2. Download JSON key file (store as secret, never commit)
-3. Grant the service account the required IAM roles
-4. For Workspace APIs: enable domain-wide delegation in Admin console
-5. Mint a JWT, exchange for access_token via oauth2.googleapis.com/token</code></pre>
-
-<p><strong>Required env vars:</strong></p>
-<pre><code class="lang-text">GOOGLE_SERVICE_ACCOUNT_EMAIL
-GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY   # PEM format
-GOOGLE_PROJECT_ID</code></pre>
-
-<h3>Token refresh pattern (Cloudflare Workers)</h3>
-<pre><code class="lang-typescript">async function getAccessToken(env: Env, refreshToken: string): Promise&lt;string&gt; {
-  const res = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      client_id:     env.GOOGLE_CLIENT_ID,
-      client_secret: env.GOOGLE_CLIENT_SECRET,
-      refresh_token: refreshToken,
-      grant_type:    'refresh_token',
-    }),
-  });
-  const data = await res.json() as { access_token: string };
-  return data.access_token;
-}</code></pre>
-
-<h2>Scope conventions</h2>
-
-<p>Always request the minimum scope. Prefer read-only scopes unless writes are required.</p>
-
-<table><thead><tr><th>API</th><th>Read-only scope</th><th>Read-write scope</th></tr></thead><tbody><tr><td>Gmail</td><td><code>gmail.readonly</code></td><td><code>gmail.modify</code> or <code>gmail.send</code></td></tr><tr><td>Drive</td><td><code>drive.readonly</code></td><td><code>drive</code></td></tr><tr><td>Sheets</td><td><code>spreadsheets.readonly</code></td><td><code>spreadsheets</code></td></tr><tr><td>Calendar</td><td><code>calendar.readonly</code></td><td><code>calendar</code></td></tr><tr><td>Admin SDK</td><td><code>admin.directory.user.readonly</code></td><td><code>admin.directory.user</code></td></tr></tbody></table>
-
-<p>Full scope reference: https://developers.google.com/identity/protocols/oauth2/scopes</p>
-
-<h2>Google API base URLs</h2>
-
-<pre><code class="lang-text">Gmail:     https://gmail.googleapis.com/gmail/v1/users/{userId}/
-Drive:     https://www.googleapis.com/drive/v3/
-Sheets:    https://sheets.googleapis.com/v4/spreadsheets/
-Calendar:  https://www.googleapis.com/calendar/v3/
-Admin SDK: https://admin.googleapis.com/admin/directory/v1/
-BigQuery:  https://bigquery.googleapis.com/bigquery/v2/
-Cloud Run: https://run.googleapis.com/v2/</code></pre>
+<p>In the 2nth.ai stack, GCP is the <strong>second-tier compute substrate</strong> alongside AWS — used when a workload needs Vertex AI (Gemini, embeddings), BigQuery analytics, or deep Workspace integration. Workspace APIs run through Gmail/Drive/Sheets automations that back Penny briefings and client intake flows.</p>
 
 <h2>Sub-skills</h2>
 
-<table><thead><tr><th>Skill</th><th>Path</th><th>Status</th></tr></thead><tbody><tr><td>Google Cloud Platform</td><td><code>tech/google/cloud</code></td><td>Stub</td></tr><tr><td>Google Workspace</td><td><code>tech/google/workspace</code></td><td>Stub</td></tr><tr><td>Gmail</td><td><code>tech/google/workspace/gmail</code></td><td>Stub</td></tr></tbody></table>
+<table><thead><tr><th>Path</th><th>Focus</th><th>Status</th></tr></thead><tbody><tr><td><code>tech/google/cloud</code></td><td>GCP parent — projects, IAM, regions, gcloud CLI</td><td>✓ production</td></tr><tr><td><code>tech/google/cloud/compute</code></td><td>Cloud Run, Cloud Functions, GKE, Compute Engine</td><td>✓ production</td></tr><tr><td><code>tech/google/cloud/ai</code></td><td>Vertex AI, Gemini, embeddings, AI Studio</td><td>✓ production</td></tr><tr><td><code>tech/google/cloud/data</code></td><td>BigQuery, Pub/Sub, Dataflow, Dataproc</td><td>✓ production</td></tr><tr><td><code>tech/google/cloud/security</code></td><td>IAM, Secret Manager, KMS, Cloud Armor</td><td>stub</td></tr><tr><td><code>tech/google/cloud/storage</code></td><td>Cloud Storage, Filestore, Transfer Service</td><td>stub</td></tr><tr><td><code>tech/google/cloud/database</code></td><td>Cloud SQL, Spanner, Firestore, AlloyDB, Bigtable</td><td>stub</td></tr><tr><td><code>tech/google/cloud/networking</code></td><td>VPC, Load Balancing, Cloud CDN, Cloud DNS</td><td>stub</td></tr><tr><td><code>tech/google/workspace</code></td><td>Workspace parent — domain-wide delegation, scopes</td><td>✓ production</td></tr><tr><td><code>tech/google/workspace/gmail</code></td><td>Gmail API — read, send, label, Watch pipeline, AI automation</td><td>✓ production</td></tr><tr><td><code>tech/google/workspace/drive</code></td><td>Drive API v3 — files, folders, permissions, shared drives</td><td>stub</td></tr><tr><td><code>tech/google/workspace/sheets</code></td><td>Sheets API v4 — read, append, batch update, formulas</td><td>stub</td></tr><tr><td><code>tech/google/workspace/calendar</code></td><td>Calendar API v3 — events, availability, push notifications</td><td>stub</td></tr><tr><td><code>tech/google/workspace/admin</code></td><td>Admin SDK — users, groups, domain-wide delegation management</td><td>stub</td></tr></tbody></table>
+
+<h2>Authentication model</h2>
+
+<p>Google uses <strong>OAuth 2.0</strong> for user-delegated access and <strong>service accounts</strong> for server-to-server. Both sit on top of Cloud IAM. The choice depends on whose data you are accessing:</p>
+
+<table><thead><tr><th>Identity</th><th>Use case</th><th>Credential</th></tr></thead><tbody><tr><td><strong>User OAuth</strong></td><td>User authorises your app to access <em>their</em> Gmail/Drive/Sheets</td><td><code>access_token</code> + <code>refresh_token</code>, OAuth consent screen</td></tr><tr><td><strong>Service account</strong></td><td>Server code accessing <em>project-owned</em> GCP resources (BigQuery, GCS, Pub/Sub)</td><td>JSON key OR Workload Identity Federation</td></tr><tr><td><strong>Service account + DWD</strong></td><td>Workspace <em>domain</em> data (all users in example.com)</td><td>JSON key + Workspace admin grants domain-wide delegation to the SA's OAuth client ID</td></tr><tr><td><strong>Workload Identity</strong></td><td>GKE / Cloud Run / Cloud Functions — no static key</td><td>Automatic token exchange via metadata server</td></tr><tr><td><strong>Workload Identity Federation</strong></td><td>External IdPs (AWS, Okta, GitHub OIDC)</td><td>Trust policy on the SA, short-lived tokens</td></tr></tbody></table>
+
+<p><strong>Golden rule</strong>: Never put a service-account JSON key in application code running on Google Cloud compute. Always use the attached service account via the metadata server. Keys are only for local dev, CI secrets, or cross-cloud.</p>
+
+<h3>gcloud CLI setup</h3>
+
+<pre><code class="lang-bash"># Install (macOS)
+brew install --cask google-cloud-sdk
+
+# Interactive login (user credentials)
+gcloud auth login
+
+# Application Default Credentials (what SDKs read)
+gcloud auth application-default login
+
+# Set the active project
+gcloud config set project my-project-id
+gcloud config set compute/region africa-south1
+gcloud config set run/region africa-south1
+
+# Verify
+gcloud config list
+gcloud auth list
+gcloud projects list</code></pre>
+
+<h3>Service account (server-to-server)</h3>
+
+<pre><code class="lang-bash"># Create service account
+gcloud iam service-accounts create my-sa \
+  --display-name "My Service Account" \
+  --project my-project-id
+
+# Grant a role (project-level)
+gcloud projects add-iam-policy-binding my-project-id \
+  --member "serviceAccount:my-sa@my-project-id.iam.gserviceaccount.com" \
+  --role "roles/bigquery.dataViewer"
+
+# Generate JSON key (local dev / CI only — prefer Workload Identity for runtime)
+gcloud iam service-accounts keys create ~/.keys/my-sa.json \
+  --iam-account my-sa@my-project-id.iam.gserviceaccount.com
+
+# Use the key
+export GOOGLE_APPLICATION_CREDENTIALS=~/.keys/my-sa.json</code></pre>
+
+<h3>Workload Identity Federation (no JSON keys)</h3>
+
+<p>Federate an external IdP (AWS STS, GitHub OIDC, Okta) to impersonate a GCP service account without a downloadable key. The canonical pattern for GitHub Actions deploying to GCP:</p>
+
+<pre><code class="lang-bash"># Pool + provider
+gcloud iam workload-identity-pools create github \
+  --location global --display-name "GitHub Actions"
+
+gcloud iam workload-identity-pools providers create-oidc github-oidc \
+  --location global --workload-identity-pool github \
+  --issuer-uri "https://token.actions.githubusercontent.com" \
+  --attribute-mapping "google.subject=assertion.sub,attribute.repository=assertion.repository"
+
+# Bind the SA
+gcloud iam service-accounts add-iam-policy-binding \
+  my-sa@my-project-id.iam.gserviceaccount.com \
+  --role roles/iam.workloadIdentityUser \
+  --member "principalSet://iam.googleapis.com/projects/NUM/locations/global/workloadIdentityPools/github/attribute.repository/my-org/my-repo"</code></pre>
+
+<h2>Project / organisation hierarchy</h2>
+
+<pre><code class="lang-text">Organization (example.com)
+ ├── Folder: production
+ │   ├── Project: my-app-prod          ← where compute runs
+ │   └── Project: my-data-prod
+ ├── Folder: staging
+ │   └── Project: my-app-staging
+ └── Project: shared-services           ← central logging, billing, DNS</code></pre>
+
+<p>IAM bindings cascade downward. Grant narrowly — at the project or resource level, not the org level, unless you have org-admin reasons.</p>
+
+<h2>Regions for SA / Africa clients</h2>
+
+<table><thead><tr><th>Region</th><th>Code</th><th>POPIA fit</th></tr></thead><tbody><tr><td>Johannesburg</td><td><code>africa-south1</code></td><td>✓ SA data residency</td></tr><tr><td>London</td><td><code>europe-west2</code></td><td>GDPR + documented SA transfer basis</td></tr><tr><td>Belgium</td><td><code>europe-west1</code></td><td>GDPR EU fallback</td></tr><tr><td>Iowa</td><td><code>us-central1</code></td><td>Avoid for SA personal data</td></tr></tbody></table>
+
+
+<h2>Cloudflare + GCP hybrid pattern</h2>
+
+<pre><code class="lang-text">User request
+    → Cloudflare Worker (edge auth, rate limit, cache)
+         → Cloud Run service (europe-west2 or africa-south1)
+              → BigQuery (analytics)
+              → Vertex AI Gemini (inference)
+              → Cloud SQL / Firestore (persistence)
+              → Gmail API via Workspace DWD (user comms)</code></pre>
+
+<p>Cloud Run is the closest GCP analogue to Cloudflare Workers + AWS Lambda — pay-per-request, scale to zero, container-based. For real-time streaming AI inference, Vertex AI endpoints sit behind Cloud Run.</p>
+
+<h2>See Also</h2>
+
+<ul><li><a href="cloud/SKILL.md" target="_blank" rel="noopener">Google Cloud (GCP)</a></li><li><a href="workspace/SKILL.md" target="_blank" rel="noopener">Google Workspace</a></li><li><a href="../aws/SKILL.md" target="_blank" rel="noopener">AWS platform</a> — the sibling compute substrate</li><li><a href="../cloudflare/workers/SKILL.md" target="_blank" rel="noopener">Cloudflare Workers</a> — the edge tier</li></ul>
 
     </div>
 

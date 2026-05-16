@@ -24,17 +24,23 @@ Skills for AI agents working in healthcare contexts — clinical systems, operat
 
 | Path | Focus |
 |------|-------|
-| `health/clinical/` | EHR/EMR, diagnostics, clinical protocols |
-| `health/ops/` | Scheduling, billing, coding, compliance |
-| `health/pharma/` | Formulary, drug interactions, clinical trials |
-| `health/public-health/` | Population health, epidemiology, reporting |
+| `health/clinical/` | EHR/EMR integration, patient records, clinical protocols |
+| `health/clinical-governance/` | Quality assurance, clinical audits, patient safety |
+| `health/digital/` | Digital health, telemedicine, health informatics |
+| `health/finance/` | Healthcare financial management, medical aid billing |
+| `health/mental-health/` | Mental health services, counselling frameworks |
+| `health/operations/` | Hospital operations, bed management, staffing |
+| `health/ops/` | Scheduling, billing, ICD-10/CPT coding, compliance |
+| `health/pharmacy/` | Formulary management, drug interactions, dispensing |
+| `health/public-health/` | Population health, epidemiology, NHI, reporting |
+| `health/sa/` | South African healthcare context — NDoH, HPCSA, COHSASA, medical aids |
 
 ## Critical Principle
 
 AI agents in healthcare contexts **support clinical and administrative professionals — they do not make clinical decisions**. All clinical outputs require qualified human review. This is non-negotiable.
 
-Regulatory context: HIPAA (US), POPIA (ZA), GDPR (EU), national health authority guidelines apply. Skills in this domain will note applicable regulations.
+Regulatory context: POPIA (ZA), NHA (National Health Act 61 of 2003), HPCSA ethical rules, and provincial health department guidelines apply. Skills in this domain note applicable regulations.
 
 ## Status
 
-Stubs. Production skills to be added as client engagements define the patterns. Starting with `health/ops/billing` and `health/clinical/ehr` based on current pipeline.
+`health/operations`, `health/sa`, `health/ops` are production. Others are stubs pending client engagements.

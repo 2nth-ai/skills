@@ -71,6 +71,7 @@ biz/
 data/
   strategy/          SKILL.md  ✓ production — data maturity, data product road-map, platform architecture, team structure
   engineering/       SKILL.md  ✓ production — ETL/ELT, data warehouse, dbt, orchestration, data quality
+    liteparse/       SKILL.md  ✓ production — local document parsing (PDF, DOCX, PPTX, images) — LlamaIndex LiteParse CLI for POPIA-safe RAG ingestion
   analysis/          SKILL.md  ✓ production — SQL analytics, EDA, statistical reasoning, A/B testing
   science/           SKILL.md  ✓ production — ML problem framing, feature engineering, model selection, evaluation
   ml-ops/            SKILL.md  ✓ production — model serving, feature stores, drift detection, retraining pipelines
@@ -171,6 +172,15 @@ tech/
   agent-protocols/   SKILL.md  ✓ production — MCP, A2A, ACP, multi-agent orchestration patterns
   mcp/               stub
   iac/               stub
+  design/            SKILL.md  ✓ stub — UI/product design: tokens, components, frameworks, motion, typography, a11y, Figma, AI design tools
+    systems/         stub
+    frameworks/      stub
+    components/      stub
+    motion/          stub
+    typography/      stub
+    accessibility/   stub
+    figma/           stub
+    ai-tools/        stub
 ```
 
 ## How Skills Reference Each Other

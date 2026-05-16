@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2nth.ai × Discord — Agentic Bot Pattern</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #003459; --navy-deep: #001F3F;
+  --cyan: #00A8E8; --cyan-dark: #0090C8; --cyan-light: #33BFEF;
+  --cyan-bg: rgba(0,168,232,0.07);
+  --blurple: #5865F2; --blurple-dark: #4752C4; --blurple-light: #7289da;
+  --discord-bg: #313338; --discord-sidebar: #2B2D31; --discord-input: #383A40;
+  --discord-hover: rgba(255,255,255,0.06); --discord-border: rgba(255,255,255,0.08);
+  --discord-text: #DBDEE1; --discord-muted: #949BA4; --discord-faint: #4E5058;
+  --dc-green: #23A559; --dc-red: #F23F43; --dc-yellow: #F0B232;
+  --off: #F7F9FB;
+  --text: #0D1B2A; --text-2: #3D5A73; --text-3: #6B8299;
+  --border: #E2EAF1;
+  --success: #1A7A4A; --success-bg: #E8F5EE;
+  --sans: 'Plus Jakarta Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--off); font-family: var(--sans); color: var(--text); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* NAV */
+.nav { position: sticky; top: 0; z-index: 100; background: rgba(0,52,89,0.97); backdrop-filter: blur(16px); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 60px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.nav-brand { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
+.nav-brand span { color: var(--cyan-light); }
+.nav-links { display: flex; gap: 4px; }
+.nav-link { padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: rgba(255,255,255,0.5); text-decoration: none; transition: all 0.18s; cursor: pointer; }
+.nav-link:hover { background: rgba(255,255,255,0.08); color: white; }
+.nav-badge { padding: 4px 12px; border-radius: 100px; background: rgba(88,101,242,0.2); border: 1px solid rgba(88,101,242,0.4); font-size: 10px; font-weight: 600; color: #8a9cf5; letter-spacing: 1px; }
+
+/* HERO */
+.hero { background: linear-gradient(160deg, var(--navy-deep) 0%, #0d0e20 50%, #13154a 100%); padding: 80px 40px 72px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(88,101,242,0.2) 0%, transparent 65%); pointer-events: none; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(88,101,242,0.15); border: 1px solid rgba(88,101,242,0.35); border-radius: 100px; padding: 6px 18px; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #8a9cf5; margin-bottom: 28px; }
+.hero-badge .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--blurple-light); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+.hero h1 { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; color: white; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.5px; }
+.hero h1 span { color: #8a9cf5; }
+.hero-sub { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 300; max-width: 600px; margin: 0 auto 40px; line-height: 1.8; }
+.hero-pills { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.hero-pill { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 9px 16px; }
+.hero-pill span { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.75); }
+.hero-arrow { font-size: 1rem; color: rgba(255,255,255,0.2); }
+
+/* SECTIONS */
+.section { padding: 72px 40px; max-width: 1080px; margin: 0 auto; }
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--blurple); margin-bottom: 10px; }
+.section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; color: var(--text); margin-bottom: 12px; line-height: 1.2; letter-spacing: -0.3px; }
+.section-title span { color: var(--blurple-dark); }
+.section-sub { font-size: 15px; color: var(--text-2); font-weight: 300; line-height: 1.8; max-width: 640px; margin-bottom: 48px; }
+.divider { border: none; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0; }
+
+/* ARCH */
+.arch { display: grid; grid-template-columns: 1fr 56px 1fr 56px 1fr 56px 1fr; gap: 0; align-items: center; margin-bottom: 24px; }
+.arch-box { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 18px 14px; text-align: center; }
+.arch-box.highlight { border-color: var(--blurple); box-shadow: 0 0 0 2px rgba(88,101,242,0.15); }
+.arch-icon { font-size: 1.5rem; margin-bottom: 8px; }
+.arch-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.arch-desc { font-size: 10px; color: var(--text-3); line-height: 1.5; }
+.arch-tag { display: inline-block; margin-top: 8px; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+.tag-dc { background: rgba(88,101,242,0.1); color: var(--blurple-dark); }
+.tag-cf { background: var(--cyan-bg); color: var(--cyan-dark); }
+.tag-ed { background: rgba(35,165,89,0.1); color: #1a7a4a; }
+.arch-arrow { text-align: center; }
+.arch-arrow-inner { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.arrow-label { font-size: 8px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-3); }
+.arrow-svg { color: var(--blurple); font-size: 1.1rem; }
+.arch-note { grid-column:1/-1; background: rgba(88,101,242,0.06); border: 1px solid rgba(88,101,242,0.18); border-radius: 10px; padding: 13px 18px; font-size: 12px; color: var(--text-2); display: flex; align-items: flex-start; gap: 10px; margin-top: 4px; }
+.arch-note strong { color: var(--navy); }
+code.inline { font-family: var(--mono); font-size: 11px; background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; }
+
+/* DIFF TABLE */
+.diff-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 32px; }
+.diff-table th { background: var(--navy); color: rgba(255,255,255,0.7); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 12px 16px; text-align: left; }
+.diff-table td { padding: 11px 16px; border-top: 1px solid var(--border); font-size: 12px; }
+.diff-table tr:hover td { background: var(--off); }
+.diff-label { font-weight: 700; color: var(--text); }
+.diff-slack { color: #611f69; background: rgba(74,21,75,0.07); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: var(--mono); }
+.diff-discord { color: var(--blurple-dark); background: rgba(88,101,242,0.08); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: var(--mono); }
+
+/* CONNECT */
+.connect-card { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+.connect-header { background: var(--blurple-dark); padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; }
+.connect-title { font-size: 13px; font-weight: 600; color: white; }
+.connect-status { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; }
+.connect-status.idle { color: rgba(255,255,255,0.4); }
+.connect-status.connecting { color: #8a9cf5; }
+.connect-status.connected { color: #4ade80; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.connect-status.connected .status-dot { animation: pulse 2s infinite; }
+.connect-body { padding: 28px; }
+.steps-list { display: flex; flex-direction: column; }
+.step-item { display: grid; grid-template-columns: 40px 1fr; gap: 16px; position: relative; }
+.step-item::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: -1px; width: 2px; background: var(--border); }
+.step-item:last-child::before { display: none; }
+.step-dot-col { display: flex; flex-direction: column; align-items: center; padding-top: 3px; }
+.step-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); background: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text-3); transition: all 0.4s; flex-shrink: 0; }
+.step-dot.done { background: var(--blurple); border-color: var(--blurple); color: white; }
+.step-dot.active { border-color: var(--blurple); color: var(--blurple); box-shadow: 0 0 0 3px rgba(88,101,242,0.15); }
+.step-content { padding-bottom: 28px; }
+.step-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.step-desc { font-size: 12px; color: var(--text-3); line-height: 1.65; margin-bottom: 10px; }
+.step-code { background: #0D1B2A; border-radius: 8px; padding: 14px 16px; font-family: var(--mono); font-size: 11px; color: #94c4e8; line-height: 1.8; display: none; }
+.step-code.visible { display: block; }
+.step-code .comment { color: #4a6580; }
+.step-code .key { color: #7dd3fc; }
+.step-code .val { color: #86efac; }
+.step-code .str { color: #fca5a5; }
+.step-code .success { color: #4ade80; }
+.connect-footer { padding: 18px 28px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.connect-btn { padding: 10px 22px; border-radius: 8px; border: none; font-family: var(--sans); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+.connect-btn.primary { background: var(--blurple); color: white; }
+.connect-btn.primary:hover { background: var(--blurple-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(88,101,242,0.4); }
+.connect-btn.primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.connect-btn.ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
+.connect-btn.ghost:hover { border-color: var(--blurple); color: var(--blurple); }
+.connect-note { font-size: 11px; color: var(--text-3); }
+.spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── DISCORD UI ─── */
+.discord-window { border-radius: 16px; overflow: hidden; border: 1px solid rgba(0,0,0,0.3); box-shadow: 0 24px 64px rgba(0,0,0,0.35); display: flex; flex-direction: column; background: var(--discord-bg); }
+.discord-titlebar { background: #1E1F22; padding: 0 16px; height: 38px; display: flex; align-items: center; gap: 8px; }
+.tbar-dot { width: 12px; height: 12px; border-radius: 50%; }
+.tbar-dot.red { background: #FF5F57; }
+.tbar-dot.yellow { background: #FEBC2E; }
+.tbar-dot.green { background: #28C840; }
+.discord-app { display: flex; height: 520px; }
+
+/* Sidebar */
+.dc-sidebar { width: 240px; background: var(--discord-sidebar); display: flex; flex-direction: column; flex-shrink: 0; }
+.dc-server-header { padding: 16px; border-bottom: 1px solid var(--discord-border); }
+.dc-server-name { font-size: 14px; font-weight: 700; color: var(--discord-text); }
+.dc-server-badge { font-size: 10px; color: var(--discord-muted); margin-top: 2px; }
+.dc-section-label { padding: 16px 8px 4px 16px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--discord-muted); }
+.dc-channel { display: flex; align-items: center; gap: 6px; padding: 5px 8px 5px 16px; border-radius: 4px; cursor: pointer; margin: 1px 8px; transition: background 0.1s; }
+.dc-channel:hover { background: var(--discord-hover); }
+.dc-channel.active { background: rgba(88,101,242,0.3); }
+.dc-channel-icon { color: var(--discord-muted); font-size: 14px; }
+.dc-channel.active .dc-channel-icon { color: var(--discord-text); }
+.dc-channel-name { font-size: 14px; color: var(--discord-muted); }
+.dc-channel.active .dc-channel-name { color: var(--discord-text); font-weight: 600; }
+.dc-sidebar-footer { margin-top: auto; background: #232428; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
+.dc-user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--blurple); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.dc-user-name { font-size: 13px; font-weight: 600; color: var(--discord-text); }
+.dc-user-tag { font-size: 10px; color: var(--discord-muted); }
+.dc-status { width: 10px; height: 10px; border-radius: 50%; background: var(--dc-green); border: 2px solid #232428; margin-top: -8px; margin-left: -10px; }
+
+/* Main channel */
+.dc-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.dc-channel-header { background: var(--discord-bg); padding: 0 16px; height: 48px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--discord-border); flex-shrink: 0; }
+.dc-channel-header-hash { color: var(--discord-muted); font-size: 18px; }
+.dc-channel-header-name { font-size: 15px; font-weight: 700; color: var(--discord-text); }
+.dc-channel-header-desc { font-size: 13px; color: var(--discord-muted); margin-left: 6px; }
+.dc-messages { flex: 1; overflow-y: auto; padding: 16px 16px 0; display: flex; flex-direction: column; gap: 2px; }
+.dc-empty { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--discord-muted); text-align: center; padding: 40px; }
+.dc-empty .dc-empty-icon { font-size: 40px; margin-bottom: 8px; }
+.dc-empty p { font-size: 13px; color: var(--discord-text); }
+.dc-empty small { font-size: 11px; }
+
+/* Messages */
+.dc-msg { display: flex; gap: 12px; padding: 4px 0; border-radius: 4px; animation: fadeUp 0.22s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+.dc-msg:hover { background: rgba(0,0,0,0.06); margin: 0 -8px; padding: 4px 8px; }
+.dc-avatar { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-top: 2px; }
+.av-user { background: var(--blurple); }
+.av-bot { background: #23A559; }
+.av-system { background: #4E5058; }
+.dc-msg-body { flex: 1; min-width: 0; }
+.dc-msg-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 3px; }
+.dc-sender { font-size: 14px; font-weight: 600; color: var(--discord-text); }
+.dc-sender.bot-tag { color: #23A559; }
+.dc-bot-badge { font-size: 9px; font-weight: 700; background: var(--blurple); color: white; padding: 1px 5px; border-radius: 3px; margin-left: 4px; vertical-align: middle; letter-spacing: 0.3px; }
+.dc-time { font-size: 11px; color: var(--discord-muted); }
+.dc-text { font-size: 14px; color: var(--discord-text); line-height: 1.5; }
+.dc-text strong { font-weight: 700; color: white; }
+.dc-text em { color: var(--discord-muted); }
+.dc-text code { background: rgba(0,0,0,0.3); padding: 0 4px; border-radius: 3px; font-family: var(--mono); font-size: 12px; color: #d4d4d4; }
+
+/* Slash command preview */
+.slash-preview { background: rgba(88,101,242,0.1); border: 1px solid rgba(88,101,242,0.25); border-radius: 4px; padding: 8px 12px; margin-bottom: 6px; font-size: 12px; color: #8a9cf5; }
+.slash-preview strong { color: var(--blurple-light); }
+
+/* System events */
+.dc-system { font-size: 11px; color: var(--discord-muted); padding: 2px 0 2px 50px; font-style: italic; animation: fadeUp 0.2s ease; }
+.dc-tool-call { background: rgba(35,165,89,0.08); border: 1px solid rgba(35,165,89,0.2); border-radius: 6px; padding: 7px 12px; font-family: var(--mono); font-size: 10px; color: #2dc26b; margin: 4px 0 4px 50px; animation: fadeUp 0.2s ease; }
+.tool-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #2dc26b; margin-bottom: 3px; }
+
+/* Thinking */
+.dc-thinking { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--discord-muted); font-style: italic; }
+.thinking-dots span { animation: blink 1.2s infinite; }
+.thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+
+/* Embed */
+.dc-embed { border-radius: 4px; overflow: hidden; max-width: 440px; margin-top: 4px; }
+.dc-embed-inner { background: #2B2D31; border-left: 4px solid var(--blurple); padding: 12px 14px; }
+.dc-embed-author { font-size: 12px; font-weight: 600; color: var(--discord-text); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.dc-embed-author-icon { width: 20px; height: 20px; border-radius: 50%; background: var(--blurple); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+.dc-embed-body { font-size: 13px; color: var(--discord-text); line-height: 1.55; margin-bottom: 10px; }
+.dc-embed-body strong { color: white; font-weight: 700; }
+.dc-embed-fields { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.dc-embed-field { }
+.dc-field-name { font-size: 11px; font-weight: 700; color: var(--discord-text); margin-bottom: 2px; }
+.dc-field-value { font-size: 12px; color: var(--discord-muted); }
+.dc-embed-footer { font-size: 11px; color: var(--discord-muted); display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+
+/* Buttons */
+.dc-components { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.dc-btn { padding: 6px 14px; border-radius: 4px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: all 0.15s; font-family: var(--sans); }
+.dc-btn.primary { background: var(--dc-green); color: white; }
+.dc-btn.primary:hover { background: #1a9049; }
+.dc-btn.secondary { background: #4E5058; color: var(--discord-text); }
+.dc-btn.secondary:hover { background: #5C5F66; }
+.dc-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Input */
+.dc-input-bar { padding: 0 16px 16px; flex-shrink: 0; }
+.dc-input-box { background: var(--discord-input); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+.dc-input-box input { flex: 1; background: transparent; border: none; outline: none; font-family: var(--sans); font-size: 14px; color: var(--discord-text); }
+.dc-input-box input::placeholder { color: var(--discord-muted); }
+.dc-send-btn { padding: 6px 14px; background: var(--blurple); color: white; border: none; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: var(--sans); }
+.dc-send-btn:hover { background: var(--blurple-dark); }
+.dc-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Suggestions */
+.dc-suggestions { padding: 8px 16px 0; display: flex; gap: 8px; flex-wrap: wrap; }
+.dc-chip { padding: 5px 12px; border-radius: 100px; background: rgba(88,101,242,0.1); border: 1px solid rgba(88,101,242,0.2); font-size: 11px; color: #8a9cf5; cursor: pointer; transition: all 0.15s; }
+.dc-chip:hover { background: rgba(88,101,242,0.2); border-color: var(--blurple); color: var(--blurple-light); }
+
+/* CHANGE GRID */
+.change-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.change-card { border-radius: 12px; padding: 24px; }
+.change-card.before { background: #fef2f2; border: 1px solid #fecaca; }
+.change-card.after { background: var(--success-bg); border: 1px solid #bbf7d0; }
+.change-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+.change-card.before .change-label { color: #b91c1c; }
+.change-card.after .change-label { color: var(--success); }
+.change-list { display: flex; flex-direction: column; gap: 8px; }
+.change-item { font-size: 13px; display: flex; gap: 10px; line-height: 1.5; }
+.change-card.before .change-item::before { content: '✕'; color: #b91c1c; flex-shrink: 0; font-size: 11px; margin-top: 2px; }
+.change-card.after .change-item::before { content: '✓'; color: var(--success); flex-shrink: 0; font-size: 11px; margin-top: 2px; font-weight: 700; }
+.change-card.before .change-item { color: #7f1d1d; }
+.change-card.after .change-item { color: #14532d; }
+
+@media (max-width: 768px) {
+  .arch { grid-template-columns: 1fr; }
+  .arch-arrow { display: none; }
+  .change-grid { grid-template-columns: 1fr; }
+  .dc-sidebar { display: none; }
+  .section { padding: 48px 20px; }
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">skills<span>.2nth.ai</span></div>
+  <div class="nav-links">
+    <a class="nav-link" onclick="scrollTo('arch')">Architecture</a>
+    <a class="nav-link" onclick="scrollTo('diff')">vs Slack</a>
+    <a class="nav-link" onclick="scrollTo('connect')">Connect</a>
+    <a class="nav-link" onclick="scrollTo('sim')">Simulator</a>
+  </div>
+  <div class="nav-badge">Concept · Discord Agents</div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge"><div class="pulse"></div>INTERACTIONS ENDPOINT</div>
+  <h1>/slash commands.<br><span>Ed25519. Deferred replies.</span></h1>
+  <p class="hero-sub">Discord pushes every slash command to your Worker via HTTPS. Verify with Ed25519, defer in under 3 seconds, let AI do the work, and PATCH the reply when it's ready.</p>
+  <div class="hero-pills">
+    <div class="hero-pill"><span>⚔️</span><span>/ask in Discord</span></div>
+    <div class="hero-arrow">→</div>
+    <div class="hero-pill"><span>🔐</span><span>Ed25519 verify</span></div>
+    <div class="hero-arrow">→</div>
+    <div class="hero-pill"><span>⏳</span><span>Defer → AI → PATCH</span></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="arch">
+  <div class="section-label">Architecture</div>
+  <h2 class="section-title">Interactions Endpoint — <span>no WebSocket needed</span></h2>
+  <p class="section-sub">The Discord Gateway requires a persistent WebSocket — Workers can't do that. The Interactions Endpoint is a pure HTTP push model. Discord delivers every event; you respond or defer.</p>
+  <div class="arch">
+    <div class="arch-box">
+      <div class="arch-icon">🎮</div>
+      <div class="arch-name">Discord</div>
+      <div class="arch-desc">User types /ask — Discord pushes POST to your endpoint</div>
+      <span class="arch-tag tag-dc">INTERACTION</span>
+    </div>
+    <div class="arch-arrow"><div class="arch-arrow-inner"><div class="arrow-label">HTTPS POST</div><div class="arrow-svg">→</div><div class="arrow-label">&lt;3s</div></div></div>
+    <div class="arch-box highlight">
+      <div class="arch-icon">⚡</div>
+      <div class="arch-name">Cloudflare Worker</div>
+      <div class="arch-desc">Ed25519 verify — respond type 5 DEFERRED — process async</div>
+      <span class="arch-tag tag-ed">Ed25519</span>
+    </div>
+    <div class="arch-arrow"><div class="arch-arrow-inner"><div class="arrow-label">ROUTE</div><div class="arrow-svg">→</div><div class="arrow-label">ASYNC</div></div></div>
+    <div class="arch-box">
+      <div class="arch-icon">🤖</div>
+      <div class="arch-name">Workers AI + Claude</div>
+      <div class="arch-desc">Classify → draft reply via AI Gateway</div>
+      <span class="arch-tag tag-cf">Llama + Claude</span>
+    </div>
+    <div class="arch-arrow"><div class="arch-arrow-inner"><div class="arrow-label">PATCH</div><div class="arrow-svg">→</div><div class="arrow-label">@original</div></div></div>
+    <div class="arch-box">
+      <div class="arch-icon">✨</div>
+      <div class="arch-name">Embed reply</div>
+      <div class="arch-desc">Rich embed with colour, fields, and action buttons</div>
+      <span class="arch-tag tag-dc">Embed + Components</span>
+    </div>
+    <div class="arch-note" style="grid-column:1/-1">
+      💡 <strong>The deferred pattern:</strong> Respond with <code class="inline">{ "type": 5 }</code> in &lt;100ms — Discord shows "Bot is thinking…". The Worker's <code class="inline">ctx.waitUntil()</code> processes the AI request, then PATCHes <code class="inline">/webhooks/{appId}/{token}/messages/@original</code> with the embed. You have 15 minutes before the interaction token expires.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="diff">
+  <div class="section-label">Discord vs Slack</div>
+  <h2 class="section-title">Key differences from <span>Slack integration</span></h2>
+  <p class="section-sub">Same concept — different implementation. If you've built the Slack bot first, these are the specific things that change.</p>
+  <table class="diff-table">
+    <thead><tr><th>Concern</th><th>Slack</th><th>Discord</th></tr></thead>
+    <tbody>
+      <tr><td class="diff-label">Signature algorithm</td><td><span class="diff-slack">HMAC-SHA256</span></td><td><span class="diff-discord">Ed25519</span></td></tr>
+      <tr><td class="diff-label">Signed payload</td><td><span class="diff-slack">v0:timestamp:body</span></td><td><span class="diff-discord">timestamp + body (concat)</span></td></tr>
+      <tr><td class="diff-label">Ack response</td><td><span class="diff-slack">Empty 200</span></td><td><span class="diff-discord">{ "type": 5 } JSON</span></td></tr>
+      <tr><td class="diff-label">PING verification</td><td><span class="diff-slack">challenge JSON</span></td><td><span class="diff-discord">{ "type": 1 } PONG</span></td></tr>
+      <tr><td class="diff-label">Async reply mechanism</td><td><span class="diff-slack">chat.postMessage Web API</span></td><td><span class="diff-discord">PATCH /messages/@original</span></td></tr>
+      <tr><td class="diff-label">Command registration</td><td><span class="diff-slack">App manifest YAML</span></td><td><span class="diff-discord">PUT /applications/{id}/commands</span></td></tr>
+      <tr><td class="diff-label">Rich messages</td><td><span class="diff-slack">Block Kit JSON</span></td><td><span class="diff-discord">Embeds + Components</span></td></tr>
+      <tr><td class="diff-label">Bot token prefix</td><td><span class="diff-slack">xoxb-... (no prefix in header)</span></td><td><span class="diff-discord">Bot {token} (prefix required)</span></td></tr>
+      <tr><td class="diff-label">Token expiry</td><td><span class="diff-slack">response_url: 30 min / 5 uses</span></td><td><span class="diff-discord">interaction token: 15 minutes</span></td></tr>
+      <tr><td class="diff-label">Dev commands</td><td><span class="diff-slack">Instant via manifest</span></td><td><span class="diff-discord">Guild commands: instant; Global: up to 1h</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="connect">
+  <div class="section-label">Connection</div>
+  <h2 class="section-title">Three steps to a <span>live Discord bot</span></h2>
+  <p class="section-sub">Developer portal, three secrets, one PUT to register commands. No manifests — commands are registered programmatically via the REST API.</p>
+
+  <div class="connect-card">
+    <div class="connect-header">
+      <div class="connect-title">Discord app setup — 2nth Assistant</div>
+      <div class="connect-status idle" id="conn-status">
+        <div class="status-dot"></div>
+        <span id="conn-status-text">Not connected</span>
+      </div>
+    </div>
+    <div class="connect-body">
+      <div class="steps-list">
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot active" id="dot-1">1</div></div>
+          <div class="step-content">
+            <div class="step-title">Create app + bot in Developer Portal</div>
+            <div class="step-desc">discord.com/developers → New Application → Bot → Add Bot. Copy the Public Key (for Ed25519 verification) and the Bot Token. Set the Interactions Endpoint URL to your Worker.</div>
+            <div class="step-code" id="code-1">
+<span class="comment"># Developer Portal → General Information</span>
+<span class="key">Application ID:</span>  <span class="str">1234567890123456789</span>
+<span class="key">Public Key:</span>      <span class="str">a1b2c3d4e5f6...  (64 hex chars, Ed25519)</span>
+
+<span class="comment"># Bot → Token (reset if needed)</span>
+<span class="key">Bot Token:</span>       <span class="str">MTIzNDU2Nzg5MDEyMzQ1Njc4OQ.XXXXXX.xxxx</span>
+
+<span class="comment"># General Information → Interactions Endpoint URL</span>
+<span class="val">https://your-worker.workers.dev/discord</span>
+
+<span class="comment"># Discord immediately PINGs the URL — Worker must respond</span>
+<span class="success">→ POST { "type": 1 }  ← PING
+← 200  { "type": 1 }  ← PONG  ✓ URL verified</span>
+
+<span class="comment"># OAuth2 → URL Generator → scopes: bot + applications.commands</span>
+<span class="success">✓ Bot added to server — ready to receive interactions</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot" id="dot-2">2</div></div>
+          <div class="step-content">
+            <div class="step-title">Store secrets + register slash commands</div>
+            <div class="step-desc">Three secrets in the Worker. Then call the Discord REST API to register your commands — use guild commands during development (instant) and global commands for production.</div>
+            <div class="step-code" id="code-2">
+<span class="comment"># Three Worker secrets</span>
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">DISCORD_PUBLIC_KEY</span>
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">DISCORD_BOT_TOKEN</span>
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">DISCORD_APP_ID</span>
+
+<span class="comment"># Register commands — guild (instant) or global (up to 1h)</span>
+<span class="key">PUT</span> https://discord.com/api/v10/applications/<span class="str">{APP_ID}</span>/guilds/<span class="str">{GUILD_ID}</span>/commands
+Authorization: <span class="str">Bot {BOT_TOKEN}</span>
+Content-Type: <span class="str">application/json</span>
+
+[{ "name": <span class="str">"ask"</span>, "description": <span class="str">"Ask the 2nth assistant"</span>,
+   "options": [{ "name": <span class="str">"question"</span>, "type": <span class="str">3</span>, "required": <span class="str">true</span>,
+                 "description": <span class="str">"Your question"</span> }] },
+ { "name": <span class="str">"invoice"</span>, "description": <span class="str">"Check invoice status"</span> },
+ { "name": <span class="str">"report"</span>,  "description": <span class="str">"Generate a business report"</span> }]
+
+<span class="success">→ 200 [ { "id": "...", "name": "ask", "version": "..." }, ... ]
+✓ /ask, /invoice, /report registered in guild</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot" id="dot-3">3</div></div>
+          <div class="step-content">
+            <div class="step-title">Test Ed25519 verify + first deferred interaction</div>
+            <div class="step-desc">Run /ask in Discord. The Worker should verify the Ed25519 signature, respond with type 5 in &lt;100ms, process async, and PATCH the reply with an embed.</div>
+            <div class="step-code" id="code-3">
+<span class="comment"># Discord POSTs the interaction</span>
+<span class="key">POST</span> /discord
+X-Signature-Ed25519: <span class="str">a1b2c3...  (64 hex chars)</span>
+X-Signature-Timestamp: <span class="str">1743500000</span>
+
+{ "type": 2, "data": { "name": "ask",
+    "options": [{ "name": "question", "value": "show overdue invoices" }] },
+  "guild_id": "...", "member": { "user": { "id": "...", "username": "Craig" } },
+  "application_id": "...", "token": "aW50ZXJhY3Rpb24..." }
+
+<span class="comment"># Worker response &lt;100ms</span>
+<span class="success">← 200  { "type": 5 }   ← DEFERRED — Discord shows "Bot is thinking…"</span>
+
+<span class="comment"># ctx.waitUntil() → Workers AI → Claude → PATCH</span>
+<span class="key">PATCH</span> /api/v10/webhooks/<span class="str">{APP_ID}</span>/<span class="str">{TOKEN}</span>/messages/@original
+{ "embeds": [{ "color": 8028250, "description": "Found 3 overdue invoices..." }],
+  "components": [{ "type": 1, "components": [...buttons] }] }
+
+<span class="success">✓ Embed posted — 2nth Assistant active in #ops-ai</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="connect-footer">
+      <div class="connect-note" id="conn-note">Step through to simulate Discord bot setup.</div>
+      <div style="display:flex;gap:10px">
+        <button class="connect-btn ghost" onclick="resetConn()">Reset</button>
+        <button class="connect-btn primary" id="next-btn" onclick="nextStep()"><span id="next-label">Create app →</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section" id="sim">
+  <div class="section-label">Simulator</div>
+  <h2 class="section-title">Discord channel — <span>live simulation</span></h2>
+  <p class="section-sub">Use a slash command or click a suggestion. Watch the deferred "thinking" state, the tool call, and the embed reply with action buttons.</p>
+
+  <div class="discord-window">
+    <div class="discord-titlebar">
+      <div class="tbar-dot red"></div>
+      <div class="tbar-dot yellow"></div>
+      <div class="tbar-dot green"></div>
+    </div>
+    <div class="discord-app">
+      <!-- Sidebar -->
+      <div class="dc-sidebar">
+        <div class="dc-server-header">
+          <div class="dc-server-name">2nth.ai</div>
+          <div class="dc-server-badge">Business Intelligence Server</div>
+        </div>
+        <div class="dc-section-label">Text Channels</div>
+        <div class="dc-channel"><span class="dc-channel-icon">#</span><span class="dc-channel-name">general</span></div>
+        <div class="dc-channel active"><span class="dc-channel-icon">#</span><span class="dc-channel-name">ops-ai</span></div>
+        <div class="dc-channel"><span class="dc-channel-icon">#</span><span class="dc-channel-name">alerts</span></div>
+        <div class="dc-channel"><span class="dc-channel-icon">#</span><span class="dc-channel-name">reports</span></div>
+        <div class="dc-section-label">Voice Channels</div>
+        <div class="dc-channel"><span class="dc-channel-icon">🔊</span><span class="dc-channel-name">standup</span></div>
+        <div class="dc-sidebar-footer">
+          <div style="position:relative">
+            <div class="dc-user-avatar">C</div>
+            <div class="dc-status"></div>
+          </div>
+          <div>
+            <div class="dc-user-name">Craig</div>
+            <div class="dc-user-tag">#2nth</div>
+          </div>
+        </div>
+      </div>
+      <!-- Main -->
+      <div class="dc-main">
+        <div class="dc-channel-header">
+          <span class="dc-channel-header-hash">#</span>
+          <span class="dc-channel-header-name">ops-ai</span>
+          <span class="dc-channel-header-desc">AI business assistant</span>
+        </div>
+        <div class="dc-messages" id="dc-messages">
+          <div class="dc-empty" id="dc-empty">
+            <div class="dc-empty-icon">🤖</div>
+            <p>Welcome to <strong>#ops-ai</strong></p>
+            <small style="color:var(--discord-muted)">Use /ask, /invoice, or /report — or try a suggestion below</small>
+          </div>
+        </div>
+        <div class="dc-suggestions" id="dc-chips">
+          <div class="dc-chip" onclick="sendChip(this)">/ask show overdue invoices</div>
+          <div class="dc-chip" onclick="sendChip(this)">/invoice status:overdue</div>
+          <div class="dc-chip" onclick="sendChip(this)">/report type:revenue</div>
+          <div class="dc-chip" onclick="sendChip(this)">/ask draft a reminder for Acme Corp</div>
+        </div>
+        <div class="dc-input-bar">
+          <div class="dc-input-box">
+            <input type="text" id="dc-input" placeholder="Message #ops-ai or type /ask [question]" onkeydown="if(event.key==='Enter') sendMsg()">
+            <button class="dc-send-btn" id="dc-send" onclick="sendMsg()">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section">
+  <div class="section-label">Before &amp; After</div>
+  <h2 class="section-title">What the Discord bot <span>changes</span></h2>
+  <div class="change-grid">
+    <div class="change-card before">
+      <div class="change-label">Without the bot</div>
+      <div class="change-list">
+        <div class="change-item">Discord is social — no structured way to query business data from a channel</div>
+        <div class="change-item">Manual copy-paste of reports and alerts into Discord by humans</div>
+        <div class="change-item">No slash commands — teams have to open the ERP or a browser to get data</div>
+        <div class="change-item">Alerts require a separate monitoring tool and manual posting</div>
+        <div class="change-item">AI tools live in other tabs — not where the team already communicates</div>
+        <div class="change-item">Bot setup feels complex — Gateway, WebSockets, server hosting</div>
+      </div>
+    </div>
+    <div class="change-card after">
+      <div class="change-label">With 2nth Discord bot</div>
+      <div class="change-list">
+        <div class="change-item">/ask, /invoice, /report bring ERP and AI into the channel where the team already is</div>
+        <div class="change-item">Pub/Sub → Worker → Discord webhook posts overdue alerts, order events, and anomalies automatically</div>
+        <div class="change-item">Rich embeds with action buttons — save to D1, mark as handled, escalate — without leaving Discord</div>
+        <div class="change-item">Ephemeral replies (flags: 64) keep sensitive data private — only the user who asked sees it</div>
+        <div class="change-item">Interactions Endpoint on Workers — no servers, no WebSocket, scales to zero</div>
+        <div class="change-item">Cloud Scheduler → Worker → webhook posts scheduled reports to #reports every morning</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// ─── CONNECTION WIZARD ───
+let step = 0;
+function scrollTo(id) { document.getElementById(id)?.scrollIntoView({ behavior:'smooth', block:'start' }); }
+function nextStep() {
+  const btn = document.getElementById('next-btn');
+  const label = document.getElementById('next-label');
+  const note = document.getElementById('conn-note');
+  if (step === 0) {
+    step = 1;
+    document.getElementById('code-1').classList.add('visible');
+    document.getElementById('dot-1').classList.add('active');
+    document.getElementById('dot-2').classList.add('active');
+    label.textContent = 'Store secrets →';
+    note.textContent = 'App created and URL verified. Now store secrets and register commands.';
+    setStatus('connecting', 'Configuring...');
+  } else if (step === 1) {
+    step = 2;
+    markDone(1);
+    document.getElementById('code-2').classList.add('visible');
+    label.textContent = 'Test /ask →';
+    note.textContent = 'Commands registered. Run /ask in Discord to test the full flow.';
+  } else if (step === 2) {
+    step = 3;
+    markDone(2);
+    document.getElementById('dot-3').classList.add('active');
+    document.getElementById('code-3').classList.add('visible');
+    btn.disabled = true;
+    label.innerHTML = '<div class="spinner"></div> Verifying...';
+    note.textContent = 'Ed25519 verification and first deferred interaction...';
+    setStatus('connecting', 'Connecting...');
+    setTimeout(() => {
+      markDone(3);
+      btn.disabled = true;
+      label.textContent = 'Bot active ✓';
+      note.textContent = '2nth Assistant is live — /ask, /invoice, /report ready in #ops-ai';
+      setStatus('connected', 'Bot active');
+    }, 2400);
+  }
+}
+function markDone(n) {
+  const d = document.getElementById('dot-' + n);
+  d.className = 'step-dot done'; d.textContent = '✓';
+}
+function setStatus(cls, txt) {
+  document.getElementById('conn-status').className = 'connect-status ' + cls;
+  document.getElementById('conn-status-text').textContent = txt;
+}
+function resetConn() {
+  step = 0;
+  ['code-1','code-2','code-3'].forEach(id => document.getElementById(id).classList.remove('visible'));
+  ['1','2','3'].forEach(n => { const d = document.getElementById('dot-'+n); d.className='step-dot'; d.textContent=n; });
+  document.getElementById('dot-1').classList.add('active');
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-label').textContent = 'Create app →';
+  document.getElementById('conn-note').textContent = 'Step through to simulate Discord bot setup.';
+  setStatus('idle', 'Not connected');
+}
+
+// ─── DISCORD SIMULATOR ───
+const now = () => { const d = new Date(); return d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }); };
+let busy = false;
+
+const RESPONSES = {
+  'overdue': {
+    intent: 'erp_query', color: 0x23A559,
+    tool: { name: 'query_invoices', args: '{ "status": "overdue" }' },
+    title: 'Overdue Invoices',
+    body: '**3 overdue invoices** found in the ERP:\n\n• **Acme Corp** — R 24,500 · 18 days overdue\n• **Buildmax SA** — R 8,200 · 7 days overdue\n• **Retail Pro** — R 61,000 · 31 days overdue\n\nTotal outstanding: **R 93,700**',
+    fields: [{ name: 'Count', value: '3 invoices' }, { name: 'Total', value: 'R 93,700' }, { name: 'Oldest', value: '31 days' }],
+    buttons: ['👍 Helpful', '✏️ Draft reminders', '📋 Save to D1'],
+  },
+  'invoice': {
+    intent: 'erp_query', color: 0x23A559,
+    tool: { name: 'query_invoices', args: '{ "status": "overdue", "limit": 5 }' },
+    title: 'Invoice Status — Overdue',
+    body: 'Fetched overdue invoices from the ERP system. Showing top results by amount.',
+    fields: [{ name: 'Acme Corp', value: 'R 24,500 · 18d' }, { name: 'Retail Pro', value: 'R 61,000 · 31d' }, { name: 'Buildmax SA', value: 'R 8,200 · 7d' }],
+    buttons: ['📊 Full report', '✉️ Send reminders', '📋 Save'],
+  },
+  'revenue': {
+    intent: 'report', color: 0x5865F2,
+    tool: { name: 'run_bigquery', args: '{ "report": "revenue", "period": "Q1-2026" }' },
+    title: 'Q1 2026 Revenue Report',
+    body: 'Revenue analysis for Q1 2026 vs Q1 2025.',
+    fields: [{ name: 'Q1 2026', value: 'R 482,000' }, { name: 'vs Q1 2025', value: '+18% YoY' }, { name: 'Top line', value: 'ERP services' }],
+    buttons: ['📤 Post to #finance', '📊 Drill down', '📋 Save'],
+  },
+  'reminder': {
+    intent: 'draft_email', color: 0xF0B232,
+    tool: { name: 'get_client', args: '{ "client": "Acme Corp" }' },
+    title: 'Payment Reminder Draft',
+    body: '_Subject: Payment reminder — Invoice #INV-2024-0847 (R 24,500)_\n\nDear Acme Corp team, this is a friendly reminder that invoice #INV-2024-0847 for R 24,500 was due 18 days ago. Please advise on expected payment at your earliest convenience.\n\nKind regards, 2nth.ai',
+    fields: [{ name: 'Client', value: 'Acme Corp' }, { name: 'Amount', value: 'R 24,500' }, { name: 'Overdue', value: '18 days' }],
+    buttons: ['✅ Send email', '✏️ Edit draft', '📋 Save'],
+  },
+};
+
+function getResp(text) {
+  const t = text.toLowerCase();
+  if (t.includes('overdue') || (t.includes('invoice') && !t.includes('invoice status'))) return RESPONSES['overdue'];
+  if (t.includes('invoice')) return RESPONSES['invoice'];
+  if (t.includes('revenue') || t.includes('report')) return RESPONSES['revenue'];
+  if (t.includes('reminder') || t.includes('acme')) return RESPONSES['reminder'];
+  return {
+    intent: 'general', color: 0x5865F2, tool: null,
+    title: 'Response',
+    body: `Processing your query: _"${text.replace(/^\/(ask|invoice|report)\s*/i,'').trim()}"_\n\nIn a live deployment, Workers AI would classify this and Claude would draft a structured response with relevant data from your ERP and analytics.`,
+    fields: [],
+    buttons: ['👍 Got it', '🔄 Try again'],
+  };
+}
+
+function parseCommand(text) {
+  const cmd = text.match(/^\/(\w+)\s*(.*)/);
+  if (cmd) return { command: cmd[1], args: cmd[2] };
+  return { command: 'message', args: text };
+}
+
+function sendChip(el) {
+  document.getElementById('dc-input').value = el.textContent;
+  sendMsg();
+}
+
+function sendMsg() {
+  if (busy) return;
+  const input = document.getElementById('dc-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  busy = true;
+  document.getElementById('dc-send').disabled = true;
+
+  const msgs = document.getElementById('dc-messages');
+  document.getElementById('dc-empty')?.remove();
+
+  const { command, args } = parseCommand(text);
+  const isSlash = text.startsWith('/');
+  const resp = getResp(text);
+  const ts = now();
+
+  // User message
+  addUserMsg('Craig', text, ts, isSlash, command, args);
+
+  // Worker receipt
+  setTimeout(() => addSystem(`⚡ Worker received — Ed25519 signature verified — responded type 5 DEFERRED in &lt;90ms`), 350);
+
+  // Classification
+  setTimeout(() => addSystem(`🤖 Workers AI → intent: <strong>${resp.intent}</strong>`), 800);
+
+  // Tool call
+  if (resp.tool) {
+    setTimeout(() => addToolCall(resp.tool.name, resp.tool.args), 1300);
+  }
+
+  // Thinking
+  const thinkDelay = resp.tool ? 2000 : 1200;
+  setTimeout(() => addThinking(), thinkDelay);
+
+  // Embed reply
+  setTimeout(() => {
+    removeThinking();
+    addEmbed(resp);
+    busy = false;
+    document.getElementById('dc-send').disabled = false;
+    document.getElementById('dc-input').focus();
+  }, thinkDelay + (resp.tool ? 2200 : 1600));
+}
+
+function addUserMsg(name, text, ts, isSlash, command, args) {
+  const msgs = document.getElementById('dc-messages');
+  const el = document.createElement('div');
+  el.className = 'dc-msg';
+  let content = '';
+  if (isSlash) {
+    content = `<div class="slash-preview">Using <strong>/${command}</strong>${args ? ' — <em>' + args + '</em>' : ''}</div>`;
+  } else {
+    content = `<div class="dc-text">${text}</div>`;
+  }
+  el.innerHTML = `
+    <div class="dc-avatar av-user">C</div>
+    <div class="dc-msg-body">
+      <div class="dc-msg-header"><span class="dc-sender">${name}</span><span class="dc-time">Today at ${ts}</span></div>
+      ${content}
+    </div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addSystem(html) {
+  const msgs = document.getElementById('dc-messages');
+  const el = document.createElement('div');
+  el.className = 'dc-system';
+  el.innerHTML = html;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addToolCall(name, args) {
+  const msgs = document.getElementById('dc-messages');
+  const el = document.createElement('div');
+  el.className = 'dc-tool-call';
+  el.innerHTML = `<div class="tool-label">→ tool: ${name}</div>${args}`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addThinking() {
+  const msgs = document.getElementById('dc-messages');
+  const el = document.createElement('div');
+  el.className = 'dc-msg';
+  el.id = 'dc-thinking';
+  el.innerHTML = `
+    <div class="dc-avatar av-bot">2</div>
+    <div class="dc-msg-body">
+      <div class="dc-msg-header">
+        <span class="dc-sender bot-tag">2nth Assistant<span class="dc-bot-badge">APP</span></span>
+        <span class="dc-time">Today at ${now()}</span>
+      </div>
+      <div class="dc-thinking">Bot is thinking <div class="thinking-dots"><span>●</span><span>●</span><span>●</span></div></div>
+    </div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeThinking() { document.getElementById('dc-thinking')?.remove(); }
+
+function addEmbed(resp) {
+  const msgs = document.getElementById('dc-messages');
+  const el = document.createElement('div');
+  el.className = 'dc-msg';
+  const formatted = resp.body
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/_([^_]+)_/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+  const fields = resp.fields.map(f =>
+    `<div class="dc-embed-field"><div class="dc-field-name">${f.name}</div><div class="dc-field-value">${f.value}</div></div>`
+  ).join('');
+  const buttons = resp.buttons.map((b, i) =>
+    `<button class="dc-btn ${i === 0 ? 'primary' : 'secondary'}" onclick="this.textContent='✓ Done';this.disabled=true">${b}</button>`
+  ).join('');
+
+  el.innerHTML = `
+    <div class="dc-avatar av-bot">2</div>
+    <div class="dc-msg-body">
+      <div class="dc-msg-header">
+        <span class="dc-sender bot-tag">2nth Assistant<span class="dc-bot-badge">APP</span></span>
+        <span class="dc-time">Today at ${now()}</span>
+        <span style="font-size:10px;color:var(--discord-muted);margin-left:4px">· PATCH /messages/@original</span>
+      </div>
+      <div class="dc-embed">
+        <div class="dc-embed-inner" style="border-left-color:#${resp.color.toString(16).padStart(6,'0')}">
+          <div class="dc-embed-author">
+            <div class="dc-embed-author-icon">2</div>
+            2nth Assistant · ${resp.title}
+          </div>
+          <div class="dc-embed-body">${formatted}</div>
+          ${fields ? `<div class="dc-embed-fields">${fields}</div>` : ''}
+          <div class="dc-embed-footer">⚡ Workers AI + Claude · ${now()}</div>
+        </div>
+      </div>
+      <div class="dc-components">${buttons}</div>
+    </div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+</body>
+</html>

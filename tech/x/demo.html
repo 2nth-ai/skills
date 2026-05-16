@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>X (Twitter) API — skills.2nth.ai</title>
+<style>
+  :root {
+    --x-bg:      #000000;
+    --x-surface: #16181C;
+    --x-border:  #2F3336;
+    --x-text:    #E7E9EA;
+    --x-muted:   #71767B;
+    --x-blue:    #1D9BF0;
+    --x-green:   #00BA7C;
+    --x-red:     #F4212E;
+    --x-orange:  #FF7A00;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--x-bg); color: var(--x-text); }
+
+  /* NAV */
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 52px; background: rgba(0,0,0,.92); border-bottom: 1px solid var(--x-border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+  .nav-brand { font-size: 15px; font-weight: 600; color: #fff; text-decoration: none; letter-spacing: -.3px; }
+  .nav-brand span { color: var(--x-blue); }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a { color: var(--x-muted); text-decoration: none; font-size: 13px; transition: color .2s; }
+  .nav-links a:hover { color: #fff; }
+  .nav-badge { color: var(--x-blue); font-weight: 700; font-size: 11px; font-family: monospace; }
+
+  /* HERO */
+  .hero { padding: 64px 24px 48px; max-width: 960px; margin: 0 auto; text-align: center; }
+  .skill-path { font-size: 12px; color: var(--x-muted); letter-spacing: .5px; margin-bottom: 16px; font-family: monospace; }
+  .skill-path span { color: #fff; }
+  .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 12px; line-height: 1.1; }
+  .hero h1 em { font-style: normal; color: var(--x-blue); }
+  .hero p { color: var(--x-muted); font-size: 16px; max-width: 560px; margin: 0 auto 32px; line-height: 1.6; }
+  .hero-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-val { font-size: 22px; font-weight: 800; color: var(--x-blue); }
+  .stat-label { font-size: 11px; color: var(--x-muted); margin-top: 2px; }
+
+  /* X APP CHROME */
+  .demo-section { max-width: 960px; margin: 0 auto 64px; padding: 0 24px; }
+  .section-label { font-size: 11px; color: var(--x-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; }
+
+  .x-app { background: var(--x-bg); border: 1px solid var(--x-border); border-radius: 16px; overflow: hidden; display: flex; height: 600px; box-shadow: 0 24px 80px rgba(0,0,0,.7); }
+
+  /* LEFT NAV */
+  .x-nav { width: 72px; border-right: 1px solid var(--x-border); display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 4px; flex-shrink: 0; }
+  .x-nav-logo { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+  .x-nav-logo svg { width: 24px; height: 24px; fill: #fff; }
+  .x-nav-item { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .15s; color: var(--x-text); position: relative; }
+  .x-nav-item:hover { background: rgba(255,255,255,.08); }
+  .x-nav-item.active { color: var(--x-blue); }
+  .x-nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .x-nav-badge { position: absolute; top: 4px; right: 4px; width: 16px; height: 16px; background: var(--x-blue); border-radius: 50%; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid var(--x-bg); }
+  .x-post-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--x-blue); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 8px; transition: opacity .2s; }
+  .x-post-btn:hover { opacity: .85; }
+
+  /* MAIN FEED */
+  .x-main { flex: 1; display: flex; flex-direction: column; min-width: 0; border-right: 1px solid var(--x-border); }
+  .x-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(12px); border-bottom: 1px solid var(--x-border); position: sticky; top: 0; background: rgba(0,0,0,.85); z-index: 10; }
+  .x-header-title { font-size: 18px; font-weight: 800; }
+  .x-tabs { display: flex; border-bottom: 1px solid var(--x-border); }
+  .x-tab { flex: 1; padding: 14px; text-align: center; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--x-muted); position: relative; transition: color .2s; }
+  .x-tab.active { color: var(--x-text); font-weight: 700; }
+  .x-tab.active::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 32px; height: 3px; background: var(--x-blue); border-radius: 2px; }
+  .x-feed { flex: 1; overflow-y: auto; }
+  .x-tweet { padding: 14px 16px; border-bottom: 1px solid var(--x-border); cursor: pointer; transition: background .12s; display: flex; gap: 10px; }
+  .x-tweet:hover { background: rgba(255,255,255,.02); }
+  .x-tweet.highlight { background: rgba(29,155,240,.04); border-left: 2px solid var(--x-blue); }
+  .x-tweet-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; }
+  .x-tweet-body { flex: 1; min-width: 0; }
+  .x-tweet-header { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+  .x-tweet-name { font-weight: 700; font-size: 14px; }
+  .x-tweet-handle { color: var(--x-muted); font-size: 14px; }
+  .x-tweet-time { color: var(--x-muted); font-size: 14px; }
+  .x-tweet-text { font-size: 15px; line-height: 1.55; color: var(--x-text); word-wrap: break-word; }
+  .x-tweet-text .mention { color: var(--x-blue); }
+  .x-tweet-actions { display: flex; gap: 20px; margin-top: 10px; }
+  .x-action { display: flex; align-items: center; gap: 5px; color: var(--x-muted); font-size: 13px; cursor: pointer; transition: color .15s; }
+  .x-action:hover { color: var(--x-blue); }
+  .x-action.liked { color: var(--x-red); }
+  .x-action.retweeted { color: var(--x-green); }
+  .x-action svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .x-action.liked svg { fill: var(--x-red); }
+
+  /* BOT REPLY TWEET */
+  .x-reply-indicator { font-size: 12px; color: var(--x-muted); margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+  .x-thread-line { width: 2px; background: var(--x-border); margin: 4px auto; height: 20px; }
+
+  /* AI PROCESSING PANEL */
+  .x-ai-panel { background: var(--x-surface); border: 1px solid var(--x-border); border-radius: 12px; padding: 16px; margin-top: 4px; display: none; }
+  .x-ai-panel.visible { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .x-ai-title { font-size: 11px; color: var(--x-muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
+  .x-ai-step { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 12px; color: var(--x-muted); transition: color .3s; }
+  .x-ai-step.done { color: var(--x-text); }
+  .x-ai-step.active { color: var(--x-text); }
+  .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--x-border); flex-shrink: 0; transition: background .3s; }
+  .x-ai-step.done .step-dot { background: var(--x-green); }
+  .x-ai-step.active .step-dot { background: var(--x-blue); animation: blink 1s infinite; }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .2; } }
+
+  /* RATE LIMIT BAR */
+  .rate-bar { background: var(--x-surface); border: 1px solid var(--x-border); border-radius: 12px; padding: 14px 16px; margin-top: 16px; }
+  .rate-bar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .rate-bar-label { font-size: 12px; font-weight: 700; }
+  .rate-bar-reset { font-size: 11px; color: var(--x-muted); }
+  .rate-limits { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .rate-item { font-size: 12px; }
+  .rate-name { color: var(--x-muted); margin-bottom: 4px; }
+  .rate-track { height: 4px; background: var(--x-border); border-radius: 2px; overflow: hidden; }
+  .rate-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+  .rate-fill.ok { background: var(--x-green); }
+  .rate-fill.warn { background: var(--x-orange); }
+  .rate-fill.crit { background: var(--x-red); }
+  .rate-nums { display: flex; justify-content: space-between; margin-top: 3px; font-size: 10px; color: var(--x-muted); }
+
+  /* RIGHT PANEL */
+  .x-right { width: 300px; padding: 12px 16px; overflow-y: auto; flex-shrink: 0; }
+  .x-widget { background: var(--x-surface); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+  .x-widget-title { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
+  .x-tier-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+  .tier-basic { background: rgba(255,122,0,.15); color: var(--x-orange); border: 1px solid rgba(255,122,0,.3); }
+  .tier-pro { background: rgba(29,155,240,.15); color: var(--x-blue); border: 1px solid rgba(29,155,240,.3); }
+  .x-tier-row { font-size: 13px; margin-bottom: 8px; display: flex; justify-content: space-between; color: var(--x-muted); }
+  .x-tier-row span { color: var(--x-text); font-weight: 600; }
+  .x-cron-indicator { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 8px 10px; background: rgba(0,186,124,.08); border: 1px solid rgba(0,186,124,.2); border-radius: 8px; color: var(--x-green); margin-top: 8px; }
+  .x-cron-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--x-green); animation: blink 1.5s infinite; }
+
+  /* COMPOSE */
+  .x-compose { border-bottom: 1px solid var(--x-border); padding: 12px 16px; display: flex; gap: 10px; }
+  .x-compose-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--x-blue); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .x-compose-input { flex: 1; background: transparent; border: none; outline: none; color: var(--x-text); font-size: 18px; resize: none; min-height: 60px; font-family: inherit; }
+  .x-compose-input::placeholder { color: var(--x-muted); }
+  .x-compose-actions { display: flex; align-items: center; justify-content: flex-end; margin-top: 8px; gap: 8px; }
+  .x-char-count { font-size: 13px; color: var(--x-muted); }
+  .x-char-count.warn { color: var(--x-orange); }
+  .x-tweet-btn { background: var(--x-blue); color: #fff; border: none; border-radius: 20px; padding: 7px 16px; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+  /* ARCH / COMPARE */
+  .arch-section { max-width: 960px; margin: 0 auto 64px; padding: 0 24px; }
+  .arch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 20px; }
+  .arch-card { background: var(--x-surface); border: 1px solid var(--x-border); border-radius: 12px; padding: 20px; }
+  .arch-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .arch-card p { font-size: 13px; color: var(--x-muted); line-height: 1.6; }
+  .arch-icon { font-size: 18px; }
+
+  /* TIER TABLE */
+  .tier-section { max-width: 960px; margin: 0 auto 64px; padding: 0 24px; }
+  .tier-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 20px; }
+  .tier-table th { padding: 10px 14px; text-align: left; font-size: 11px; color: var(--x-muted); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--x-border); }
+  .tier-table td { padding: 11px 14px; border-bottom: 1px solid rgba(255,255,255,.04); }
+  .tier-table tr:hover td { background: rgba(255,255,255,.02); }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .tag.yes { background: rgba(0,186,124,.15); color: var(--x-green); }
+  .tag.no { background: rgba(244,33,46,.12); color: var(--x-red); }
+  .tag.warn { background: rgba(255,122,0,.15); color: var(--x-orange); }
+
+  /* WIZARD */
+  .wizard-section { max-width: 960px; margin: 0 auto 64px; padding: 0 24px; }
+  .wizard { background: var(--x-surface); border: 1px solid var(--x-border); border-radius: 16px; overflow: hidden; }
+  .wizard-steps { display: flex; border-bottom: 1px solid var(--x-border); }
+  .wizard-step { flex: 1; padding: 14px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: background .15s; }
+  .wizard-step:hover { background: rgba(255,255,255,.03); }
+  .wizard-step.active { background: rgba(29,155,240,.06); }
+  .step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--x-border); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .3s; }
+  .wizard-step.active .step-num { background: var(--x-blue); }
+  .wizard-step.done .step-num { background: var(--x-green); }
+  .step-label { font-size: 12px; font-weight: 600; }
+  .step-sub { font-size: 10px; color: var(--x-muted); }
+  .wizard-body { padding: 28px; min-height: 220px; }
+  .wizard-pane { display: none; }
+  .wizard-pane.active { display: block; animation: fadeIn .25s ease; }
+  .wizard-pane h3 { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+  .wizard-pane > p { font-size: 13px; color: var(--x-muted); margin-bottom: 20px; line-height: 1.6; }
+  .checklist { display: flex; flex-direction: column; gap: 10px; }
+  .check-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; }
+  .check-item::before { content: '✓'; color: var(--x-green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .code-block { background: #0D0D0D; border: 1px solid var(--x-border); border-radius: 8px; padding: 14px 16px; font-family: monospace; font-size: 12px; color: #E8E8E8; line-height: 1.7; margin-bottom: 16px; overflow-x: auto; }
+  .code-block .k { color: #C792EA; }
+  .code-block .s { color: #C3E88D; }
+  .code-block .c { color: #546E7A; }
+  .code-block .v { color: #82AAFF; }
+  .wizard-nav { display: flex; justify-content: flex-end; margin-top: 20px; }
+  .btn-next { background: var(--x-blue); color: #fff; border: none; border-radius: 20px; padding: 9px 22px; font-size: 13px; font-weight: 700; cursor: pointer; }
+
+  /* BEFORE/AFTER */
+  .ba-section { max-width: 960px; margin: 0 auto 80px; padding: 0 24px; }
+  .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+  .ba-card { background: var(--x-surface); border: 1px solid var(--x-border); border-radius: 12px; padding: 20px; }
+  .ba-label { font-size: 11px; font-weight: 700; letter-spacing: .5px; margin-bottom: 14px; }
+  .ba-label.before { color: var(--x-red); }
+  .ba-label.after { color: var(--x-blue); }
+  .ba-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--x-muted); margin-bottom: 10px; line-height: 1.5; }
+  .ba-card.before .ba-item::before { content: '✗'; color: var(--x-red); font-weight: 700; flex-shrink: 0; }
+  .ba-card.after .ba-item::before { content: '✓'; color: var(--x-green); font-weight: 700; flex-shrink: 0; }
+
+  footer { border-top: 1px solid var(--x-border); padding: 32px 24px; text-align: center; font-size: 12px; color: var(--x-muted); }
+  footer a { color: var(--x-muted); text-decoration: none; }
+  footer a:hover { color: #fff; }
+
+  @media(max-width: 760px) {
+    .x-right { display: none; }
+    .x-nav { width: 52px; }
+    .ba-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">skills<span>.2nth.ai</span></a>
+  <div class="nav-links">
+    <span class="nav-badge">tech/x</span>
+    <a href="/tech">← tech</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="skill-path">tech / <span>x</span></div>
+  <h1><em>X (Twitter)</em> API v2</h1>
+  <p>Monitor mentions, reply with AI, post threads, and send DMs — automated on Cloudflare Workers with smart rate limit handling.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-val">500M+</div><div class="stat-label">monthly active users</div></div>
+    <div class="stat"><div class="stat-val">5 min</div><div class="stat-label">cron poll interval</div></div>
+    <div class="stat"><div class="stat-val">280</div><div class="stat-label">char reply cap</div></div>
+    <div class="stat"><div class="stat-val">v2</div><div class="stat-label">API version</div></div>
+  </div>
+</section>
+
+<!-- X APP DEMO -->
+<section class="demo-section">
+  <div class="section-label">Live Demo — X Mention AI Agent</div>
+  <div class="x-app">
+    <!-- Left Nav -->
+    <div class="x-nav">
+      <div class="x-nav-logo">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </div>
+      <div class="x-nav-item active" title="Home">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+      </div>
+      <div class="x-nav-item" title="Search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </div>
+      <div class="x-nav-item" title="Notifications" style="position:relative">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="x-nav-badge">3</div>
+      </div>
+      <div class="x-nav-item" title="Messages">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <button class="x-post-btn" title="Post">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </div>
+
+    <!-- Main Feed -->
+    <div class="x-main">
+      <div class="x-header">
+        <div class="x-header-title">Notifications</div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      </div>
+      <div class="x-tabs">
+        <div class="x-tab active">All</div>
+        <div class="x-tab">Mentions</div>
+        <div class="x-tab">Replies</div>
+      </div>
+      <div class="x-feed" id="x-feed">
+
+        <!-- Mention 1 — incoming -->
+        <div class="x-tweet highlight" id="tweet-1" onclick="processTweet(1)">
+          <div class="x-tweet-avatar" style="background:#833AB4">T</div>
+          <div class="x-tweet-body">
+            <div class="x-tweet-header">
+              <span class="x-tweet-name">tshepiso_dev</span>
+              <span class="x-tweet-handle">@tshepiso_dev · 2m</span>
+            </div>
+            <div class="x-tweet-text"><span class="mention">@2nthai</span> does your platform support WhatsApp + X automation in the same Worker? asking for a client project 🤔</div>
+            <div class="x-tweet-actions">
+              <div class="x-action"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Reply</div>
+              <div class="x-action"><svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> 3</div>
+              <div class="x-action" onclick="toggleLike(event, this)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 14</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mention 2 -->
+        <div class="x-tweet" id="tweet-2" onclick="processTweet(2)">
+          <div class="x-tweet-avatar" style="background:#1D9BF0">N</div>
+          <div class="x-tweet-body">
+            <div class="x-tweet-header">
+              <span class="x-tweet-name">nokwanda.ai</span>
+              <span class="x-tweet-handle">@nokwanda_ai · 8m</span>
+            </div>
+            <div class="x-tweet-text"><span class="mention">@2nthai</span> just tried the Slack skill — the Block Kit builder is 🔥. when is the X integration shipping?</div>
+            <div class="x-tweet-actions">
+              <div class="x-action"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Reply</div>
+              <div class="x-action"><svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> 7</div>
+              <div class="x-action"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 31</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mention 3 — support -->
+        <div class="x-tweet" id="tweet-3" onclick="processTweet(3)">
+          <div class="x-tweet-avatar" style="background:#F4212E">L</div>
+          <div class="x-tweet-body">
+            <div class="x-tweet-header">
+              <span class="x-tweet-name">lebo_startup</span>
+              <span class="x-tweet-handle">@lebo_startup · 15m</span>
+            </div>
+            <div class="x-tweet-text"><span class="mention">@2nthai</span> getting a 429 on the search endpoint — running on Basic tier. is there a workaround?</div>
+            <div class="x-tweet-actions">
+              <div class="x-action"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Reply</div>
+              <div class="x-action"><svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> 2</div>
+              <div class="x-action"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 5</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Placeholder for replies -->
+        <div id="replies-container"></div>
+
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="x-right">
+      <div class="x-widget">
+        <div class="x-widget-title">Your tier</div>
+        <div class="x-tier-badge tier-basic">● Basic — $100/mo</div>
+        <div class="x-tier-row">Search/15min <span>60 req</span></div>
+        <div class="x-tier-row">Write/24h <span>100 tweets</span></div>
+        <div class="x-tier-row">Stream <span style="color:var(--x-red)">✗</span></div>
+        <div class="x-tier-row">DMs/24h <span>100</span></div>
+        <div class="x-cron-indicator">
+          <div class="x-cron-dot"></div>
+          Cron polling every 5 min
+        </div>
+      </div>
+
+      <div class="x-widget">
+        <div class="x-widget-title">Rate limits</div>
+        <div class="rate-limits">
+          <div class="rate-item">
+            <div class="rate-name">search/recent</div>
+            <div class="rate-track"><div class="rate-fill ok" id="rl1" style="width:28%"></div></div>
+            <div class="rate-nums"><span>17 used</span><span>60</span></div>
+          </div>
+          <div class="rate-item">
+            <div class="rate-name">post tweet</div>
+            <div class="rate-track"><div class="rate-fill warn" id="rl2" style="width:63%"></div></div>
+            <div class="rate-nums"><span>63 used</span><span>100</span></div>
+          </div>
+          <div class="rate-item">
+            <div class="rate-name">DM send</div>
+            <div class="rate-track"><div class="rate-fill ok" id="rl3" style="width:8%"></div></div>
+            <div class="rate-nums"><span>8 used</span><span>100</span></div>
+          </div>
+          <div class="rate-item">
+            <div class="rate-name">users lookup</div>
+            <div class="rate-track"><div class="rate-fill crit" id="rl4" style="width:89%"></div></div>
+            <div class="rate-nums"><span>267 used</span><span>300</span></div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--x-muted);margin-top:10px;">Resets in 8m 22s</div>
+      </div>
+
+      <div class="x-widget" style="font-size:12px;color:var(--x-muted);line-height:1.6;">
+        <div style="font-weight:700;color:var(--x-text);margin-bottom:8px;">Processing mode</div>
+        Click any mention above to see the AI pipeline run in real time.
+        <br><br>
+        Cron fires every 5 min → fetches new mentions since last <code style="color:var(--x-blue)">since_id</code> → classifies intent → Claude drafts reply → posts.
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Panel -->
+  <div class="x-ai-panel" id="ai-panel">
+    <div class="x-ai-title">AI processing pipeline — <span id="ai-tweet-ref" style="color:var(--x-blue)"></span></div>
+    <div class="x-ai-step" id="xs1"><div class="step-dot"></div> Cron fires → GET /2/tweets/search/recent?since_id=<span id="since-id" style="color:var(--x-blue)">18741…</span></div>
+    <div class="x-ai-step" id="xs2"><div class="step-dot"></div> KV dedup check — tweet ID not seen, proceeding</div>
+    <div class="x-ai-step" id="xs3"><div class="step-dot"></div> Workers AI (Llama 3.1 8B) — classified as <strong id="ai-intent" style="color:var(--x-blue)"></strong></div>
+    <div class="x-ai-step" id="xs4"><div class="step-dot"></div> Claude Sonnet 4.6 via AI Gateway — reply drafted (≤280 chars)</div>
+    <div class="x-ai-step" id="xs5"><div class="step-dot"></div> POST /2/tweets — reply posted, in_reply_to_tweet_id set</div>
+    <div class="x-ai-step" id="xs6"><div class="step-dot"></div> D1 insert + KV since_id updated</div>
+  </div>
+
+  <!-- Rate limit sim trigger -->
+  <div style="background:var(--x-surface);border:1px solid var(--x-border);border-radius:12px;padding:14px 16px;margin-top:16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;" onclick="sim429()">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="width:36px;height:36px;border-radius:50%;background:rgba(244,33,46,.15);display:flex;align-items:center;justify-content:center;font-size:16px;">🚦</div>
+      <div>
+        <div style="font-size:14px;font-weight:700;">Simulate 429 rate limit</div>
+        <div style="font-size:12px;color:var(--x-muted);">See how the Worker handles backoff and retry scheduling</div>
+      </div>
+    </div>
+    <div style="color:var(--x-muted);font-size:18px;">›</div>
+  </div>
+  <div id="rate-log" style="display:none;background:#0D0D0D;border:1px solid var(--x-border);border-radius:12px;padding:14px;margin-top:10px;font-family:monospace;font-size:12px;color:#4CAF50;line-height:1.8;"></div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="arch-section">
+  <div class="section-label">Architecture</div>
+  <div class="arch-grid">
+    <div class="arch-card">
+      <h4><span class="arch-icon">⏰</span> Cron Trigger polling</h4>
+      <p>Basic tier has no push webhooks. A Cron Trigger fires every 5 minutes, fetches new mentions via <code>since_id</code> to avoid reprocessing. Zero gap on Pro with filtered stream.</p>
+    </div>
+    <div class="arch-card">
+      <h4><span class="arch-icon">🔑</span> OAuth 2.0 PKCE</h4>
+      <p>Posting tweets and DMs requires user context OAuth 2.0 PKCE. Access token cached in KV with auto-refresh 5 minutes before expiry. Bearer token used for read-only searches.</p>
+    </div>
+    <div class="arch-card">
+      <h4><span class="arch-icon">🗃️</span> KV deduplication</h4>
+      <p>Each processed tweet ID is stored in KV with 7-day TTL. <code>since_id</code> also stored to narrow API queries. Prevents double-replies even if cron overlaps.</p>
+    </div>
+    <div class="arch-card">
+      <h4><span class="arch-icon">🚦</span> Rate limit awareness</h4>
+      <p>Every response header is checked for <code>x-rate-limit-remaining</code>. On 429, the reset timestamp is logged and processing is skipped — no retry loops that burn quota.</p>
+    </div>
+    <div class="arch-card">
+      <h4><span class="arch-icon">🧵</span> Thread context</h4>
+      <p>KV context keyed on <code>conversation_id</code> (the root tweet), not individual tweet IDs. Claude sees the full thread when replying deep in a conversation.</p>
+    </div>
+    <div class="arch-card">
+      <h4><span class="arch-icon">🤫</span> Noise filtering</h4>
+      <p>Query includes <code>-is:retweet -from:ownId</code>. <code>is_echo</code> guard skips own replies. Spam intent classification means the bot never engages with troll mentions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TIER TABLE -->
+<section class="tier-section">
+  <div class="section-label">API tier comparison</div>
+  <table class="tier-table">
+    <thead>
+      <tr><th>Feature</th><th>Free</th><th>Basic ($100/mo)</th><th>Pro ($5k/mo)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Filtered stream</td><td><span class="tag no">✗</span></td><td><span class="tag no">✗</span></td><td><span class="tag yes">✓</span></td></tr>
+      <tr><td>Search/recent</td><td><span class="tag no">✗</span></td><td><span class="tag yes">60/15min</span></td><td><span class="tag yes">300/15min</span></td></tr>
+      <tr><td>Write tweets/day</td><td><span class="tag warn">1,500</span></td><td><span class="tag yes">3,000</span></td><td><span class="tag yes">300,000</span></td></tr>
+      <tr><td>Direct Messages</td><td><span class="tag no">✗</span></td><td><span class="tag yes">100/day</span></td><td><span class="tag yes">1,000/day</span></td></tr>
+      <tr><td>Read tweets/mo</td><td><span class="tag no">✗</span></td><td><span class="tag yes">10k</span></td><td><span class="tag yes">1M</span></td></tr>
+      <tr><td>Recommended approach</td><td>Write-only bots</td><td><span class="tag warn">Cron polling</span></td><td><span class="tag yes">Filtered stream</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- WIZARD -->
+<section class="wizard-section">
+  <div class="section-label">Connection guide</div>
+  <div class="wizard">
+    <div class="wizard-steps">
+      <div class="wizard-step active" id="ws1" onclick="goWizard(1)">
+        <div class="step-num" id="wn1">1</div>
+        <div><div class="step-label">Create X App</div><div class="step-sub">developer.twitter.com</div></div>
+      </div>
+      <div class="wizard-step" id="ws2" onclick="goWizard(2)">
+        <div class="step-num" id="wn2">2</div>
+        <div><div class="step-label">OAuth + tokens</div><div class="step-sub">PKCE flow</div></div>
+      </div>
+      <div class="wizard-step" id="ws3" onclick="goWizard(3)">
+        <div class="step-num" id="wn3">3</div>
+        <div><div class="step-label">Deploy Worker</div><div class="step-sub">Cron + secrets</div></div>
+      </div>
+    </div>
+    <div class="wizard-body">
+      <div class="wizard-pane active" id="wp1">
+        <h3>Create an X Developer App</h3>
+        <p>All API access requires an approved developer account and a project with an App. Basic tier is self-serve; just upgrade via the Developer Portal.</p>
+        <div class="checklist">
+          <div class="check-item">Go to <strong>developer.twitter.com → Projects & Apps → New Project</strong></div>
+          <div class="check-item">Create an App inside the project — note your <strong>Client ID</strong> and <strong>Client Secret</strong></div>
+          <div class="check-item">Under <strong>App Settings → User authentication settings</strong> — enable OAuth 2.0</div>
+          <div class="check-item">Set scopes: <code>tweet.read tweet.write users.read dm.read dm.write offline.access</code></div>
+          <div class="check-item">Set Callback URI to your Worker URL: <code>https://your-worker.workers.dev/callback</code></div>
+          <div class="check-item">Generate a <strong>Bearer Token</strong> for App-only search (read public tweets without user auth)</div>
+        </div>
+        <div class="wizard-nav"><button class="btn-next" onclick="goWizard(2)">Next →</button></div>
+      </div>
+      <div class="wizard-pane" id="wp2">
+        <h3>Run the OAuth 2.0 PKCE flow</h3>
+        <p>Posting tweets requires a user context token. Run the OAuth flow once to get a refresh token, then the Worker auto-refreshes it via KV.</p>
+        <div class="code-block"><span class="c"># 1. Visit the auth URL from your Worker /auth endpoint</span>
+<span class="c">#    Worker generates PKCE verifier + redirects to X</span>
+
+<span class="c"># 2. X redirects back to /callback with ?code=...</span>
+<span class="c">#    Worker exchanges code for tokens and stores in KV:</span>
+<span class="v">x_access_token</span>   <span class="c"># expires in ~2h, auto-refreshed</span>
+<span class="v">x_refresh_token</span>  <span class="c"># permanent — store securely in KV</span></div>
+        <div class="checklist">
+          <div class="check-item">Deploy the Worker first, then visit <code>/auth</code> to kick off the flow</div>
+          <div class="check-item">After OAuth, verify with: <code>GET /2/users/me</code> — should return your account</div>
+          <div class="check-item">Store your numeric user ID as <code>X_OWN_USER_ID</code> secret to filter your own tweets from mentions</div>
+        </div>
+        <div class="wizard-nav"><button class="btn-next" onclick="goWizard(3)">Next →</button></div>
+      </div>
+      <div class="wizard-pane" id="wp3">
+        <h3>Add secrets and deploy with Cron</h3>
+        <p>Five secrets needed. The <code>wrangler.toml</code> cron schedule controls polling frequency — every 5 minutes is the sweet spot for Basic tier.</p>
+        <div class="code-block"><span class="c"># wrangler.toml</span>
+<span class="k">name</span> = <span class="s">"x-bot"</span>
+[triggers]
+<span class="k">crons</span> = [<span class="s">"*/5 * * * *"</span>]
+
+<span class="c"># Secrets</span>
+<span class="k">wrangler</span> secret put <span class="v">BEARER_TOKEN</span>
+<span class="k">wrangler</span> secret put <span class="v">X_CLIENT_ID</span>
+<span class="k">wrangler</span> secret put <span class="v">X_CLIENT_SECRET</span>
+<span class="k">wrangler</span> secret put <span class="v">X_REDIRECT_URI</span>
+<span class="k">wrangler</span> secret put <span class="v">X_OWN_USER_ID</span></div>
+        <div class="checklist">
+          <div class="check-item">Deploy: <code>wrangler deploy</code> — Cron starts on first scheduled trigger</div>
+          <div class="check-item">Force a test run: <code>wrangler dev --test-scheduled</code> then <code>curl "http://localhost:8787/__scheduled"</code></div>
+          <div class="check-item">Check D1 after first run: <code>wrangler d1 execute DB --command "SELECT * FROM x_mentions"</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEFORE / AFTER -->
+<section class="ba-section">
+  <div class="section-label">Impact</div>
+  <div class="ba-grid">
+    <div class="ba-card before">
+      <div class="ba-label before">WITHOUT THIS SKILL</div>
+      <div class="ba-item">Mentions go unanswered for hours — public visibility with no response</div>
+      <div class="ba-item">Support questions on X get lost in notification noise</div>
+      <div class="ba-item">No conversation threading — every reply starts cold</div>
+      <div class="ba-item">Spam mentions get equal attention as genuine enquiries</div>
+      <div class="ba-item">Rate limits hit unpredictably — no visibility until 429 in production</div>
+    </div>
+    <div class="ba-card after">
+      <div class="ba-label after">WITH THIS SKILL</div>
+      <div class="ba-item">Mentions answered within 5 minutes, 24/7, in brand voice</div>
+      <div class="ba-item">Intent classification routes product, support, and feedback separately</div>
+      <div class="ba-item">Conversation context in KV — coherent multi-turn thread replies</div>
+      <div class="ba-item">Spam filtered at classify step — bot only engages meaningfully</div>
+      <div class="ba-item">Rate limit headers read on every call — backoff built in, no surprise 429s</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><a href="/">skills.2nth.ai</a> · <a href="/tech">tech</a> · <a href="/tech/meta">tech/meta</a> · MIT License</p>
+</footer>
+
+<script>
+// ─── TWEET PROCESSING ─────────────────────────────────────────────────────────
+const tweetData = {
+  1: { handle: 'tshepiso_dev', text: 'does your platform support WhatsApp + X automation in the same Worker?', intent: 'product' },
+  2: { handle: 'nokwanda_ai',  text: 'just tried the Slack skill — the Block Kit builder is fire. when is the X integration shipping?', intent: 'feedback' },
+  3: { handle: 'lebo_startup', text: 'getting a 429 on the search endpoint — running on Basic tier. is there a workaround?', intent: 'support' },
+};
+
+const aiReplies = {
+  1: "Yes — one Worker handles both. WhatsApp via Meta webhook, X via Cron polling. Different auth, same D1/KV. skills.2nth.ai/tech has the full patterns. 🔧",
+  2: "It's live now 👀 skills.2nth.ai/tech/x — Cron polling for Basic tier, filtered stream for Pro. Glad you're finding the Slack skill useful!",
+  3: "Basic tier: 60 search req/15min. Set cron to */5 and use since_id to fetch only new tweets each poll. Read x-rate-limit-remaining on every call and skip if <3. skills.2nth.ai/tech/x has the handler.",
+};
+
+let processing = new Set();
+
+function processTweet(id) {
+  if (processing.has(id)) return;
+  processing.add(id);
+
+  const tweet = tweetData[id];
+  const panel = document.getElementById('ai-panel');
+  panel.classList.add('visible');
+
+  document.getElementById('ai-tweet-ref').textContent = `@${tweet.handle}`;
+  document.getElementById('ai-intent').textContent = tweet.intent;
+
+  const steps = ['xs1','xs2','xs3','xs4','xs5','xs6'];
+  steps.forEach(s => { document.getElementById(s).className = 'x-ai-step'; });
+
+  steps.forEach((s, i) => {
+    setTimeout(() => {
+      document.getElementById(s).classList.add('active');
+      setTimeout(() => document.getElementById(s).classList.add('done'), 600);
+    }, i * 500);
+  });
+
+  // Show reply tweet after processing
+  setTimeout(() => {
+    addReplyTweet(id, tweet.handle, aiReplies[id]);
+    // Update rate bars
+    const r1 = document.getElementById('rl1');
+    const w = Math.min(100, parseInt(r1.style.width) + 5);
+    r1.style.width = w + '%';
+    if (w > 70) r1.className = 'rate-fill warn';
+    if (w > 90) r1.className = 'rate-fill crit';
+
+    const r2 = document.getElementById('rl2');
+    const w2 = Math.min(100, parseInt(r2.style.width) + 3);
+    r2.style.width = w2 + '%';
+    if (w2 > 90) r2.className = 'rate-fill crit';
+  }, steps.length * 500 + 600);
+}
+
+function addReplyTweet(id, handle, replyText) {
+  const container = document.getElementById('replies-container');
+  const div = document.createElement('div');
+  div.className = 'x-tweet';
+  div.style.borderLeft = '2px solid rgba(29,155,240,.3)';
+  div.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+      <div class="x-tweet-avatar" style="background:var(--x-surface);border:1px solid var(--x-border);font-size:11px;font-weight:700;color:var(--x-blue)">2N</div>
+    </div>
+    <div class="x-tweet-body">
+      <div class="x-reply-indicator">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Replying to <span style="color:var(--x-blue)">@${handle}</span>
+      </div>
+      <div class="x-tweet-header">
+        <span class="x-tweet-name">2nth.ai</span>
+        <span class="x-tweet-handle">@2nthai · just now</span>
+        <span style="font-size:11px;background:rgba(29,155,240,.12);color:var(--x-blue);padding:1px 6px;border-radius:8px;font-weight:700;">AI</span>
+      </div>
+      <div class="x-tweet-text"><span class="mention">@${handle}</span> ${replyText}</div>
+      <div style="font-size:11px;color:var(--x-muted);margin-top:6px;">${replyText.length} / 280 chars</div>
+      <div class="x-tweet-actions">
+        <div class="x-action"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="x-action"><svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+        <div class="x-action"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+      </div>
+    </div>`;
+  div.style.animation = 'fadeIn .4s ease';
+  container.appendChild(div);
+  container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function toggleLike(e, el) {
+  e.stopPropagation();
+  el.classList.toggle('liked');
+}
+
+// ─── 429 SIMULATION ───────────────────────────────────────────────────────────
+let sim429Done = false;
+function sim429() {
+  if (sim429Done) return;
+  sim429Done = true;
+
+  const log = document.getElementById('rate-log');
+  log.style.display = 'block';
+
+  const lines = [
+    { t: 0,    c: '#E8E8E8', v: '› [cron] GET /2/tweets/search/recent?since_id=18741…' },
+    { t: 400,  c: '#F4212E', v: '✗ HTTP 429  x-rate-limit-remaining: 0' },
+    { t: 800,  c: '#71767B', v: '  x-rate-limit-reset: 1735024920 (in 8m 22s)' },
+    { t: 1200, c: '#E8E8E8', v: '› logging rate limit event to D1' },
+    { t: 1600, c: '#4CAF50', v: '✓ skipping processing — will retry at next cron tick' },
+    { t: 2000, c: '#71767B', v: '  (next tick in ~5min, well after reset window)' },
+    { t: 2500, c: '#E8E8E8', v: '─────────────────────────────────────────────────' },
+    { t: 2800, c: '#71767B', v: '  [cron +5min] checking remaining before fetch…' },
+    { t: 3200, c: '#4CAF50', v: '✓ x-rate-limit-remaining: 47  — proceeding' },
+    { t: 3600, c: '#4CAF50', v: '✓ GET /2/tweets/search/recent → 200 OK (6 results)' },
+  ];
+
+  // Max out the rate bar
+  const r1 = document.getElementById('rl1');
+  r1.style.width = '100%';
+  r1.className = 'rate-fill crit';
+
+  lines.forEach(({ t, c, v }) => {
+    setTimeout(() => {
+      const line = document.createElement('div');
+      line.textContent = v;
+      line.style.color = c;
+      log.appendChild(line);
+      log.scrollTop = log.scrollHeight;
+
+      // Recover rate bar toward end
+      if (t === 3600) {
+        setTimeout(() => {
+          r1.style.width = '22%';
+          r1.className = 'rate-fill ok';
+        }, 500);
+      }
+    }, t);
+  });
+}
+
+// ─── WIZARD ───────────────────────────────────────────────────────────────────
+function goWizard(n) {
+  for (let i = 1; i <= 3; i++) {
+    document.getElementById(`wp${i}`).classList.remove('active');
+    document.getElementById(`ws${i}`).classList.remove('active');
+    document.getElementById(`ws${i}`).classList.remove('done');
+    document.getElementById(`wn${i}`).textContent = i;
+  }
+  for (let i = 1; i < n; i++) {
+    document.getElementById(`ws${i}`).classList.add('done');
+    document.getElementById(`wn${i}`).textContent = '✓';
+  }
+  document.getElementById(`wp${n}`).classList.add('active');
+  document.getElementById(`ws${n}`).classList.add('active');
+}
+
+// Auto-trigger first tweet after 1s
+setTimeout(() => processTweet(1), 1000);
+</script>
+</body>
+</html>

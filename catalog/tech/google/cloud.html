@@ -33,12 +33,8 @@
     .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
     .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
     .icon-sun, .icon-moon { display: none; }
-    html:not([data-theme="dark"]) .icon-sun { display: block; }
     html[data-theme="dark"] .icon-moon { display: block; }
-    @media (prefers-color-scheme: dark) {
-      html:not([data-theme]) .icon-sun { display: none; }
-      html:not([data-theme]) .icon-moon { display: block; }
-    }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
 
     .btn-gh {
       display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
@@ -177,10 +173,10 @@
     <div class="skill-header">
       <div class="skill-path">tech/google/cloud</div>
       <h1>CLOUD</h1>
-      <p class="skill-desc">Google Cloud Platform (GCP) infrastructure skill.</p>
+      <p class="skill-desc">Google Cloud Platform (GCP) skills. Use skills in this domain when:</p>
       <div class="skill-meta">
         <span class="badge badge-prod">production</span>
-        <span style="font-size:13px;color:var(--text-muted)">Google Cloud SDK, REST APIs, Terraform, Cloudflare Workers (fetch)</span>
+        <span style="font-size:13px;color:var(--text-muted)">gcloud CLI, bq, gsutil, GCP SDK v3 (Node/Python/Go), Terraform</span>
         
       </div>
       <div class="meta-requires">
@@ -197,167 +193,172 @@
       
 <h1>Google Cloud Platform (GCP)</h1>
 
-<p>GCP is the 2nth.ai choice for compute-heavy workloads that don't fit the Cloudflare edge model — containerised legacy apps (ERPNext, Frappe), large relational databases, and ML training. The pattern is: <strong>Cloudflare at the edge → GCP for the heavy lift</strong>.</p>
+<p>GCP is the 2nth.ai choice for:</p>
+<ul><li><strong>AI/ML workloads</strong> via Vertex AI (Gemini, embeddings, managed endpoints) — often the reason to pick GCP over AWS.</li><li><strong>Analytics at scale</strong> via BigQuery — serverless, sub-second on billions of rows, pay per TB scanned.</li><li><strong>Event streaming</strong> via Pub/Sub — simpler than Kafka, deeply integrated with Dataflow and BigQuery.</li><li><strong>Workspace-native integrations</strong> — service-account domain-wide delegation lets GCP code act on behalf of Gmail/Drive/Sheets domains.</li><li><strong>Containerised legacy workloads</strong> that don't fit the edge model — ERPNext / Frappe (<code>2nth_erp</code>), large relational databases, Python ML training.</li></ul>
 
-<h2>Services in scope</h2>
+<p>The pattern is: <strong>Cloudflare at the edge → Cloud Run for the heavy lift → BigQuery / Vertex AI for data + AI</strong>.</p>
 
-<table><thead><tr><th>Service</th><th>Purpose</th><th>2nth usage</th></tr></thead><tbody><tr><td><strong>Cloud Run</strong></td><td>Serverless containers, scales to zero</td><td>ERPNext/Frappe instances on demand (<code>2nth_erp</code>)</td></tr><tr><td><strong>Cloud SQL</strong></td><td>Managed MySQL / PostgreSQL</td><td>Frappe DB, client ERP databases</td></tr><tr><td><strong>BigQuery</strong></td><td>Serverless analytics, SQL at scale</td><td>Reporting, data warehouse, AI training sets</td></tr><tr><td><strong>Vertex AI</strong></td><td>Managed ML — training, serving, Gemini API</td><td>AI model endpoints, fine-tuning</td></tr><tr><td><strong>Pub/Sub</strong></td><td>Async messaging, push/pull</td><td>Event fanout, webhook relay, pipeline triggers</td></tr><tr><td><strong>Cloud Storage</strong></td><td>Object storage (buckets)</td><td>File uploads, backups, BigQuery staging</td></tr><tr><td><strong>Secret Manager</strong></td><td>Managed secrets</td><td>API keys, DB passwords, service account keys</td></tr><tr><td><strong>Cloud Scheduler</strong></td><td>Cron jobs</td><td>Trigger Cloud Run jobs on a schedule</td></tr></tbody></table>
+<h3>2nth-specific usage map</h3>
 
-<h2>Authentication</h2>
+<table><thead><tr><th>Service</th><th>2nth usage</th></tr></thead><tbody><tr><td><strong>Cloud Run</strong></td><td>On-demand ERPNext/Frappe instances (<code>2nth_erp</code>) — scale to zero between sessions</td></tr><tr><td><strong>Cloud SQL (MySQL 8.0)</strong></td><td>Frappe DB for ERPNext, client ERP databases</td></tr><tr><td><strong>BigQuery</strong></td><td>Token economy analytics, Penny briefing rollups, client activity warehouse</td></tr><tr><td><strong>Vertex AI</strong></td><td>Gemini endpoints + Claude via Model Garden for Penny briefings, embeddings for skill retrieval</td></tr><tr><td><strong>Pub/Sub</strong></td><td>Gmail Watch → Cloud Run / Worker push, webhook fanout, inter-service events</td></tr><tr><td><strong>Cloud Scheduler</strong></td><td>Cold-wake for 2nth_erp Cloud Run, daily token rollups into BQ, Gmail watch renewal</td></tr><tr><td><strong>Secret Manager</strong></td><td>Workspace-bridge SA keys, Frappe DB creds, third-party API keys</td></tr></tbody></table>
 
-<p>See <code>tech/google</code> for the shared OAuth 2.0 / service account model.</p>
+<h2>Sub-skills</h2>
 
-<p>For GCP APIs specifically, prefer <strong>service accounts</strong> over user OAuth — GCP resources are not user-owned.</p>
+<table><thead><tr><th>Path</th><th>Focus</th><th>Status</th></tr></thead><tbody><tr><td><code>tech/google/cloud/compute</code></td><td>Cloud Run, Cloud Functions, GKE, Compute Engine</td><td>✓ production</td></tr><tr><td><code>tech/google/cloud/ai</code></td><td>Vertex AI, Gemini, embeddings, AI Studio</td><td>✓ production</td></tr><tr><td><code>tech/google/cloud/data</code></td><td>BigQuery, Pub/Sub, Dataflow, Dataproc</td><td>✓ production</td></tr><tr><td><code>tech/google/cloud/security</code></td><td>IAM, Secret Manager, KMS, Cloud Armor, VPC-SC</td><td>stub</td></tr><tr><td><code>tech/google/cloud/storage</code></td><td>Cloud Storage, Filestore, Transfer Service</td><td>stub</td></tr><tr><td><code>tech/google/cloud/database</code></td><td>Cloud SQL, Spanner, Firestore, AlloyDB, Bigtable</td><td>stub</td></tr><tr><td><code>tech/google/cloud/networking</code></td><td>VPC, Cloud Load Balancing, Cloud CDN, Cloud DNS</td><td>stub</td></tr></tbody></table>
 
-<pre><code class="lang-bash"># Authenticate locally
-gcloud auth application-default login
+<h2>gcloud project setup</h2>
 
-# Set project
-gcloud config set project YOUR_PROJECT_ID
+<pre><code class="lang-bash"># Create project
+gcloud projects create my-app-prod --name "My App (prod)" --organization 123456789012
 
-# Create service account
-gcloud iam service-accounts create my-sa \
-  --display-name="My Service Account"
+# Set active project
+gcloud config set project my-app-prod
 
-# Grant a role
-gcloud projects add-iam-policy-binding PROJECT_ID \
-  --member="serviceAccount:my-sa@PROJECT_ID.iam.gserviceaccount.com" \
-  --role="roles/run.invoker"</code></pre>
+# Link billing account (required for most services)
+gcloud billing projects link my-app-prod \
+  --billing-account 0X0X0X-0X0X0X-0X0X0X
 
-<h2>Cloud Run</h2>
+# Enable APIs you need (always explicit)
+gcloud services enable \
+  run.googleapis.com \
+  cloudfunctions.googleapis.com \
+  bigquery.googleapis.com \
+  aiplatform.googleapis.com \
+  pubsub.googleapis.com \
+  secretmanager.googleapis.com \
+  cloudbuild.googleapis.com \
+  artifactregistry.googleapis.com</code></pre>
 
-<p>Scales to zero. Cold start ~1–2s for Node.js/Python containers. Ideal for on-demand ERPNext instances.</p>
+<h2>IAM: primitive, predefined, custom roles</h2>
 
-<pre><code class="lang-bash"># Deploy a container
-gcloud run deploy SERVICE_NAME \
-  --image gcr.io/PROJECT_ID/IMAGE:TAG \
-  --platform managed \
+<table><thead><tr><th>Role type</th><th>Example</th><th>When to use</th></tr></thead><tbody><tr><td><strong>Primitive</strong></td><td><code>roles/owner</code>, <code>roles/editor</code>, <code>roles/viewer</code></td><td>Never in production — too broad</td></tr><tr><td><strong>Predefined</strong></td><td><code>roles/run.invoker</code>, <code>roles/bigquery.dataViewer</code></td><td>Default — least privilege built-in</td></tr><tr><td><strong>Custom</strong></td><td><code>roles/organizations/123/customRoleId</code></td><td>When predefined doesn't fit; org-level definition</td></tr></tbody></table>
+
+<pre><code class="lang-bash"># Grant Cloud Run invoker to a service account
+gcloud run services add-iam-policy-binding my-service \
   --region africa-south1 \
-  --allow-unauthenticated \
-  --set-env-vars KEY=VALUE \
-  --set-secrets KEY=SECRET_NAME:latest \
-  --min-instances 0 \
-  --max-instances 3 \
-  --memory 512Mi \
-  --cpu 1
+  --member "serviceAccount:caller@other-project.iam.gserviceaccount.com" \
+  --role "roles/run.invoker"
 
-# Get service URL
-gcloud run services describe SERVICE_NAME \
-  --platform managed --region africa-south1 \
-  --format 'value(status.url)'</code></pre>
+# Grant BigQuery job-user (can run queries) at project level
+gcloud projects add-iam-policy-binding my-app-prod \
+  --member "serviceAccount:my-sa@my-app-prod.iam.gserviceaccount.com" \
+  --role "roles/bigquery.jobUser"
 
-<p><strong>Scale-to-zero pattern (2nth_erp):</strong> Cloud Scheduler sends a request to wake the instance. First request has latency; subsequent requests within the idle timeout (~15min) are warm.</p>
+# Grant BigQuery dataset-level read (not project-wide)
+bq add-iam-policy-binding \
+  --member "serviceAccount:my-sa@my-app-prod.iam.gserviceaccount.com" \
+  --role "roles/bigquery.dataViewer" \
+  my-app-prod:my_dataset</code></pre>
 
-<h2>Cloud SQL</h2>
+<h2>Scale-to-zero pattern (2nth_erp / Frappe)</h2>
 
-<p>Managed MySQL/PostgreSQL. Used for Frappe/ERPNext which requires MySQL 8.0.</p>
+<p>Cloud Run's scale-to-zero is the foundation of the 2nth_erp on-demand ERPNext pattern: an instance that costs nothing when idle and warms on first request. Pairs with Cloud SQL (MySQL 8.0 for Frappe) connected over the built-in Cloud SQL proxy — no network plumbing.</p>
 
-<pre><code class="lang-bash"># Create instance
-gcloud sql instances create INSTANCE_NAME \
-  --database-version=MYSQL_8_0 \
-  --tier=db-f1-micro \
-  --region=africa-south1 \
-  --storage-auto-increase \
-  --backup-start-time=02:00
+<pre><code class="lang-bash"># Frappe needs the Cloud SQL connection wired into the Cloud Run service
+gcloud run services update 2nth-erp --region africa-south1 \
+  --set-cloudsql-instances=my-project:africa-south1:frappe-db \
+  --set-env-vars DB_HOST=/cloudsql/my-project:africa-south1:frappe-db \
+  --min-instances 0 --max-instances 3 \
+  --memory 2Gi --cpu 2
 
-# Create database and user
-gcloud sql databases create DB_NAME --instance=INSTANCE_NAME
-gcloud sql users create DB_USER --instance=INSTANCE_NAME --password=SECRET
+# Cold-wake via Cloud Scheduler before a scheduled session
+gcloud scheduler jobs create http wake-2nth-erp \
+  --schedule "55 7 * * 1-5" --time-zone "Africa/Johannesburg" \
+  --uri "https://2nth-erp-xyz-ew.a.run.app/healthz" \
+  --http-method GET</code></pre>
 
-# Connect locally via Cloud SQL Auth Proxy
-cloud-sql-proxy PROJECT_ID:REGION:INSTANCE_NAME &amp;
-mysql -u DB_USER -p -h 127.0.0.1 DB_NAME</code></pre>
+<p>Idle timeout is ~15 min — first request wears the cold-start cost, subsequent requests within the window are warm.</p>
 
-<p><strong>Connection from Cloud Run:</strong></p>
-<pre><code class="lang-text"># In wrangler.toml / Cloud Run env vars:
-DB_HOST=/cloudsql/PROJECT_ID:REGION:INSTANCE_NAME   # Unix socket
-DB_SOCKET_PATH=/cloudsql/PROJECT_ID:REGION:INSTANCE_NAME</code></pre>
+<h2>Region reference</h2>
 
-<h2>BigQuery</h2>
+<table><thead><tr><th>Region</th><th>Code</th><th>Notes</th></tr></thead><tbody><tr><td>Johannesburg</td><td><code>africa-south1</code></td><td>SA primary; POPIA data residency</td></tr><tr><td>London</td><td><code>europe-west2</code></td><td>EU fallback for services not in africa-south1; Vertex AI</td></tr><tr><td>Belgium</td><td><code>europe-west1</code></td><td>GDPR EU, broader service availability</td></tr><tr><td>Iowa</td><td><code>us-central1</code></td><td>Most features, cheapest — avoid for SA personal data</td></tr><tr><td>Las Vegas</td><td><code>us-west4</code></td><td>Vertex AI specific model availability</td></tr></tbody></table>
 
-<p>Serverless SQL analytics. Free tier: 10GB storage + 1TB queries/month.</p>
+<p>Check <a href="https://cloud.google.com/about/locations" target="_blank" rel="noopener">cloud.google.com/about/locations</a> before committing — <code>africa-south1</code> is newer and some services land there last.</p>
 
-<pre><code class="lang-bash"># Run a query
-bq query --use_legacy_sql=false \
-  'SELECT client, SUM(amount) as total FROM `project.dataset.invoices` GROUP BY client'
+<h2>Cloud Build — container → deploy</h2>
 
-# Load a CSV into a table
-bq load --autodetect \
-  project:dataset.table \
-  gs://bucket/file.csv
+<pre><code class="lang-bash"># cloudbuild.yaml
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: [build, -t, europe-west2-docker.pkg.dev/$PROJECT_ID/my-repo/my-service:$SHORT_SHA, .]
+  - name: gcr.io/cloud-builders/docker
+    args: [push, europe-west2-docker.pkg.dev/$PROJECT_ID/my-repo/my-service:$SHORT_SHA]
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - my-service
+      - --image=europe-west2-docker.pkg.dev/$PROJECT_ID/my-repo/my-service:$SHORT_SHA
+      - --region=africa-south1
+      - --platform=managed
 
-# Create a dataset
-bq mk --dataset --location=africa-south1 project:dataset_name</code></pre>
+# Submit a build
+gcloud builds submit --config cloudbuild.yaml .</code></pre>
 
-<p><strong>From Cloudflare Workers (via REST):</strong></p>
-<pre><code class="lang-typescript">const res = await fetch(
-  `https://bigquery.googleapis.com/bigquery/v2/projects/${projectId}/queries`,
-  {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      query: 'SELECT * FROM `project.dataset.table` LIMIT 100',
-      useLegacySql: false,
-    }),
-  }
-);</code></pre>
+<h2>Artifact Registry (container + package hosting)</h2>
 
-<h2>Vertex AI / Gemini</h2>
+<pre><code class="lang-bash"># Create a Docker repo (replaces deprecated Container Registry / gcr.io)
+gcloud artifacts repositories create my-repo \
+  --repository-format=docker \
+  --location=europe-west2 \
+  --description="Container images for my-app"
 
-<p>Google's managed AI platform. Use for Gemini API access or custom model training.</p>
+# Configure Docker auth
+gcloud auth configure-docker europe-west2-docker.pkg.dev
 
-<pre><code class="lang-typescript">// Gemini API from Cloudflare Workers
-const res = await fetch(
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${env.GOOGLE_AI_KEY}`,
-  {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-    }),
-  }
-);
-const data = await res.json();
-const text = data.candidates[0].content.parts[0].text;</code></pre>
+# Push
+docker tag my-service europe-west2-docker.pkg.dev/my-app-prod/my-repo/my-service:v1
+docker push europe-west2-docker.pkg.dev/my-app-prod/my-repo/my-service:v1</code></pre>
 
-<h2>Pub/Sub</h2>
+<h2>Cloud Logging &amp; Monitoring</h2>
 
-<p>Async messaging. Push subscriptions deliver to an HTTP endpoint (Cloud Run, Cloudflare Worker).</p>
+<p>GCP auto-collects structured JSON logs from Cloud Run, Functions, GKE, GCE. Write one-line JSON to stdout and Cloud Logging parses every field.</p>
 
-<pre><code class="lang-bash"># Create topic and subscription
-gcloud pubsub topics create my-topic
-gcloud pubsub subscriptions create my-sub \
-  --topic=my-topic \
-  --push-endpoint=https://my-worker.workers.dev/pubsub \
-  --ack-deadline=60
+<pre><code class="lang-typescript">// Structured logging — Cloud Logging auto-parses
+const log = (severity: 'INFO' | 'WARNING' | 'ERROR', message: string, extra?: object) =&gt; {
+  console.log(JSON.stringify({
+    severity,
+    message,
+    timestamp: new Date().toISOString(),
+    ...extra,
+  }));
+};
 
-# Publish a message
-gcloud pubsub topics publish my-topic --message='{"event":"order.created","id":"123"}'</code></pre>
+log('INFO', 'request', { method: 'POST', path: '/api/process', userId: 'u_123' });
+log('ERROR', 'bq_query_failed', { error: err.message, queryId: job.id });</code></pre>
 
-<p><strong>Receiving in Cloudflare Workers:</strong></p>
-<pre><code class="lang-typescript">export default {
-  async fetch(request: Request): Promise&lt;Response&gt; {
-    const body = await request.json() as { message: { data: string } };
-    const payload = JSON.parse(atob(body.message.data));
-    // process payload...
-    return new Response('OK', { status: 200 }); // must ack within deadline
-  }
-};</code></pre>
+<pre><code class="lang-bash"># Tail Cloud Run logs
+gcloud run services logs read my-service --region africa-south1 --limit 50
 
-<h2>Regions</h2>
+# Structured log filter (Cloud Logging query language)
+gcloud logging read '
+  resource.type="cloud_run_revision"
+  resource.labels.service_name="my-service"
+  severity&gt;=ERROR
+' --limit 20 --format json</code></pre>
 
-<p>Prefer <code>africa-south1</code> (Johannesburg) for SA-based clients. Fallback: <code>europe-west1</code> (Belgium) for services not yet available in <code>africa-south1</code>.</p>
+<h2>Cost controls</h2>
 
-<pre><code class="lang-bash"># List services available in africa-south1
-gcloud run regions list</code></pre>
+<pre><code class="lang-bash"># Budget alert at $500 for the project
+gcloud alpha billing budgets create \
+  --billing-account 0X0X0X-0X0X0X-0X0X0X \
+  --display-name "my-app-prod monthly" \
+  --budget-amount 500USD \
+  --threshold-rule percent=0.5,basis=CURRENT_SPEND \
+  --threshold-rule percent=0.9,basis=CURRENT_SPEND \
+  --threshold-rule percent=1.0,basis=CURRENT_SPEND \
+  --filter-projects projects/my-app-prod</code></pre>
 
-<h2>Cost model (key services)</h2>
+<p>Expect surprises from: <strong>egress</strong> (especially cross-region + to internet), <strong>BigQuery on-demand queries</strong> (scan bytes, not rows), <strong>Vertex AI endpoint provisioned capacity</strong> (billed idle), <strong>Cloud NAT</strong> (per-GB + hourly).</p>
 
-<table><thead><tr><th>Service</th><th>Free tier</th><th>Paid from</th></tr></thead><tbody><tr><td>Cloud Run</td><td>2M req/month, 360k vCPU-sec</td><td>$0.00002400/vCPU-sec</td></tr><tr><td>Cloud SQL</td><td>None</td><td>~$7/month (db-f1-micro)</td></tr><tr><td>BigQuery</td><td>10GB storage, 1TB queries</td><td>$5/TB queries</td></tr><tr><td>Pub/Sub</td><td>10GB/month</td><td>$0.04/GB</td></tr><tr><td>Cloud Storage</td><td>5GB</td><td>$0.020/GB</td></tr></tbody></table>
+<h2>Common gotchas</h2>
 
-<h2>Gotchas</h2>
+<ul><li><strong>africa-south1 service gaps</strong>: Vertex AI Gemini endpoints, some Dataflow templates, Anthos Service Mesh, and newer managed services often land in <code>europe-west2</code>/<code>us-central1</code> first. Always verify availability at <a href="https://cloud.google.com/about/locations" target="_blank" rel="noopener">cloud.google.com/about/locations</a>.</li><li><strong>Service account JSON keys</strong>: Prefer Workload Identity or Workload Identity Federation over downloadable keys. A leaked JSON key is the #1 GCP breach vector.</li><li><strong><code>roles/editor</code> is not least privilege</strong>: It grants broad mutate power across most services. Use predefined resource-specific roles.</li><li><strong>BigQuery billing model</strong>: On-demand is per TB scanned (~$5/TB <code>us</code>, ~$6–7/TB <code>eu</code>). A <code>SELECT *</code> on a 1TB table scans 1TB every time. Use partitioned tables + clustering + <code>SELECT specific_columns</code> + capped custom quotas.</li><li><strong>Cloud Run cold starts</strong>: ~100–500ms for Node/Python; seconds for JVM. Use min-instances &gt; 0 for latency-critical paths. Each min-instance is billed 24/7.</li><li><strong>Quotas ≠ billing</strong>: GCP quotas are per-project soft/hard limits (e.g. Vertex AI requests/min, Cloud Run concurrency). Running out of quota returns 429/RESOURCE_EXHAUSTED — not billed but blocks traffic.</li><li><strong>Project deletion is 30-day soft</strong>: Deleted projects hang around for 30 days. You can <code>gcloud projects undelete</code>. But billing stops immediately.</li></ul>
 
-<ul><li><strong>africa-south1 gaps</strong>: Not all services (e.g. some Vertex AI features) are available in africa-south1 yet — check availability before designing</li><li><strong>Cloud SQL + Cloud Run</strong>: Must add Cloud SQL connection name to Cloud Run service config, not just env var</li><li><strong>IAM propagation</strong>: Role changes take up to 60s to propagate — account for this in CI/CD</li><li><strong>BigQuery slots vs on-demand</strong>: On-demand (pay per query) is fine for ad-hoc; switch to reservations for predictable high-volume workloads</li><li><strong>Service account keys</strong>: Download once, store immediately in Secret Manager — cannot be re-downloaded</li></ul>
+<h2>See Also</h2>
+
+<ul><li><a href="compute/SKILL.md" target="_blank" rel="noopener">Cloud Run / Functions / GKE / GCE</a></li><li><a href="ai/SKILL.md" target="_blank" rel="noopener">Vertex AI and Gemini</a></li><li><a href="data/SKILL.md" target="_blank" rel="noopener">BigQuery, Pub/Sub, Dataflow</a></li><li><a href="../SKILL.md" target="_blank" rel="noopener">Google platform auth model</a></li><li><a href="../../aws/SKILL.md" target="_blank" rel="noopener">AWS platform</a></li></ul>
 
     </div>
 

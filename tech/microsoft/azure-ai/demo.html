@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2nth.ai × Microsoft Azure AI — Agentic Pattern</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #003459; --navy-deep: #001F3F; --navy-mid: #004578;
+  --cyan: #00A8E8; --cyan-dark: #0090C8; --cyan-light: #33BFEF;
+  --cyan-bg: rgba(0,168,232,0.07); --cyan-glow: rgba(0,168,232,0.15);
+  --ms-blue: #0078D4; --ms-purple: #7B2FBE; --ms-teal: #038387;
+  --white: #FFFFFF; --off: #F7F9FB; --gray: #F0F4F8;
+  --text: #0D1B2A; --text-2: #3D5A73; --text-3: #6B8299;
+  --border: #E2EAF1; --border-2: #C8D8E4;
+  --success: #1A7A4A; --success-bg: #E8F5EE;
+  --sans: 'Plus Jakarta Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--off); font-family: var(--sans); color: var(--text); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* ─── NAV ─── */
+.nav { position: sticky; top: 0; z-index: 100; background: rgba(0,52,89,0.97); backdrop-filter: blur(16px); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 60px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.nav-brand { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
+.nav-brand span { color: var(--cyan-light); }
+.nav-links { display: flex; gap: 4px; }
+.nav-link { padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: rgba(255,255,255,0.5); text-decoration: none; transition: all 0.18s; cursor: pointer; }
+.nav-link:hover { background: rgba(255,255,255,0.08); color: white; }
+.nav-badge { padding: 4px 12px; border-radius: 100px; background: rgba(0,120,212,0.2); border: 1px solid rgba(0,120,212,0.4); font-size: 10px; font-weight: 600; color: #60b4f5; letter-spacing: 1px; }
+
+/* ─── HERO ─── */
+.hero { background: linear-gradient(160deg, var(--navy-deep) 0%, #001a35 50%, #00254a 100%); padding: 80px 40px 72px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(0,120,212,0.12) 0%, transparent 65%); pointer-events: none; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,120,212,0.12); border: 1px solid rgba(0,120,212,0.3); border-radius: 100px; padding: 6px 18px; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #60b4f5; margin-bottom: 28px; }
+.hero-badge .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--ms-blue); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+.hero h1 { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; color: white; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.5px; }
+.hero h1 span { color: #60b4f5; }
+.hero-sub { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 300; max-width: 600px; margin: 0 auto 40px; line-height: 1.8; }
+.hero-pills { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.hero-pill { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 9px 16px; }
+.hero-pill span { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); }
+.hero-arrow { font-size: 1rem; color: rgba(255,255,255,0.2); }
+
+/* ─── SECTIONS ─── */
+.section { padding: 72px 40px; max-width: 1080px; margin: 0 auto; }
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ms-blue); margin-bottom: 10px; }
+.section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; color: var(--text); margin-bottom: 12px; line-height: 1.2; letter-spacing: -0.3px; }
+.section-title span { color: var(--ms-blue); }
+.section-sub { font-size: 15px; color: var(--text-2); font-weight: 300; line-height: 1.8; max-width: 640px; margin-bottom: 48px; }
+.divider { border: none; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0; }
+
+/* ─── STACK DIAGRAM ─── */
+.stack { display: flex; flex-direction: column; gap: 4px; margin-bottom: 32px; }
+.stack-row { display: grid; grid-template-columns: 140px 1fr; gap: 0; align-items: stretch; }
+.stack-label { background: var(--navy); color: rgba(255,255,255,0.6); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 18px 16px; display: flex; align-items: center; border-radius: 10px 0 0 10px; }
+.stack-box { background: white; border: 1px solid var(--border); border-left: none; border-radius: 0 10px 10px 0; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.stack-box.highlight { border-color: rgba(0,120,212,0.4); box-shadow: 0 0 0 1px rgba(0,120,212,0.15); }
+.stack-items { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.stack-item { display: flex; align-items: center; gap: 6px; background: var(--off); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600; color: var(--text); }
+.stack-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dot-blue { background: var(--ms-blue); }
+.dot-purple { background: var(--ms-purple); }
+.dot-teal { background: var(--ms-teal); }
+.dot-cyan { background: var(--cyan); }
+.dot-green { background: #34A853; }
+.stack-note { font-size: 11px; color: var(--text-3); flex-shrink: 0; max-width: 200px; text-align: right; line-height: 1.5; }
+.arch-callout { background: rgba(0,120,212,0.06); border: 1px solid rgba(0,120,212,0.18); border-radius: 10px; padding: 14px 20px; font-size: 12px; color: var(--text-2); display: flex; align-items: flex-start; gap: 10px; margin-top: 4px; }
+.arch-callout strong { color: var(--navy); }
+
+/* ─── ROUTING FLOW ─── */
+.routing-card { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+.routing-header { background: var(--navy); padding: 18px 28px; }
+.routing-title { font-size: 13px; font-weight: 600; color: white; }
+.routing-body { padding: 24px 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.route-col h4 { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-3); margin-bottom: 14px; }
+.route-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 10px; background: var(--off); border: 1px solid var(--border); margin-bottom: 8px; transition: all 0.2s; cursor: default; }
+.route-item:hover { border-color: rgba(0,120,212,0.3); background: rgba(0,120,212,0.04); }
+.route-badge { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 100px; letter-spacing: 0.5px; flex-shrink: 0; margin-top: 1px; }
+.badge-edge { background: var(--cyan-bg); color: var(--cyan-dark); }
+.badge-agent { background: rgba(0,120,212,0.1); color: var(--ms-blue); }
+.badge-sk { background: rgba(123,47,190,0.1); color: var(--ms-purple); }
+.badge-mcp { background: rgba(3,131,135,0.1); color: var(--ms-teal); }
+.route-text .label { font-size: 12px; font-weight: 600; color: var(--text); }
+.route-text .detail { font-size: 11px; color: var(--text-3); margin-top: 2px; line-height: 1.5; }
+
+/* ─── CONNECTION WIZARD ─── */
+.connect-card { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+.connect-header { background: var(--navy); padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; }
+.connect-title { font-size: 13px; font-weight: 600; color: white; }
+.connect-status { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; }
+.connect-status.idle { color: rgba(255,255,255,0.4); }
+.connect-status.connecting { color: #60b4f5; }
+.connect-status.connected { color: #4ade80; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.connect-status.connected .status-dot { animation: pulse 2s infinite; }
+.connect-body { padding: 28px; }
+.steps-list { display: flex; flex-direction: column; gap: 0; }
+.step-item { display: grid; grid-template-columns: 40px 1fr; gap: 16px; position: relative; }
+.step-item::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: -1px; width: 2px; background: var(--border); }
+.step-item:last-child::before { display: none; }
+.step-dot-col { display: flex; flex-direction: column; align-items: center; padding-top: 3px; }
+.step-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); background: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text-3); transition: all 0.4s; flex-shrink: 0; }
+.step-dot.done { background: var(--ms-blue); border-color: var(--ms-blue); color: white; }
+.step-dot.active { border-color: var(--ms-blue); color: var(--ms-blue); box-shadow: 0 0 0 3px rgba(0,120,212,0.15); }
+.step-content { padding-bottom: 28px; }
+.step-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.step-desc { font-size: 12px; color: var(--text-3); line-height: 1.65; margin-bottom: 10px; }
+.step-code { background: #0D1B2A; border-radius: 8px; padding: 14px 16px; font-family: var(--mono); font-size: 11px; color: #94c4e8; line-height: 1.8; display: none; }
+.step-code.visible { display: block; }
+.step-code .comment { color: #4a6580; }
+.step-code .key { color: #7dd3fc; }
+.step-code .val { color: #86efac; }
+.step-code .str { color: #fca5a5; }
+.step-code .success { color: #4ade80; }
+.step-code .warn { color: #fbbf24; }
+.connect-footer { padding: 20px 28px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.connect-btn { padding: 11px 24px; border-radius: 8px; border: none; font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+.connect-btn.primary { background: var(--ms-blue); color: white; }
+.connect-btn.primary:hover { background: #006bc0; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,120,212,0.35); }
+.connect-btn.primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.connect-btn.ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
+.connect-btn.ghost:hover { border-color: var(--ms-blue); color: var(--ms-blue); }
+.connect-note { font-size: 11px; color: var(--text-3); }
+.spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── AGENT THREAD SIM ─── */
+.agent-sim { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+.agent-sim-header { background: var(--navy); padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; }
+.agent-sim-title { font-size: 13px; font-weight: 600; color: white; }
+.thread-id { font-size: 10px; color: rgba(255,255,255,0.3); font-family: var(--mono); }
+.agent-sim-body { padding: 24px 28px; min-height: 320px; display: flex; flex-direction: column; gap: 0; }
+.thread-empty { display: flex; align-items: center; justify-content: center; height: 220px; color: var(--text-3); font-size: 13px; text-align: center; line-height: 1.8; }
+.msg { display: flex; gap: 10px; margin-bottom: 16px; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.msg.user { flex-direction: row-reverse; }
+.msg-avatar { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.msg.user .msg-avatar { background: rgba(0,120,212,0.12); }
+.msg.agent .msg-avatar { background: rgba(123,47,190,0.12); }
+.msg-bubble { max-width: 72%; }
+.msg-name { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-3); margin-bottom: 5px; }
+.msg.user .msg-name { text-align: right; }
+.msg-content { padding: 10px 14px; border-radius: 10px; font-size: 12px; line-height: 1.65; }
+.msg.user .msg-content { background: rgba(0,120,212,0.08); border: 1px solid rgba(0,120,212,0.15); color: var(--text); border-radius: 10px 2px 10px 10px; }
+.msg.agent .msg-content { background: var(--off); border: 1px solid var(--border); color: var(--text); border-radius: 2px 10px 10px 10px; }
+.tool-call { background: rgba(3,131,135,0.06); border: 1px solid rgba(3,131,135,0.2); border-radius: 8px; padding: 8px 12px; font-family: var(--mono); font-size: 10px; color: var(--ms-teal); margin: 6px 0; }
+.tool-call-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ms-teal); margin-bottom: 4px; }
+.msg-thinking { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: var(--off); border: 1px solid var(--border); border-radius: 2px 10px 10px 10px; color: var(--text-3); font-size: 12px; }
+.thinking-dots span { animation: blink 1.2s infinite; }
+.thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+.agent-sim-input { padding: 16px 28px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+.sim-input { flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-family: var(--sans); font-size: 12px; color: var(--text); background: var(--off); outline: none; transition: border-color 0.2s; }
+.sim-input:focus { border-color: var(--ms-blue); }
+.sim-send { padding: 10px 20px; background: var(--ms-blue); color: white; border: none; border-radius: 8px; font-family: var(--sans); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.sim-send:hover { background: #006bc0; }
+.sim-send:disabled { opacity: 0.4; cursor: not-allowed; }
+.sim-suggestions { padding: 0 28px 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.sim-chip { padding: 6px 12px; border-radius: 100px; background: var(--off); border: 1px solid var(--border); font-size: 11px; color: var(--text-2); cursor: pointer; transition: all 0.15s; }
+.sim-chip:hover { border-color: var(--ms-blue); color: var(--ms-blue); background: rgba(0,120,212,0.04); }
+
+/* ─── CAPABILITY GRID ─── */
+.cap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.cap-card { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 20px; transition: all 0.2s; }
+.cap-card:hover { border-color: rgba(0,120,212,0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-2px); }
+.cap-icon { font-size: 1.5rem; margin-bottom: 10px; }
+.cap-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+.cap-desc { font-size: 11px; color: var(--text-3); line-height: 1.6; margin-bottom: 10px; }
+.cap-tag { display: inline-block; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 100px; letter-spacing: 0.5px; }
+.cap-tag.azure { background: rgba(0,120,212,0.1); color: var(--ms-blue); }
+.cap-tag.sk { background: rgba(123,47,190,0.1); color: var(--ms-purple); }
+.cap-tag.mcp { background: rgba(3,131,135,0.1); color: var(--ms-teal); }
+.cap-tag.copilot { background: rgba(0,168,232,0.1); color: var(--cyan-dark); }
+
+/* ─── CHANGE GRID ─── */
+.change-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.change-card { border-radius: 12px; padding: 24px; }
+.change-card.before { background: #fef2f2; border: 1px solid #fecaca; }
+.change-card.after { background: var(--success-bg); border: 1px solid #bbf7d0; }
+.change-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+.change-card.before .change-label { color: #b91c1c; }
+.change-card.after .change-label { color: var(--success); }
+.change-list { display: flex; flex-direction: column; gap: 8px; }
+.change-item { font-size: 13px; display: flex; gap: 10px; line-height: 1.5; }
+.change-card.before .change-item::before { content: '✕'; color: #b91c1c; flex-shrink: 0; font-size: 11px; margin-top: 2px; }
+.change-card.after .change-item::before { content: '✓'; color: var(--success); flex-shrink: 0; font-size: 11px; margin-top: 2px; font-weight: 700; }
+.change-card.before .change-item { color: #7f1d1d; }
+.change-card.after .change-item { color: #14532d; }
+
+@media (max-width: 700px) {
+  .routing-body { grid-template-columns: 1fr; }
+  .change-grid { grid-template-columns: 1fr; }
+  .section { padding: 48px 20px; }
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">skills<span>.2nth.ai</span></div>
+  <div class="nav-links">
+    <a class="nav-link" onclick="scrollTo('stack')">Stack</a>
+    <a class="nav-link" onclick="scrollTo('routing')">Routing</a>
+    <a class="nav-link" onclick="scrollTo('connect')">Connect</a>
+    <a class="nav-link" onclick="scrollTo('agent')">Agent</a>
+  </div>
+  <div class="nav-badge">Concept · Azure AI Agents</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><div class="pulse"></div>AGENTIC AI PATTERN</div>
+  <h1>Workers classify.<br><span>Azure agents execute.</span></h1>
+  <p class="hero-sub">Workers AI routes at the edge in milliseconds. Azure AI Agent Service manages the stateful thread — tools, memory, reasoning — and streams the reply back.</p>
+  <div class="hero-pills">
+    <div class="hero-pill"><span>⚡</span><span>Workers AI</span></div>
+    <div class="hero-arrow">→</div>
+    <div class="hero-pill"><span>🧠</span><span>Azure AI Agents</span></div>
+    <div class="hero-arrow">→</div>
+    <div class="hero-pill"><span>🔌</span><span>MCP → Copilot</span></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- STACK -->
+<section class="section" id="stack">
+  <div class="section-label">Architecture</div>
+  <h2 class="section-title">The full <span>Microsoft agentic stack</span></h2>
+  <p class="section-sub">Four layers from model to surface. Each layer has a clear owner — Cloudflare handles speed, Azure handles intelligence, Microsoft 365 handles the surface where work happens.</p>
+
+  <div class="stack">
+    <div class="stack-row">
+      <div class="stack-label">Surface</div>
+      <div class="stack-box">
+        <div class="stack-items">
+          <div class="stack-item"><div class="dot dot-blue"></div>Teams</div>
+          <div class="stack-item"><div class="dot dot-blue"></div>Outlook</div>
+          <div class="stack-item"><div class="dot dot-blue"></div>Copilot Chat</div>
+          <div class="stack-item"><div class="dot dot-blue"></div>Word / Excel</div>
+          <div class="stack-item"><div class="dot dot-cyan"></div>2nth.ai Web</div>
+        </div>
+        <div class="stack-note">Where users interact with agents</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-label">Agent platform</div>
+      <div class="stack-box highlight">
+        <div class="stack-items">
+          <div class="stack-item"><div class="dot dot-purple"></div>Copilot Studio</div>
+          <div class="stack-item"><div class="dot dot-teal"></div>MCP Connector</div>
+          <div class="stack-item"><div class="dot dot-purple"></div>M365 Agents SDK</div>
+          <div class="stack-item"><div class="dot dot-blue"></div>AI Agent Service</div>
+        </div>
+        <div class="stack-note">Threads · Tool calls · Memory · Streaming</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-label">Orchestration</div>
+      <div class="stack-box">
+        <div class="stack-items">
+          <div class="stack-item"><div class="dot dot-purple"></div>Semantic Kernel</div>
+          <div class="stack-item"><div class="dot dot-teal"></div>Azure AI Search</div>
+          <div class="stack-item"><div class="dot dot-blue"></div>Function tools</div>
+          <div class="stack-item"><div class="dot dot-green"></div>Graph API tools</div>
+        </div>
+        <div class="stack-note">Plugins · RAG · Multi-step planning</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-label">Models</div>
+      <div class="stack-box">
+        <div class="stack-items">
+          <div class="stack-item"><div class="dot dot-blue"></div>GPT-4o</div>
+          <div class="stack-item"><div class="dot dot-blue"></div>o3-mini</div>
+          <div class="stack-item"><div class="dot dot-blue"></div>text-embedding-3</div>
+          <div class="stack-item"><div class="dot dot-cyan"></div>Workers AI (edge)</div>
+        </div>
+        <div class="stack-note">Azure OpenAI + AI Foundry catalog</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-label">Identity</div>
+      <div class="stack-box">
+        <div class="stack-items">
+          <div class="stack-item"><div class="dot dot-blue"></div>Entra ID</div>
+          <div class="stack-item"><div class="dot dot-teal"></div>App registration</div>
+          <div class="stack-item"><div class="dot dot-teal"></div>Client credentials</div>
+          <div class="stack-item"><div class="dot dot-cyan"></div>Worker secrets</div>
+        </div>
+        <div class="stack-note">One identity, all Microsoft APIs</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arch-callout">
+    💡 <strong>The 2nth pattern:</strong> Cloudflare Workers handle every incoming message — zero-latency classification with Workers AI, session management in KV, simple replies inline. Only complex, multi-step tasks create an Azure AI Agent thread. The threadId is stored in KV and returned to the client so conversations persist across sessions.
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ROUTING -->
+<section class="section" id="routing">
+  <div class="section-label">Routing</div>
+  <h2 class="section-title">Four paths from <span>one message</span></h2>
+  <p class="section-sub">Workers AI classifies every incoming message in milliseconds. The classification determines which layer handles the response — no round-trips for simple queries.</p>
+
+  <div class="routing-card">
+    <div class="routing-header">
+      <div class="routing-title">Message router — Workers AI → Azure AI dispatch</div>
+    </div>
+    <div class="routing-body">
+      <div class="route-col">
+        <h4>Intent → Handler</h4>
+        <div class="route-item">
+          <span class="route-badge badge-edge">EDGE</span>
+          <div class="route-text">
+            <div class="label">Simple question</div>
+            <div class="detail">Azure OpenAI GPT-4o mini — direct answer, no thread needed. 200ms.</div>
+          </div>
+        </div>
+        <div class="route-item">
+          <span class="route-badge badge-agent">AGENT</span>
+          <div class="route-text">
+            <div class="label">Multi-step task</div>
+            <div class="detail">Azure AI Agent Service — creates or resumes a thread, runs with tools, streams reply.</div>
+          </div>
+        </div>
+        <div class="route-item">
+          <span class="route-badge badge-sk">SK</span>
+          <div class="route-text">
+            <div class="label">Complex orchestration</div>
+            <div class="detail">Semantic Kernel on Cloud Run — plugin chaining, multi-agent, long planning horizons.</div>
+          </div>
+        </div>
+        <div class="route-item">
+          <span class="route-badge badge-mcp">MCP</span>
+          <div class="route-text">
+            <div class="label">Copilot surface</div>
+            <div class="detail">Worker exposes MCP server → Copilot Studio picks up tools → Teams / Outlook surface.</div>
+          </div>
+        </div>
+      </div>
+      <div class="route-col">
+        <h4>Agent tools available</h4>
+        <div class="route-item">
+          <span class="route-badge badge-agent">TOOL</span>
+          <div class="route-text">
+            <div class="label">Function calling</div>
+            <div class="detail">Worker endpoint: query D1, call ERPNext, check WooCommerce stock, read invoices.</div>
+          </div>
+        </div>
+        <div class="route-item">
+          <span class="route-badge badge-agent">TOOL</span>
+          <div class="route-text">
+            <div class="label">File search</div>
+            <div class="detail">Azure AI Search (hybrid vector + BM25) over uploaded documents, contracts, policies.</div>
+          </div>
+        </div>
+        <div class="route-item">
+          <span class="route-badge badge-agent">TOOL</span>
+          <div class="route-text">
+            <div class="label">Code interpreter</div>
+            <div class="detail">Azure sandboxed Python — run data analysis, generate charts, process spreadsheets in-thread.</div>
+          </div>
+        </div>
+        <div class="route-item">
+          <span class="route-badge badge-mcp">TOOL</span>
+          <div class="route-text">
+            <div class="label">Graph API (M365)</div>
+            <div class="detail">Read calendar, draft emails, query SharePoint — agent acts on behalf of the organisation.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONNECTION WIZARD -->
+<section class="section" id="connect">
+  <div class="section-label">Connection</div>
+  <h2 class="section-title">Three steps to <span>Azure AI from Workers</span></h2>
+  <p class="section-sub">An app registration in Entra ID and three Worker secrets. The Worker mints short-lived OAuth 2.0 tokens using client credentials — no user login, no Azure SDK.</p>
+
+  <div class="connect-card">
+    <div class="connect-header">
+      <div class="connect-title">Azure AI setup — 2nth-platform</div>
+      <div class="connect-status idle" id="conn-status">
+        <div class="status-dot"></div>
+        <span id="conn-status-text">Not connected</span>
+      </div>
+    </div>
+
+    <div class="connect-body">
+      <div class="steps-list">
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot active" id="dot-1">1</div></div>
+          <div class="step-content">
+            <div class="step-title">Register app in Azure Entra ID</div>
+            <div class="step-desc">One app registration gives access to all Microsoft APIs. Grant API permissions, add a client secret, note the three IDs you'll need.</div>
+            <div class="step-code" id="code-1">
+<span class="comment"># Create app registration via Azure CLI</span>
+<span class="key">az</span> <span class="val">ad app create</span> \
+  --display-name <span class="str">"2nth-worker"</span> \
+  --sign-in-audience <span class="str">AzureADMyOrg</span>
+
+<span class="comment"># Create service principal</span>
+<span class="key">az</span> <span class="val">ad sp create</span> --id &lt;appId&gt;
+
+<span class="comment"># Add client secret</span>
+<span class="key">az</span> <span class="val">ad app credential reset</span> \
+  --id &lt;appId&gt; --append \
+  --display-name <span class="str">"worker-secret-2026"</span>
+
+<span class="comment"># Grant Azure OpenAI / Cognitive Services User role</span>
+<span class="key">az</span> <span class="val">role assignment create</span> \
+  --assignee &lt;appId&gt; \
+  --role <span class="str">"Cognitive Services OpenAI User"</span> \
+  --scope /subscriptions/&lt;sub&gt;/resourceGroups/&lt;rg&gt;
+
+<span class="val success">✓ App registration: 2nth-worker
+   Tenant ID:  a1b2c3d4-...
+   Client ID:  e5f6g7h8-...
+   Secret:     ••••••••••••••••</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot" id="dot-2">2</div></div>
+          <div class="step-content">
+            <div class="step-title">Store credentials + deploy Azure AI resources</div>
+            <div class="step-desc">Three secrets in the Worker. The Azure OpenAI endpoint and AI Agent project endpoint go in wrangler.toml as vars (they're not sensitive). Token caching in KV avoids a round-trip on every request.</div>
+            <div class="step-code" id="code-2">
+<span class="comment"># Store the three sensitive values as Worker secrets</span>
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">AZURE_TENANT_ID</span>
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">AZURE_CLIENT_ID</span>
+<span class="key">wrangler</span> <span class="val">secret put</span> <span class="str">AZURE_CLIENT_SECRET</span>
+
+<span class="comment"># wrangler.toml — non-sensitive endpoints</span>
+[vars]
+<span class="key">AZURE_OPENAI_ENDPOINT</span> = <span class="str">"https://2nth-ai.openai.azure.com"</span>
+<span class="key">AZURE_AI_PROJECT_ENDPOINT</span> = <span class="str">"https://2nth-ai-foundry.services.ai.azure.com"</span>
+<span class="key">AZURE_AGENT_ID</span> = <span class="str">"asst_abc123"</span>
+
+<span class="comment"># Token with KV caching (avoids Entra roundtrip per request)</span>
+<span class="key">async function</span> <span class="val">getToken</span>(env: Env, scope: string) {
+  <span class="key">const</span> cached = await env.KV.get(<span class="str">`az_token:${scope}`</span>);
+  <span class="key">if</span> (cached) <span class="key">return</span> cached;
+
+  <span class="key">const</span> { access_token } = await fetch(
+    <span class="str">`https://login.microsoftonline.com/${env.AZURE_TENANT_ID}/oauth2/v2.0/token`</span>,
+    { method: <span class="str">'POST'</span>, body: <span class="key">new</span> URLSearchParams({
+        client_id: env.AZURE_CLIENT_ID,
+        client_secret: env.AZURE_CLIENT_SECRET,
+        scope, grant_type: <span class="str">'client_credentials'</span>
+    }) }
+  ).then(r => r.json());
+
+  await env.KV.put(<span class="str">`az_token:${scope}`</span>, access_token, { expirationTtl: <span class="str">3500</span> });
+  <span class="key">return</span> access_token;
+}
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-dot-col"><div class="step-dot" id="dot-3">3</div></div>
+          <div class="step-content">
+            <div class="step-title">First call — GPT-4o completion + Agent thread</div>
+            <div class="step-desc">Verify the token, run a chat completion, then create an Agent thread and run. Both should succeed before wiring up production routing.</div>
+            <div class="step-code" id="code-3">
+<span class="comment"># Test 1: GPT-4o chat completion</span>
+<span class="key">POST</span> https://2nth-ai.openai.azure.com/openai/deployments/gpt-4o/chat/completions
+     ?api-version=2025-01-01-preview
+Authorization: Bearer {token}
+
+<span class="val">{ "messages": [{ "role": "user", "content": "Hello from 2nth.ai Workers" }],
+  "max_tokens": 50 }</span>
+
+<span class="success">→ { "choices": [{ "message": { "content": "Hello! How can I assist you today?" } }] }</span>
+
+<span class="comment"># Test 2: Create an Agent thread + run</span>
+<span class="key">POST</span> https://2nth-ai-foundry.services.ai.azure.com/agents/v1.0/threads
+<span class="val">→ { "id": "thread_abc123", "created_at": 1743500000 }</span>
+
+<span class="key">POST</span> .../threads/thread_abc123/messages
+<span class="val">→ message added</span>
+
+<span class="key">POST</span> .../threads/thread_abc123/runs
+<span class="val">{ "assistant_id": "asst_abc123" }</span>
+<span class="success">→ { "id": "run_xyz789", "status": "queued" }</span>
+
+<span class="comment"># Poll status → in_progress → completed</span>
+<span class="success">✓ Azure AI connected — GPT-4o · AI Agent Service · thread_abc123</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="connect-footer">
+      <div class="connect-note" id="conn-note">Step through the setup to simulate a live Azure AI connection.</div>
+      <div style="display:flex;gap:10px">
+        <button class="connect-btn ghost" onclick="resetConnection()">Reset</button>
+        <button class="connect-btn primary" id="next-btn" onclick="nextStep()">
+          <span id="next-label">Start setup</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- AGENT THREAD SIM -->
+<section class="section" id="agent">
+  <div class="section-label">Agent simulation</div>
+  <h2 class="section-title">Azure AI Agent — <span>live thread</span></h2>
+  <p class="section-sub">Each message creates or continues a persistent thread. The agent reasons over your tools — querying ERP, searching documents, running code — before replying.</p>
+
+  <div class="agent-sim">
+    <div class="agent-sim-header">
+      <div class="agent-sim-title">2nth ERP Assistant — Azure AI Agent</div>
+      <div class="thread-id" id="thread-id-display">No active thread</div>
+    </div>
+    <div class="agent-sim-body" id="thread-body">
+      <div class="thread-empty" id="thread-empty">
+        Send a message to start an Agent thread.<br>
+        <small style="color:var(--text-3);font-size:11px;margin-top:6px;display:block">Persistent · Tool-enabled · Streams back through the Worker</small>
+      </div>
+    </div>
+    <div class="sim-suggestions" id="sim-suggestions">
+      <div class="sim-chip" onclick="sendSuggestion(this)">Show overdue invoices</div>
+      <div class="sim-chip" onclick="sendSuggestion(this)">Draft a payment reminder for Acme Corp</div>
+      <div class="sim-chip" onclick="sendSuggestion(this)">Analyse Q1 revenue vs last year</div>
+      <div class="sim-chip" onclick="sendSuggestion(this)">What stock items are running low?</div>
+    </div>
+    <div class="agent-sim-input">
+      <input class="sim-input" id="sim-input" type="text" placeholder="Ask the agent..." onkeydown="if(event.key==='Enter') sendMessage()">
+      <button class="sim-send" id="sim-send" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CAPABILITIES -->
+<section class="section">
+  <div class="section-label">Capabilities</div>
+  <h2 class="section-title">What <span>connects and unlocks</span></h2>
+  <p class="section-sub">One app registration. Every capability in the Microsoft agentic stack becomes available to your Workers.</p>
+
+  <div class="cap-grid">
+    <div class="cap-card">
+      <div class="cap-icon">🤖</div>
+      <div class="cap-name">Azure OpenAI</div>
+      <div class="cap-desc">GPT-4o, o3-mini, o1, embeddings. Same REST API as OpenAI — swap the base URL and add api-version.</div>
+      <span class="cap-tag azure">AZURE OPENAI</span>
+    </div>
+    <div class="cap-card">
+      <div class="cap-icon">🧵</div>
+      <div class="cap-name">AI Agent Threads</div>
+      <div class="cap-desc">Persistent conversations with tool execution, file search, code interpreter. State stored in Azure — not in the Worker.</div>
+      <span class="cap-tag azure">AGENT SERVICE</span>
+    </div>
+    <div class="cap-card">
+      <div class="cap-icon">🔌</div>
+      <div class="cap-name">MCP → Copilot Studio</div>
+      <div class="cap-desc">Expose Workers as MCP servers. Copilot Studio auto-discovers tools. Agent surfaces in Teams, Outlook, Word.</div>
+      <span class="cap-tag mcp">MCP</span>
+    </div>
+    <div class="cap-card">
+      <div class="cap-icon">🎼</div>
+      <div class="cap-name">Semantic Kernel</div>
+      <div class="cap-desc">Plugin orchestration for complex multi-step tasks. Run in Cloud Run container when Worker CPU limits are a constraint.</div>
+      <span class="cap-tag sk">SEM. KERNEL</span>
+    </div>
+    <div class="cap-card">
+      <div class="cap-icon">🔍</div>
+      <div class="cap-name">Azure AI Search</div>
+      <div class="cap-desc">Hybrid vector + BM25 search over enterprise documents. The retrieval layer for Agent file_search and RAG patterns.</div>
+      <span class="cap-tag azure">AI SEARCH</span>
+    </div>
+    <div class="cap-card">
+      <div class="cap-icon">📧</div>
+      <div class="cap-name">Graph API (M365)</div>
+      <div class="cap-desc">Read mail, calendar, Teams messages, SharePoint files — as an agent tool. Same Entra ID token as Azure AI.</div>
+      <span class="cap-tag copilot">GRAPH API</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- WHAT CHANGES -->
+<section class="section">
+  <div class="section-label">Before &amp; After</div>
+  <h2 class="section-title">What the Microsoft agentic pattern <span>changes</span></h2>
+  <div class="change-grid">
+    <div class="change-card before">
+      <div class="change-label">Without agents</div>
+      <div class="change-list">
+        <div class="change-item">Every AI response is stateless — no memory of the last question</div>
+        <div class="change-item">Complex tasks need custom orchestration code in every project</div>
+        <div class="change-item">Microsoft 365 data is siloed — no AI can read your email or calendar without bespoke OAuth flows</div>
+        <div class="change-item">Teams bots require Bot Framework — heavyweight, slow to build</div>
+        <div class="change-item">Document Q&amp;A requires building and maintaining a vector pipeline from scratch</div>
+        <div class="change-item">Multi-step tasks (draft → review → send) require manual handoffs</div>
+      </div>
+    </div>
+    <div class="change-card after">
+      <div class="change-label">With Azure AI agents</div>
+      <div class="change-list">
+        <div class="change-item">Persistent threads mean the agent remembers context across sessions — stored in Azure, resumed by threadId</div>
+        <div class="change-item">Tool calling handles multi-step reasoning — ERP query → analysis → draft → confirm — in a single thread</div>
+        <div class="change-item">Graph API as an agent tool gives read access to mail, calendar, Teams without per-user OAuth flows</div>
+        <div class="change-item">MCP connector exposes any Worker as a Copilot Studio tool — surfaces in Teams in minutes</div>
+        <div class="change-item">AI Agent file_search with Azure AI Search means document Q&amp;A is a tool declaration, not a RAG build</div>
+        <div class="change-item">Semantic Kernel process framework handles approval workflows, branching, and multi-agent hand-offs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+let step = 0;
+
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function nextStep() {
+  const btn = document.getElementById('next-btn');
+  const label = document.getElementById('next-label');
+  const note = document.getElementById('conn-note');
+
+  if (step === 0) {
+    step = 1;
+    document.getElementById('code-1').classList.add('visible');
+    document.getElementById('dot-1').classList.add('active');
+    document.getElementById('dot-2').classList.add('active');
+    label.textContent = 'Store secrets →';
+    note.textContent = 'App registered. Now store the three credentials as Worker secrets.';
+    updateStatus('connecting', 'Configuring...');
+  } else if (step === 1) {
+    step = 2;
+    markDone(1);
+    document.getElementById('code-2').classList.add('visible');
+    label.textContent = 'Test connection →';
+    note.textContent = 'Secrets stored. Now verify with a live GPT-4o call and Agent thread.';
+  } else if (step === 2) {
+    step = 3;
+    markDone(2);
+    document.getElementById('dot-3').classList.add('active');
+    document.getElementById('code-3').classList.add('visible');
+    btn.disabled = true;
+    label.innerHTML = '<div class="spinner"></div> Connecting...';
+    note.textContent = 'Testing GPT-4o completion and creating Agent thread...';
+    updateStatus('connecting', 'Connecting...');
+    setTimeout(() => {
+      markDone(3);
+      btn.disabled = true;
+      label.textContent = 'Connected ✓';
+      note.textContent = '2nth-platform → Azure AI connected — GPT-4o · Agent Service · Entra ID';
+      updateStatus('connected', 'Connected');
+    }, 2400);
+  }
+}
+
+function markDone(n) {
+  const d = document.getElementById('dot-' + n);
+  d.classList.remove('active');
+  d.classList.add('done');
+  d.textContent = '✓';
+}
+
+function updateStatus(state, text) {
+  const el = document.getElementById('conn-status');
+  el.className = 'connect-status ' + state;
+  document.getElementById('conn-status-text').textContent = text;
+}
+
+function resetConnection() {
+  step = 0;
+  ['code-1','code-2','code-3'].forEach(id => document.getElementById(id).classList.remove('visible'));
+  ['1','2','3'].forEach(n => {
+    const d = document.getElementById('dot-' + n);
+    d.className = 'step-dot';
+    d.textContent = n;
+  });
+  document.getElementById('dot-1').classList.add('active');
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-label').textContent = 'Start setup';
+  document.getElementById('conn-note').textContent = 'Step through the setup to simulate a live Azure AI connection.';
+  updateStatus('idle', 'Not connected');
+}
+
+// ─── AGENT THREAD SIMULATION ───
+
+const THREAD_ID = 'thread_' + Math.random().toString(36).slice(2, 10);
+let threadStarted = false;
+let isThinking = false;
+
+const RESPONSES = {
+  'show overdue invoices': {
+    thinking: 1800,
+    toolCall: { name: 'query_invoices', args: '{ "status": "overdue" }' },
+    reply: `I found <strong>3 overdue invoices</strong> in your ERP:\n\n• <strong>Acme Corp</strong> — R 24,500 · 18 days overdue\n• <strong>Buildmax SA</strong> — R 8,200 · 7 days overdue\n• <strong>Retail Pro</strong> — R 61,000 · 31 days overdue\n\nTotal outstanding: <strong>R 93,700</strong>. Would you like me to draft payment reminders for any of these?`
+  },
+  'draft a payment reminder for acme corp': {
+    thinking: 2600,
+    toolCall: { name: 'query_invoices', args: '{ "client": "Acme Corp", "status": "overdue" }' },
+    reply: `Here's a draft reminder for Acme Corp:\n\n<em>Subject: Payment reminder — Invoice #INV-2024-0847 (R 24,500)</em>\n\nDear Acme Corp,\n\nThis is a friendly reminder that invoice #INV-2024-0847 for R 24,500 was due 18 days ago. Please advise on expected payment or contact us to discuss.\n\nKind regards, 2nth.ai\n\n---\nShall I send this, or would you like to adjust the tone?`
+  },
+  'analyse q1 revenue vs last year': {
+    thinking: 3200,
+    toolCall: { name: 'run_bigquery', args: '{ "query": "SELECT period, SUM(amount) FROM invoices WHERE period IN (\'Q1-2025\',\'Q1-2026\') GROUP BY period" }' },
+    reply: `Q1 2026 vs Q1 2025 analysis:\n\n• <strong>Q1 2026:</strong> R 482,000 (+18% YoY)\n• <strong>Q1 2025:</strong> R 408,500\n• <strong>Growth drivers:</strong> New Cloudflare services (+R 44k), expanded ERP client base (+R 29.5k)\n• <strong>Concern:</strong> Professional services margin down 4% — worth reviewing utilisation rates\n\nWant me to generate a full breakdown by service line?`
+  },
+  'what stock items are running low?': {
+    thinking: 2000,
+    toolCall: { name: 'query_stock', args: '{ "filter": "below_reorder_point" }' },
+    reply: `<strong>4 items below reorder point:</strong>\n\n• Cloud Run instances (ERPNext) — 2 remaining, reorder at 5\n• SSL certificates (wildcard) — 1 remaining, expires in 14 days\n• Cloudflare seat licenses — 3 remaining of 10 allocation\n• API gateway capacity — 78% consumed\n\nWould you like me to raise purchase orders or draft renewal reminders?`
+  }
+};
+
+function sendSuggestion(el) {
+  const text = el.textContent;
+  document.getElementById('sim-input').value = text;
+  sendMessage();
+}
+
+function sendMessage() {
+  if (isThinking) return;
+  const input = document.getElementById('sim-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  if (!threadStarted) {
+    threadStarted = true;
+    document.getElementById('thread-empty').remove();
+    document.getElementById('thread-id-display').textContent = THREAD_ID;
+  }
+
+  addMsg('user', '👤', 'You', text);
+  const key = text.toLowerCase();
+  const match = Object.keys(RESPONSES).find(k => key.includes(k));
+  const resp = match ? RESPONSES[match] : {
+    thinking: 1400,
+    toolCall: null,
+    reply: `I understand you're asking about "${text}". In a live deployment, I would query the relevant tools — ERP, BigQuery, or document search — and return structured results. Connect to Azure AI Agent Service to see real tool execution.`
+  };
+
+  showThinking(resp.thinking, resp.toolCall, resp.reply);
+}
+
+function addMsg(role, avatar, name, content) {
+  const body = document.getElementById('thread-body');
+  const el = document.createElement('div');
+  el.className = 'msg ' + role;
+  el.innerHTML = `
+    <div class="msg-avatar">${avatar}</div>
+    <div class="msg-bubble">
+      <div class="msg-name">${name}</div>
+      <div class="msg-content">${content.replace(/\n/g, '<br>')}</div>
+    </div>`;
+  body.appendChild(el);
+  body.scrollTop = body.scrollHeight;
+}
+
+function showThinking(duration, toolCall, reply) {
+  isThinking = true;
+  document.getElementById('sim-send').disabled = true;
+
+  const body = document.getElementById('thread-body');
+  const thinking = document.createElement('div');
+  thinking.className = 'msg agent';
+  thinking.id = 'thinking-msg';
+  thinking.innerHTML = `
+    <div class="msg-avatar">🧠</div>
+    <div class="msg-bubble">
+      <div class="msg-name">Azure AI Agent · GPT-4o</div>
+      <div class="msg-thinking">
+        <span>Reasoning</span>
+        <div class="thinking-dots"><span>●</span><span>●</span><span>●</span></div>
+      </div>
+    </div>`;
+  body.appendChild(thinking);
+  body.scrollTop = body.scrollHeight;
+
+  const toolDelay = toolCall ? duration * 0.45 : duration;
+
+  if (toolCall) {
+    setTimeout(() => {
+      const tc = document.createElement('div');
+      tc.className = 'msg agent';
+      tc.innerHTML = `
+        <div class="msg-avatar">🔧</div>
+        <div class="msg-bubble">
+          <div class="msg-name">Tool call</div>
+          <div class="tool-call">
+            <div class="tool-call-label">→ ${toolCall.name}</div>
+            ${toolCall.args}
+          </div>
+        </div>`;
+      body.appendChild(tc);
+      body.scrollTop = body.scrollHeight;
+    }, toolDelay);
+  }
+
+  setTimeout(() => {
+    document.getElementById('thinking-msg')?.remove();
+    addMsg('agent', '🧠', 'Azure AI Agent · GPT-4o', reply);
+    isThinking = false;
+    document.getElementById('sim-send').disabled = false;
+    document.getElementById('sim-input').focus();
+  }, duration);
+}
+</script>
+</body>
+</html>

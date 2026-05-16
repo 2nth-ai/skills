@@ -9,17 +9,18 @@ description: |
   (5) Microsoft 365 — Graph API, Teams, Outlook, SharePoint, OneDrive via Entra ID,
   (6) AWS — Lambda, ECS Fargate, API Gateway, IAM, VPC, S3, RDS, DynamoDB, Bedrock,
   (7) Cisco — IOS/NX-OS networking, ASA/Firepower security, Meraki wireless, Webex collaboration, network automation,
-  (8) Claude Code — setup, CLAUDE.md, skills integration, MCP servers,
-  (9) MCP (Model Context Protocol) — building and consuming MCP servers,
-  (10) infrastructure as code — Wrangler, Terraform, GCP, deployment pipelines,
-  (11) Recall.ai — meeting bot API for recording, transcribing Zoom/Meet/Teams/Webex calls.
+  (8) Ollama — local LLM runtime, open-weight models, OpenAI-compatible API, Modelfile, Docker/K8s deployment,
+  (9) Claude Code — setup, CLAUDE.md, skills integration, MCP servers,
+  (10) MCP (Model Context Protocol) — building and consuming MCP servers,
+  (11) infrastructure as code — Wrangler, Terraform, GCP, deployment pipelines,
+  (12) Recall.ai — meeting bot API for recording, transcribing Zoom/Meet/Teams/Webex calls.
 license: MIT
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   homepage: "https://skills.2nth.ai/tech"
   repository: "https://github.com/2nth-ai/skills"
-  categories: "Technology, Cloudflare, AWS, Lambda, ECS, IAM, Cisco, IOS, NX-OS, networking, Firepower, Meraki, Webex, CUCM, Netmiko, Google Cloud, GCP, Gmail, Workspace, Microsoft, Azure AI, Copilot, Slack, Discord, Meta, WhatsApp, Facebook, Messenger, Instagram, X, Twitter, Claude Code, Infrastructure"
+  categories: "Technology, Cloudflare, AWS, Lambda, ECS, IAM, Cisco, IOS, NX-OS, networking, Firepower, Meraki, Webex, CUCM, Netmiko, Google Cloud, GCP, Gmail, Workspace, Microsoft, Azure AI, Copilot, Slack, Discord, Meta, WhatsApp, Facebook, Messenger, Instagram, X, Twitter, Ollama, local LLM, open-weight, Llama, Mistral, Gemma, Phi, Modelfile, Claude Code, Recall.ai, MCP, Infrastructure"
 ---
 
 # Technology Skills
@@ -51,6 +52,11 @@ Skills for AI agents working with the 2nth.ai technology stack — Cloudflare ed
 | `tech/cisco/wireless/` | Catalyst/Meraki Wi-Fi, WLC, access points, RF design |
 | `tech/cisco/collaboration/` | Webex, CUCM, Unity Connection, UCCX contact centre |
 | `tech/cisco/automation/` | Netmiko, NAPALM, Ansible, DNA Center, NSO, NETCONF/RESTCONF |
+| `tech/ollama/` | Ollama local LLM runtime — model management, REST API, Modelfile, Docker/K8s deployment |
+| `tech/ollama/models/` | Model selection, GGUF quantisation, VRAM budgets, embedding models |
+| `tech/ollama/api/` | REST API, OpenAI-compatible endpoint, streaming, JSON mode, tool calling |
+| `tech/ollama/modelfile/` | Custom Modelfile — system prompts, parameters, LoRA adapters |
+| `tech/ollama/deployment/` | Docker, systemd, Kubernetes, GPU config, Open WebUI, reverse proxy |
 | `tech/elevenlabs/` | ElevenLabs voice AI — TTS, voice cloning, STT, conversational AI agents |
 | `tech/github/` | GitHub REST API, Octokit, Actions, Apps, webhooks, Copilot data policy |
 | `tech/zoho/` | Zoho CRM v8, Books v3, OAuth multi-DC, webhooks, CRM↔Books sync |
@@ -67,4 +73,4 @@ Skills for AI agents working with the 2nth.ai technology stack — Cloudflare ed
 
 ## Status
 
-`tech/cloudflare`, `tech/claude-code`, `tech/google/*`, `tech/microsoft/*`, `tech/aws/compute`, `tech/aws/security`, `tech/slack`, `tech/discord`, `tech/meta/*`, and `tech/x` are production. `tech/aws/storage`, `tech/aws/database`, `tech/aws/networking`, `tech/aws/messaging`, `tech/aws/ai`, and all `tech/cisco/*` are stubs. Others pending.
+`tech/cloudflare`, `tech/claude-code`, `tech/google/*`, `tech/microsoft/*`, `tech/aws/compute`, `tech/aws/security`, `tech/slack`, `tech/discord`, `tech/meta/*`, and `tech/x` are production. `tech/ollama/*`, `tech/aws/storage`, `tech/aws/database`, `tech/aws/networking`, `tech/aws/messaging`, `tech/aws/ai`, and all `tech/cisco/*` are stubs. Others pending.

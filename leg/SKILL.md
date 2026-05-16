@@ -23,13 +23,17 @@ Skills for AI agents working in legal and compliance contexts.
 
 | Path | Focus |
 |------|-------|
-| `leg/contracts/` | Contract review, drafting, clause analysis |
-| `leg/compliance/` | Regulatory compliance, policy adherence |
-| `leg/ip/` | Intellectual property, licensing |
+| `leg/commercial/` | Commercial agreements, MSAs, SLAs, procurement |
+| `leg/contracts/` | Contract review, drafting, clause analysis, risk scoring |
+| `leg/corporate/` | Companies Act, governance, director duties, resolutions |
+| `leg/data-privacy/` | POPIA compliance, data processing, breach response |
+| `leg/disputes/` | Litigation, arbitration, CCMA, dispute resolution |
+| `leg/employment/` | LRA, BCEA, dismissals, disciplinary, employment contracts |
+| `leg/fundraising/` | Investment agreements, shareholder pacts, term sheets |
+| `leg/ip/` | Intellectual property, patents, trademarks, licensing |
+| `leg/property/` | Lease negotiation, property transactions, sectional title |
 
-## Status
-
-Stubs. Production skills to be added as client engagements define the patterns.
+Load the relevant subdomain or leaf skill directly. This manifest is for discovery.
 
 ## Note
 
