@@ -1,16 +1,13 @@
 ---
-name: Cost Accounting & Margin Analysis
+name: costing
 description: >
   (1) Cost accounting — product and service costing, gross margin analysis, overhead
   allocation, contribution margin, and pricing decisions grounded in cost reality.
-requires:
-  - fin/accounting
-  - fin/management-accounts
-improves:
-  - fin/modelling
 metadata:
   domain: fin
   subdomain: costing
+  requires: "fin/accounting, fin/management-accounts"
+  improves: "fin/modelling"
   maturity: stable
 ---
 

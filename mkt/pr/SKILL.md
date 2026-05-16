@@ -1,16 +1,13 @@
 ---
-name: Public Relations & Communications
+name: pr
 description: >
   (1) PR strategy, media relations, thought leadership placement, crisis
   communications, and earned media in the South African market.
-requires:
-  - mkt
-  - mkt/brand
-improves: []
 metadata:
   domain: mkt
   subdomain: pr
   maturity: stable
+  requires: "mkt, mkt/brand"
   jurisdiction: ZA
 ---
 

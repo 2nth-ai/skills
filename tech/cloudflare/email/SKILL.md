@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/email
+name: email
 description: |
   Cloudflare Email Routing — inbound email processing in Workers + MailChannels outbound. Use this skill when:
   (1) triggering AI workflows from inbound email (client briefs, intake forms),
@@ -9,16 +9,14 @@ description: |
   Free — included with any Cloudflare-managed domain.
 license: MIT
 compatibility: Cloudflare Workers, Email Routing
-homepage: https://skills.2nth.ai/tech/cloudflare/email
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "0.1.0"
   status: stub
+  homepage: "https://skills.2nth.ai/tech/cloudflare/email"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech/cloudflare"
   categories: "Cloudflare, Email Routing, MailChannels, Workers"
 ---
 

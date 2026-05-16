@@ -1,16 +1,14 @@
 ---
-name: Non-Monolithic Trading Platforms
+name: trading-platforms
 description: >
   Architecture patterns for composable, microservices-based capital markets platforms —
   the shift away from monolithic front-to-back systems, FM Converge as a reference
   implementation, FRTB/SA-CCR/XVA regulatory modules, and how banks evaluate
   and adopt next-generation trading infrastructure.
-requires:
-  - fin/capital-markets
-improves: []
 metadata:
   domain: fin
   subdomain: capital-markets
+  requires: "fin/capital-markets"
   maturity: stable
 ---
 

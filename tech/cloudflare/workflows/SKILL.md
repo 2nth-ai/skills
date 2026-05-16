@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/workflows
+name: workflows
 description: |
   Cloudflare Workflows — durable multi-step execution. Use this skill when:
   (1) orchestrating multi-step AI agent pipelines that must survive Worker restarts,
@@ -10,16 +10,13 @@ description: |
   Currently in open beta — available on Workers Paid plan.
 license: MIT
 compatibility: Cloudflare Workers (Paid, beta)
-homepage: https://skills.2nth.ai/tech/cloudflare/workflows
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-  - tech/cloudflare/queues
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/workflows"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers, tech/cloudflare/queues"
+  improves: "tech/cloudflare"
   categories: "Cloudflare, Workflows, Orchestration, Durable Execution, Beta"
 ---
 

@@ -1,17 +1,15 @@
 ---
-name: South African Marketing Context
+name: sa
 description: >
   (1) South African marketing — local media landscape, POPIA compliance,
   ARB advertising standards, B-BBEE marketing spend, cultural considerations,
   and channel nuances for the SA market.
-requires:
-  - mkt
-improves: []
 metadata:
   domain: mkt
   subdomain: sa
   maturity: stable
   jurisdiction: ZA
+  requires: "mkt"
   legislation: POPIA Act 4 of 2013; Consumer Protection Act 68 of 2008; ARB Code of Advertising Practice
 ---
 

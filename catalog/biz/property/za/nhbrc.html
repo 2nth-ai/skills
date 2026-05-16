@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nhbrc — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">nhbrc</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/biz/property/za/nhbrc/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">nhbrc</div>
+      <h1>NHBRC</h1>
+      <p class="skill-desc">NHBRC National Home Builders Registration Council.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">Housing Consumers Protection Measures Act, 1998 (Act 95 of 1998)</span>
+        
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>NHBRC — National Home Builders Registration Council</h1>
+
+<h2>Overview</h2>
+
+<p>The NHBRC is a statutory body established in 1998 under the Housing Consumers Protection Measures Act, 1998 (Act 95 of 1998). Its mandate is to protect housing consumers and regulate the home building industry.</p>
+
+<p><strong>Critical legal requirements:</strong></p>
+<ul><li>Any person in the business of building homes <strong>must</strong> be registered — failure is a criminal offence (fine or imprisonment up to 1 year)</li><li>Every new home <strong>must</strong> be enrolled at least <strong>15 days before construction starts</strong></li><li>The NHBRC conducts quality inspections at four construction stages</li><li>Homes are covered by a tiered warranty from date of occupation</li></ul>
+
+<p><strong>Scope:</strong> Residential home building only. Commercial and industrial construction falls outside NHBRC's mandate (though those projects must still comply with SANS 10400 and, for public sector work, CIDB requirements).</p>
+
+<h2>Builder Registration</h2>
+
+<h3>Who Must Register</h3>
+<p>Any person or entity in the business of building homes, regardless of size or value.</p>
+
+<h3>Application Process</h3>
+<ol><li>Visit NHBRC Online Services Portal or nearest provincial office</li><li>Complete Builder Registration Form</li><li>Submit required documents:</li></ol>
+<p>   - Valid ID    - Company registration documents (COR14.1, COR14.3 for new PTYs; CM29 for old PTYs)    - Certified copy of share certificates    - Valid Tax Clearance from SARS    - Signed consent for credit checks    - Trust resolution / Partnership agreement / Constitution (as applicable)    - Appointment letter for Technical Manager (if not a managing member)</p>
+<ol><li>Pay application fee: <strong>R745.61</strong> (once-off, non-refundable)</li><li>Attend mandatory <strong>Builders' Induction Workshop</strong> at nearest NHBRC office</li><li>Pass the <strong>Technical Assessment</strong> (construction knowledge, SANS compliance, general building)</li></ol>
+<p>   - Two attempts within 30 days of paying application fee    - Prepare via the Home Builders Manual (Parts 1, 2, and 3)</p>
+<ol><li>Receive registration certificate</li></ol>
+
+<h3>Home Builders Manual</h3>
+<ul><li>Manual only: ~R88</li><li>Manual + SANS 10400: ~R3,168</li></ul>
+
+<h3>Renewal</h3>
+<ul><li>Annual membership: <strong>R526.32</strong></li><li>Must be renewed annually to maintain compliance</li></ul>
+
+<h2>Home Enrolment</h2>
+
+<p>Every new home must be enrolled at least <strong>15 days before construction starts</strong>.</p>
+
+<ul><li>The <strong>home builder</strong> enrols the home (not the homeowner)</li><li>Enrolment is per dwelling unit</li><li>An enrolment fee applies (varies by project value)</li><li>No warranty cover without enrolment</li><li>Enrolment triggers the NHBRC inspection schedule</li></ul>
+
+<h3>What Counts as a "Home"</h3>
+<p>Any dwelling unit constructed for human habitation:</p>
+<ul><li>Houses, townhouses, flats/apartments</li><li>Government housing (RDP/BNG)</li><li>Alterations and additions above a certain value threshold</li></ul>
+
+<h2>Inspection Stages</h2>
+
+<p>The NHBRC conducts a <strong>minimum of four inspections</strong>:</p>
+
+<table><thead><tr><th>Stage</th><th>What Is Inspected</th><th>SANS 10400 Alignment</th></tr></thead><tbody><tr><td><strong>1. Foundation</strong></td><td>Excavation, soil conditions, foundation layout, concrete quality</td><td>Part G (Excavations), Part H (Foundations)</td></tr><tr><td><strong>2. Wall plate</strong></td><td>Wall construction, damp-proof course, lintels, wall plate level</td><td>Part K (Walls), Part B (Structural design)</td></tr><tr><td><strong>3. Roof</strong></td><td>Roof structure, waterproofing, truss installation</td><td>Part L (Roofs)</td></tr><tr><td><strong>4. Practical completion</strong></td><td>Overall finish, plumbing, electrical, drainage, plan compliance</td><td>Parts J, O, P, R, T, W, XA</td></tr></tbody></table>
+
+<h3>Non-Compliance</h3>
+<ul><li>Builder given reasonable time to rectify</li><li>If unable/unwilling: NHBRC may stop construction, institute disciplinary proceedings, or arrange rectification and recover costs</li></ul>
+
+<h2>Warranty Structure</h2>
+
+<p>From the <strong>date of first occupation</strong>, three tiers apply:</p>
+
+<h3>Tier 1: Minor Defects — 3 months</h3>
+<ul><li>Any deviation from plans, specifications, or agreement</li><li>Any deficiency in design, workmanship, or materials</li><li>Consumer must notify builder <strong>in writing</strong> within 3 months</li><li><strong>Not</strong> covered by NHBRC Warranty Fund — this is the builder's direct obligation</li></ul>
+
+<h3>Tier 2: Roof Leaks — 1 year</h3>
+<ul><li>Any roof leak</li><li>Must be reported <strong>in writing</strong> within 1 year</li><li>NHBRC intervenes if builder fails to respond</li></ul>
+
+<h3>Tier 3: Major Structural Defects — 5 years</h3>
+<ul><li>Defects affecting structural integrity</li><li>Must be reported <strong>in writing</strong> within 5 years</li><li>Covered by the <strong>NHBRC Warranty Fund</strong></li><li>If builder defaults, NHBRC arranges rectification</li></ul>
+
+<h3>Warranty Fund</h3>
+<p>Funded by enrolment fees. Provides the financial backstop for Tier 3 claims when the builder cannot or will not rectify.</p>
+
+<h2>Complaints &amp; Conciliation</h2>
+
+<ol><li>Consumer identifies defect within warranty period</li><li>Consumer notifies builder <strong>in writing</strong> (keep proof)</li><li>Builder has reasonable time to rectify</li><li>If builder fails → consumer contacts nearest NHBRC Provincial Customer Care Office</li><li>NHBRC notifies builder and seeks response</li><li>If builder still fails → NHBRC issues request for conciliation</li><li>Consumer pays refundable conciliation deposit</li><li>Conciliation determines outcome</li><li>If conciliation fails → arbitration</li></ol>
+
+<h3>Builder Disciplinary Action</h3>
+<p>The NHBRC can act against builders who: fail to enrol homes, build below standards, refuse to rectify defects, engage in fraud, or fail to maintain registration.</p>
+
+<h2>ERP Integration Points</h2>
+
+<h3>Builder/Contractor Fields</h3>
+<pre><code class="lang-text">nhbrc_registration_number       — NHBRC registration number
+nhbrc_registration_expiry       — Date (annual renewal)
+nhbrc_technical_manager         — Appointed Technical Manager name
+nhbrc_compliance_status         — Active / Expired / Suspended</code></pre>
+
+<h3>Project/Home Fields</h3>
+<pre><code class="lang-text">nhbrc_enrolment_number          — Per dwelling unit
+nhbrc_enrolment_date            — Must be ≥15 days before construction_start
+nhbrc_enrolment_fee_paid        — Boolean + amount
+construction_start_date         — Validated against enrolment date</code></pre>
+
+<h3>Inspection Tracking</h3>
+<pre><code class="lang-text">inspection_stage                — Foundation / Wall Plate / Roof / Practical Completion
+inspection_date                 — Date of NHBRC inspection
+inspection_result               — Compliant / Non-compliant / Rectification Required
+rectification_deadline          — Date
+rectification_completed         — Boolean + date</code></pre>
+
+<h3>Warranty Tracking</h3>
+<pre><code class="lang-text">occupation_date                 — Triggers warranty start
+snag_list_deadline              — occupation_date + 3 months
+roof_warranty_expiry            — occupation_date + 1 year
+structural_warranty_expiry      — occupation_date + 5 years
+defect_reports                  — Child table: date, type, description, status</code></pre>
+
+<h3>Validation Rules</h3>
+<ul><li>Block construction start if enrolment date &lt; 15 days before construction start</li><li>Alert on builder registration expiry</li><li>Auto-generate warranty milestone dates from occupation date</li><li>Require written defect notification records with timestamps</li></ul>
+
+<h2>Common Gotchas</h2>
+
+<ol><li><strong>The 15-day enrolment rule is non-negotiable.</strong> No enrolment = no warranty cover. This is the single most common compliance failure in residential construction.</li><li><strong>The 3-month snag list is NOT an NHBRC warranty claim.</strong> It's the builder's direct obligation. NHBRC only backstops Tier 3 (structural, 5-year).</li><li><strong>Enrolment is per dwelling unit</strong>, not per project. A 50-unit development requires 50 separate enrolments.</li><li><strong>The Technical Assessment has teeth.</strong> Two attempts only within 30 days. Builders who fail both must reapply and repay the application fee.</li><li><strong>Written notification is essential</strong> for all warranty claims. Verbal complaints have no legal standing under the Act.</li></ol>
+
+<h2>See Also</h2>
+
+<ul><li><a href="https://www.nhbrc.org.za" target="_blank" rel="noopener">NHBRC Website</a></li><li><a href="../SKILL.md" target="_blank" rel="noopener">biz/property/za</a> — Parent skill with regulatory overview</li><li><a href="../sans-10400/SKILL.md" target="_blank" rel="noopener">biz/property/za/sans-10400</a> — SANS 10400 parts aligned to inspection stages</li><li><a href="../project-stages/SKILL.md" target="_blank" rel="noopener">biz/property/za/project-stages</a> — Inspections mapped to project lifecycle</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/biz/property/za/nhbrc/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

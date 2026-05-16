@@ -12,14 +12,15 @@ description: |
   (8) Ollama — local LLM runtime, open-weight models, OpenAI-compatible API, Modelfile, Docker/K8s deployment,
   (9) Claude Code — setup, CLAUDE.md, skills integration, MCP servers,
   (10) MCP (Model Context Protocol) — building and consuming MCP servers,
-  (11) infrastructure as code — Wrangler, Terraform, GCP, deployment pipelines.
+  (11) infrastructure as code — Wrangler, Terraform, GCP, deployment pipelines,
+  (12) Recall.ai — meeting bot API for recording, transcribing Zoom/Meet/Teams/Webex calls.
 license: MIT
-homepage: https://skills.2nth.ai/tech
-repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai
   version: "1.0.0"
-  categories: "Technology, Cloudflare, AWS, Lambda, ECS, IAM, Cisco, IOS, NX-OS, networking, Firepower, Meraki, Webex, CUCM, Netmiko, Google Cloud, GCP, Gmail, Workspace, Microsoft, Azure AI, Copilot, Slack, Discord, Meta, WhatsApp, Facebook, Messenger, Instagram, X, Twitter, Ollama, local LLM, open-weight, Llama, Mistral, Gemma, Phi, Modelfile, Claude Code, Infrastructure"
+  homepage: "https://skills.2nth.ai/tech"
+  repository: "https://github.com/2nth-ai/skills"
+  categories: "Technology, Cloudflare, AWS, Lambda, ECS, IAM, Cisco, IOS, NX-OS, networking, Firepower, Meraki, Webex, CUCM, Netmiko, Google Cloud, GCP, Gmail, Workspace, Microsoft, Azure AI, Copilot, Slack, Discord, Meta, WhatsApp, Facebook, Messenger, Instagram, X, Twitter, Ollama, local LLM, open-weight, Llama, Mistral, Gemma, Phi, Modelfile, Claude Code, Recall.ai, MCP, Infrastructure"
 ---
 
 # Technology Skills
@@ -66,6 +67,7 @@ Skills for AI agents working with the 2nth.ai technology stack — Cloudflare ed
 | `tech/meta/instagram/` | Instagram Messaging API — DMs, story mentions, quick replies, 7-day window |
 | `tech/x/` | X (Twitter) API v2 — mention polling, filtered stream, OAuth 2.0 PKCE, DMs |
 | `tech/claude-code/` | Claude Code setup, CLAUDE.md patterns, skill injection |
+| `tech/recall-ai/` | Recall.ai meeting bot API — recording, transcripts, webhooks for Zoom/Meet/Teams/Webex |
 | `tech/mcp/` | Model Context Protocol — building and consuming servers |
 | `tech/iac/` | Infrastructure as code, Wrangler, deployment |
 

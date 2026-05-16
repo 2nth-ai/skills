@@ -1,17 +1,15 @@
 ---
-name: South African VAT
+name: vat
 description: >
   (1) South African VAT compliance — VAT Act 89 of 1991, VAT201 returns, input and output
   tax, zero-rated and exempt supplies, registration thresholds, and SARS requirements.
-requires:
-  - fin/sa
-improves:
-  - fin/accounting
 metadata:
   domain: fin
   subdomain: sa/vat
   maturity: stable
   jurisdiction: ZA
+  requires: "fin/sa"
+  improves: "fin/accounting"
   legislation: Value-Added Tax Act 89 of 1991
 ---
 

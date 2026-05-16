@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>project-stages — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">project-stages</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/biz/property/za/project-stages/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">project-stages</div>
+      <h1>PROJECT STAGES</h1>
+      <p class="skill-desc">South African property development lifecycle with ERP integration.</p>
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        <span style="font-size:13px;color:var(--text-muted)">ERPNext v14+, adaptable to any ERP or project management system</span>
+        
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Project Stages &amp; ERP Integration for SA Property Development</h1>
+
+<h2>Development Lifecycle</h2>
+
+<p>A typical South African residential property development follows these stages. Each has specific regulatory requirements from SANS 10400, CIDB, and/or NHBRC.</p>
+
+<h3>Stage 0: Feasibility &amp; Land Acquisition</h3>
+<ul><li>Zoning confirmation with local municipality</li><li>Geotechnical investigation (required by SANS 10400-B for dolomite lands, recommended elsewhere)</li><li>Environmental impact assessment (if required by NEMA)</li><li>Title deed and SG diagram review</li></ul>
+
+<h3>Stage 1: Design &amp; Plan Approval</h3>
+<ul><li>Engage competent person (architect/engineer) for design</li><li>Prepare building plans per SANS 10400-A requirements</li><li>Submit plans to local authority for approval</li><li>Await approval (30–60 working days)</li><li>Obtain CIDB-registered contractor (for public sector projects)</li><li>Register builder with NHBRC (if not already registered)</li></ul>
+
+<h3>Stage 2: Pre-Construction</h3>
+<ul><li>Enrol each home with NHBRC (minimum 15 days before construction)</li><li>Appoint CIDB-graded contractor (verify grade vs project value)</li><li>Site establishment per SANS 10400-F (Site Operations)</li><li>Secure construction guarantee/insurance</li><li>Submit construction schedule to NHBRC</li></ul>
+
+<h3>Stage 3: Foundation</h3>
+<ul><li>Clear site per SANS 10400-F</li><li>Excavate per SANS 10400-G</li><li>Lay foundations per SANS 10400-H and approved plans</li><li><strong>NHBRC Inspection 1: Foundation stage</strong></li><li>Obtain foundation sign-off before proceeding</li></ul>
+
+<h3>Stage 4: Superstructure</h3>
+<ul><li>Construct walls per SANS 10400-K (masonry, damp-proof course)</li><li>Install lintels, wall plate</li><li><strong>NHBRC Inspection 2: Wall plate / Structural stage</strong></li><li>Construct floors per SANS 10400-J</li><li>Install stairways per SANS 10400-M (if applicable)</li></ul>
+
+<h3>Stage 5: Roof &amp; Envelope</h3>
+<ul><li>Install roof structure per SANS 10400-L</li><li>Waterproofing (watertight 5+ years without maintenance)</li><li>Install glazing per SANS 10400-N</li><li><strong>NHBRC Inspection 3: Roof stage</strong></li><li>Energy compliance check per SANS 10400-XA (building envelope)</li></ul>
+
+<h3>Stage 6: Services &amp; Finishes</h3>
+<ul><li>Electrical installation (registered electrician → CoC required)</li><li>Plumbing installation (registered plumber → CoC required)</li><li>Drainage per SANS 10400-P</li><li>Stormwater disposal per SANS 10400-R</li><li>Lighting and ventilation per SANS 10400-O</li><li>Fire protection per SANS 10400-T (especially multi-unit)</li><li>Disability access per SANS 10400-S (if applicable)</li></ul>
+
+<h3>Stage 7: Practical Completion &amp; Handover</h3>
+<ul><li><strong>NHBRC Inspection 4: Practical completion</strong></li><li>Obtain occupancy certificate from local authority</li><li>Obtain electrical and plumbing Certificates of Compliance</li><li>Compile as-built drawings</li><li>Handover package: warranty docs, maintenance manual, CoCs, approved plans</li></ul>
+
+<h3>Stage 8: Post-Occupation (Warranty Period)</h3>
+<ul><li>3-month snag list period (builder's obligation)</li><li>1-year roof leak warranty</li><li>5-year major structural defect warranty (NHBRC Warranty Fund)</li><li>Track and manage defect reports</li></ul>
+
+<h2>Regulatory Milestones Matrix</h2>
+
+<table><thead><tr><th>Stage</th><th>SANS 10400</th><th>CIDB</th><th>NHBRC</th></tr></thead><tbody><tr><td>Feasibility</td><td>Part B (geotech)</td><td>—</td><td>—</td></tr><tr><td>Design</td><td>Part A (plans)</td><td>—</td><td>—</td></tr><tr><td>Pre-construction</td><td>Part F (site ops)</td><td>Contractor grade verification</td><td>Home enrolment (15 days before)</td></tr><tr><td>Foundation</td><td>Parts G, H</td><td>—</td><td>Inspection 1</td></tr><tr><td>Superstructure</td><td>Parts J, K, M</td><td>—</td><td>Inspection 2</td></tr><tr><td>Roof</td><td>Parts L, N, XA</td><td>—</td><td>Inspection 3</td></tr><tr><td>Services</td><td>Parts O, P, R, T, W</td><td>—</td><td>—</td></tr><tr><td>Completion</td><td>All parts</td><td>Project registered on RoP</td><td>Inspection 4</td></tr><tr><td>Handover</td><td>—</td><td>—</td><td>Warranty starts</td></tr><tr><td>Post-occupation</td><td>—</td><td>—</td><td>3mo / 1yr / 5yr warranty</td></tr></tbody></table>
+
+<h2>ERPNext Doctype Mapping</h2>
+
+<h3>Project (master)</h3>
+<pre><code class="lang-text">project_name                    — Development name
+project_type                    — Residential / Commercial / Mixed
+local_authority                 — Municipality name
+zoning_status                   — Confirmed / Pending / Requires rezoning
+plan_approval_date              — Date plans approved
+plan_approval_reference         — Local authority reference number
+occupancy_classification        — Per SANS 10400 Part A (H3, H4, etc.)
+estimated_cidb_grade            — Required contractor grade
+environmental_approval          — Required / Not required / Approved
+geotechnical_report             — Attached / Not required</code></pre>
+
+<h3>Dwelling Unit (child of Project)</h3>
+<pre><code class="lang-text">unit_number                     — Unit identifier
+nhbrc_enrolment_number          — NHBRC enrolment reference
+nhbrc_enrolment_date            — Must be ≥15 days before construction_start
+construction_start_date         — Actual start
+inspection_1_date               — Foundation
+inspection_1_result             — Pass / Fail / Rectification
+inspection_2_date               — Wall plate
+inspection_2_result
+inspection_3_date               — Roof
+inspection_3_result
+inspection_4_date               — Practical completion
+inspection_4_result
+occupancy_certificate_date      — From local authority
+occupation_date                 — Consumer moves in
+snag_list_deadline              — Auto: occupation_date + 90 days
+roof_warranty_expiry            — Auto: occupation_date + 365 days
+structural_warranty_expiry      — Auto: occupation_date + 1825 days
+electrical_coc_date             — Electrical Certificate of Compliance
+plumbing_coc_date               — Plumbing Certificate of Compliance</code></pre>
+
+<h3>Contractor (linked to Supplier)</h3>
+<pre><code class="lang-text">cidb_registration_number
+cidb_grade                      — 1–9
+cidb_classes_of_works           — Multi-select (CE, GB, ME, etc.)
+cidb_registration_expiry
+cidb_max_tender_value           — Auto from grade
+nhbrc_registration_number       — For residential builders
+nhbrc_registration_expiry
+nhbrc_technical_manager</code></pre>
+
+<h3>Compliance Checklist</h3>
+<pre><code class="lang-text">project                         — Link to Project
+stage                           — Pre-construction / Foundation / Superstructure / Roof / Services / Completion
+sans_10400_parts_applicable     — Multi-select (A, B, C, etc.)
+checklist_items                 — Child table of individual checks
+overall_status                  — Pending / In Progress / Compliant / Non-compliant
+sign_off_by                     — Competent person name
+sign_off_date</code></pre>
+
+<h2>Compliance Checklists</h2>
+
+<h3>Pre-Construction</h3>
+<ul><li>[ ] Building plans approved by local authority</li><li>[ ] NHBRC home enrolment confirmed (≥15 days before start)</li><li>[ ] Contractor CIDB registration verified (grade ≥ project requirement)</li><li>[ ] Contractor NHBRC registration verified (current)</li><li>[ ] Geotechnical report obtained (if required)</li><li>[ ] Site establishment plan per SANS 10400-F</li><li>[ ] Construction guarantee/insurance in place</li><li>[ ] Environmental approval obtained (if required)</li></ul>
+
+<h3>Foundation</h3>
+<ul><li>[ ] Site cleared per SANS 10400-F</li><li>[ ] Excavation per SANS 10400-G (safe faces, appropriate depth)</li><li>[ ] Foundation layout matches approved plans</li><li>[ ] Concrete quality per specification</li><li>[ ] Damp-proof membrane installed</li><li>[ ] NHBRC Inspection 1 completed and passed</li><li>[ ] Foundation sign-off by competent person</li></ul>
+
+<h3>Wall Plate</h3>
+<ul><li>[ ] Masonry per SANS 10400-K</li><li>[ ] Damp-proof course correctly positioned (above finished ground level)</li><li>[ ] Lintels correctly installed over all openings</li><li>[ ] Wall plate level and aligned</li><li>[ ] Window and door openings per approved plans</li><li>[ ] NHBRC Inspection 2 completed and passed</li></ul>
+
+<h3>Roof</h3>
+<ul><li>[ ] Roof structure per SANS 10400-L and engineer's design</li><li>[ ] Trusses correctly installed and braced</li><li>[ ] Waterproofing installed (5+ year durability)</li><li>[ ] Fascia and barge boards installed</li><li>[ ] Roof drainage connected</li><li>[ ] NHBRC Inspection 3 completed and passed</li></ul>
+
+<h3>Practical Completion</h3>
+<ul><li>[ ] All construction per approved plans and SANS 10400</li><li>[ ] Electrical installation complete with CoC</li><li>[ ] Plumbing installation complete with CoC</li><li>[ ] Drainage per SANS 10400-P connected and tested</li><li>[ ] Stormwater per SANS 10400-R properly channelled</li><li>[ ] Lighting and ventilation per SANS 10400-O</li><li>[ ] Fire protection per SANS 10400-T (if applicable)</li><li>[ ] Energy compliance per SANS 10400-XA demonstrated</li><li>[ ] Disability access per SANS 10400-S (if applicable)</li><li>[ ] NHBRC Inspection 4 completed and passed</li><li>[ ] Occupancy certificate obtained from local authority</li><li>[ ] As-built drawings compiled</li><li>[ ] Handover documentation package prepared</li></ul>
+
+<h2>Document Requirements by Stage</h2>
+
+<h3>At Plan Submission</h3>
+<ul><li>Architectural drawings (site plan, floor plans, elevations, sections)</li><li>Structural engineer's drawings and calculations</li><li>Energy compliance documentation (SANS 10400-XA)</li><li>Geotechnical report (if applicable)</li><li>SG diagram and title deed</li><li>Municipal rates clearance</li><li>NHBRC enrolment proof</li></ul>
+
+<h3>During Construction</h3>
+<ul><li>NHBRC inspection reports (4 stages)</li><li>Site diary/logbook</li><li>Material test certificates (concrete cube tests, etc.)</li><li>Variation orders (if changes to approved plans)</li><li>Progress photographs</li></ul>
+
+<h3>At Handover</h3>
+<ul><li>Occupancy certificate (from local authority)</li><li>Electrical Certificate of Compliance</li><li>Plumbing Certificate of Compliance</li><li>NHBRC final inspection report</li><li>As-built drawings</li><li>Warranty documentation</li><li>Maintenance manual</li><li>Keys and access devices</li></ul>
+
+<h3>Post-Occupation</h3>
+<ul><li>Defect reports (within warranty periods)</li><li>Proof of written notification to builder</li><li>NHBRC conciliation records (if applicable)</li><li>Rectification completion records</li></ul>
+
+<h2>Common Gotchas</h2>
+
+<ol><li><strong>Stage gates are hard dependencies.</strong> You cannot pour a foundation before NHBRC enrolment. You cannot proceed past foundation without Inspection 1 sign-off. ERP workflows must enforce this sequencing.</li><li><strong>Occupation date drives all warranty calculations.</strong> Get this date wrong and every downstream deadline is wrong. Make it a required field with audit trail.</li><li><strong>Variation orders require updated plan approval.</strong> Any change to approved plans during construction needs local authority sign-off — not just an internal change order.</li><li><strong>CoCs are per-installation, not per-project.</strong> A multi-unit development needs separate electrical and plumbing CoCs for each unit.</li><li><strong>The handover package is a legal deliverable</strong>, not a nice-to-have. Missing documents at handover create liability exposure throughout the warranty period.</li></ol>
+
+<h2>See Also</h2>
+
+<ul><li><a href="../SKILL.md" target="_blank" rel="noopener">biz/property/za</a> — Parent skill with regulatory overview</li><li><a href="../sans-10400/SKILL.md" target="_blank" rel="noopener">biz/property/za/sans-10400</a> — Building code details per part</li><li><a href="../cidb/SKILL.md" target="_blank" rel="noopener">biz/property/za/cidb</a> — Contractor grading and procurement</li><li><a href="../nhbrc/SKILL.md" target="_blank" rel="noopener">biz/property/za/nhbrc</a> — Builder registration and inspections</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/biz/property/za/project-stages/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

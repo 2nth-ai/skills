@@ -1,5 +1,5 @@
 ---
-name: biz/erp/sage-x3
+name: sage-x3
 description: |
   Sage X3 ERP AI integration expert. Use this skill when:
   (1) querying Sage X3 master data — customers, suppliers, products, stock sites,
@@ -10,17 +10,14 @@ description: |
   (6) deploying Sage X3 integrations to Cloudflare Workers.
 license: MIT
 compatibility: Any HTTP client, GraphQL client, or Cloudflare Workers
-homepage: https://skills.2nth.ai/biz/erp/sage-x3
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-  - fin/reporting
-improves:
-  - biz/erp
 metadata:
   author: 2nth.ai
   version: "1.1.0"
   categories: "ERP, GraphQL, Reporting, Sage X3"
+  homepage: "https://skills.2nth.ai/biz/erp/sage-x3"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers, fin/reporting"
+  improves: "biz/erp"
 allowed-tools: Bash(curl:*) Bash(npx:*) Read Write Edit Glob Grep
 ---
 

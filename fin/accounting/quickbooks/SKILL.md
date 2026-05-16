@@ -1,5 +1,5 @@
 ---
-name: fin/accounting/quickbooks
+name: quickbooks
 description: |
   QuickBooks Online (QBO) AI integration expert. Use this skill when:
   (1) querying the QBO REST API v3 — invoices, payments, customers, vendors, accounts, bills,
@@ -10,16 +10,14 @@ description: |
   (6) implementing change data capture (CDC) or webhook-driven accounting pipelines.
 license: MIT
 compatibility: Any HTTP client, Node.js, Python, Cloudflare Workers
-homepage: https://skills.2nth.ai/fin/accounting/quickbooks
-repository: https://github.com/2nth-ai/skills
-requires:
-  - fin/modelling
-improves:
-  - fin/accounting
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Accounting, QuickBooks, Intuit, Finance, AI"
+  homepage: "https://skills.2nth.ai/fin/accounting/quickbooks"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "fin/modelling"
+  improves: "fin/accounting"
 allowed-tools: Bash(curl:*) Bash(npx:*) Read Write Edit Glob Grep
 ---
 

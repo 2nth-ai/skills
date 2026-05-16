@@ -1,5 +1,5 @@
 ---
-name: tech/aws/compute
+name: compute
 description: |
   AWS compute skill. Use when: (1) deploying serverless functions with Lambda — event-driven, pay-per-invocation,
   (2) running containers with ECS Fargate — serverless containers, no EC2 management,
@@ -9,17 +9,14 @@ description: |
   (6) running hybrid Cloudflare + AWS architectures — Cloudflare at edge, AWS for compute-heavy workloads.
 license: MIT
 compatibility: AWS CLI v2, CDK v2, SDK v3 (TypeScript/Python), Terraform
-homepage: https://skills.2nth.ai/tech/aws/compute
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/aws
-improves:
-  - tech/aws
-  - tech
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "AWS, Lambda, EC2, ECS, Fargate, API Gateway, Auto Scaling, CloudWatch"
+  homepage: "https://skills.2nth.ai/tech/aws/compute"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/aws"
+  improves: "tech/aws, tech"
 allowed-tools: Bash(aws:*) Bash(cdk:*) Read Write Edit Glob Grep
 ---
 

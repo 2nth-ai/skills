@@ -1,9 +1,8 @@
 ---
-name: Data Strategy
+name: strategy
 description: >
   Building a data strategy — capability assessment, data product road-map, platform
   architecture decisions, team structure, and measuring data ROI.
-improves: []
 metadata:
   domain: data
   subdomain: strategy

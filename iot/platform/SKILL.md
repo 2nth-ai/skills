@@ -1,12 +1,8 @@
 ---
-name: IoT Platform & Cloud Integration
+name: platform
 description: >
   Device management platforms, MQTT brokers, time-series databases, digital twins,
   edge computing, fleet management, and IoT data pipelines from device to dashboard.
-requires:
-  - iot/connectivity
-  - iot/firmware
-improves: []
 metadata:
   domain: iot
   subdomain: platform
@@ -14,6 +10,7 @@ metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "IoT, Platform, MQTT, Time-Series, Digital Twin, Edge Computing, Fleet Management, OTA"
+  requires: "iot/connectivity, iot/firmware"
 allowed-tools: Read Write Edit Glob Grep
 ---
 

@@ -1,13 +1,11 @@
 ---
-name: tech/cisco/networking
+name: networking
 description: Cisco switching and routing — IOS/IOS-XE/NX-OS, VLANs, STP, inter-VLAN routing, OSPF, EIGRP, BGP, QoS.
-requires:
-  - tech/cisco
-improves:
-  - tech/cisco
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  requires: "tech/cisco"
+  improves: "tech/cisco"
   maturity: stub
 ---
 

@@ -1,15 +1,13 @@
 ---
-name: Intellectual Property
+name: ip
 description: >
   (1) IP fundamentals for CEOs — ownership of work product, trademarks, copyright,
   trade secrets, IP assignments, and protecting what the business creates.
-requires:
-  - leg
-improves: []
 metadata:
   domain: leg
   subdomain: ip
   maturity: stable
+  requires: "leg"
   jurisdiction: ZA
 ---
 

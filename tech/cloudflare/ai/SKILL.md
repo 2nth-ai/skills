@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/ai
+name: ai
 description: |
   Cloudflare AI stack. Use skills in this subdomain when building:
   (1) edge inference — Workers AI for fast, cheap classification and routing,
@@ -7,13 +7,12 @@ description: |
   (3) Vectorize — vector database for RAG, semantic search, and skill discovery,
   (4) full AI pipelines combining all three: classify at edge, retrieve context, answer with Claude.
 license: MIT
-homepage: https://skills.2nth.ai/tech/cloudflare/ai
-repository: https://github.com/2nth-ai/skills
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/ai"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "tech/cloudflare"
   categories: "Cloudflare, AI, LLM, RAG, Inference"
 ---
 

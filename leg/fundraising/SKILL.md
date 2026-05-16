@@ -1,17 +1,14 @@
 ---
-name: Fundraising & Investment Documentation
+name: fundraising
 description: >
   (1) Investment documentation for founders — term sheets, shareholder agreements,
   SAFE notes, convertible instruments, cap table, and investor rights in South Africa.
-requires:
-  - leg
-  - leg/corporate
-improves: []
 metadata:
   domain: leg
   subdomain: fundraising
   maturity: stable
   jurisdiction: ZA
+  requires: "leg, leg/corporate"
   legislation: Companies Act 71 of 2008; Financial Markets Act 19 of 2012
 ---
 

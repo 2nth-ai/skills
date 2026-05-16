@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/ai/vectorize
+name: vectorize
 description: |
   Cloudflare Vectorize — vector database for semantic search and RAG. Use this skill when:
   (1) building semantic search over skills, documents, or knowledge bases,
@@ -10,17 +10,14 @@ description: |
   (6) combining Vectorize with Workers AI embeddings and Claude for full RAG pipelines.
 license: MIT
 compatibility: Cloudflare Workers
-homepage: https://skills.2nth.ai/tech/cloudflare/ai/vectorize
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-  - tech/cloudflare/ai/workers-ai
-improves:
-  - tech/cloudflare/ai
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Cloudflare, Vectorize, RAG, Embeddings, Semantic Search"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/ai/vectorize"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers, tech/cloudflare/ai/workers-ai"
+  improves: "tech/cloudflare/ai"
 allowed-tools: Bash(npx:*) Bash(wrangler:*) Read Write Edit Glob Grep
 ---
 

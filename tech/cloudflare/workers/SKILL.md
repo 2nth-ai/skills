@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/workers
+name: workers
 description: |
   Cloudflare Workers runtime. Use this skill when:
   (1) building edge API handlers, middleware, or proxies in TypeScript/JavaScript,
@@ -10,16 +10,14 @@ description: |
   (6) building Worker-to-Worker communication or service bindings.
 license: MIT
 compatibility: Cloudflare Workers (V8 isolates, Node.js compat mode)
-homepage: https://skills.2nth.ai/tech/cloudflare/workers
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Cloudflare, Workers, Edge, TypeScript, Serverless"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/workers"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare"
+  improves: "tech/cloudflare"
 allowed-tools: Bash(npx:*) Bash(wrangler:*) Read Write Edit Glob Grep
 ---
 

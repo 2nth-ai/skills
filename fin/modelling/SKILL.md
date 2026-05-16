@@ -1,5 +1,5 @@
 ---
-name: fin/modelling
+name: modelling
 description: |
   Financial modelling AI expert. Use this skill when:
   (1) building three-statement models (P&L, Balance Sheet, Cash Flow) from assumptions or natural language inputs,
@@ -12,16 +12,14 @@ description: |
   (8) handling IFRS vs GAAP differences (including IFRS 16 lease accounting adjustments).
 license: MIT
 compatibility: Any — outputs Excel, JSON, Markdown
-homepage: https://skills.2nth.ai/fin/modelling
-repository: https://github.com/2nth-ai/skills
-requires:
-  - fin/reporting
-improves:
-  - fin
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Finance, DCF, Financial Modelling, Valuation, Scenario Analysis"
+  homepage: "https://skills.2nth.ai/fin/modelling"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "fin/reporting"
+  improves: "fin"
 allowed-tools: Read Write Edit
 ---
 

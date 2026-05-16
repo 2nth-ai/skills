@@ -1,5 +1,5 @@
 ---
-name: tech/zoho
+name: zoho
 description: |
   Zoho platform integration skill. Use when:
   (1) reading or writing CRM data — Leads, Contacts, Accounts, Deals via Zoho CRM API v8,
@@ -11,15 +11,13 @@ description: |
   (7) working with other Zoho products — Desk (support), People (HR), Projects, Campaigns, Analytics.
 license: MIT
 compatibility: Zoho CRM API v8, Zoho Books API v3, Zoho OAuth 2.0, Node.js/TypeScript SDK, Python SDK
-homepage: https://skills.2nth.ai/tech/zoho
-repository: https://github.com/2nth-ai/skills
-improves:
-  - tech
-  - biz
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   maturity: stub
+  homepage: "https://skills.2nth.ai/tech/zoho"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "tech, biz"
   categories: "Zoho, CRM, Books, Desk, People, OAuth, invoices, contacts, leads, deals, webhooks, accounting"
 ---
 

@@ -1,16 +1,12 @@
 ---
-name: Financial Planning & Analysis
+name: fp-and-a
 description: >
   (1) FP&A — annual budgeting, rolling forecasts, scenario modelling, unit economics,
   and the financial narratives that connect business performance to strategic decisions.
-requires:
-  - fin/accounting
-  - fin/management-accounts
-  - fin/modelling
-improves: []
 metadata:
   domain: fin
   subdomain: fp-and-a
+  requires: "fin/accounting, fin/management-accounts, fin/modelling"
   maturity: stable
 ---
 

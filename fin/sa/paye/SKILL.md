@@ -1,17 +1,15 @@
 ---
-name: South African PAYE, UIF & SDL
+name: paye
 description: >
   (1) South African employer tax obligations — PAYE withholding, UIF contributions,
   Skills Development Levy, EMP201 monthly returns, and EMP501 annual reconciliation.
-requires:
-  - fin/sa
-improves:
-  - fin/accounting
 metadata:
   domain: fin
   subdomain: sa/paye
   maturity: stable
   jurisdiction: ZA
+  requires: "fin/sa"
+  improves: "fin/accounting"
   legislation: Income Tax Act 58 of 1962; Unemployment Insurance Act 63 of 2001; Skills Development Levies Act 9 of 1999
 ---
 

@@ -1,15 +1,13 @@
 ---
-name: Sales Prospecting
+name: prospecting
 description: >
   (1) B2B outbound prospecting — ICP definition, account targeting, cold outreach
   sequencing, and pipeline generation for consistent top-of-funnel growth.
-requires:
-  - biz/sales
-improves:
-  - biz/crm
 metadata:
   domain: biz
   subdomain: sales/prospecting
+  requires: "biz/sales"
+  improves: "biz/crm"
   maturity: stable
 ---
 

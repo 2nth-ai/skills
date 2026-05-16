@@ -8,11 +8,11 @@ description: |
   (4) public health — population health analytics, epidemiology, reporting,
   (5) healthcare AI — clinical decision support, diagnostic assistance, care coordination.
 license: MIT
-homepage: https://skills.2nth.ai/health
-repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/health"
+  repository: "https://github.com/2nth-ai/skills"
   categories: "Healthcare, Clinical, EHR, Compliance, Pharma"
 ---
 

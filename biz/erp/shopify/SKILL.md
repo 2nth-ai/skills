@@ -1,5 +1,5 @@
 ---
-name: biz/erp/shopify
+name: shopify
 description: |
   Shopify AI integration expert. Use this skill when:
   (1) querying Shopify Admin API — products, orders, customers, inventory, collections,
@@ -10,16 +10,14 @@ description: |
   (6) analysing Shopify data for marketing, growth, and operational insights.
 license: MIT
 compatibility: Any HTTP client, Node.js, Python, or Cloudflare Workers
-homepage: https://skills.2nth.ai/biz/erp/shopify
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - biz/erp
 metadata:
   author: 2nth.ai
   version: "1.1.0"
   categories: "E-Commerce, Shopify, AI, Retail"
+  homepage: "https://skills.2nth.ai/biz/erp/shopify"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "biz/erp"
 allowed-tools: Bash(curl:*) Bash(npx:*) Read Write Edit Glob Grep
 ---
 

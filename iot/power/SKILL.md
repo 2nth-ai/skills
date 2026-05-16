@@ -1,14 +1,12 @@
 ---
-name: Power Systems & Energy Management
+name: power
 description: >
   Power architecture for IoT devices — battery selection, energy harvesting,
   load shedding-resilient design, regulators, BMS, and ultra-low-power budgeting.
-requires:
-  - iot/hardware
-improves: []
 metadata:
   domain: iot
   subdomain: power
+  requires: "iot/hardware"
   maturity: stable
 ---
 

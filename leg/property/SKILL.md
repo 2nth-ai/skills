@@ -1,16 +1,14 @@
 ---
-name: Commercial Property & Leases
+name: property
 description: >
   (1) Commercial lease review and negotiation for tenants — key clauses, red flags,
   escalation, turnover rent, landlord obligations, and exit rights.
-requires:
-  - leg
-improves: []
 metadata:
   domain: leg
   subdomain: property
   maturity: stable
   jurisdiction: ZA
+  requires: "leg"
   legislation: Rental Housing Act 50 of 1999; Consumer Protection Act 68 of 2008
 ---
 

@@ -1,10 +1,8 @@
 ---
-name: Clinical Governance
+name: clinical-governance
 description: >
   Patient safety frameworks, clinical audit, incident management, mortality
   and morbidity review, accreditation, and HPCSA compliance for South African healthcare.
-requires: []
-improves: []
 metadata:
   domain: health
   subdomain: clinical-governance

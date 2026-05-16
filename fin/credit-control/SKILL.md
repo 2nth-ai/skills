@@ -1,15 +1,12 @@
 ---
-name: Credit Control
+name: credit-control
 description: >
   (1) Accounts receivable and credit control — debtor management, collections process,
   credit terms, age analysis, and reducing days sales outstanding (DSO).
-requires:
-  - fin/accounting
-  - fin/cash-flow
-improves: []
 metadata:
   domain: fin
   subdomain: credit-control
+  requires: "fin/accounting, fin/cash-flow"
   maturity: stable
 ---
 

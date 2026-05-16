@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/kv
+name: kv
 description: |
   Cloudflare Workers KV — distributed key-value store. Use this skill when:
   (1) storing session tokens, auth state, or user preferences at the edge,
@@ -11,16 +11,14 @@ description: |
   structured queries, or data >25MB per value.
 license: MIT
 compatibility: Cloudflare Workers, Wrangler CLI
-homepage: https://skills.2nth.ai/tech/cloudflare/kv
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Cloudflare, KV, Cache, Edge, Sessions"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/kv"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech/cloudflare"
 allowed-tools: Bash(npx:*) Bash(wrangler:*) Read Write Edit Glob Grep
 ---
 

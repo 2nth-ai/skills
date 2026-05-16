@@ -1,13 +1,11 @@
 ---
-name: tech/cisco/automation
+name: automation
 description: Cisco network automation — Netmiko/NAPALM Python, Ansible, DNA Center REST API, NSO, YANG/NETCONF/RESTCONF.
-requires:
-  - tech/cisco
-improves:
-  - tech/cisco
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  requires: "tech/cisco"
+  improves: "tech/cisco"
   maturity: stub
 ---
 

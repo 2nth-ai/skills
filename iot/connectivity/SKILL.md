@@ -1,14 +1,12 @@
 ---
-name: IoT Connectivity & Protocols
+name: connectivity
 description: >
   Wireless protocol selection (WiFi, BLE, LoRaWAN, Zigbee, NB-IoT, LTE-M, cellular),
   MQTT/CoAP/HTTP, mesh networking, and protocol trade-offs for IoT deployments.
-requires:
-  - iot/firmware
-improves: []
 metadata:
   domain: iot
   subdomain: connectivity
+  requires: "iot/firmware"
   maturity: stable
 ---
 

@@ -1,16 +1,14 @@
 ---
-name: Data Privacy & POPIA
+name: data-privacy
 description: >
   (1) South African data privacy compliance — POPIA (Protection of Personal Information
   Act 4 of 2013), lawful processing, data subject rights, and breach obligations.
-requires:
-  - leg
-improves: []
 metadata:
   domain: leg
   subdomain: data-privacy
   maturity: stable
   jurisdiction: ZA
+  requires: "leg"
   legislation: Protection of Personal Information Act 4 of 2013
 ---
 

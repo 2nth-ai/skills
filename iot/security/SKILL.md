@@ -1,15 +1,12 @@
 ---
-name: IoT Security
+name: security
 description: >
   Device security architecture, secure boot, TLS/DTLS, certificate management,
   OTA security, POPIA compliance for IoT data, and common IoT attack vectors.
-requires:
-  - iot/firmware
-  - iot/connectivity
-improves: []
 metadata:
   domain: iot
   subdomain: security
+  requires: "iot/firmware, iot/connectivity"
   maturity: stable
 ---
 

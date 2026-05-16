@@ -1,15 +1,13 @@
 ---
-name: Brand Strategy & Positioning
+name: brand
 description: >
   (1) Brand positioning, messaging architecture, visual identity management,
   and building a durable brand in competitive markets.
-requires:
-  - mkt
-improves: []
 metadata:
   domain: mkt
   subdomain: brand
   maturity: stable
+  requires: "mkt"
   jurisdiction: ZA
 ---
 

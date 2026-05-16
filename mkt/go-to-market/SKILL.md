@@ -1,17 +1,13 @@
 ---
-name: Go-to-Market Strategy
+name: go-to-market
 description: >
   (1) GTM planning for new products and markets — launch strategy, channel
   selection, pricing positioning, and market entry execution.
-requires:
-  - mkt
-  - mkt/brand
-  - mkt/demand-gen
-improves: []
 metadata:
   domain: mkt
   subdomain: go-to-market
   maturity: stable
+  requires: "mkt, mkt/brand, mkt/demand-gen"
   jurisdiction: ZA
 ---
 

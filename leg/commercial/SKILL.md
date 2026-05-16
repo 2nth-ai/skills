@@ -1,15 +1,13 @@
 ---
-name: Commercial Contracts
+name: commercial
 description: >
   (1) Commercial contract fundamentals — MSAs, SLAs, NDAs, service agreements, and
   the key clauses every CEO must understand before signing anything.
-requires:
-  - leg/contracts
-improves: []
 metadata:
   domain: leg
   subdomain: commercial
   maturity: stable
+  requires: "leg/contracts"
   jurisdiction: ZA
 ---
 

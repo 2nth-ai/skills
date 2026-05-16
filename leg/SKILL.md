@@ -7,11 +7,11 @@ description: |
   (3) intellectual property — patents, trademarks, licensing,
   (4) legal document processing or summarisation.
 license: MIT
-homepage: https://skills.2nth.ai/leg
-repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/leg"
+  repository: "https://github.com/2nth-ai/skills"
   categories: "Legal, Compliance, Contracts, IP"
 ---
 

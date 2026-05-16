@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/tunnel
+name: tunnel
 description: |
   Cloudflare Tunnel — secure outbound connector from on-premise to Cloudflare edge. Use this skill when:
   (1) connecting 2nth Workers to a client's on-premise ERP, CRM, or database without opening firewall ports,
@@ -8,16 +8,14 @@ description: |
   Free — cloudflared daemon runs on the client's machine or server.
 license: MIT
 compatibility: Cloudflare Tunnel (cloudflared), any OS
-homepage: https://skills.2nth.ai/tech/cloudflare/tunnel
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "0.1.0"
   status: stub
+  homepage: "https://skills.2nth.ai/tech/cloudflare/tunnel"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech/cloudflare"
   categories: "Cloudflare, Tunnel, cloudflared, Private Network, On-premise"
 ---
 

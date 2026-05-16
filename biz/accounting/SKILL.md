@@ -1,20 +1,18 @@
 ---
-name: biz/accounting
+name: accounting
 description: |
   Accounting domain manifest. Use this skill when routing to accounting system integrations.
   Child skills provide specific platform coverage:
   (1) Xero cloud accounting — invoicing, reconciliation, financial reports, OAuth 2.0.
 license: MIT
 compatibility: Any
-homepage: https://skills.2nth.ai/biz/accounting
-repository: https://github.com/2nth-ai/skills
-requires: []
-improves:
-  - biz
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Accounting, Finance, ERP"
+  homepage: "https://skills.2nth.ai/biz/accounting"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "biz"
 allowed-tools: Read
 ---
 

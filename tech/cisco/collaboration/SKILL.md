@@ -1,13 +1,11 @@
 ---
-name: tech/cisco/collaboration
+name: collaboration
 description: Cisco collaboration — Webex cloud, CUCM on-prem telephony, Unity Connection voicemail, UCCX contact centre.
-requires:
-  - tech/cisco
-improves:
-  - tech/cisco
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  requires: "tech/cisco"
+  improves: "tech/cisco"
   maturity: stub
 ---
 

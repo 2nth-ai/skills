@@ -1,13 +1,11 @@
 ---
-name: tech/aws/ai
+name: ai
 description: AWS AI services — Bedrock (Claude, Llama, Titan), SageMaker, Rekognition, Comprehend, Transcribe.
-requires:
-  - tech/aws
-improves:
-  - tech/aws
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  requires: "tech/aws"
+  improves: "tech/aws"
   maturity: stub
 ---
 

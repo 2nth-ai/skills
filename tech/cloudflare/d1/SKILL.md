@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/d1
+name: d1
 description: |
   Cloudflare D1 — SQLite at the edge. Use this skill when:
   (1) designing schemas and writing migrations for D1 databases,
@@ -10,16 +10,14 @@ description: |
   (6) choosing between D1, KV, and R2 for different data shapes.
 license: MIT
 compatibility: Cloudflare Workers, Wrangler CLI
-homepage: https://skills.2nth.ai/tech/cloudflare/d1
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Cloudflare, D1, SQLite, Database, Edge"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/d1"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech/cloudflare"
 allowed-tools: Bash(npx:*) Bash(wrangler:*) Read Write Edit Glob Grep
 ---
 

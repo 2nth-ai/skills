@@ -1,16 +1,13 @@
 ---
-name: Revenue Forecasting
+name: forecasting
 description: >
   (1) B2B revenue forecasting — three-tier forecast model, sales velocity, commit
   discipline, and CRM-based forecasting hygiene for accurate revenue prediction.
-requires:
-  - biz/sales
-  - biz/sales/pipeline
-improves:
-  - fin/modelling
 metadata:
   domain: biz
   subdomain: sales/forecasting
+  requires: "biz/sales, biz/sales/pipeline"
+  improves: "fin/modelling"
   maturity: stable
 ---
 

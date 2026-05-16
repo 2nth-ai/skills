@@ -1,5 +1,5 @@
 ---
-name: tech/aws
+name: aws
 description: |
   Amazon Web Services (AWS) platform skills. Use skills in this domain when:
   (1) deploying compute workloads — Lambda serverless functions, ECS Fargate containers, EC2 virtual machines,
@@ -10,14 +10,13 @@ description: |
   (6) building a cloud contact centre — Amazon Connect IVR, routing, agent desktop, Contact Lens, Lex,
   (7) building hybrid Cloudflare + AWS architectures — Cloudflare at the edge, AWS for compute-heavy or stateful workloads.
 license: MIT
-homepage: https://skills.2nth.ai/tech/aws
-repository: https://github.com/2nth-ai/skills
-improves:
-  - tech
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "AWS, Lambda, EC2, ECS, IAM, VPC, S3, RDS, DynamoDB, Bedrock, SageMaker"
+  homepage: "https://skills.2nth.ai/tech/aws"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "tech"
 allowed-tools: Bash(aws:*) Bash(cdk:*) Read Write Edit Glob Grep
 ---
 

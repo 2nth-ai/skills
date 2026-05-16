@@ -1,15 +1,13 @@
 ---
-name: SARS Compliance & eFiling
+name: sars
 description: >
   (1) SARS compliance management — eFiling, tax clearance, audits, objections, disputes,
   and maintaining good standing with the South African Revenue Service.
-requires:
-  - fin/sa
-improves: []
 metadata:
   domain: fin
   subdomain: sa/sars
   maturity: stable
+  requires: "fin/sa"
   jurisdiction: ZA
 ---
 

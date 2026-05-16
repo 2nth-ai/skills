@@ -39,6 +39,7 @@ Skills teach AI agents how to work effectively in a specific domain context. The
 | `agents/eric` | Fractional IoT Engineering Director | iot/hardware, iot/firmware, iot/connectivity, iot/sensors, iot/power, iot/security, iot/platform, iot/sa |
 | `agents/andi` | FinMechanics Africa Representative | fin/capital-markets, fin/capital-markets/trading-platforms, fin/sa |
 | `agents/sophia` | (specialist — see AGENT.md) | |
+| `agents/skills` | Repository Maintainer | tech/github, tech/cloudflare/pages, tech/agent-protocols, tech/claude-code |
 
 ## Skill Tree (current state)
 
@@ -51,9 +52,18 @@ biz/
     woocommerce/     SKILL.md  ✓ production — WooCommerce REST API v3, orders, products, inventory, webhooks
   accounting/        SKILL.md  ✓ production — accounting domain manifest
     xero/            SKILL.md  ✓ production — Xero REST API, OAuth 2.0, invoicing, reconciliation, reports
+  cms/               SKILL.md  ✓ production — content management systems domain manifest
+    ghost/           SKILL.md  ✓ production — Ghost CMS setup, Admin + Content API, themes, memberships, newsletters
   crm/
     hubspot/         stub
     salesforce/      stub
+  property/          SKILL.md  ✓ production — property development, construction compliance
+    za/              SKILL.md  ✓ production — SA regulatory landscape (SANS 10400 + CIDB + NHBRC)
+      sans-10400/    SKILL.md  ✓ production — building codes, 23 parts, occupancy classes, plan submission
+      cidb/          SKILL.md  ✓ production — contractor grading (1–9), classes of works, tender values
+      nhbrc/         SKILL.md  ✓ production — builder registration, 4-stage inspections, 3-tier warranty
+      project-stages/ SKILL.md ✓ production — 9-stage lifecycle, ERPNext doctypes, compliance checklists
+  spatial-gallery/   SKILL.md  ✓ production — FOAM-inspired spatial index, gallery, proof of presence for shared spaces
   hr/                SKILL.md  ✓ stub — HR and talent domain manifest
     recruitment/     SKILL.md  ✓ production — full recruitment value chain, JD → offer
     onboarding/      stub
@@ -160,6 +170,7 @@ tech/
   elevenlabs/        SKILL.md  ✓ stub — TTS (flash/v3), voice cloning, STT, conversational AI agents, Cloudflare streaming
   github/            SKILL.md  ✓ stub — REST API, Octokit v21, Actions, Apps, webhooks, Copilot data policy (Apr 2026)
   zoho/              SKILL.md  ✓ stub — CRM v8 (COQL, bulk), Books v3 (invoices, payments), OAuth multi-DC, CRM↔Books sync
+  recall-ai/         SKILL.md  ✓ production — meeting bot API, recording, transcripts, webhooks for Zoom/Meet/Teams/Webex
   claude-code/       SKILL.md  ✓ stub — Claude Code setup and patterns
   agent-protocols/   SKILL.md  ✓ production — MCP, A2A, ACP, multi-agent orchestration patterns
   mcp/               stub

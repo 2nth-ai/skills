@@ -1,16 +1,13 @@
 ---
-name: Content Marketing
+name: content
 description: >
   (1) Content strategy, editorial planning, thought leadership, and content
   distribution — building authority and inbound demand through valuable content.
-requires:
-  - mkt
-  - mkt/brand
-improves: []
 metadata:
   domain: mkt
   subdomain: content
   maturity: stable
+  requires: "mkt, mkt/brand"
   jurisdiction: ZA
 ---
 

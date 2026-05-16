@@ -1,5 +1,5 @@
 ---
-name: health/ops
+name: ops
 description: |
   Healthcare operations skills. Use skills in this subdomain when working with:
   (1) patient scheduling — appointment booking, resource allocation, waitlist management,
@@ -7,13 +7,12 @@ description: |
   (3) healthcare compliance — HIPAA, POPIA, accreditation, audit trails,
   (4) practice management — staff scheduling, inventory, facility operations.
 license: MIT
-homepage: https://skills.2nth.ai/health/ops
-repository: https://github.com/2nth-ai/skills
-improves:
-  - health
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/health/ops"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "health"
   categories: "Healthcare Operations, Billing, Scheduling, Compliance"
 ---
 

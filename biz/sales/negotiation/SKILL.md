@@ -1,15 +1,12 @@
 ---
-name: Sales Negotiation
+name: negotiation
 description: >
   (1) B2B commercial negotiation — anchoring, concession strategy, multi-stakeholder
   deals, and closing without discounting on price alone.
-requires:
-  - biz/sales
-  - biz/sales/proposal
-improves: []
 metadata:
   domain: biz
   subdomain: sales/negotiation
+  requires: "biz/sales, biz/sales/proposal"
   maturity: stable
 ---
 

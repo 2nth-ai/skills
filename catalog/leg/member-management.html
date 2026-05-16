@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Portal Member Management — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Multi-Portal Member Management</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/leg/member-management/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">Multi-Portal Member Management</div>
+      <h1>MULTI PORTAL MEMBER MANAGEMENT</h1>
+      
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        <span style="font-size:13px;color:var(--text-muted)">v1.0</span>
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>Multi-Portal Member Management</h1>
+
+<p>Best practices for managing members across multiple properties with SSO, privacy compliance, and role-based access.</p>
+
+<h2>Architecture Pattern</h2>
+
+<h3>Central Identity Provider (2nth.ai)</h3>
+<pre><code class="lang-text">2nth.ai (Identity Provider)
+├── User account (email, profile, consent record)
+├── OAuth2/OIDC provider
+├── Token balance &amp; billing
+├── Activity audit log
+│
+├── 2nth.io (Relying Party — Infrastructure)
+│   ├── OTP auth via 2nth.ai API
+│   ├── Local session cookie (2nth_io_session)
+│   ├── Role: platform user, partner
+│   └── No duplicate user record
+│
+├── 2nth.org (Relying Party — Investor Portal)
+│   ├── PIN auth (local) + OTP fallback via 2nth.ai
+│   ├── Local session cookie (2nth_org_pin / 2nth_org_token)
+│   ├── Role: investor (whitelist-gated)
+│   └── No duplicate user record
+│
+├── 2nth.me (Independent Identity)
+│   ├── Own OTP auth, own KV store
+│   ├── Separate user record (privacy-first)
+│   ├── Optional link to 2nth.ai account
+│   └── Role: skill member
+│
+└── developers.2nth.ai (Relying Party — Dev Portal)
+    ├── JWT auth via 2nth.ai session cookie
+    ├── Scope-based access (per partner)
+    └── Role: developer, partner, admin</code></pre>
+
+<h3>Key Principles</h3>
+
+<ol><li><strong>Single identity, multiple sessions</strong> — One account on 2nth.ai, separate session cookies per property</li><li><strong>No credential duplication</strong> — Relying parties never store passwords or PINs for the central identity</li><li><strong>Consent per property</strong> — Each property tracks its own consent grant, not inherited from SSO</li><li><strong>Minimal data transfer</strong> — OAuth userinfo returns only what the relying party needs (scoped claims)</li><li><strong>Independent deletion</strong> — Deleting from one property doesn't cascade (user chooses per-platform)</li></ol>
+
+<h2>Consent Management</h2>
+
+<h3>Consent Record Schema</h3>
+<pre><code class="lang-sql">CREATE TABLE consent_records (
+    id              TEXT PRIMARY KEY,
+    user_id         TEXT NOT NULL,
+    property        TEXT NOT NULL,       -- '2nth.ai', '2nth.io', '2nth.org', '2nth.me'
+    consent_type    TEXT NOT NULL,       -- 'registration', 'marketing', 'data_sharing', 'profiling'
+    granted         INTEGER NOT NULL DEFAULT 1,
+    ip_address      TEXT,
+    user_agent      TEXT,
+    granted_at      TEXT NOT NULL,
+    revoked_at      TEXT,
+    version         TEXT,               -- Terms version consented to
+    UNIQUE(user_id, property, consent_type)
+);</code></pre>
+
+<h3>Consent Types</h3>
+<table><thead><tr><th>Type</th><th>Description</th><th>Required</th><th>Default</th></tr></thead><tbody><tr><td><code>registration</code></td><td>Account creation consent</td><td>Yes</td><td>Granted on signup</td></tr><tr><td><code>marketing</code></td><td>Email marketing opt-in</td><td>No</td><td>Not granted</td></tr><tr><td><code>data_sharing</code></td><td>Share data between 2nth properties</td><td>No</td><td>Not granted</td></tr><tr><td><code>profiling</code></td><td>Use data for recommendations/analytics</td><td>No</td><td>Not granted</td></tr><tr><td><code>public_profile</code></td><td>Make profile publicly visible</td><td>No</td><td>Not granted</td></tr><tr><td><code>partner_visibility</code></td><td>Show profile in partner directory</td><td>No</td><td>Not granted</td></tr></tbody></table>
+
+<h3>Consent Change Audit</h3>
+<p>Every consent change must be logged:</p>
+<pre><code class="lang-sql">CREATE TABLE consent_audit (
+    id              TEXT PRIMARY KEY,
+    user_id         TEXT NOT NULL,
+    property        TEXT NOT NULL,
+    consent_type    TEXT NOT NULL,
+    action          TEXT NOT NULL,       -- 'grant', 'revoke', 'update'
+    old_value       INTEGER,
+    new_value       INTEGER NOT NULL,
+    ip_address      TEXT,
+    user_agent      TEXT,
+    created_at      TEXT NOT NULL DEFAULT (datetime('now'))
+);</code></pre>
+
+<h2>Data Subject Rights (POPIA Section 23-25, GDPR Articles 15-22)</h2>
+
+<h3>Required Endpoints per Property</h3>
+<pre><code class="lang-text">GET  /api/privacy/data-export      — Full data export (JSON/CSV)
+POST /api/privacy/delete-account   — Account deletion with confirmation
+GET  /api/privacy/consent          — Current consent status
+PUT  /api/privacy/consent          — Update consent preferences
+GET  /api/privacy/activity-log     — Activity history for the user
+POST /api/privacy/data-request     — Formal data subject request (30-day SLA)</code></pre>
+
+<h3>Data Export Format</h3>
+<pre><code class="lang-json">{
+  "export_date": "2026-04-05T10:00:00Z",
+  "property": "2nth.ai",
+  "user": {
+    "id": "abc123",
+    "email": "user@example.com",
+    "display_name": "User Name",
+    "created_at": "2026-01-15T08:00:00Z",
+    "consent_records": [
+      { "type": "registration", "granted": true, "at": "2026-01-15T08:00:00Z" }
+    ]
+  },
+  "activity_log": [...],
+  "transactions": [...],
+  "projects": [...],
+  "agent_sessions": [...]
+}</code></pre>
+
+<h3>Deletion Process</h3>
+<ol><li>User requests deletion via UI or API</li><li>System generates confirmation token (emailed)</li><li>User confirms within 24 hours</li><li>Soft-delete: mark <code>status = 'deleted'</code>, anonymise PII</li><li>Hard-delete: after 30-day cooling period, permanently remove</li><li>Log deletion event in audit trail (retain audit record without PII)</li><li>Notify linked properties (OAuth clients) of deletion</li></ol>
+
+<h3>Response SLA</h3>
+<ul><li><strong>POPIA</strong>: 30 days (Section 25)</li><li><strong>GDPR</strong>: 30 days (Article 12), extendable to 90 days for complex requests</li><li><strong>Best practice</strong>: Respond within 7 days, complete within 14 days</li></ul>
+
+<h2>Role &amp; Access Management</h2>
+
+<h3>Role Hierarchy</h3>
+<pre><code class="lang-text">admin          — Full access to all properties and admin functions
+partner        — Access to partner hub, developer portal, assigned scopes
+builder        — Full platform access, token billing, project creation
+investor       — 2nth.org portal access (whitelist-gated)
+user           — Standard platform access
+explorer       — Free tier, limited demo access
+anonymous      — Fingerprint-tracked demo access, no PII</code></pre>
+
+<h3>Scope-Based Access (Developer Portal)</h3>
+<pre><code class="lang-text">full           — All partner materials, admin functions
+platform       — Platform docs and general partner content
+&lt;partner-name&gt; — Specific partner's materials only (e.g. 'agilex', 'proximity-green')</code></pre>
+
+<h3>Access Control Checklist per Property</h3>
+<ul><li>[ ] Authentication required for private pages</li><li>[ ] Session validation on every protected request</li><li>[ ] Role/scope check before rendering content</li><li>[ ] No PII visible to unauthenticated users</li><li>[ ] Partner profiles gated behind auth</li><li>[ ] Admin functions require admin role</li><li>[ ] Rate limiting on auth endpoints</li><li>[ ] Session expiry and rotation</li></ul>
+
+<h2>Cookie Policy</h2>
+
+<h3>Per-Property Cookies</h3>
+<table><thead><tr><th>Property</th><th>Cookie</th><th>Domain</th><th>TTL</th><th>Purpose</th></tr></thead><tbody><tr><td>2nth.ai</td><td><code>2nth_session</code></td><td><code>.2nth.ai</code></td><td>7 days</td><td>JWT session</td></tr><tr><td>2nth.io</td><td><code>2nth_io_token</code></td><td>(pages.dev)</td><td>15 min</td><td>OAuth access token</td></tr><tr><td>2nth.io</td><td><code>2nth_io_session</code></td><td>(pages.dev)</td><td>30 days</td><td>Session ID</td></tr><tr><td>2nth.org</td><td><code>2nth_org_pin</code></td><td>(pages.dev)</td><td>30 days</td><td>PIN session</td></tr><tr><td>2nth.org</td><td><code>2nth_org_token</code></td><td>(pages.dev)</td><td>15 min</td><td>OAuth access token</td></tr><tr><td>2nth.me</td><td><code>2nth_me_session</code></td><td><code>.2nth.me</code></td><td>7 days</td><td>Session ID</td></tr><tr><td>developers</td><td><code>2nth_session</code></td><td><code>.2nth.ai</code></td><td>7 days</td><td>Shared with 2nth.ai</td></tr></tbody></table>
+
+<h3>Cookie Rules</h3>
+<ol><li>All cookies: <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite=Lax</code></li><li>No tracking cookies, analytics cookies, or third-party cookies</li><li>Session cookies only — no persistent identifiers beyond session</li><li>Cookie consent banner not required if only essential cookies (POPIA/GDPR exemption)</li></ol>
+
+<h2>Breach Notification</h2>
+
+<h3>Process</h3>
+<ol><li>Detect breach (monitoring, audit log anomaly, external report)</li><li>Contain: revoke affected sessions, rotate secrets</li><li>Assess: determine scope, affected users, data types exposed</li><li>Notify Information Regulator within 72 hours (POPIA Section 22)</li><li>Notify affected users "as soon as reasonably possible"</li><li>Document in breach register</li></ol>
+
+<h3>Breach Register Schema</h3>
+<pre><code class="lang-sql">CREATE TABLE breach_register (
+    id              TEXT PRIMARY KEY,
+    detected_at     TEXT NOT NULL,
+    description     TEXT NOT NULL,
+    affected_users  INTEGER,
+    data_types      TEXT,               -- JSON array: ['email', 'name', 'tokens']
+    severity        TEXT,               -- 'low', 'medium', 'high', 'critical'
+    contained_at    TEXT,
+    regulator_notified_at TEXT,
+    users_notified_at TEXT,
+    remediation     TEXT,
+    status          TEXT DEFAULT 'open' -- 'open', 'contained', 'resolved'
+);</code></pre>
+
+<h2>Implementation Checklist</h2>
+
+<h3>Phase 1: Foundation</h3>
+<ul><li>[ ] Consent record table in D1</li><li>[ ] Consent audit table in D1</li><li>[ ] Privacy settings page on each property</li><li>[ ] Data export endpoint per property</li><li>[ ] Account deletion endpoint with confirmation flow</li></ul>
+
+<h3>Phase 2: Compliance</h3>
+<ul><li>[ ] Data subject request handler (email + API)</li><li>[ ] 30-day SLA tracking</li><li>[ ] Breach register table</li><li>[ ] Breach notification workflow</li><li>[ ] Privacy impact assessment template</li></ul>
+
+<h3>Phase 3: User Control</h3>
+<ul><li>[ ] Consent preference centre (granular opt-in/out)</li><li>[ ] Cross-property consent dashboard</li><li>[ ] Activity log viewer per user</li><li>[ ] Data retention policy enforcement (auto-purge)</li><li>[ ] Right to be forgotten across linked properties</li></ul>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/leg/member-management/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 ---
-name: tech/cisco
+name: cisco
 description: |
   Cisco platform skills. Use skills in this domain when working with:
   (1) network infrastructure — IOS/IOS-XE/NX-OS switches and routers, VLANs, spanning tree, routing protocols (OSPF, EIGRP, BGP),
@@ -8,14 +8,13 @@ description: |
   (4) collaboration — Webex, CUCM, Unity Connection, UCCX,
   (5) network automation — Netmiko, NAPALM, Ansible, Cisco DNA Center, NSO, YANG/NETCONF/RESTCONF.
 license: MIT
-homepage: https://skills.2nth.ai/tech/cisco
-repository: https://github.com/2nth-ai/skills
-improves:
-  - tech
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   maturity: stub
+  homepage: "https://skills.2nth.ai/tech/cisco"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "tech"
   categories: "Cisco, IOS, NX-OS, networking, switching, routing, OSPF, BGP, firewall, ASA, Firepower, Meraki, Webex, CUCM, Netmiko, DNA Center, automation"
 ---
 

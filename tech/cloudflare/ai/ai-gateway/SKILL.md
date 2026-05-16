@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/ai/ai-gateway
+name: ai-gateway
 description: |
   Cloudflare AI Gateway — unified proxy for Claude, OpenAI, and Workers AI. Use this skill when:
   (1) routing all Claude API calls through AI Gateway for token metering and logging,
@@ -10,17 +10,14 @@ description: |
   (6) implementing the 2nth token economy — per-client billing via gateway logs.
 license: MIT
 compatibility: Cloudflare Workers, any HTTP client
-homepage: https://skills.2nth.ai/tech/cloudflare/ai/ai-gateway
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-  - tech/cloudflare/ai/workers-ai
-improves:
-  - tech/cloudflare/ai
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Cloudflare, AI Gateway, Claude, Token Economy, Observability"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/ai/ai-gateway"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers, tech/cloudflare/ai/workers-ai"
+  improves: "tech/cloudflare/ai"
 allowed-tools: Bash(npx:*) Bash(wrangler:*) Read Write Edit Glob Grep
 ---
 

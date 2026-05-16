@@ -1,5 +1,5 @@
 ---
-name: tech/aws/connect
+name: connect
 description: |
   Amazon Connect contact centre skill. Use when:
   (1) setting up a cloud contact centre — instance creation, phone numbers, hours of operation,
@@ -11,18 +11,14 @@ description: |
   (7) agent desktop customisation — Streams API, custom CCP, third-party CRM embedding.
 license: MIT
 compatibility: AWS CLI v2, Amazon Connect Console, Connect Streams API v2, AWS SDK v3 (TypeScript/Python)
-homepage: https://skills.2nth.ai/tech/aws/connect
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/aws
-  - tech/aws/compute
-  - tech/aws/security
-improves:
-  - tech/aws
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "AWS, Amazon Connect, contact centre, IVR, contact flow, Lex, Lambda, routing, CCP, Streams API, Contact Lens, outbound, Kinesis"
+  homepage: "https://skills.2nth.ai/tech/aws/connect"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/aws, tech/aws/compute, tech/aws/security"
+  improves: "tech/aws"
 allowed-tools: Bash(aws:*) Read Write Edit Glob Grep
 ---
 

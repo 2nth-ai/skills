@@ -1,17 +1,15 @@
 ---
-name: AI Agent Communication Protocols
+name: agent-protocols
 description: >
   The open standards and patterns for building chains of AI agents that
   communicate, delegate, and collaborate — covering MCP, A2A, ACP, agent
   orchestration topologies, and practical implementation on edge and cloud.
-requires:
-  - tech/architecture
-improves:
-  - tech
 metadata:
   domain: tech
   subdomain: agent-protocols
   maturity: stable
+  requires: "tech/architecture"
+  improves: "tech"
   version: "1.0.0"
 ---
 

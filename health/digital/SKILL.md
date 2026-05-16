@@ -1,10 +1,8 @@
 ---
-name: Digital Health & Clinical Informatics
+name: digital
 description: >
   EMR/EHR systems, HL7 FHIR interoperability, telemedicine, health data standards,
   clinical decision support, and digital health implementation in South Africa.
-requires: []
-improves: []
 metadata:
   domain: health
   subdomain: digital

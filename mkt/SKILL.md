@@ -1,10 +1,8 @@
 ---
-name: Marketing
+name: mkt
 description: >
   (1) Marketing domain root — brand, content, digital, social, performance,
   demand generation, PR, go-to-market, and South Africa market context.
-requires: []
-improves: []
 metadata:
   domain: mkt
   maturity: stable

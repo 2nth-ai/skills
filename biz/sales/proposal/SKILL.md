@@ -1,16 +1,12 @@
 ---
-name: Sales Proposal
+name: proposal
 description: >
   (1) B2B proposal and RFP structure — executive summary, business case, commercial
   terms, and presentation frameworks that win at the economic buyer level.
-requires:
-  - biz/sales
-  - biz/sales/discovery
-  - biz/sales/qualification
-improves: []
 metadata:
   domain: biz
   subdomain: sales/proposal
+  requires: "biz/sales, biz/sales/discovery, biz/sales/qualification"
   maturity: stable
 ---
 

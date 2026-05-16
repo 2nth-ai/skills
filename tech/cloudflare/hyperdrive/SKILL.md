@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/hyperdrive
+name: hyperdrive
 description: |
   Cloudflare Hyperdrive — database connection pooling for Postgres and MySQL. Use this skill when:
   (1) connecting Cloudflare Workers to an external Postgres or MySQL database,
@@ -9,15 +9,13 @@ description: |
   Requires Workers Paid plan.
 license: MIT
 compatibility: Cloudflare Workers (Paid), Postgres, MySQL
-homepage: https://skills.2nth.ai/tech/cloudflare/hyperdrive
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/hyperdrive"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech/cloudflare"
   categories: "Cloudflare, Hyperdrive, Postgres, MySQL, Connection Pooling"
 ---
 

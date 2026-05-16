@@ -1,15 +1,13 @@
 ---
-name: Sensors & Signal Conditioning
+name: sensors
 description: >
   Sensor selection, signal conditioning, ADC design, calibration, interface
   protocols (I²C/SPI/UART/4-20mA/RS-485), and measurement accuracy for
   IoT and industrial deployments.
-requires:
-  - iot/hardware
-improves: []
 metadata:
   domain: iot
   subdomain: sensors
+  requires: "iot/hardware"
   maturity: stable
 ---
 

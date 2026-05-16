@@ -1,16 +1,13 @@
 ---
-name: Cash Flow Management
+name: cash-flow
 description: >
   (1) Business cash flow management — 13-week rolling forecast, working capital
   optimisation, treasury basics, and cash runway planning for SMBs.
-requires:
-  - fin/accounting
-  - fin/management-accounts
-improves:
-  - fin/modelling
 metadata:
   domain: fin
   subdomain: cash-flow
+  requires: "fin/accounting, fin/management-accounts"
+  improves: "fin/modelling"
   maturity: stable
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: tech/cloudflare/r2
+name: r2
 description: |
   Cloudflare R2 — S3-compatible object storage with zero egress fees. Use this skill when:
   (1) storing files, images, documents, or exports uploaded by users,
@@ -10,16 +10,14 @@ description: |
   (6) connecting R2 to a custom domain for public asset serving.
 license: MIT
 compatibility: Cloudflare Workers, S3-compatible clients (AWS SDK v3)
-homepage: https://skills.2nth.ai/tech/cloudflare/r2
-repository: https://github.com/2nth-ai/skills
-requires:
-  - tech/cloudflare/workers
-improves:
-  - tech/cloudflare
 metadata:
   author: 2nth.ai
   version: "1.0.0"
   categories: "Cloudflare, R2, Object Storage, Files, S3"
+  homepage: "https://skills.2nth.ai/tech/cloudflare/r2"
+  repository: "https://github.com/2nth-ai/skills"
+  requires: "tech/cloudflare/workers"
+  improves: "tech/cloudflare"
 allowed-tools: Bash(npx:*) Bash(wrangler:*) Read Write Edit Glob Grep
 ---
 

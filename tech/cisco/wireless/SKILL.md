@@ -1,13 +1,11 @@
 ---
-name: tech/cisco/wireless
+name: wireless
 description: Cisco wireless — Catalyst Wi-Fi (WLC), Meraki cloud-managed, access point deployment, RF design.
-requires:
-  - tech/cisco
-improves:
-  - tech/cisco
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  requires: "tech/cisco"
+  improves: "tech/cisco"
   maturity: stub
 ---
 

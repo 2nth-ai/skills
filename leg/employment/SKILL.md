@@ -1,16 +1,14 @@
 ---
-name: South African Employment Law
+name: employment
 description: >
   (1) SA employment law fundamentals — LRA, BCEA, employment contracts, dismissal,
   disciplinary processes, and the obligations every employer must meet.
-requires:
-  - leg
-improves: []
 metadata:
   domain: leg
   subdomain: employment
   maturity: stable
   jurisdiction: ZA
+  requires: "leg"
   legislation: Labour Relations Act 66 of 1995; Basic Conditions of Employment Act 75 of 1997
 ---
 

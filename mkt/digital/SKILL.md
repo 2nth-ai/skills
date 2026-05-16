@@ -1,15 +1,13 @@
 ---
-name: Digital Marketing
+name: digital
 description: >
   (1) Digital channel strategy — SEO, SEM, paid social, email marketing,
   marketing automation, and multi-channel attribution.
-requires:
-  - mkt
-improves: []
 metadata:
   domain: mkt
   subdomain: digital
   maturity: stable
+  requires: "mkt"
   jurisdiction: ZA
 ---
 

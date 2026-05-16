@@ -1,14 +1,12 @@
 ---
-name: Capital Markets
+name: capital-markets
 description: >
   Capital markets domain manifest — trading, risk, pricing, and technology
   architecture for investment banks, treasury operations, and capital market divisions.
-requires: []
-improves:
-  - fin
 metadata:
   domain: fin
   subdomain: capital-markets
+  improves: "fin"
   maturity: stable
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: health/clinical
+name: clinical
 description: |
   Clinical systems skills. Use skills in this subdomain when working with:
   (1) EHR/EMR systems — FHIR APIs, patient records, clinical notes,
@@ -7,13 +7,12 @@ description: |
   (3) clinical protocols — treatment guidelines, order sets, care plans,
   (4) interoperability — HL7, FHIR R4, SMART on FHIR integrations.
 license: MIT
-homepage: https://skills.2nth.ai/health/clinical
-repository: https://github.com/2nth-ai/skills
-improves:
-  - health
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  homepage: "https://skills.2nth.ai/health/clinical"
+  repository: "https://github.com/2nth-ai/skills"
+  improves: "health"
   categories: "Clinical, EHR, FHIR, HL7, Diagnostics"
 ---
 

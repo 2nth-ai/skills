@@ -1,13 +1,11 @@
 ---
-name: tech/cisco/security
+name: security
 description: Cisco network security — ASA/Firepower NGFW, Umbrella DNS security, ISE identity/NAC, AnyConnect VPN.
-requires:
-  - tech/cisco
-improves:
-  - tech/cisco
 metadata:
   author: 2nth.ai
   version: "1.0.0"
+  requires: "tech/cisco"
+  improves: "tech/cisco"
   maturity: stub
 ---
 

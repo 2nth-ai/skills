@@ -1,14 +1,12 @@
 ---
-name: Data Governance
+name: governance
 description: >
   Data quality management, data cataloguing, data lineage, access controls,
   and POPIA-compliant data handling for South African organisations.
-requires:
-  - data/strategy
-improves: []
 metadata:
   domain: data
   subdomain: governance
+  requires: "data/strategy"
   maturity: stable
 ---
 

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GDPR & POPIA Compliance for SaaS Platforms — 2nth.ai Skills</title>
+  <link rel="stylesheet" href="../../theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; flex: 1; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text-faint); }
+    .breadcrumb-current { color: var(--text-3); }
+    .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); background: var(--bg-card);
+      border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .icon-sun, .icon-moon { display: none; }
+    html:not([data-theme="dark"]) .icon-sun { display: block; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .icon-sun { display: none; }
+      html:not([data-theme]) .icon-moon { display: block; }
+    }
+
+    .btn-gh {
+      display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 36px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, color 0.15s; white-space: nowrap;
+    }
+    .btn-gh:hover { border-color: var(--border-strong); color: var(--text); }
+    .btn-gh svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Skill header ── */
+    .skill-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .skill-path {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .skill-header h1 {
+      font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 12px;
+    }
+    .skill-desc { font-size: 16px; color: var(--text-3); max-width: 640px; margin-bottom: 16px; line-height: 1.5; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge-prod { background: var(--tag-prod-bg); color: var(--tag-prod); }
+    .badge-stub { background: var(--tag-stub-bg); color: var(--tag-stub); }
+    .badge-beta { background: var(--tag-beta-bg); color: var(--tag-beta); }
+
+    .meta-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .meta-requires { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .skill-chip {
+      font-family: var(--font-mono); font-size: 12px;
+      background: var(--brand-dim); border: 1px solid var(--brand-border);
+      color: var(--brand); padding: 2px 8px; border-radius: 4px;
+      text-decoration: none;
+    }
+    .skill-chip:hover { border-color: var(--brand); }
+
+    /* ── Skill body (rendered markdown) ── */
+    .skill-body { font-size: 15px; color: var(--text-2); }
+    .skill-body h1 { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.03em; margin: 40px 0 12px; color: var(--text); }
+    .skill-body h2 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em;
+      margin: 36px 0 12px; color: var(--text); padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-body h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .skill-body p { margin-bottom: 14px; line-height: 1.65; }
+    .skill-body ul, .skill-body ol { margin: 0 0 14px 20px; }
+    .skill-body li { margin-bottom: 6px; line-height: 1.55; }
+    .skill-body pre {
+      background: var(--code-bg); color: var(--code-text);
+      font-family: var(--font-mono); font-size: 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 20px; overflow-x: auto; margin: 16px 0;
+      line-height: 1.5;
+    }
+    .skill-body code {
+      font-family: var(--font-mono); font-size: 13px;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1px 5px; border-radius: 3px;
+    }
+    .skill-body pre code { background: none; padding: 0; }
+    .skill-body blockquote {
+      border-left: 3px solid var(--brand); padding: 8px 16px;
+      background: var(--brand-dim); border-radius: 0 6px 6px 0;
+      color: var(--text-3); margin: 16px 0; font-style: italic;
+    }
+    .skill-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .skill-body th {
+      background: var(--bg-subtle); text-align: left; padding: 8px 12px;
+      border: 1px solid var(--border); font-weight: 600; color: var(--text);
+    }
+    .skill-body td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text-2); }
+    .skill-body tr:nth-child(even) td { background: var(--bg-subtle); }
+    .skill-body a { color: var(--brand); text-decoration: none; }
+    .skill-body a:hover { text-decoration: underline; }
+    .skill-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .skill-body strong { color: var(--text); }
+
+    /* ── Footer nav ── */
+    .page-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); color: var(--text-2); background: var(--bg-card);
+      padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px;
+      transition: border-color 0.15s;
+    }
+    .btn-back:hover { border-color: var(--border-strong); }
+
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      var s = localStorage.getItem('2nth-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && prefersDark)) document.documentElement.setAttribute('data-theme','dark');
+    })();
+  </script>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="breadcrumb">
+        <a href="../../">2nth.ai Skills</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">GDPR & POPIA Compliance for SaaS Platforms</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn-gh" href="https://github.com/2nth-ai/skills/blob/main/leg/gdpr-compliance/SKILL.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          SKILL.md
+        </a>
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zm0-10a1 1 0 100-2 1 1 0 000 2zm0 12a1 1 0 100 2 1 1 0 000-2zm7-5a1 1 0 100-2 1 1 0 000 2zM1 8a1 1 0 100-2 1 1 0 000 2zm12.07-5.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zM3.34 13.07a1 1 0 10-1.41-1.41 1 1 0 001.41 1.41zm9.73 0a1 1 0 101.41-1.41 1 1 0 00-1.41 1.41zM2.93 3.93a1 1 0 10-1.41 1.41 1 1 0 001.41-1.41z"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16"><path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="skill-header">
+      <div class="skill-path">GDPR & POPIA Compliance for SaaS Platforms</div>
+      <h1>GDPR & POPIA COMPLIANCE FOR SAAS PLATFORMS</h1>
+      
+      <div class="skill-meta">
+        <span class="badge badge-prod">production</span>
+        
+        <span style="font-size:13px;color:var(--text-muted)">v1.0</span>
+      </div>
+      
+      
+    </div>
+
+    <div class="skill-body">
+      
+<h1>GDPR &amp; POPIA Compliance for SaaS Platforms</h1>
+
+<p>Technical and operational requirements for GDPR (EU) and POPIA (South Africa) compliance in multi-tenant SaaS platforms.</p>
+
+<h2>Applicability</h2>
+
+<h3>When POPIA Applies</h3>
+<ul><li>Processing personal information of South African data subjects</li><li>Any 2nth.ai/2nth.io user with a South African email, IP, or declared location</li><li>B2BS.co.za as the responsible party (data controller)</li></ul>
+
+<h3>When GDPR Applies</h3>
+<ul><li>Processing personal data of EU/EEA data subjects</li><li>Any user accessing from EU, or with EU email domain</li><li>Applies even if the data controller is outside the EU</li><li>2nth.ai processes EU data via Cloudflare edge nodes in EU</li></ul>
+
+<h3>Overlap</h3>
+<p>Both laws share the same core principles. Build for GDPR (stricter) and you satisfy POPIA automatically. Key differences:</p>
+
+<table><thead><tr><th>Requirement</th><th>GDPR</th><th>POPIA</th></tr></thead><tbody><tr><td>Notification deadline</td><td>72 hours</td><td>"As soon as reasonably possible"</td></tr><tr><td>DPO required?</td><td>Yes (&gt;250 employees or special categories)</td><td>Yes (Information Officer, registered with Regulator)</td></tr><tr><td>Fines</td><td>Up to €20M or 4% global turnover</td><td>Up to R10M or 10 years imprisonment</td></tr><tr><td>Data transfer</td><td>Adequacy decisions, SCCs, BCRs</td><td>Similar, but SA not yet on EU adequacy list</td></tr><tr><td>Right to be forgotten</td><td>Article 17 — explicit right</td><td>Section 24 — similar, less explicit</td></tr><tr><td>Data portability</td><td>Article 20 — structured, machine-readable</td><td>Not explicitly required, but best practice</td></tr></tbody></table>
+
+<h2>Lawful Basis for Processing</h2>
+
+<h3>Per Data Type</h3>
+<table><thead><tr><th>Data</th><th>Lawful Basis</th><th>Justification</th></tr></thead><tbody><tr><td>Email address</td><td>Consent (registration)</td><td>Required for account creation and OTP auth</td></tr><tr><td>Display name</td><td>Consent (optional)</td><td>User chooses to provide</td></tr><tr><td>Company name</td><td>Consent (optional)</td><td>User chooses to provide</td></tr><tr><td>IP address</td><td>Legitimate interest</td><td>Security, rate limiting, abuse prevention</td></tr><tr><td>Geo location (country/city)</td><td>Legitimate interest</td><td>POPIA compliance (jurisdiction), Cloudflare auto-detection</td></tr><tr><td>Token balance</td><td>Contract</td><td>Billing relationship</td></tr><tr><td>Activity log</td><td>Legitimate interest + Legal obligation</td><td>Security audit, POPIA Section 19</td></tr><tr><td>Agent chat history</td><td>Contract</td><td>Service delivery</td></tr><tr><td>OAuth tokens</td><td>Contract</td><td>SSO functionality</td></tr></tbody></table>
+
+<h2>Technical Requirements</h2>
+
+<h3>Data Minimisation</h3>
+<pre><code class="lang-text">DO collect:
+  ✓ Email (required for auth)
+  ✓ Consent timestamp + IP (required for compliance)
+  ✓ Activity log (required for security)
+
+DO NOT collect:
+  ✗ Full name (unless user volunteers it)
+  ✗ Physical address (not needed)
+  ✗ Date of birth (not needed)
+  ✗ Government ID numbers (not needed)
+  ✗ Browsing history beyond platform (no third-party tracking)
+  ✗ Device fingerprinting beyond session (anon demo only)</code></pre>
+
+<h3>Encryption</h3>
+<table><thead><tr><th>Layer</th><th>Requirement</th><th>2nth Implementation</th></tr></thead><tbody><tr><td>In transit</td><td>TLS 1.2+</td><td>Cloudflare manages (TLS 1.3)</td></tr><tr><td>At rest (DB)</td><td>AES-256 or equivalent</td><td>Cloudflare D1 encrypted at rest</td></tr><tr><td>At rest (KV)</td><td>Encrypted storage</td><td>Cloudflare KV encrypted at rest</td></tr><tr><td>Backups</td><td>Encrypted</td><td>D1 automatic (Cloudflare managed)</td></tr><tr><td>Secrets</td><td>Environment variables</td><td>Wrangler secrets (encrypted)</td></tr></tbody></table>
+
+<h3>Access Control</h3>
+<pre><code class="lang-text">Principle of least privilege:
+  - Users see only their own data
+  - Partners see only their scoped content
+  - Admin access requires explicit role
+  - OAuth scopes limit data exposed to relying parties
+  - No wildcard database queries without user_id filter</code></pre>
+
+<h3>Data Retention</h3>
+<table><thead><tr><th>Data Type</th><th>Retention Period</th><th>Justification</th></tr></thead><tbody><tr><td>User account</td><td>Until deletion requested</td><td>Ongoing service</td></tr><tr><td>Activity log</td><td>12 months</td><td>Security audit</td></tr><tr><td>Auth sessions</td><td>7-30 days (auto-expire)</td><td>Session management</td></tr><tr><td>OTP codes</td><td>10 minutes (auto-expire)</td><td>Authentication</td></tr><tr><td>OAuth auth codes</td><td>10 minutes (auto-expire)</td><td>Token exchange</td></tr><tr><td>Refresh tokens</td><td>30 days (auto-expire)</td><td>Session continuity</td></tr><tr><td>Anonymous fingerprints</td><td>30 days (auto-expire)</td><td>Demo rate limiting</td></tr><tr><td>Breach register</td><td>5 years minimum</td><td>Legal requirement</td></tr><tr><td>Consent audit trail</td><td>Life of account + 5 years</td><td>Legal requirement</td></tr></tbody></table>
+
+<h3>Automatic Purge Implementation</h3>
+<pre><code class="lang-sql">-- Run daily via scheduled worker
+DELETE FROM activity_log
+WHERE created_at &lt; datetime('now', '-12 months');
+
+DELETE FROM anon_identities
+WHERE last_seen &lt; datetime('now', '-30 days');
+
+DELETE FROM oauth_authorization_codes
+WHERE expires_at &lt; datetime('now');
+
+DELETE FROM oauth_refresh_tokens
+WHERE expires_at &lt; datetime('now');</code></pre>
+
+<h2>Privacy by Design Checklist</h2>
+
+<h3>Registration Flow</h3>
+<ul><li>[ ] Only email required (all other fields optional)</li><li>[ ] Consent timestamp and IP captured</li><li>[ ] Terms link visible before submission</li><li>[ ] No pre-checked marketing consent boxes</li><li>[ ] Welcome email includes privacy notice link</li><li>[ ] Profile defaults to private</li></ul>
+
+<h3>Authentication Flow</h3>
+<ul><li>[ ] OTP/magic link — no password storage</li><li>[ ] Session cookies: HttpOnly, Secure, SameSite=Lax</li><li>[ ] Session rotation after 1 hour</li><li>[ ] Rate limiting on auth endpoints (3/min)</li><li>[ ] Failed attempt logging (without storing codes)</li><li>[ ] Brute-force lockout (5 attempts)</li></ul>
+
+<h3>Data Display</h3>
+<ul><li>[ ] PII never in URLs or query parameters</li><li>[ ] PII never in client-side JavaScript variables (except current user)</li><li>[ ] Partner names/emails not visible to unauthenticated users</li><li>[ ] Error messages don't reveal whether an email exists</li><li>[ ] API responses don't include unnecessary fields</li></ul>
+
+<h3>Third-Party Services</h3>
+<table><thead><tr><th>Service</th><th>Data Shared</th><th>DPA Required</th><th>Status</th></tr></thead><tbody><tr><td>Cloudflare</td><td>All traffic (proxied)</td><td>Yes (Cloudflare DPA)</td><td>✓ Covered by Cloudflare terms</td></tr><tr><td>Resend</td><td>Email addresses (OTP)</td><td>Yes</td><td>Review required</td></tr><tr><td>Hetzner</td><td>Server data (2nth.io)</td><td>Yes</td><td>Review required</td></tr><tr><td>Paystack</td><td>Email + payment (billing)</td><td>Yes</td><td>Review required</td></tr><tr><td>GitHub</td><td>Public code only</td><td>No (no PII)</td><td>N/A</td></tr></tbody></table>
+
+<h2>Information Officer Registration</h2>
+
+<h3>POPIA Requirement (Section 55)</h3>
+<ul><li>Register Information Officer with Information Regulator</li><li>Current: Craig Leppan (craig@2nth.ai)</li><li>Register at: https://www.justice.gov.za/inforeg/</li><li>Annual confirmation required</li></ul>
+
+<h3>Responsibilities</h3>
+<ol><li>Encourage compliance within the organisation</li><li>Handle data subject requests</li><li>Ensure privacy impact assessments are conducted</li><li>Cooperate with the Information Regulator</li><li>Maintain breach register</li></ol>
+
+<h2>Cross-Border Data Transfers</h2>
+
+<h3>Current Architecture</h3>
+<pre><code class="lang-text">User (SA/EU/Global)
+  → Cloudflare Edge (nearest PoP — global)
+  → Cloudflare D1 (edge replicated)
+  → Hetzner Cloud (Helsinki — 2nth.io instances)</code></pre>
+
+<h3>POPIA Section 72 — Transborder Flows</h3>
+<p>Personal information may be transferred if:</p>
+<ol><li>Recipient country has adequate protection (EU countries qualify)</li><li>Data subject consents</li><li>Transfer is necessary for contract performance</li><li>Binding corporate rules are in place</li></ol>
+
+<h3>GDPR Chapter 5 — International Transfers</h3>
+<ul><li>Cloudflare: Standard Contractual Clauses (SCCs) in place</li><li>Hetzner: EU-based (Germany/Finland) — no transfer issue</li><li>Mauritius (planned): No EU adequacy decision — will need SCCs</li></ul>
+
+<h2>Privacy Notice Template</h2>
+
+<p>Every 2nth property must display:</p>
+<ol><li><strong>Who we are</strong> — Data controller identity and contact</li><li><strong>What we collect</strong> — Specific data types</li><li><strong>Why</strong> — Lawful basis per data type</li><li><strong>How long</strong> — Retention periods</li><li><strong>Who sees it</strong> — Third parties and sub-processors</li><li><strong>Your rights</strong> — Access, correction, deletion, portability, objection</li><li><strong>How to complain</strong> — Information Regulator contact details</li><li><strong>Updates</strong> — How changes to the notice are communicated</li></ol>
+
+    </div>
+
+    <div class="page-footer">
+      <a class="btn-back" href="../">← Back to Cloudflare</a>
+      <a class="btn-back" href="../../">← All Domains</a>
+      <a class="btn-back" href="https://github.com/2nth-ai/skills/blob/main/leg/gdpr-compliance/SKILL.md" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    btn.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) { html.removeAttribute('data-theme'); localStorage.setItem('2nth-theme','light'); }
+      else { html.setAttribute('data-theme','dark'); localStorage.setItem('2nth-theme','dark'); }
+    });
+  </script>
+</body>
+</html>

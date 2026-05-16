@@ -1,16 +1,12 @@
 ---
-name: Sales Enablement
+name: enablement
 description: >
   (1) Sales enablement — battle cards, objection handling playbooks, ROI templates,
   and collateral that equips a sales team to sell consistently and confidently.
-requires:
-  - biz/sales
-  - biz/sales/discovery
-  - biz/sales/qualification
-improves: []
 metadata:
   domain: biz
   subdomain: sales/enablement
+  requires: "biz/sales, biz/sales/discovery, biz/sales/qualification"
   maturity: stable
 ---
 
