@@ -26,29 +26,43 @@ function parseFrontmatter(content) {
   const body = match[2];
   const meta = {};
 
+  // Container types: 'multiline-string' | 'array' | 'map' | 'undetermined' | null
   let currentKey = null;
-  let inArray = false;
+  let containerType = null;
+
+  const strip = v => v.replace(/^["']|["']$/g, '');
+
   for (const line of raw.split('\n')) {
-    const arrayItem = line.match(/^\s{2}-\s+(.+)$/);
-    const keyVal = line.match(/^(\w[\w-]*):\s*(.*)$/);
-    const blockScalar = line.match(/^(\w[\w-]*):\s*\|$/);
+    const topKeyVal       = line.match(/^(\w[\w-]*):\s*(.*)$/);
+    const blockScalar     = line.match(/^(\w[\w-]*):\s*\|$/);
+    const indentedArray   = line.match(/^\s{2}-\s+(.+)$/);
+    const indentedKeyVal  = line.match(/^\s{2,}(\w[\w-]*):\s*(.*)$/);
 
     if (blockScalar) {
       currentKey = blockScalar[1];
       meta[currentKey] = '';
-      inArray = false;
-    } else if (arrayItem && currentKey && inArray) {
-      meta[currentKey].push(arrayItem[1]);
-    } else if (keyVal) {
-      currentKey = keyVal[1];
-      inArray = false;
-      if (keyVal[2] === '') {
-        meta[currentKey] = [];
-        inArray = true;
+      containerType = 'multiline-string';
+    } else if (topKeyVal) {
+      currentKey = topKeyVal[1];
+      if (topKeyVal[2] === '') {
+        // Empty value — could be array OR map; decide on next indented line
+        meta[currentKey] = null;
+        containerType = 'undetermined';
       } else {
-        meta[currentKey] = keyVal[2].replace(/^["']|["']$/g, '');
+        meta[currentKey] = strip(topKeyVal[2]);
+        containerType = 'scalar';
       }
-    } else if (currentKey && typeof meta[currentKey] === 'string' && line.startsWith('  ')) {
+    } else if (indentedArray && currentKey && (containerType === 'undetermined' || containerType === 'array')) {
+      if (!Array.isArray(meta[currentKey])) meta[currentKey] = [];
+      meta[currentKey].push(strip(indentedArray[1]));
+      containerType = 'array';
+    } else if (indentedKeyVal && currentKey && (containerType === 'undetermined' || containerType === 'map')) {
+      if (typeof meta[currentKey] !== 'object' || meta[currentKey] === null || Array.isArray(meta[currentKey])) {
+        meta[currentKey] = {};
+      }
+      meta[currentKey][indentedKeyVal[1]] = strip(indentedKeyVal[2]);
+      containerType = 'map';
+    } else if (currentKey && containerType === 'multiline-string' && line.startsWith('  ')) {
       meta[currentKey] += (meta[currentKey] ? '\n' : '') + line.trim();
     }
   }
