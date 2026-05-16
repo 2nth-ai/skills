@@ -24,9 +24,9 @@ Skills for AI agents working in business systems — ERP, CRM, e-commerce, and o
 
 | Path | Focus |
 |------|-------|
-| `biz/erp/` | Enterprise resource planning systems |
-| `biz/crm/` | Customer relationship management |
-| `biz/hr/` | HR and talent — recruitment, onboarding, performance |
-| `biz/ops/` | Operations, workflow, automation |
+| `biz/accounting/` | Business accounting — Xero, QuickBooks, bookkeeping |
+| `biz/erp/` | Enterprise resource planning — Sage X3, ERPNext, Shopify, WooCommerce |
+| `biz/hr/` | HR and talent — recruitment pipeline, onboarding, performance |
+| `biz/sales/` | B2B sales — prospecting, discovery, pipeline, proposals, RevOps |
 
 Load the relevant subdomain or leaf skill directly. This manifest is for discovery.
