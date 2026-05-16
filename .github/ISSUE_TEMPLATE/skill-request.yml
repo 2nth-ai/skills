@@ -1,0 +1,54 @@
+name: Skill Request
+description: Request a new skill for the 2nth.ai skill tree
+labels: ["skill-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Request a new skill to be added to the 2nth.ai skill tree.
+        skills@2nth.ai will triage this request and surface it for development.
+
+  - type: input
+    id: path
+    attributes:
+      label: Proposed skill path
+      description: Follow the domain/subdomain/skill-name convention
+      placeholder: "e.g., biz/crm/hubspot"
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use cases
+      description: When would an agent need this skill? Enumerate specific scenarios.
+      placeholder: |
+        (1) When an agent needs to...
+        (2) When a user asks about...
+        (3) When integrating with...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - "High — blocking client work"
+        - "Medium — would improve agent capability"
+        - "Low — nice to have"
+    validations:
+      required: true
+
+  - type: input
+    id: agents
+    attributes:
+      label: Which agents would use this skill?
+      description: List agent names that would benefit
+      placeholder: "e.g., grant, tom, penny"
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Links to docs, API references, or related skills

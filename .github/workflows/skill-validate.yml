@@ -1,0 +1,91 @@
+name: Skill Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+    paths:
+      - '**/SKILL.md'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Find changed SKILL.md files
+        id: changed
+        run: |
+          FILES=$(git diff --name-only origin/main...HEAD -- '**/SKILL.md' | tr '\n' ' ')
+          echo "files=$FILES" >> "$GITHUB_OUTPUT"
+          if [ -z "$FILES" ]; then
+            echo "No SKILL.md files changed."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Changed files: $FILES"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate skills
+        if: steps.changed.outputs.skip != 'true'
+        id: validate
+        env:
+          VALIDATION_OUTPUT: validation-report.md
+        run: |
+          node .github/scripts/validate-skill.mjs ${{ steps.changed.outputs.files }}
+        continue-on-error: true
+
+      - name: Post validation report
+        if: steps.changed.outputs.skip != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body;
+            try {
+              body = fs.readFileSync('validation-report.md', 'utf-8');
+            } catch {
+              body = '## skills@2nth.ai — Skill Validation Report\n\n⚠️ Validation script did not produce output. Check the workflow logs.';
+            }
+
+            // Find and update existing bot comment, or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const marker = '## skills@2nth.ai — Skill Validation Report';
+            const existing = comments.find(c => c.body.startsWith(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      - name: Fail if validation errors
+        if: steps.validate.outcome == 'failure'
+        run: exit 1
