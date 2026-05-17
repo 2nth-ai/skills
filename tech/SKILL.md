@@ -14,7 +14,6 @@ description: |
   (10) MCP (Model Context Protocol) — building and consuming MCP servers,
   (11) infrastructure as code — Wrangler, Terraform, GCP, deployment pipelines.
 license: MIT
-homepage: https://skills.2nth.ai/tech
 repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai

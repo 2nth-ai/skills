@@ -14,7 +14,6 @@ description: |
   (10) routing: Workers AI classifies WhatsApp intent → Claude drafts reply → send via Cloud API.
 license: MIT
 compatibility: Meta Graph API v21.0, WhatsApp Business Cloud API, Messenger Platform, Cloudflare Workers
-homepage: https://skills.2nth.ai/tech/meta
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

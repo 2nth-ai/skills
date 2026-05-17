@@ -14,7 +14,6 @@ description: |
   (10) human agent handover via the Handover Protocol for Instagram.
 license: MIT
 compatibility: Instagram Messaging API (Graph API v21.0), Cloudflare Workers, Meta Graph API
-homepage: https://skills.2nth.ai/tech/meta/instagram
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/meta

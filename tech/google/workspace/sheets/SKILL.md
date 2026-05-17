@@ -8,7 +8,6 @@ description: |
   (5) using Sheets as a lightweight CMS or as the output surface for AI-generated reports.
 license: MIT
 compatibility: Google Sheets API v4
-homepage: https://skills.2nth.ai/tech/google/workspace/sheets
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/workspace

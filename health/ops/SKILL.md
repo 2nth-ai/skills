@@ -7,7 +7,6 @@ description: |
   (3) healthcare compliance — HIPAA, POPIA, accreditation, audit trails,
   (4) practice management — staff scheduling, inventory, facility operations.
 license: MIT
-homepage: https://skills.2nth.ai/health/ops
 repository: https://github.com/2nth-ai/skills
 improves:
   - health

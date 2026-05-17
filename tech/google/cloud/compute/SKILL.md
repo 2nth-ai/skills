@@ -9,7 +9,6 @@ description: |
   (6) building hybrid Cloudflare + GCP — Cloudflare at edge, Cloud Run for container workloads.
 license: MIT
 compatibility: gcloud CLI v500+, Cloud Run gen2, Cloud Functions v2, GKE 1.30+
-homepage: https://skills.2nth.ai/tech/google/cloud/compute
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/cloud

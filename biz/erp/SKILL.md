@@ -7,7 +7,6 @@ description: |
   (3) Shopify — Admin + Storefront API, e-commerce operations,
   (4) any ERP system for AI-powered reporting or workflow automation.
 license: MIT
-homepage: https://skills.2nth.ai/biz/erp
 repository: https://github.com/2nth-ai/skills
 improves:
   - biz

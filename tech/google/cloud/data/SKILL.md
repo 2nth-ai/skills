@@ -8,7 +8,6 @@ description: |
   (5) orchestrating with Cloud Scheduler → Pub/Sub → Cloud Run / Dataflow.
 license: MIT
 compatibility: BigQuery standard SQL + BigQuery ML, Pub/Sub v1, Dataflow (Apache Beam 2.50+)
-homepage: https://skills.2nth.ai/tech/google/cloud/data
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/cloud

@@ -11,7 +11,6 @@ description: |
   (7) working with GitHub in Cloudflare Workers or AWS Lambda — Octokit, REST, webhooks.
 license: MIT
 compatibility: GitHub REST API v3, GraphQL API v4, Octokit v21 (TypeScript/JS), GitHub Actions, GitHub Apps
-homepage: https://skills.2nth.ai/tech/github
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

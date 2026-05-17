@@ -8,7 +8,6 @@ description: |
   (5) scoping access narrowly with drive.file (only files your app creates/opens).
 license: MIT
 compatibility: Drive API v3, Drive Activity API v2
-homepage: https://skills.2nth.ai/tech/google/workspace/drive
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/workspace

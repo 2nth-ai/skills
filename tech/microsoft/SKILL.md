@@ -9,7 +9,6 @@ description: |
   (5) exposing 2nth.ai skills to Microsoft Copilot Studio or Teams via MCP or custom connectors,
   (6) running hybrid Cloudflare + Azure architectures — edge routing, Azure for AI compute and M365 data.
 license: MIT
-homepage: https://skills.2nth.ai/tech/microsoft
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

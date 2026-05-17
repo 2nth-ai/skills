@@ -14,7 +14,6 @@ description: |
   (10) filtering noise — dedup by tweet ID, skip retweets/own tweets, handle quote tweets.
 license: MIT
 compatibility: X API v2, OAuth 2.0 PKCE, Cloudflare Workers, Cron Triggers
-homepage: https://skills.2nth.ai/tech/x
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech

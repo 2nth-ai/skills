@@ -7,7 +7,6 @@ description: |
   (4) moving data into GCP with Storage Transfer Service or Transfer Appliance.
 license: MIT
 compatibility: Cloud Storage v1, gsutil, Filestore v1
-homepage: https://skills.2nth.ai/tech/google/cloud/storage
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/cloud

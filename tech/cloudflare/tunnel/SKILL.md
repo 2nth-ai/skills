@@ -8,7 +8,6 @@ description: |
   Free — cloudflared daemon runs on the client's machine or server.
 license: MIT
 compatibility: Cloudflare Tunnel (cloudflared), any OS
-homepage: https://skills.2nth.ai/tech/cloudflare/tunnel
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

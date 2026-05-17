@@ -5,7 +5,6 @@ description: |
   (1) contract review — first-pass review, risk scoring, redlines, deviation reports.
 license: MIT
 compatibility: Any
-homepage: https://skills.2nth.ai/leg/contracts
 repository: https://github.com/2nth-ai/skills
 requires: []
 improves:

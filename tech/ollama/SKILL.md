@@ -10,7 +10,6 @@ description: |
   (6) integrating with agent frameworks — LangChain, LlamaIndex, Open WebUI, Continue.dev.
 license: MIT
 compatibility: Ollama v0.5+, REST API, OpenAI-compatible API, Docker
-homepage: https://skills.2nth.ai/tech/ollama
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

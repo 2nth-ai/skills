@@ -8,7 +8,6 @@ description: |
   (5) building scheduling flows — conference rooms, timezone handling, recurring events.
 license: MIT
 compatibility: Google Calendar API v3
-homepage: https://skills.2nth.ai/tech/google/workspace/calendar
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/workspace

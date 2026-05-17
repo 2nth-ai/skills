@@ -10,7 +10,6 @@ description: |
   (6) implementing the 2nth token economy — per-client billing via gateway logs.
 license: MIT
 compatibility: Cloudflare Workers, any HTTP client
-homepage: https://skills.2nth.ai/tech/cloudflare/ai/ai-gateway
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

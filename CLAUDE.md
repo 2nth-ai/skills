@@ -32,12 +32,15 @@ Changes to production skills (marked `✓ production` in SKILLS.md) require Penn
 
 ## CI/CD
 
-GitHub Actions automate validation and deployment:
+GitHub Actions automate validation and deployment of the legacy catalog UI:
 
-- **Skill validation**: PRs that touch SKILL.md files are validated against SKILL_FORMAT.md (`.github/workflows/skill-validate.yml`)
-- **Preview deploys**: Every PR gets a preview at `<branch>.skills-2nth-ai.pages.dev` (`.github/workflows/preview-deploy.yml`)
-- **Production deploy**: Merges to `main` auto-deploy to `skills.2nth.ai` (`.github/workflows/deploy-production.yml`)
-- **Staging**: The `dev` branch deploys to `dev.skills.2nth.ai`
+- **Skill validation**: PRs that touch SKILL.md files are validated against SKILL_FORMAT.md (`.github/workflows/skill-validate.yml`) — still useful regardless of where the rendered catalog lives.
+- **Preview deploys**: Every PR builds a preview of the legacy catalog at `<branch>.2nth-skills.pages.dev` (`.github/workflows/preview-deploy.yml`).
+- **Production deploy**: Merges to `main` rebuild the legacy catalog and push to the `2nth-skills-hub` Cloudflare project (`.github/workflows/deploy-production.yml`).
+
+**The legacy public UI was retired 2026-05-17.** The `skills.2nth.ai`, `openclaw.skills.2nth.ai`, and `dev.skills.2nth.ai` custom domains were unmapped on that date. The Cloudflare projects (`2nth-skills-hub`, `2nth-skills`) are kept as orphan `*.pages.dev` containers for a brief grace period before deletion. The deploy workflows still run but no longer serve a canonical human-facing surface — `know.2nth.ai` is the public knowledge tree now.
+
+The SKILL.md files in this repo remain the source of truth that agents (Penny / Grant / Leo / Eric) load at runtime. The validation workflow stays in place to keep that quality bar.
 
 The `agents/skills` agent (skills@2nth.ai) manages the review pipeline. See `agents/skills/AGENT.md`.
 

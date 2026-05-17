@@ -9,7 +9,6 @@ description: |
   (6) using Memorystore (Redis/Memcached/Valkey) for caching.
 license: MIT
 compatibility: Cloud SQL (Postgres 13–16, MySQL 8.0), AlloyDB, Spanner, Firestore Native, Bigtable
-homepage: https://skills.2nth.ai/tech/google/cloud/database
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/cloud

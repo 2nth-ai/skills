@@ -8,7 +8,6 @@ description: |
   (4) financial modelling — scenario planning, projections,
   (5) capital markets — trading, risk, portfolio management.
 license: MIT
-homepage: https://skills.2nth.ai/fin
 repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai

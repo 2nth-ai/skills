@@ -9,7 +9,6 @@ description: |
   (6) running hybrid Cloudflare + AWS architectures — Cloudflare at edge, AWS for compute-heavy workloads.
 license: MIT
 compatibility: AWS CLI v2, CDK v2, SDK v3 (TypeScript/Python), Terraform
-homepage: https://skills.2nth.ai/tech/aws/compute
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/aws

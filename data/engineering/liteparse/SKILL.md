@@ -10,7 +10,6 @@ description: |
   (6) parsing documents at the edge or inside a customer VPC where cloud parsers (LlamaParse, Unstructured SaaS, Azure DI) are blocked by data residency.
 license: MIT
 compatibility: Node 18+. `@llamaindex/liteparse` global install. LibreOffice for Office formats, ImageMagick for images.
-homepage: https://skills.2nth.ai/data/engineering/liteparse
 repository: https://github.com/2nth-ai/skills
 requires: []
 improves:

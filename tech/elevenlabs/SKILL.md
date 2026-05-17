@@ -11,7 +11,6 @@ description: |
   (7) generating sound effects or music — AI-generated audio assets.
 license: MIT
 compatibility: ElevenLabs API v1, Python SDK, TypeScript/JavaScript SDK, React SDK
-homepage: https://skills.2nth.ai/tech/elevenlabs
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

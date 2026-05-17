@@ -11,7 +11,6 @@ description: |
   (7) AI design tools — v0, Lovable, Framer AI, design-to-code generators,
   (8) accessibility — WCAG patterns, ARIA, screen reader testing, keyboard navigation.
 license: MIT
-homepage: https://skills.2nth.ai/tech/design
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

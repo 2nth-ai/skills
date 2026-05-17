@@ -15,8 +15,10 @@ description: |
   (3) use case three.
 license: MIT
 compatibility: What runtimes/environments this skill works in
-homepage: https://skills.2nth.ai/domain/subdomain/skill-name
 repository: https://github.com/2nth-ai/skills
+# Note: `homepage` was historically used to point at skills.2nth.ai, but that
+# public UI was retired 2026-05-17. No replacement URL yet — omit the field
+# entirely, or re-add when a new public surface lands.
 requires:
   - domain/other-skill     # skills this one depends on (resolved automatically)
 improves:

@@ -11,7 +11,6 @@ description: |
   structured queries, or data >25MB per value.
 license: MIT
 compatibility: Cloudflare Workers, Wrangler CLI
-homepage: https://skills.2nth.ai/tech/cloudflare/kv
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

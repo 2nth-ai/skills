@@ -10,7 +10,6 @@ description: |
   (6) connecting R2 to a custom domain for public asset serving.
 license: MIT
 compatibility: Cloudflare Workers, S3-compatible clients (AWS SDK v3)
-homepage: https://skills.2nth.ai/tech/cloudflare/r2
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

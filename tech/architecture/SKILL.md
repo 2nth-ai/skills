@@ -13,7 +13,6 @@ description: |
   (9) identifying and documenting existing architecture decisions retrospectively.
 license: MIT
 compatibility: Any — outputs Markdown, Mermaid, JSON
-homepage: https://skills.2nth.ai/tech/architecture
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

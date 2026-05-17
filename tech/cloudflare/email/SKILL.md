@@ -9,7 +9,6 @@ description: |
   Free — included with any Cloudflare-managed domain.
 license: MIT
 compatibility: Cloudflare Workers, Email Routing
-homepage: https://skills.2nth.ai/tech/cloudflare/email
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

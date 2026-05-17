@@ -8,7 +8,6 @@ description: |
   (5) securing Lambda and ECS workloads — execution roles, task roles, no hardcoded credentials.
 license: MIT
 compatibility: AWS CLI v2, CDK v2, SDK v3 (TypeScript/Python), Terraform
-homepage: https://skills.2nth.ai/tech/aws/security
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/aws

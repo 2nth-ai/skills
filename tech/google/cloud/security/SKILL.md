@@ -8,7 +8,6 @@ description: |
   (5) constraining data exfiltration with VPC Service Controls.
 license: MIT
 compatibility: gcloud CLI, Secret Manager v1, KMS v1, Cloud Armor (HTTPS LB)
-homepage: https://skills.2nth.ai/tech/google/cloud/security
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/cloud
