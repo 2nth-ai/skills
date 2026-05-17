@@ -8,7 +8,6 @@ description: |
   (5) automating offboarding — suspend user, transfer Drive, delete after grace period.
 license: MIT
 compatibility: Admin SDK Directory v1, Reports v1, Groups Settings v1
-homepage: https://skills.2nth.ai/tech/google/workspace/admin
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/workspace

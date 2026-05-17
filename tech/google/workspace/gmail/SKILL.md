@@ -9,7 +9,6 @@ description: |
   (6) handling MIME parsing, base64url encoding, and attachments correctly.
 license: MIT
 compatibility: Gmail API v1, googleapis (Node 9+), google-api-python-client
-homepage: https://skills.2nth.ai/tech/google/workspace/gmail
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/workspace

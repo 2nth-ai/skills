@@ -9,7 +9,6 @@ description: |
   Unlimited sites, 500 builds/month on free plan.
 license: MIT
 compatibility: Cloudflare Pages, Wrangler CLI
-homepage: https://skills.2nth.ai/tech/cloudflare/pages
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

@@ -13,7 +13,6 @@ description: |
   (9) jurisdiction-aware review for South African (POPIA), UK (GDPR), or US contracts.
 license: MIT
 compatibility: Any — outputs JSON, Markdown, redline documents
-homepage: https://skills.2nth.ai/leg/contracts/review
 repository: https://github.com/2nth-ai/skills
 requires: []
 improves:

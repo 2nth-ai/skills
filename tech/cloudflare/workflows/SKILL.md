@@ -10,7 +10,6 @@ description: |
   Currently in open beta — available on Workers Paid plan.
 license: MIT
 compatibility: Cloudflare Workers (Paid, beta)
-homepage: https://skills.2nth.ai/tech/cloudflare/workflows
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

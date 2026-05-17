@@ -8,7 +8,6 @@ description: |
   (4) building people analytics, compensation benchmarking, or workforce planning tools,
   (5) supporting onboarding workflows, compliance documentation, or performance cycles.
 license: MIT
-homepage: https://skills.2nth.ai/biz/hr
 repository: https://github.com/2nth-ai/skills
 improves:
   - biz

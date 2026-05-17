@@ -10,7 +10,6 @@ description: |
   (6) analysing Shopify data for marketing, growth, and operational insights.
 license: MIT
 compatibility: Any HTTP client, Node.js, Python, or Cloudflare Workers
-homepage: https://skills.2nth.ai/biz/erp/shopify
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

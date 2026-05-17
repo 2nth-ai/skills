@@ -10,7 +10,6 @@ description: |
   (6) integrating WooCommerce with ERPs, accounting systems, or fulfilment providers via AI middleware.
 license: MIT
 compatibility: Any HTTP client, Node.js, Python, Cloudflare Workers, PHP
-homepage: https://skills.2nth.ai/biz/erp/woocommerce
 repository: https://github.com/2nth-ai/skills
 requires: []
 improves:

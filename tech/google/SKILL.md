@@ -8,7 +8,6 @@ description: |
   (4) navigating project, organisation, and folder hierarchies with IAM,
   (5) choosing regions for POPIA / GDPR data residency — africa-south1 (Johannesburg) for SA clients.
 license: MIT
-homepage: https://skills.2nth.ai/tech/google
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

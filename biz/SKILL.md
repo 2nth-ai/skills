@@ -9,7 +9,6 @@ description: |
   (5) CMS platforms — Ghost, WordPress, content and newsletter management,
   (6) business operations, workflow automation, reporting.
 license: MIT
-homepage: https://skills.2nth.ai/biz
 repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai

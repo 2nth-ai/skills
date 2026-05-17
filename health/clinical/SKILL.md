@@ -7,7 +7,6 @@ description: |
   (3) clinical protocols — treatment guidelines, order sets, care plans,
   (4) interoperability — HL7, FHIR R4, SMART on FHIR integrations.
 license: MIT
-homepage: https://skills.2nth.ai/health/clinical
 repository: https://github.com/2nth-ai/skills
 improves:
   - health

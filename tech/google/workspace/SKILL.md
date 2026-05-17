@@ -11,7 +11,6 @@ description: |
   (7) building Cloudflare-native Workspace integrations — the workspace-bridge Worker pattern with Web Crypto JWT signing.
 license: MIT
 compatibility: Google APIs client libraries (Node, Python), REST v1/v3/v4, Cloudflare Workers (Web Crypto)
-homepage: https://skills.2nth.ai/tech/google/workspace
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google

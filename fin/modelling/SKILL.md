@@ -12,7 +12,6 @@ description: |
   (8) handling IFRS vs GAAP differences (including IFRS 16 lease accounting adjustments).
 license: MIT
 compatibility: Any — outputs Excel, JSON, Markdown
-homepage: https://skills.2nth.ai/fin/modelling
 repository: https://github.com/2nth-ai/skills
 requires:
   - fin/reporting

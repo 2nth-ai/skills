@@ -9,7 +9,6 @@ description: |
   (6) deciding Gemini vs Claude via Vertex Model Garden — Anthropic models are available through Vertex too.
 license: MIT
 compatibility: Vertex AI v1, Gen AI SDK (Node/Python), Model Garden
-homepage: https://skills.2nth.ai/tech/google/cloud/ai
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/cloud

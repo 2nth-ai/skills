@@ -10,7 +10,6 @@ description: |
   (6) deploying Sage X3 integrations to Cloudflare Workers.
 license: MIT
 compatibility: Any HTTP client, GraphQL client, or Cloudflare Workers
-homepage: https://skills.2nth.ai/biz/erp/sage-x3
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

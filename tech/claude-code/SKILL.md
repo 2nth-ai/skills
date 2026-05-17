@@ -9,7 +9,6 @@ description: |
   (5) designing the client onboarding flow for the 2nth.ai platform.
 license: MIT
 compatibility: Claude Code CLI, claude.ai/code
-homepage: https://skills.2nth.ai/tech/claude-code
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

@@ -12,7 +12,6 @@ description: |
   (8) integrating Xero with external systems via the Xero REST API.
 license: MIT
 compatibility: Any HTTP client, Cloudflare Workers, Node.js
-homepage: https://skills.2nth.ai/biz/accounting/xero
 repository: https://github.com/2nth-ai/skills
 requires: []
 improves:

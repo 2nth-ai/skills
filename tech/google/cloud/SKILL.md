@@ -10,7 +10,6 @@ description: |
   (6) building Cloudflare + GCP hybrid architectures — Cloudflare at the edge, Cloud Run for compute, BigQuery for analytics.
 license: MIT
 compatibility: gcloud CLI, bq, gsutil, GCP SDK v3 (Node/Python/Go), Terraform
-homepage: https://skills.2nth.ai/tech/google/cloud
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google

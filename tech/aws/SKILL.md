@@ -10,7 +10,6 @@ description: |
   (6) building a cloud contact centre — Amazon Connect IVR, routing, agent desktop, Contact Lens, Lex,
   (7) building hybrid Cloudflare + AWS architectures — Cloudflare at the edge, AWS for compute-heavy or stateful workloads.
 license: MIT
-homepage: https://skills.2nth.ai/tech/aws
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

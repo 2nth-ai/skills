@@ -11,7 +11,6 @@ description: |
   Requires Workers Paid plan ($5/mo).
 license: MIT
 compatibility: Cloudflare Workers (Paid plan required)
-homepage: https://skills.2nth.ai/tech/cloudflare/durable-objects
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

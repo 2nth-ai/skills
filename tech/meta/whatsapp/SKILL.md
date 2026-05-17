@@ -14,7 +14,6 @@ description: |
   (10) building multi-turn conversations with context from KV or D1.
 license: MIT
 compatibility: WhatsApp Business Cloud API v21.0, Cloudflare Workers, Meta Graph API
-homepage: https://skills.2nth.ai/tech/meta/whatsapp
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/meta

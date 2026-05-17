@@ -8,7 +8,6 @@ description: |
   (4) collaboration — Webex, CUCM, Unity Connection, UCCX,
   (5) network automation — Netmiko, NAPALM, Ansible, Cisco DNA Center, NSO, YANG/NETCONF/RESTCONF.
 license: MIT
-homepage: https://skills.2nth.ai/tech/cisco
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

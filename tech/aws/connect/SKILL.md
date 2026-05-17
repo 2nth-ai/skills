@@ -11,7 +11,6 @@ description: |
   (7) agent desktop customisation — Streams API, custom CCP, third-party CRM embedding.
 license: MIT
 compatibility: AWS CLI v2, Amazon Connect Console, Connect Streams API v2, AWS SDK v3 (TypeScript/Python)
-homepage: https://skills.2nth.ai/tech/aws/connect
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/aws

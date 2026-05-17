@@ -11,7 +11,6 @@ description: |
   (7) working with other Zoho products — Desk (support), People (HR), Projects, Campaigns, Analytics.
 license: MIT
 compatibility: Zoho CRM API v8, Zoho Books API v3, Zoho OAuth 2.0, Node.js/TypeScript SDK, Python SDK
-homepage: https://skills.2nth.ai/tech/zoho
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

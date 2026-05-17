@@ -1,6 +1,8 @@
-# skills.2nth.ai
+# 2nth.ai skills
 
 The 2nth.ai skill tree. A fractal, self-referencing library of AI agent skills — organised by domain, consumed by Claude Code and any AI agent runtime.
+
+> **Note**: The legacy public UI at `skills.2nth.ai` was retired 2026-05-17. The SKILL.md files in this repo remain the source of truth that agents load at runtime. For human-facing knowledge content, see [`know.2nth.ai`](https://know.2nth.ai).
 
 ## Domains
 

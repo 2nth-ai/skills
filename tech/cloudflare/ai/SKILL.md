@@ -7,7 +7,6 @@ description: |
   (3) Vectorize — vector database for RAG, semantic search, and skill discovery,
   (4) full AI pipelines combining all three: classify at edge, retrieve context, answer with Claude.
 license: MIT
-homepage: https://skills.2nth.ai/tech/cloudflare/ai
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech/cloudflare

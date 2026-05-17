@@ -10,7 +10,6 @@ description: |
   (6) building Worker-to-Worker communication or service bindings.
 license: MIT
 compatibility: Cloudflare Workers (V8 isolates, Node.js compat mode)
-homepage: https://skills.2nth.ai/tech/cloudflare/workers
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare

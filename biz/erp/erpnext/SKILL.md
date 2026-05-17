@@ -10,7 +10,6 @@ description: |
   (6) integrating ERPNext with external systems via its REST/RPC API.
 license: MIT
 compatibility: Any HTTP client, Python, or Cloudflare Workers
-homepage: https://skills.2nth.ai/biz/erp/erpnext
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

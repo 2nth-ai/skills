@@ -7,7 +7,6 @@ description: |
   (3) K-12 education — curriculum, student progress, adaptive learning,
   (4) building AI-powered learning companions or course assistants.
 license: MIT
-homepage: https://skills.2nth.ai/edu
 repository: https://github.com/2nth-ai/skills
 metadata:
   author: 2nth.ai

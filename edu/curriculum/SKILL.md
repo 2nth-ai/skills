@@ -13,7 +13,6 @@ description: |
   (9) producing remediation plans for learners struggling with specific topics.
 license: MIT
 compatibility: Any — outputs Markdown, DOCX, JSON
-homepage: https://skills.2nth.ai/edu/curriculum
 repository: https://github.com/2nth-ai/skills
 requires: []
 improves:

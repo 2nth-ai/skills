@@ -12,7 +12,6 @@ description: |
   (8) integrating Ghost with external systems — webhooks, Zapier, custom integrations.
 license: MIT
 compatibility: Node.js 18+, Docker, Ubuntu 22.04+, any HTTP client
-homepage: https://skills.2nth.ai/biz/cms/ghost
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare

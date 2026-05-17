@@ -4,7 +4,6 @@ description: |
   Accounting domain manifest. Use this skill when routing to accounting platform integrations.
   Child skills: quickbooks (QBO REST API), xero (Xero API).
 license: MIT
-homepage: https://skills.2nth.ai/fin/accounting
 repository: https://github.com/2nth-ai/skills
 improves:
   - fin

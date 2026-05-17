@@ -14,7 +14,6 @@ description: |
   (10) building community bots for customer support, AI Q&A, or ops alerts.
 license: MIT
 compatibility: Discord REST API v10, Interactions Endpoint, Cloudflare Workers, Ed25519
-homepage: https://skills.2nth.ai/tech/discord
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

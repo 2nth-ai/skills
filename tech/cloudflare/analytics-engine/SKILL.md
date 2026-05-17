@@ -10,7 +10,6 @@ description: |
   Included with Workers Paid plan.
 license: MIT
 compatibility: Cloudflare Workers (Paid plan)
-homepage: https://skills.2nth.ai/tech/cloudflare/analytics-engine
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

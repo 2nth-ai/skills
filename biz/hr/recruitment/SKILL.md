@@ -10,7 +10,6 @@ description: |
   (6) integrating with ATS platforms (Greenhouse, Lever, Workday, BambooHR, SmartRecruiters).
 license: MIT
 compatibility: Any ATS via REST API; Cloudflare Workers AI for CV parsing
-homepage: https://skills.2nth.ai/biz/hr/recruitment
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

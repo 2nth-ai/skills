@@ -14,7 +14,6 @@ description: |
   (10) exposing Slack slash commands as MCP tools or AI agent endpoints.
 license: MIT
 compatibility: Slack Web API, Events API, Slash Commands, Block Kit, Cloudflare Workers
-homepage: https://skills.2nth.ai/tech/slack
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

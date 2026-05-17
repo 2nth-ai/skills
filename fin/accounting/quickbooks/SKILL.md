@@ -10,7 +10,6 @@ description: |
   (6) implementing change data capture (CDC) or webhook-driven accounting pipelines.
 license: MIT
 compatibility: Any HTTP client, Node.js, Python, Cloudflare Workers
-homepage: https://skills.2nth.ai/fin/accounting/quickbooks
 repository: https://github.com/2nth-ai/skills
 requires:
   - fin/modelling

@@ -10,7 +10,6 @@ description: |
   (6) running image classification, speech-to-text, or translation at the edge.
 license: MIT
 compatibility: Cloudflare Workers
-homepage: https://skills.2nth.ai/tech/cloudflare/ai/workers-ai
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

@@ -6,7 +6,6 @@ description: |
   (1) Xero cloud accounting — invoicing, reconciliation, financial reports, OAuth 2.0.
 license: MIT
 compatibility: Any
-homepage: https://skills.2nth.ai/biz/accounting
 repository: https://github.com/2nth-ai/skills
 requires: []
 improves:

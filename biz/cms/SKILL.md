@@ -8,7 +8,6 @@ description: |
   (4) managing memberships, subscriptions, and content monetisation,
   (5) theming, customising, or migrating CMS installations.
 license: MIT
-homepage: https://skills.2nth.ai/biz/cms
 repository: https://github.com/2nth-ai/skills
 improves:
   - biz

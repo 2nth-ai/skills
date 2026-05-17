@@ -10,7 +10,6 @@ description: |
   (6) combining Vectorize with Workers AI embeddings and Claude for full RAG pipelines.
 license: MIT
 compatibility: Cloudflare Workers
-homepage: https://skills.2nth.ai/tech/cloudflare/ai/vectorize
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

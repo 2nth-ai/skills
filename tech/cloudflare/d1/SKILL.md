@@ -10,7 +10,6 @@ description: |
   (6) choosing between D1, KV, and R2 for different data shapes.
 license: MIT
 compatibility: Cloudflare Workers, Wrangler CLI
-homepage: https://skills.2nth.ai/tech/cloudflare/d1
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

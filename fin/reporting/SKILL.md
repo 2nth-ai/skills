@@ -9,7 +9,6 @@ description: |
   (5) formatting financial outputs for display in Cloudflare Workers or Pages.
 license: MIT
 compatibility: Any JavaScript/TypeScript, Cloudflare Workers
-homepage: https://skills.2nth.ai/fin/reporting
 repository: https://github.com/2nth-ai/skills
 improves:
   - fin

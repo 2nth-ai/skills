@@ -9,7 +9,6 @@ description: |
   (6) egress via Cloud NAT for no-public-IP workloads.
 license: MIT
 compatibility: VPC, Cloud LB (global + regional), Cloud CDN, Cloud DNS, Cloud NAT
-homepage: https://skills.2nth.ai/tech/google/cloud/networking
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/google/cloud

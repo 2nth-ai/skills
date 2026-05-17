@@ -9,7 +9,6 @@ description: |
   (5) deploying 2nth.ai platform components or client applications.
 license: MIT
 compatibility: Cloudflare Workers, Cloudflare Pages, Wrangler CLI
-homepage: https://skills.2nth.ai/tech/cloudflare
 repository: https://github.com/2nth-ai/skills
 improves:
   - tech

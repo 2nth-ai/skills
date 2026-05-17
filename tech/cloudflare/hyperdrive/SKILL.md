@@ -9,7 +9,6 @@ description: |
   Requires Workers Paid plan.
 license: MIT
 compatibility: Cloudflare Workers (Paid), Postgres, MySQL
-homepage: https://skills.2nth.ai/tech/cloudflare/hyperdrive
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/cloudflare/workers

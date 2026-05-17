@@ -11,7 +11,6 @@ description: |
   (7) connecting M365 data (mail, calendar, Teams) into an agent tool via Graph API.
 license: MIT
 compatibility: Azure OpenAI REST API, Azure AI Agent Service REST API, Semantic Kernel SDK, Copilot Studio, MCP
-homepage: https://skills.2nth.ai/tech/microsoft/azure-ai
 repository: https://github.com/2nth-ai/skills
 requires:
   - tech/microsoft
