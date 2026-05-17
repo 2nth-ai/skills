@@ -99,11 +99,16 @@ function requiredSkillExists(skillPath) {
 // ── Count gotcha bullets ───────────────────────────────────────────────────
 
 function countGotchaBullets(body) {
-  const gotchaMatch = body.match(/##\s*Common\s+Gotchas\s*\n([\s\S]*?)(?=\n##\s|\n#\s|$)/i);
+  // Accept "## Gotchas", "## Common Gotchas", "## 11. Gotchas" (numbered sub-headings),
+  // and any leading numeric/whitespace prefix authors use in long files.
+  const gotchaMatch = body.match(/##\s*(?:\d+\.\s*)?(?:Common\s+)?Gotchas\b\s*\n([\s\S]*?)(?=\n##\s|\n#\s|$)/i);
   if (!gotchaMatch) return 0;
   const section = gotchaMatch[1];
+  // Two recognised gotcha-entry styles: list bullets (- / *) OR bold sub-headings
+  // (**Heading** on its own line, followed by an explanation paragraph).
   const bullets = section.match(/^[\s]*[-*]\s+/gm);
-  return bullets ? bullets.length : 0;
+  const boldHeadings = section.match(/^\*\*[^*\n]+\*\*\s*$/gm);
+  return (bullets ? bullets.length : 0) + (boldHeadings ? boldHeadings.length : 0);
 }
 
 // ── Check for OpenClaw references ──────────────────────────────────────────
